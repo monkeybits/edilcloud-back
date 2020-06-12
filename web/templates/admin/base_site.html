@@ -1,0 +1,19 @@
+
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+
+{% block extrastyle %}
+{{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'admin/css/admin_style.css' %}" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://use.fontawesome.com/184a0e7927.js"></script>
+{% endblock extrastyle %}
+
+{% block branding %}
+  <h1 id="site-name">
+    <a href="{% url 'admin:index' %}" title="{{cookiecutter.domain}}">
+      Whistle - {% trans 'Administration' %}
+    </a>
+  </h1>
+{% endblock branding %}
+

@@ -1,0 +1,29 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
+<<<<<<< local
+from web.core.models import UserModel, DateModel, StatusModel, OrderedModel
+=======
+
+from thux_core.models import UserModel, DateModel, StatusModel, OrderedModel
+>>>>>>> other
+
+
+@python_2_unicode_compatible
+class Document(UserModel, DateModel, StatusModel, OrderedModel):
+    pass
+
+    class Meta:
+        verbose_name = _('document')
+        verbose_name_plural = _('documents')
+        permissions = (
+            ("list_document", "Can list Document"),
+            ("detail_document", "Can detail Document"),
+            ("disable_document", "Can disable Document"),
+        )
+
+    def __str__(self):
+        return self.__Document__.__name__.pk

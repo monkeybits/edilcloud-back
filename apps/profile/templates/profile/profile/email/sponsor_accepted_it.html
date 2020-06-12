@@ -1,0 +1,13 @@
+{% extends 'email/base_email_it.html' %}
+
+{% block content %}
+<p>
+    Gentile {{recipient_first_name}} {{recipient_last_name}}, <br/>
+    <strong>La tua richiesta di sponsorizzazione è stata accettata</strong>.<br/>
+</p>
+<p>
+    Dettaglio Sponsor: <br/>
+    <strong>Categorie</strong>: {{tags}}<br/>
+    <strong>Data di scadenza</strong>: {{expiration_date}}<br/>
+</p>
+{% endblock %}

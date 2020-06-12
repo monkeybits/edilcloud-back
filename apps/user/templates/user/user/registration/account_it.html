@@ -1,0 +1,17 @@
+{% extends 'email/base_email_it.html' %}
+
+{% block content %}
+<p>
+    Gentile {{first_name}}, <br/>
+    <strong>grazie per esserti registrato in WhistlePRO.</strong>.
+    <br/>
+</p>
+<p>
+    Il tuo account non è ancora attivo.
+</p>
+<p>
+    Per completare la registrazione, premere sul seguente bottone:
+    <a style="background-color: #085ff7" href="{{ endpoint }}" target="_blank" class="btn-primary">Account Activation</a>
+</p>
+
+{% endblock %}

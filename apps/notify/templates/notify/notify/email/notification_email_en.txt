@@ -1,0 +1,29 @@
+
+ Dear {{first_name}} {{last_name}},
+   {{info_phrase}}.
+
+  Kindly login and select your company {{company_name}} profile.
+  You could check the current event also at your profile's notification dashboard.
+
+  For simplicity, the following link will redirect to the target page
+  (** We would expect that you have already logged in).
+
+  Please cut and paste it in your browser: {{ endpoint }}
+
+
+
+WhistlePRO allows all actors of constructions to collaborate,
+share informations and choose materials from preferred suppliers.
+
+--------------------------------------
+Thanks,
+
+WhistlePRO Team
+
+
+
+You can find the answers to the most frequently asked questions here: http://www.whistlepro.it/faq/.
+You can still write us at info@whistlepro.it.
+
+Whistle srl is a company registered in Italy with VAT number 04160940161
+Our office is registered in via Santa Liberata 11, 24050 Bariano (BG) Italy

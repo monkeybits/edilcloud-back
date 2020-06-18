@@ -202,7 +202,6 @@ class SharedProjectAdmin(UserAdminMixin, admin.ModelAdmin):
     )
     raw_id_fields = ('company', 'referent',)
 
-
 class TaskAdmin(UserAdminMixin, admin.ModelAdmin):
     class Media:
         js = (
@@ -246,6 +245,41 @@ class TaskAdmin(UserAdminMixin, admin.ModelAdmin):
     )
     raw_id_fields = ('project', 'shared_task', 'assigned_company',)
 
+class PostAdmin(UserAdminMixin, admin.ModelAdmin):
+    fieldsets = (
+        (_('general_information'), {
+            'fields': (
+                'sub_task', 'author',
+                'text', 'photos'
+            )
+        }),
+    )
+    list_display = (
+        'id', 'author', 'sub_task',
+        'text'
+    )
+    readonly_fields = (
+        'created_date', 'published_date',
+    )
+    list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
+
+class CommentAdmin(UserAdminMixin, admin.ModelAdmin):
+    fieldsets = (
+        (_('general_information'), {
+            'fields': (
+                'parent', 'post',
+                'author', 'text'
+            )
+        }),
+    )
+    list_display = (
+        'id', 'author', 'post',
+        'parent'
+    )
+    readonly_fields = (
+        'created_date',
+    )
+    list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
 
 admin.site.register(models.Project, ProjectAdmin)
 admin.site.register(models.InternalProject, InternalProjectAdmin)
@@ -253,3 +287,5 @@ admin.site.register(models.SharedProject, SharedProjectAdmin)
 admin.site.register(models.InternalSharedProject, ProjectAdmin)
 admin.site.register(models.GenericProject, ProjectAdmin)
 admin.site.register(models.Task, TaskAdmin)
+admin.site.register(models.Post, PostAdmin)
+admin.site.register(models.Comment, CommentAdmin)

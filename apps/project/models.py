@@ -6,13 +6,14 @@ import datetime
 import os
 import pathlib
 
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
 from django.db import transaction
 from django.db import models
 from django.conf import settings
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
 from django.template.defaultfilters import truncatechars
 from django.db.models import Q, Count
 from django.utils.text import slugify
@@ -24,6 +25,10 @@ from web import exceptions as django_exception
 
 from django.db.models import Lookup
 from django.db.models.fields import Field
+from django.utils import timezone
+
+from ..document.models import document_limit_choices_to
+from ..media.models import get_upload_photo_path
 
 
 def get_upload_logo_path(instance, filename):
@@ -452,6 +457,70 @@ class GenericProject(Project):
                 internal_project.shared_project = self
                 internal_project.save()
 
+@python_2_unicode_compatible
+class Post(models.Model):
+    sub_task = models.ForeignKey('project.Activity', on_delete=models.CASCADE)
+    author = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        limit_choices_to=document_limit_choices_to
+    )
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    is_public = models.BooleanField(
+        default=True,
+        verbose_name=_('is public')
+    )
+    text = models.TextField()
+    created_date = models.DateTimeField(
+            default=timezone.now)
+    published_date = models.DateTimeField(
+            blank=True, null=True)
+    photos = models.ImageField(
+        blank=True,
+        upload_to=get_upload_photo_path,
+        verbose_name=_('photos'),
+    )
+
+    def publish(self):
+        self.published_date = timezone.now()
+        self.save()
+
+    def create_activity_post(self, post_dict):
+        activity = Activity.objects.get(post_dict['activity'].id)
+        post_worker = Post(
+            sub_task=activity,
+            **post_dict
+        )
+        post_worker.save()
+        return post_worker
+
+    def list_posts(self):
+        """
+        Get all company projects
+        """
+        return self.company.projects.filter(
+            Q(profiles__in=[self.id]) | Q(company=self.company)).distinct()
+
+    def __str__(self):
+        return "New post for subtask #" + str(self.sub_task.id) + "by " + self.author.user.get_full_name()
+
+@python_2_unicode_compatible
+class Comment(models.Model):
+    parent = models.ForeignKey('self',
+                            null=True,
+                            blank=True,
+                            related_name='replies',
+                            on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
+    text = models.TextField()
+    created_date = models.DateTimeField(
+        default=timezone.now)
+
+    def __str__(self):
+        return "New comment into post " + str(self.post.id)
 
 @python_2_unicode_compatible
 class Task(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):

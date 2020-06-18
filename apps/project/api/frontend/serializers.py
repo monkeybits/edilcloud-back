@@ -410,6 +410,18 @@ class TeamSerializer(
             return view.team_response_include_fields
         return super(TeamSerializer, self).get_field_names(*args, **kwargs)
 
+class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
+    class Meta:
+        model = models.Post
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
 class TeamAddSerializer(
         DynamicFieldsModelSerializer,
@@ -633,5 +645,43 @@ class TaskActivityEditSerializer(
             return task_activity
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityEditAPIPermissionDenied(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+
+class ActivityPostAddSerializer(
+        DynamicFieldsModelSerializer,
+        JWTPayloadMixin,
+        serializers.ModelSerializer):
+    class Meta:
+        model = models.Post
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.activity_request_include_fields
+        return super(ActivityPostAddSerializer, self).get_field_names(*args, **kwargs)
+
+    # def validate(self, attrs):
+    #     if 'datetime_start' in attrs and 'datetime_end' in attrs:
+    #         if attrs['datetime_start'] > attrs['datetime_end']:
+    #             raise serializers.ValidationError('EndDateTime should be greater than StartDateTime')
+    #     return attrs
+
+    def create(self, validated_data):
+        try:
+            activity_post = self.profile.create_activity_post(validated_data)
+            return activity_post
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.TaskActivityAddAPIPermissionDenied(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )

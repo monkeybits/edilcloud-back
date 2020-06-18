@@ -24,7 +24,8 @@ def get_upload_photo_path(instance, filename):
     media_dir1 = instance.content_object._meta.model_name
     media_dir2 = slugify(instance.content_object.__str__().lower())
     ext = pathlib.Path(filename).suffix
-    filename = '{}{}'.format(slugify(instance.title), ext)
+    if hasattr(instance, 'title'):
+        filename = '{}{}'.format(slugify(instance.title), ext)
     media_root = get_media_root(instance.is_public)
     return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2), filename)
 

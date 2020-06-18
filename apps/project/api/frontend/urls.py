@@ -285,6 +285,16 @@ tracker_urlpatterns = [
         tracker_views.TrackerActivityDeleteView.as_view(),
         name='tracker_activity_delete'
     ),
+    url(
+        r'^activity/(?P<pk>\d+)/post_list/$',
+        tracker_views.TrackerActivityPostListView.as_view(),
+        name='tracker_activity_post_list'
+    ),
+    url(
+        r'^activity/(?P<pk>\d+)/add_post/$',
+        tracker_views.TrackerActivityPostAddView.as_view(),
+        name='tracker_activity_post_add'
+    ),
 ]
 
 urlpatterns = user_urlpatterns + generic_urlpatterns + tracker_urlpatterns

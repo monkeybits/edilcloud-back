@@ -1894,3 +1894,39 @@ class TrackerActivityDeleteView(
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         profile.remove_task_activity(instance)
+
+class TrackerActivityPostAddView(
+        WhistleGenericViewMixin,
+        TrackerTaskActivityMixin,
+        generics.CreateAPIView):
+    """
+    Create a Post for an activity
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    serializer_class = serializers.ActivityPostAddSerializer
+
+    def post(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+
+        if request.data:
+            request.data['activity'] = self.kwargs.get('pk', None)
+        return self.create(request, *args, **kwargs)
+
+class TrackerActivityPostListView(
+        WhistleGenericViewMixin,
+        TrackerTaskActivityMixin,
+        generics.ListAPIView):
+    """
+    Get all posts of an activity
+    """
+    permission_classes = ()
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    serializer_class = serializers.PostSerializer
+
+    def get_queryset(self):
+        #payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(3)
+        self.queryset = profile.list_activity_posts(self.get_object())
+        return super(TrackerActivityPostListView, self).get_queryset()

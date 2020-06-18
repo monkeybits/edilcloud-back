@@ -2038,6 +2038,13 @@ class OwnerProfile(Profile):
         task = self.get_task(task.id)
         return task.activities.all()
 
+    def list_activity_posts(self, activity):
+        """
+        Get all posts of a specific activity
+        """
+        activity_obj = Activity.objects.get(id=activity.id)
+        return activity_obj.post_set.all()
+
     def list_project_parent_activities(self, project_id):
         project = self.get_parent_project(project_id)
         activity_queryset = []

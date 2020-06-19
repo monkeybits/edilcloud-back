@@ -461,13 +461,6 @@ class GenericProject(Project):
 class Post(models.Model):
     sub_task = models.ForeignKey('project.Activity', on_delete=models.CASCADE)
     author = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
-    content_type = models.ForeignKey(
-        ContentType,
-        on_delete=models.CASCADE,
-        limit_choices_to=document_limit_choices_to
-    )
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey()
     is_public = models.BooleanField(
         default=True,
         verbose_name=_('is public')
@@ -520,7 +513,7 @@ class Comment(models.Model):
         default=timezone.now)
 
     def __str__(self):
-        return "New comment into post " + str(self.post.id)
+        return "Comment #" + str(self.id) + " of post #" + str(self.post.id)
 
 @python_2_unicode_compatible
 class Task(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):

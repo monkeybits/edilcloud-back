@@ -1903,7 +1903,7 @@ class TrackerActivityPostAddView(
     Create a Post for an activity
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
     serializer_class = serializers.ActivityPostAddSerializer
 
     def post(self, request, *args, **kwargs):
@@ -1919,14 +1919,14 @@ class TrackerActivityPostListView(
         TrackerTaskActivityMixin,
         generics.ListAPIView):
     """
-    Get all posts of an activity
+    Create a Post for an activity
     """
-    permission_classes = ()
+    permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
-    serializer_class = serializers.PostSerializer
+    serializer_class = serializers.TaskActivitySerializer
 
     def get_queryset(self):
-        #payload = self.get_payload()
-        profile = self.request.user.get_profile_by_id(3)
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         self.queryset = profile.list_activity_posts(self.get_object())
         return super(TrackerActivityPostListView, self).get_queryset()

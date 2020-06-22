@@ -15,7 +15,7 @@ from web.api.serializers import DynamicFieldsModelSerializer
 
 
 class ProjectGenericSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     typology = serializers.ReadOnlyField(source='get_typology')
     completed = serializers.ReadOnlyField(source='get_completed_perc')
     shared_companies = serializers.ReadOnlyField(source='get_shared_companies')
@@ -35,7 +35,7 @@ class ProjectGenericSerializer(
 
 
 class ProjectSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     typology = serializers.ReadOnlyField(source='get_typology')
     completed = serializers.ReadOnlyField(source='get_completed_perc')
     shared_companies = serializers.ReadOnlyField(source='get_shared_companies')
@@ -74,8 +74,7 @@ class ProjectSerializer(
 
 
 class SimpleProjectSerializer(
-        DynamicFieldsModelSerializer):
-
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Project
         fields = '__all__'
@@ -90,8 +89,7 @@ class SimpleProjectSerializer(
 
 
 class ProjectCalendarSerializer(
-        DynamicFieldsModelSerializer):
-
+    DynamicFieldsModelSerializer):
     start = serializers.DateField(source='date_start')
     end = serializers.DateField(source='date_end')
     title = serializers.CharField(source='name')
@@ -108,8 +106,8 @@ class ProjectCalendarSerializer(
 
 
 class ProjectAddSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin):
     class Meta:
         model = models.Project
         fields = '__all__'
@@ -148,9 +146,9 @@ class ProjectAddSerializer(
 
 
 class ProjectEditSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = '__all__'
@@ -184,9 +182,9 @@ class ProjectEditSerializer(
 
 
 class ProjectEnableSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = '__all__'
@@ -212,9 +210,9 @@ class ProjectEnableSerializer(
 
 
 class ProjectDisableSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = '__all__'
@@ -239,8 +237,9 @@ class ProjectDisableSerializer(
 
 
 class TaskGenericSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     share_status = serializers.ReadOnlyField(source="get_share_status")
+
     class Meta:
         model = models.Task
         fields = '__all__'
@@ -253,7 +252,7 @@ class TaskGenericSerializer(
 
 
 class TaskSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     project = ProjectSerializer()
     assigned_company = profile_serializers.CompanySerializer()
     workers = profile_serializers.ProfileSerializer(many=True)
@@ -272,9 +271,9 @@ class TaskSerializer(
 
 
 class TaskAddSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Task
         fields = '__all__'
@@ -305,8 +304,8 @@ class TaskAddSerializer(
 
 
 class TaskEditSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin):
     class Meta:
         model = models.Task
         fields = '__all__'
@@ -333,7 +332,7 @@ class TaskEditSerializer(
 
     def update(self, instance, validated_data):
         validated_data['id'] = instance.id
-        if(not instance.assigned_company) and validated_data['assigned_company']:
+        if (not instance.assigned_company) and validated_data['assigned_company']:
             task = self.profile.assign_task(validated_data)
         else:
             task = self.profile.edit_task(validated_data)
@@ -341,9 +340,9 @@ class TaskEditSerializer(
 
 
 class TaskEnableSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Task
         fields = '__all__'
@@ -368,9 +367,9 @@ class TaskEnableSerializer(
 
 
 class TaskDisableSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Task
         fields = '__all__'
@@ -395,7 +394,7 @@ class TaskDisableSerializer(
 
 
 class TeamSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     role = serializers.ReadOnlyField(source="get_role")
     project = ProjectSerializer()
     profile = profile_serializers.ProfileSerializer()
@@ -410,9 +409,10 @@ class TeamSerializer(
             return view.team_response_include_fields
         return super(TeamSerializer, self).get_field_names(*args, **kwargs)
 
-class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
+
+class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     class Meta:
-        model = models.Post
+        model = models.Comment
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -423,10 +423,44 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
+
+class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
+    comment_set = CommentSerializer(many=True)
+
+    class Meta:
+        model = models.Post
+        fields = [
+            'id',
+            'author',
+            'published_date',
+            'sub_task',
+            'photos',
+            'text',
+            'comment_set'
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_comments(self, obj):
+        comments = obj.comment_set.all()
+        comments_list = []
+        for comment in comments:
+            serializer = CommentSerializer(data=comment)
+            if serializer.is_valid():
+                comments_list.append(serializer.data)
+        return comments_list
+
+
 class TeamAddSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Team
         fields = '__all__'
@@ -456,9 +490,9 @@ class TeamAddSerializer(
 
 
 class TeamEditSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Team
         fields = '__all__'
@@ -484,9 +518,9 @@ class TeamEditSerializer(
 
 
 class TeamEnableSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Team
         fields = '__all__'
@@ -511,9 +545,9 @@ class TeamEnableSerializer(
 
 
 class TeamDisableSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Team
         fields = '__all__'
@@ -538,7 +572,7 @@ class TeamDisableSerializer(
 
 
 class TaskActivitySerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     task = TaskSerializer()
     profile = profile_serializers.ProfileSerializer()
     days_for_gantt = serializers.SerializerMethodField(source='get_days_for_gantt')
@@ -550,8 +584,8 @@ class TaskActivitySerializer(
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
-            if 'month' in view.kwargs: self.month =  view.kwargs['month']
-            if 'year' in view.kwargs: self.year =  view.kwargs['year']
+            if 'month' in view.kwargs: self.month = view.kwargs['month']
+            if 'year' in view.kwargs: self.year = view.kwargs['year']
             return view.activity_response_include_fields
         return super(TaskActivitySerializer, self).get_field_names(*args, **kwargs)
 
@@ -573,9 +607,9 @@ class TaskActivitySerializer(
 
 
 class TaskActivityAddSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Activity
         fields = '__all__'
@@ -611,9 +645,9 @@ class TaskActivityAddSerializer(
 
 
 class TaskActivityEditSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Activity
         fields = '__all__'
@@ -650,9 +684,9 @@ class TaskActivityEditSerializer(
 
 
 class ActivityPostAddSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Post
         fields = '__all__'
@@ -663,7 +697,7 @@ class ActivityPostAddSerializer(
         if context:
             self.request = kwargs['context']['request']
             payload = self.get_payload()
-            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            self.author = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -671,16 +705,56 @@ class ActivityPostAddSerializer(
             return view.activity_request_include_fields
         return super(ActivityPostAddSerializer, self).get_field_names(*args, **kwargs)
 
-    # def validate(self, attrs):
-    #     if 'datetime_start' in attrs and 'datetime_end' in attrs:
-    #         if attrs['datetime_start'] > attrs['datetime_end']:
-    #             raise serializers.ValidationError('EndDateTime should be greater than StartDateTime')
-    #     return attrs
+    def create(self, validated_data):
+        try:
+            validated_data['author'] = self.author
+            validated_data['activity'] = self.request.data['activity']
+            photos_list = []
+            for file in self.request.data['photos']:
+                photos_list.append(file)
+            validated_data['photos'] = photos_list
+            activity_post = self.author.create_activity_post(validated_data)
+            return activity_post
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.TaskActivityAddAPIPermissionDenied(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+
+class PostCommentAddSerializer(
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
+    class Meta:
+        model = models.Comment
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.author = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.activity_request_include_fields
+        return super(PostCommentAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
         try:
-            activity_post = self.profile.create_activity_post(validated_data)
-            return activity_post
+            validated_data['author'] = self.author
+            validated_data['post'] = self.request.data['post']
+            comment_parent = validated_data['parent']
+            if comment_parent != None:
+                if comment_parent.parent != None:
+                    raise serializers.ValidationError(
+                        {'parent': _('Cannot assign to a parent that already have a parent')}
+                    )
+            post_comment = self.author.create_post_comment(validated_data)
+            return post_comment
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))

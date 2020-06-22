@@ -31,7 +31,8 @@ from . import managers
 from apps.document.models import Document
 from apps.media.models import Photo, Video
 from apps.message.models import Talk, Message
-from apps.project.models import Project, Team, Task, Activity, InternalProject, SharedProject, InternalSharedProject
+from apps.project.models import Project, Team, Task, Activity, InternalProject, SharedProject, InternalSharedProject, \
+    Post, Comment
 from apps.quotation.models import Bom, BomRow, Offer, Certification, Quotation, QuotationRow, FavouriteOffer, \
     BoughtOffer, BomArchive, QuotationArchive
 from apps.user.api.frontend.views.mixin import UserMixin, TokenGenerator as UserTokenGenerator
@@ -751,6 +752,27 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     def get_count_closed_preference(self):
         return sum(len(value['closed']) for key, value in self.preference.info['results'].items())
 
+
+    def create_activity_post(self, post_dict):
+        activity = Activity.objects.get(id=post_dict['activity'])
+        post_dict.pop('activity')
+        post_worker = Post(
+            sub_task=activity,
+            **post_dict
+        )
+        post_worker.save()
+        return post_worker
+
+    def create_post_comment(self, comment_dict):
+        post = Post.objects.get(id=comment_dict['post'])
+        comment_dict.pop('post')
+        comment_worker = Comment(
+            post=post,
+            **comment_dict
+        )
+        comment_worker.save()
+        return comment_worker
+
     def edit_preference(self, preference_dict):
         """
         Update profile preference
@@ -884,6 +906,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
 
     def get_favourites(self):
         return self.favourites.all()
+
 
     def get_invitation_status(self):
         if self.company_invitation_date and not self.profile_invitation_date and not self.invitation_refuse_date:
@@ -2042,8 +2065,15 @@ class OwnerProfile(Profile):
         """
         Get all posts of a specific activity
         """
-        activity_obj = Activity.objects.get(id=activity.id)
+        activity_obj = Activity.objects.get(id=activity)
         return activity_obj.post_set.all()
+
+    def list_post_comments(self, post):
+        """
+        Get all comments of a specific post
+        """
+        post_obj = Post.objects.get(id=post)
+        return post_obj.comment_set.all()
 
     def list_project_parent_activities(self, project_id):
         project = self.get_parent_project(project_id)

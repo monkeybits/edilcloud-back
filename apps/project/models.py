@@ -480,14 +480,6 @@ class Post(models.Model):
         self.published_date = timezone.now()
         self.save()
 
-    def create_activity_post(self, post_dict):
-        activity = Activity.objects.get(post_dict['activity'].id)
-        post_worker = Post(
-            sub_task=activity,
-            **post_dict
-        )
-        post_worker.save()
-        return post_worker
 
     def list_posts(self):
         """

@@ -1104,6 +1104,28 @@ class TrackerTaskMixin(
         else:
             self.serializer_class = output_serializer
 
+class TrackerPostMixin(
+        JWTPayloadMixin):
+    """
+    Company Project Task Mixin
+    """
+    def get_object(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            task = profile.get_task(self.kwargs.get('pk', None))
+            self.check_object_permissions(self.request, task)
+            return task
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.TaskAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+    def set_output_serializer(self, output_serializer=None):
+        if output_serializer is None:
+            self.serializer_class = serializers.PostSerializer
+        else:
+            self.serializer_class = output_serializer
 
 class TrackerProjectInternalTaskListView(
         JWTPayloadMixin,
@@ -1897,7 +1919,7 @@ class TrackerActivityDeleteView(
 
 class TrackerActivityPostAddView(
         WhistleGenericViewMixin,
-        TrackerTaskActivityMixin,
+        TrackerPostMixin,
         generics.CreateAPIView):
     """
     Create a Post for an activity
@@ -1906,12 +1928,23 @@ class TrackerActivityPostAddView(
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
     serializer_class = serializers.ActivityPostAddSerializer
 
+    def __init__(self, *args, **kwargs):
+        self.activity_request_include_fields = [
+            'text', 'photos',
+            'published_date', 'created_date',
+        ]
+        self.activity_response_include_fields = [
+            'id', 'author', 'text', 'sub_task', 'photos',
+            'published_date', 'created_date',
+        ]
+        super(TrackerActivityPostAddView, self).__init__(*args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         if not request.POST._mutable:
             request.POST._mutable = True
 
         if request.data:
-            request.data['activity'] = self.kwargs.get('pk', None)
+            request.data['activity'] = self.kwargs.get('pk', None)[0]
         return self.create(request, *args, **kwargs)
 
 class TrackerActivityPostListView(
@@ -1923,10 +1956,81 @@ class TrackerActivityPostListView(
     """
     permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
-    serializer_class = serializers.TaskActivitySerializer
+    serializer_class = serializers.PostSerializer
 
     def get_queryset(self):
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-        self.queryset = profile.list_activity_posts(self.get_object())
+        self.queryset = profile.list_activity_posts(self.kwargs.get('pk', None))
         return super(TrackerActivityPostListView, self).get_queryset()
+
+
+class TrackerPostCommentListView(
+        WhistleGenericViewMixin,
+        TrackerTaskActivityMixin,
+        generics.ListAPIView):
+    """
+    Create a Post for an activity
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    serializer_class = serializers.CommentSerializer
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        self.queryset = profile.list_post_comments(self.kwargs.get('pk', None))
+        return super(TrackerPostCommentListView, self).get_queryset()
+
+class TrackerCommentMixin(
+        JWTPayloadMixin):
+    """
+    Company Project Task Mixin
+    """
+    def get_object(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            task = profile.get_task(self.kwargs.get('pk', None))
+            self.check_object_permissions(self.request, task)
+            return task
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.TaskAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+    def set_output_serializer(self, output_serializer=None):
+        if output_serializer is None:
+            self.serializer_class = serializers.CommentSerializer
+        else:
+            self.serializer_class = output_serializer
+
+
+class TrackerPostCommentAddView(
+        WhistleGenericViewMixin,
+        TrackerCommentMixin,
+        generics.CreateAPIView):
+    """
+    Create a Comment for a Post
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
+    serializer_class = serializers.PostCommentAddSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.activity_request_include_fields = [
+            'text', 'created_date', 'parent'
+        ]
+        self.activity_response_include_fields = [
+            'id', 'author', 'post', 'parent', 'text',
+            'created_date'
+        ]
+        super(TrackerPostCommentAddView, self).__init__(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+
+        if request.data:
+            request.data['post'] = self.kwargs.get('pk', None)[0]
+        return self.create(request, *args, **kwargs)

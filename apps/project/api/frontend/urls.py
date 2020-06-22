@@ -296,8 +296,13 @@ tracker_urlpatterns = [
         name='tracker_activity_post_add'
     ),
     url(
+        r'^post/(?P<pk>\d+)/comment_list/$',
+        tracker_views.TrackerPostCommentListView.as_view(),
+        name='tracker_post_comment_list'
+    ),
+    url(
         r'^post/(?P<pk>\d+)/add_comment/$',
-        tracker_views.TrackerActivityPostAddView.as_view(),
+        tracker_views.TrackerPostCommentAddView.as_view(),
         name='tracker_activity_post_add'
     ),
 ]

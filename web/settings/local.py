@@ -1,7 +1,7 @@
 #!python
-
+from web.settings.base import *
 # -*- coding: utf-8 -*-
-SECRET_KEY = 'Place your brand new security key here'
+SECRET_KEY = 'yrpjl=sz@4b7g=w-pb)0++=4^nr#0xzr12gac%su(6+(!9vl@2'
 DEBUG = True
 DATABASES = {
     'default': {

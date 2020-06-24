@@ -30,6 +30,7 @@ from django.utils import timezone
 from ..document.models import document_limit_choices_to
 from ..media.models import get_upload_photo_path
 
+import uuid
 
 def get_upload_logo_path(instance, filename):
     media_dir = slugify(instance.name[0:2])
@@ -37,6 +38,9 @@ def get_upload_logo_path(instance, filename):
     filename = '{}{}'.format(slugify(instance.name), ext)
     return os.path.join(u"project", u"logo", u"{0}".format(media_dir), filename)
 
+def get_upload_post_path(instance, filename):
+    last_post = Post.objects.last().pk
+    return os.path.join(u"subtasks", u"{0}".format(instance.sub_task_id), u"posts", u"{0}".format(str(last_post + 1)), filename)
 
 @Field.register_lookup
 class NotEqual(Lookup):
@@ -470,11 +474,7 @@ class Post(models.Model):
             default=timezone.now)
     published_date = models.DateTimeField(
             blank=True, null=True)
-    photos = models.ImageField(
-        blank=True,
-        upload_to=get_upload_photo_path,
-        verbose_name=_('photos'),
-    )
+    media = models.FileField(blank=True, default="", upload_to=get_upload_post_path)
 
     def publish(self):
         self.published_date = timezone.now()

@@ -434,7 +434,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'author',
             'published_date',
             'sub_task',
-            'photos',
+            'media',
             'text',
             'comment_set'
         ]
@@ -709,10 +709,7 @@ class ActivityPostAddSerializer(
         try:
             validated_data['author'] = self.author
             validated_data['activity'] = self.request.data['activity']
-            photos_list = []
-            for file in self.request.data['photos']:
-                photos_list.append(file)
-            validated_data['photos'] = photos_list
+            files = list(self.request.FILES.values())
             activity_post = self.author.create_activity_post(validated_data)
             return activity_post
         except ObjectDoesNotExist as err:

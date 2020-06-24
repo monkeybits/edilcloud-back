@@ -1930,11 +1930,11 @@ class TrackerActivityPostAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'text', 'photos',
+            'text', 'media',
             'published_date', 'created_date',
         ]
         self.activity_response_include_fields = [
-            'id', 'author', 'text', 'sub_task', 'photos',
+            'id', 'author', 'text', 'sub_task', 'media',
             'published_date', 'created_date',
         ]
         super(TrackerActivityPostAddView, self).__init__(*args, **kwargs)

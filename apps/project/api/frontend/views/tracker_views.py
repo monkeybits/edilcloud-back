@@ -1947,6 +1947,36 @@ class TrackerActivityPostAddView(
             request.data['activity'] = self.kwargs.get('pk', None)[0]
         return self.create(request, *args, **kwargs)
 
+class TrackerTaskPostAddView(
+        WhistleGenericViewMixin,
+        TrackerPostMixin,
+        generics.CreateAPIView):
+    """
+    Create a Post for an activity
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
+    serializer_class = serializers.TaskPostAddSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.activity_request_include_fields = [
+            'text', 'media',
+            'published_date', 'created_date',
+        ]
+        self.activity_response_include_fields = [
+            'id', 'author', 'text', 'task', 'sub_task', 'media',
+            'published_date', 'created_date',
+        ]
+        super(TrackerTaskPostAddView, self).__init__(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+
+        if request.data:
+            request.data['task'] = self.kwargs.get('pk', None)[0]
+        return self.create(request, *args, **kwargs)
+
 class TrackerActivityPostListView(
         WhistleGenericViewMixin,
         TrackerTaskActivityMixin,
@@ -1963,6 +1993,23 @@ class TrackerActivityPostListView(
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         self.queryset = profile.list_activity_posts(self.kwargs.get('pk', None))
         return super(TrackerActivityPostListView, self).get_queryset()
+
+class TrackerTaskPostListView(
+        WhistleGenericViewMixin,
+        TrackerTaskActivityMixin,
+        generics.ListAPIView):
+    """
+    Create a Post for a task
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    serializer_class = serializers.PostSerializer
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        self.queryset = profile.list_task_own_posts(self.kwargs.get('pk', None))
+        return super(TrackerTaskPostListView, self).get_queryset()
 
 
 class TrackerPostCommentListView(
@@ -2032,7 +2079,7 @@ class TrackerPostCommentAddView(
             request.POST._mutable = True
 
         if request.data:
-            request.data['post'] = self.kwargs.get('pk', None)[0]
+            request.data['post'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
 class TrackerSharePostToTaskMixin(

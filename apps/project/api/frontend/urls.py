@@ -291,9 +291,19 @@ tracker_urlpatterns = [
         name='tracker_activity_post_list'
     ),
     url(
+        r'^task/(?P<pk>\d+)/post_list/$',
+        tracker_views.TrackerTaskPostListView.as_view(),
+        name='tracker_task_post_list'
+    ),
+    url(
         r'^activity/(?P<pk>\d+)/add_post/$',
         tracker_views.TrackerActivityPostAddView.as_view(),
         name='tracker_activity_post_add'
+    ),
+    url(
+        r'^task/(?P<pk>\d+)/add_post/$',
+        tracker_views.TrackerTaskPostAddView.as_view(),
+        name='tracker_task_post_add'
     ),
     url(
         r'^post/(?P<pk>\d+)/comment_list/$',
@@ -311,7 +321,7 @@ tracker_urlpatterns = [
         name='tracker_activity_task_post_share'
     ),
     url(
-        r'^task/(?P<pk>\d+)/posts/$',
+        r'^task/(?P<pk>\d+)/shared_posts/$',
         tracker_views.TrackerTaskPostsListView.as_view(),
         name='tracker_activity_task_posts'
     ),

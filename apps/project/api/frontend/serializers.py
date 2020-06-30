@@ -434,6 +434,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'author',
             'published_date',
             'sub_task',
+            'task',
             'media',
             'text',
             'comment_set'
@@ -682,6 +683,39 @@ class TaskActivityEditSerializer(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
+class TaskPostAddSerializer(
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
+    class Meta:
+        model = models.Post
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.author = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.activity_request_include_fields
+        return super(TaskPostAddSerializer, self).get_field_names(*args, **kwargs)
+
+    def create(self, validated_data):
+        try:
+            validated_data['author'] = self.author
+            validated_data['task'] = self.request.data['task']
+            files = list(self.request.FILES.values())
+            activity_post = self.author.create_task_post(validated_data)
+            return activity_post
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.TaskActivityAddAPIPermissionDenied(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
 
 class ActivityPostAddSerializer(
     DynamicFieldsModelSerializer,

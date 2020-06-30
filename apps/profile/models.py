@@ -752,6 +752,15 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     def get_count_closed_preference(self):
         return sum(len(value['closed']) for key, value in self.preference.info['results'].items())
 
+    def create_task_post(self, post_dict):
+        task = Task.objects.get(id=post_dict['task'])
+        post_dict.pop('task')
+        post_worker = Post(
+            task=task,
+            **post_dict
+        )
+        post_worker.save()
+        return post_worker
 
     def create_activity_post(self, post_dict):
         activity = Activity.objects.get(id=post_dict['activity'])
@@ -784,6 +793,38 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         )
         task_post_ass.save()
         return task_post_ass
+
+    def list_activity_posts(self, activity):
+        """
+        Get all posts of a specific activity
+        """
+        activity_obj = Activity.objects.get(id=activity)
+        return activity_obj.post_set.all()
+
+    def list_task_own_posts(self, task):
+        """
+        Get all posts of a specific activity
+        """
+        task_obj = Task.objects.get(id=task)
+        return task_obj.post_set.all()
+
+    def list_task_posts(self, task):
+        """
+        Get all posts of a specific activity
+        """
+        all_posts = []
+        task_obj = Task.objects.get(id=task)
+        taskpost_assigments = task_obj.taskpostassignment_set.all()
+        for taskpost_ass in taskpost_assigments:
+            all_posts.append(taskpost_ass.post)
+        return all_posts
+
+    def list_post_comments(self, post):
+        """
+        Get all comments of a specific post
+        """
+        post_obj = Post.objects.get(id=post)
+        return post_obj.comment_set.all()
 
     def edit_preference(self, preference_dict):
         """
@@ -2072,32 +2113,6 @@ class OwnerProfile(Profile):
         """
         task = self.get_task(task.id)
         return task.activities.all()
-
-    def list_activity_posts(self, activity):
-        """
-        Get all posts of a specific activity
-        """
-        activity_obj = Activity.objects.get(id=activity)
-        return activity_obj.post_set.all()
-
-    def list_task_posts(self, task):
-        """
-        Get all posts of a specific activity
-        """
-        all_posts = []
-        task_obj = Task.objects.get(id=task)
-        taskpost_assigments = task_obj.taskpostassignment_set.all()
-        for taskpost_ass in taskpost_assigments:
-            all_posts.append(taskpost_ass.post)
-        return all_posts
-
-
-    def list_post_comments(self, post):
-        """
-        Get all comments of a specific post
-        """
-        post_obj = Post.objects.get(id=post)
-        return post_obj.comment_set.all()
 
     def list_project_parent_activities(self, project_id):
         project = self.get_parent_project(project_id)

@@ -463,7 +463,8 @@ class GenericProject(Project):
 
 @python_2_unicode_compatible
 class Post(models.Model):
-    sub_task = models.ForeignKey('project.Activity', on_delete=models.CASCADE)
+    sub_task = models.ForeignKey('project.Activity', on_delete=models.CASCADE, null=True, blank=True)
+    task = models.ForeignKey('project.Task', on_delete=models.CASCADE, null=True, blank=True)
     author = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
     is_public = models.BooleanField(
         default=True,
@@ -478,7 +479,12 @@ class Post(models.Model):
 
     def publish(self):
         self.published_date = timezone.now()
-        self.save()
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        self.publish()
+        super().save(force_insert=False, force_update=False, using=None,
+             update_fields=None)
 
 
     def list_posts(self):
@@ -489,7 +495,10 @@ class Post(models.Model):
             Q(profiles__in=[self.id]) | Q(company=self.company)).distinct()
 
     def __str__(self):
-        return "New post for subtask #" + str(self.sub_task.id) + "by " + self.author.user.get_full_name()
+        if self.task:
+            return "New post for task #" + str(self.task.id) + "by " + self.author.user.get_full_name()
+        else:
+            return "New post for subtask #" + str(self.sub_task.id) + "by " + self.author.user.get_full_name()
 
 @python_2_unicode_compatible
 class Comment(models.Model):

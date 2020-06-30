@@ -359,7 +359,7 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [
 #     }
 # }
 
-BASE_URL = 'whistle.it'
+BASE_URL = 'localhost:3000'
 
 JWT_AUTH = {
     'JWT_PAYLOAD_HANDLER': 'apps.user.views.custom_jwt_payload_handler',
@@ -410,7 +410,7 @@ UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media_private')
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "whistlepro.registrazione@gmail.com"
-EMAIL_HOST_PASSWORD = 'whistlepro.reg'
+EMAIL_HOST_USER = "bellinitom97@gmail.com"
+EMAIL_HOST_PASSWORD = 'Oneplus3t'
 
 NEW_SPONSOR_REQUEST_RECIPIENT = 'info@whistlepro.it'

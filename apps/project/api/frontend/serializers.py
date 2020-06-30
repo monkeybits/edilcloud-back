@@ -756,3 +756,46 @@ class PostCommentAddSerializer(
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
+
+class SharePostToTaskSerializer(
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
+
+    class Meta:
+        model = models.TaskPostAssignment
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.author = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.activity_request_include_fields
+        return super(SharePostToTaskSerializer, self).get_field_names(*args, **kwargs)
+
+    def create(self, validated_data):
+        try:
+            validated_data['creator'] = self.author.user
+            validated_data['last_modifier'] = self.author.user
+            validated_data['post'] = self.request.data['post']
+            post_comment = self.author.share_post(validated_data)
+            return "Successfully shared to Task parent"
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.TaskActivityAddAPIPermissionDenied(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+# class TaskPostsListSerializer(
+#     DynamicFieldsModelSerializer,
+#     JWTPayloadMixin,
+#     serializers.ModelSerializer):
+#     class Meta:
+#         models = models.Post
+#         fields = '__all__'

@@ -32,7 +32,7 @@ from apps.document.models import Document
 from apps.media.models import Photo, Video
 from apps.message.models import Talk, Message
 from apps.project.models import Project, Team, Task, Activity, InternalProject, SharedProject, InternalSharedProject, \
-    Post, Comment
+    Post, Comment, TaskPostAssignment
 from apps.quotation.models import Bom, BomRow, Offer, Certification, Quotation, QuotationRow, FavouriteOffer, \
     BoughtOffer, BomArchive, QuotationArchive
 from apps.user.api.frontend.views.mixin import UserMixin, TokenGenerator as UserTokenGenerator
@@ -772,6 +772,18 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         )
         comment_worker.save()
         return comment_worker
+
+    def share_post(self, post_dict):
+        post = Post.objects.get(id=post_dict['post'])
+        task = post.sub_task.task
+        post_dict.pop('post')
+        task_post_ass = TaskPostAssignment(
+            post=post,
+            task=task,
+            **post_dict
+        )
+        task_post_ass.save()
+        return task_post_ass
 
     def edit_preference(self, preference_dict):
         """
@@ -2067,6 +2079,18 @@ class OwnerProfile(Profile):
         """
         activity_obj = Activity.objects.get(id=activity)
         return activity_obj.post_set.all()
+
+    def list_task_posts(self, task):
+        """
+        Get all posts of a specific activity
+        """
+        all_posts = []
+        task_obj = Task.objects.get(id=task)
+        taskpost_assigments = task_obj.taskpostassignment_set.all()
+        for taskpost_ass in taskpost_assigments:
+            all_posts.append(taskpost_ass.post)
+        return all_posts
+
 
     def list_post_comments(self, post):
         """

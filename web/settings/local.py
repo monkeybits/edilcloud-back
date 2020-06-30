@@ -14,10 +14,10 @@ DATABASES = {
     }
 }
 PROTOCOL = 'http'
-EMAIL_HOST = 'smtps.aruba.it'
-EMAIL_PORT = '465'
-EMAIL_HOST_USER = 'dev@risin.it'
-EMAIL_HOST_PASSWORD = 'Kalimera1'
+DEFAULT_FROM_EMAIL = 'bellinitom97@gmail.com'
+SERVER_EMAIL = 'bellinitom97@gmail.com'
 EMAIL_USE_TLS = True
-EMAIL_SUBJECT_PREFIX = ['whistle']
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'bellinitom97@gmail.com'
+EMAIL_HOST_PASSWORD = 'Oneplus3t'

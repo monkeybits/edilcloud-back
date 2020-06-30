@@ -504,8 +504,40 @@ class Comment(models.Model):
     created_date = models.DateTimeField(
         default=timezone.now)
 
+    class Meta:
+        verbose_name = _('comment')
+        verbose_name_plural = _('comments')
+        permissions = (
+            ("list_comment", "can list comment"),
+            ("detail_comment", "can detail comment"),
+            ("disable_comment", "can disable comment"),
+        )
+        ordering = ['-created_date']
+        get_latest_by = "created_date"
+
     def __str__(self):
         return "Comment #" + str(self.id) + " of post #" + str(self.post.id)
+
+
+@python_2_unicode_compatible
+class TaskPostAssignment(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
+    task = models.ForeignKey('project.Task', on_delete=models.CASCADE)
+    post = models.ForeignKey('project.Post', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('task')
+        verbose_name_plural = _('taskpostassignments')
+        permissions = (
+            ("list_task_post_assignment", "can list task post assignment"),
+            ("detail_task_post_assignment", "can detail task post assignment"),
+            ("disable_task_post_assignment", "can disable task post assignment"),
+        )
+        ordering = ['-date_last_modify']
+        get_latest_by = "date_create"
+
+    def __str__(self):
+        return "Post #" + str(self.post.pk) + " shared to Task #" + str(self.task.pk)
+
 
 @python_2_unicode_compatible
 class Task(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):

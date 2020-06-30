@@ -303,7 +303,17 @@ tracker_urlpatterns = [
     url(
         r'^post/(?P<pk>\d+)/add_comment/$',
         tracker_views.TrackerPostCommentAddView.as_view(),
-        name='tracker_activity_post_add'
+        name='tracker_activity_comment_add'
+    ),
+    url(
+        r'^post/(?P<pk>\d+)/share_to_task/$',
+        tracker_views.TrackerSharePostToTaskView.as_view(),
+        name='tracker_activity_task_post_share'
+    ),
+    url(
+        r'^task/(?P<pk>\d+)/posts/$',
+        tracker_views.TrackerTaskPostsListView.as_view(),
+        name='tracker_activity_task_posts'
     ),
 ]
 

@@ -21,3 +21,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'info@whistlepro.it'
 EMAIL_HOST_PASSWORD = 'Whistle&co2016'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

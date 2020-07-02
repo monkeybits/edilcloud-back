@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #!python
-from web.settings.base import *
+from web.settings.local import *
 
 ADMINS = [
     ('THUX Team', 'jumbo@thux.it'),

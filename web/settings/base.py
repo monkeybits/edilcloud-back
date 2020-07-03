@@ -407,13 +407,13 @@ FAKER_PROVIDERS = None
 UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media_private')
 
 PROTOCOL = 'http'
-DEFAULT_FROM_EMAIL = 'info@whistlepro.it'
-SERVER_EMAIL = 'info@whistlepro.it'
+DEFAULT_FROM_EMAIL = 'edilcloud.activation@gmail.com'
+SERVER_EMAIL = 'edilcloud.activation@gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'info@whistlepro.it'
-EMAIL_HOST_PASSWORD = 'Whistle&co2016'
+EMAIL_HOST_USER = 'edilcloud.activation@gmail.com'
+EMAIL_HOST_PASSWORD = 'edilcloud-activation$'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-NEW_SPONSOR_REQUEST_RECIPIENT = 'info@whistlepro.it'
+NEW_SPONSOR_REQUEST_RECIPIENT = 'edilcloud.activation@gmail.com'

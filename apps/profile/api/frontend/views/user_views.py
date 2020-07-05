@@ -262,13 +262,14 @@ class ProfileAddView(
         self.profile_request_include_fields = [
             'first_name', 'last_name', 'email',
             'language', 'position', 'user', 'phone',
-            'fax', 'mobile', 'note', 'photo'
+            'fax', 'mobile', 'note', 'photo', 'can_access_chat', 'can_access_files'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email',
             'company_invitation_date', 'profile_invitation_date',
             'invitation_refuse_date', 'phone', 'language',
             'position', 'role', 'status', 'photo', 'fax', 'mobile', 'note',
+            'can_access_chat', 'can_access_files'
         ]
         super(ProfileAddView, self).__init__(*args, **kwargs)
 
@@ -289,7 +290,7 @@ class ProfileListView(
             'email', 'company_invitation_date', 'profile_invitation_date',
             'invitation_refuse_date', 'phone', 'language',
             'position', 'role', 'status', 'photo', 'fax', 'mobile', 'note', 'is_main',
-            'uidb36', 'token', 'is_superuser'
+            'uidb36', 'token', 'is_superuser', 'can_access_files', 'can_access_chat'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',

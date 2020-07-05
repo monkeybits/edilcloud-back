@@ -187,6 +187,7 @@ class ProfileAdmin(UserAdminMixin, admin.ModelAdmin):
                 'info', 'role', 'note',
                 'photo', 'company_invitation_date',
                 'profile_invitation_date', 'invitation_refuse_date',
+                'can_access_files', 'can_access_chat'
             )
         }),
         (_('visualization_admin'), {
@@ -208,6 +209,7 @@ class ProfileAdmin(UserAdminMixin, admin.ModelAdmin):
         'last_name', 'first_name', 'company_invitation_date',
         'profile_invitation_date', 'invitation_refuse_date',
         'get_invitation_status_icon',
+        'can_access_files', 'can_access_chat',
         'uidb36', 'token', 'get_accept_link', 'get_refuse_link'
     )
     list_editable = ('status',)

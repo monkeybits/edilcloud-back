@@ -672,6 +672,14 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         default=False,
         verbose_name=_('is superuser')
     )
+    can_access_chat = models.BooleanField(
+        default=True,
+        verbose_name=_('can access chat')
+    )
+    can_access_files = models.BooleanField(
+        default=True,
+        verbose_name=_('can access files')
+    )
 
     __original_instance = None
 

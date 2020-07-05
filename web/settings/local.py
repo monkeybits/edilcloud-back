@@ -23,3 +23,7 @@ EMAIL_HOST_USER = 'edilcloud.activation@gmail.com'
 EMAIL_HOST_PASSWORD = 'edilcloud-activation$'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+STRIPE_PUBLISHABLE_KEY = 'pk_test_AOBhwfzJx6EOTBT0scVwlcb400lWldUBoz'
+STRIPE_SECRET_KEY = 'sk_test_2sbH1hzuUeMhpuGKFbL8dwUS00rtkjaDln'
+STRIPE_CONNECT_CLIENT_ID = ''

@@ -51,7 +51,7 @@ class TrackerDocumentDetailView(
     def __init__(self, *args, **kwargs):
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
-            'date_create', 'date_last_modify', 'is_public'
+            'date_create', 'date_last_modify', 'is_public', 'size'
         ]
         super(TrackerDocumentDetailView, self).__init__(*args, **kwargs)
 

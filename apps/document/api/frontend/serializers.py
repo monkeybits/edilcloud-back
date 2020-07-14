@@ -16,12 +16,15 @@ from web.api.serializers import DynamicFieldsModelSerializer
 
 class DocumentSerializer(
         DynamicFieldsModelSerializer):
-
     extension = serializers.SerializerMethodField()
+    size = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = models.Document
         fields = '__all__'
+
+    def get_size(self, obj):
+        return obj.document.size
 
     def get_extension(self, obj):
         return obj.get_file_extension()

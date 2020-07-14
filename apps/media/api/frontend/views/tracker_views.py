@@ -50,7 +50,7 @@ class TrackerPhotoDetailView(
     def __init__(self, *args, **kwargs):
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo',
-            'is_public', 'tags', 'note',
+            'is_public', 'tags', 'note', 'size'
         ]
         super(TrackerPhotoDetailView, self).__init__(*args, **kwargs)
 
@@ -180,7 +180,7 @@ class TrackerVideoDetailView(
     def __init__(self, *args, **kwargs):
         self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
-            'tags', 'note', 'is_public'
+            'tags', 'note', 'is_public', 'size', 'extension'
         ]
         super(TrackerVideoDetailView, self).__init__(*args, **kwargs)
 

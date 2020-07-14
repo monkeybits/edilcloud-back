@@ -264,7 +264,7 @@ class TrackerProfileDocumentListView(
     serializer_class = document_serializers.DocumentSerializer
 
     def __init__(self, *args, **kwargs):
-        self.document_response_include_fields = ['id', 'title', 'description', 'document', 'date_create']
+        self.document_response_include_fields = ['id', 'title', 'description', 'document', 'date_create', 'size', 'extension']
         super(TrackerProfileDocumentListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -993,7 +993,7 @@ class TrackerCompanyCompanyDocumentListView(
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
             'date_create', 'date_last_modify', 'status',
-            'extension'
+            'extension', 'size'
         ]
         super(TrackerCompanyCompanyDocumentListView, self).__init__(*args, **kwargs)
 
@@ -1213,7 +1213,7 @@ class TrackerCompanyCompanyPhotoListView(
     def __init__(self, *args, **kwargs):
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo', 'extension',
-            'photo_64', 'note', 'is_public', 'size'
+             'note', 'is_public', 'size'
         ]
         super(TrackerCompanyCompanyPhotoListView, self).__init__(*args, **kwargs)
 
@@ -1331,7 +1331,7 @@ class TrackerCompanyVideoListView(
     def __init__(self, *args, **kwargs):
         self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
-            'extension', 'is_public'
+            'extension', 'is_public', 'size'
         ]
         super(TrackerCompanyVideoListView, self).__init__(*args, **kwargs)
 
@@ -1402,7 +1402,7 @@ class TrackerCompanyCompanyVideoListView(
     def __init__(self, *args, **kwargs):
         self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
-            'extension', 'note', 'is_public'
+            'extension', 'note', 'is_public', 'size'
         ]
         super(TrackerCompanyCompanyVideoListView, self).__init__(*args, **kwargs)
 

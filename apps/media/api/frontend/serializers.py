@@ -163,10 +163,14 @@ class VideoSerializer(
         DynamicFieldsModelSerializer):
 
     extension = serializers.SerializerMethodField()
+    size = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Video
         fields = '__all__'
+
+    def get_size(self, obj):
+        return obj.video.size
 
     def get_extension(self, obj):
         return obj.get_file_extension()

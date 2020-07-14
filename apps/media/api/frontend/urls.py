@@ -65,6 +65,11 @@ tracker_urlpatterns = [
         generic_views.PublicVideoDownloadView.as_view(),
         name='public_video_download'
     ),
+    url(
+        r'^files/download/(?P<pk>\d+)/public/$',
+        generic_views.PublicVideoDownloadView.as_view(),
+        name='public_video_download'
+    )
 ]
 
 urlpatterns = user_urlpatterns + generic_urlpatterns + tracker_urlpatterns

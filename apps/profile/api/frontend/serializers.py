@@ -71,7 +71,8 @@ class CompanySerializer(
     is_sponsor = serializers.ReadOnlyField(source='get_is_sponsor')
     followed = serializers.SerializerMethodField(read_only=True)
     partnership = serializers.SerializerMethodField(read_only=True)
-
+    can_access_files = serializers.SerializerMethodField(read_only=True)
+    can_access_chat = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = models.Company
@@ -88,6 +89,30 @@ class CompanySerializer(
         if view:
             return view.company_response_include_fields
         return super(CompanySerializer, self).get_field_names(*args, **kwargs)
+
+    def get_can_access_files(self, obj):
+        payload = self.get_payload()
+        # Todo: Under review
+        try:
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            if self.profile:
+                return self.profile.can_access_files
+            else:
+                return 0
+        except:
+            return 0
+
+    def get_can_access_chat(self, obj):
+        payload = self.get_payload()
+        # Todo: Under review
+        try:
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            if self.profile:
+                return self.profile.can_access_chat
+            else:
+                return 0
+        except:
+            return 0
 
     def get_followed(self, obj):
         payload = self.get_payload()

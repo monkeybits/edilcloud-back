@@ -397,6 +397,11 @@ tracker_urlpatterns = [
         name='tracker_company_company_private_public_photo_list'
     ),
     url(
+        r'^company/total_photo_size/$',
+        tracker_views.TrackerCompanyTotalPhotoSizeListView.as_view(),
+        name='tracker_company_total_photo_size'
+    ),
+    url(
         r'^company/project_photo_list/$',
         tracker_views.TrackerCompanyProjectPhotoListView.as_view(),
         name='tracker_company_project_photo_list'
@@ -415,6 +420,11 @@ tracker_urlpatterns = [
         r'^company/company_video_list/$',
         tracker_views.TrackerCompanyCompanyVideoListView.as_view(),
         name='tracker_company_company_video_list'
+    ),
+    url(
+        r'^company/total_video_size/$',
+        tracker_views.TrackerCompanyTotalVideoSizeListView.as_view(),
+        name='tracker_company_total_video_size'
     ),
     url(
         r'^company/company_video_list/(?P<type>(private|public){1})/$',

@@ -11,7 +11,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
-
+from rest_framework.response import Response
 from rest_framework import generics, status, exceptions
 
 from apps.message.api.frontend import serializers as message_serializers
@@ -680,7 +680,8 @@ class TrackerCompanyDetailView(
             'email', 'phone', 'logo', 'vat_number',
             'url', 'fax', 'phone2', 'projects_count',
             'messages_count', 'tags_count', 'followers_count',
-            'staff_count', 'partnerships_count', 'category', 'is_sponsor'
+            'staff_count', 'partnerships_count', 'category', 'is_sponsor',
+            'can_access_files', 'can_access_chat'
         ]
         super(TrackerCompanyDetailView, self).__init__(*args, **kwargs)
 
@@ -1212,7 +1213,7 @@ class TrackerCompanyCompanyPhotoListView(
     def __init__(self, *args, **kwargs):
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo', 'extension',
-            'photo_64', 'note', 'is_public'
+            'photo_64', 'note', 'is_public', 'size'
         ]
         super(TrackerCompanyCompanyPhotoListView, self).__init__(*args, **kwargs)
 
@@ -1226,6 +1227,46 @@ class TrackerCompanyCompanyPhotoListView(
             self.queryset = profile.list_company_photos()
         return super(TrackerCompanyCompanyPhotoListView, self).get_queryset()
 
+class TrackerCompanyTotalPhotoSizeListView(JWTPayloadMixin, QuerysetMixin, generics.ListAPIView):
+    """
+    Get total photo size
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = media_serializers.PhotoSerializer
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        if 'type' in self.kwargs:
+            list_method = 'list_{}_company_photos'.format(self.kwargs['type'])
+            self.queryset = getattr(profile, list_method)()
+        else:
+            self.queryset = profile.list_company_photos()
+        return super(TrackerCompanyTotalPhotoSizeListView, self).get_queryset()
+
+    def list(self, request, *args, **kwargs):
+        total_size = 0
+        for object in self.get_queryset():
+            total_size += object.photo.size
+        return Response([
+            {
+                'total': total_size,
+                'uom': 'bytes'
+            },
+            {
+                'total': total_size / 1000,
+                'uom': 'kilobytes'
+            },
+            {
+                'total': (total_size / 1000) /1000,
+                'uom': 'megabytes'
+            },
+            {
+                'total': ((total_size / 1000) / 1000) / 1000,
+                'uom': 'gigabytes'
+            }
+        ])
 
 class TrackerCompanyProjectPhotoListView(
         JWTPayloadMixin,
@@ -1300,6 +1341,52 @@ class TrackerCompanyVideoListView(
         self.queryset = profile.list_videos()
         return super(TrackerCompanyVideoListView, self).get_queryset()
 
+class TrackerCompanyTotalVideoSizeListView(
+        JWTPayloadMixin,
+        QuerysetMixin,
+        generics.ListAPIView):
+    """
+       Get all company Videos
+       """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = media_serializers.VideoSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.video_response_include_fields = [
+            'id', 'title', 'pub_date', 'video',
+            'extension', 'is_public'
+        ]
+        super(TrackerCompanyTotalVideoSizeListView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        self.queryset = profile.list_videos()
+        return super(TrackerCompanyTotalVideoSizeListView, self).get_queryset()
+
+    def list(self, request, *args, **kwargs):
+        total_size = 0
+        for object in self.get_queryset():
+            total_size += object.video.size
+        return Response([
+            {
+                'total': total_size,
+                'uom': 'bytes'
+            },
+            {
+                'total': total_size / 1000,
+                'uom': 'kilobytes'
+            },
+            {
+                'total': (total_size / 1000) /1000,
+                'uom': 'megabytes'
+            },
+            {
+                'total': ((total_size / 1000) / 1000) / 1000,
+                'uom': 'gigabytes'
+            }
+        ])
 
 class TrackerCompanyCompanyVideoListView(
         JWTPayloadMixin,

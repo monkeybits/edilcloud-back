@@ -9,11 +9,6 @@ user_urlpatterns = []
 generic_urlpatterns = []
 
 tracker_urlpatterns = [
-    url(
-        r'^plans/$',
-        generic_views.GenericPlansViews.as_view(),
-        name='tracker_document_detail'
-    )
 ]
 
 urlpatterns = user_urlpatterns + generic_urlpatterns + tracker_urlpatterns

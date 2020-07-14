@@ -20,6 +20,7 @@ class PhotoSerializer(
 
     extension = serializers.SerializerMethodField()
     photo_64 = serializers.SerializerMethodField()
+    size = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Photo
@@ -41,6 +42,9 @@ class PhotoSerializer(
         f.close()
         return data
 
+    def get_size(self, obj):
+        return obj.photo.size
+
 
 class PhotoAddSerializer(
         JWTPayloadMixin,
@@ -49,6 +53,7 @@ class PhotoAddSerializer(
 
     photo_64 = serializers.SerializerMethodField(read_only=True)
     extension = serializers.SerializerMethodField(read_only=True)
+    size = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = models.Photo
@@ -100,6 +105,9 @@ class PhotoAddSerializer(
         f.close()
         return data
 
+    def get_size(self, obj):
+        return obj.photo.size
+
     def get_extension(self, obj):
         return obj.get_file_extension()[1:]
 
@@ -111,6 +119,7 @@ class PhotoEditSerializer(
 
     photo_64 = serializers.SerializerMethodField(read_only=True)
     extension = serializers.SerializerMethodField(read_only=True)
+    size = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Photo
@@ -142,6 +151,9 @@ class PhotoEditSerializer(
         data = base64.b64encode(image.read())
         f.close()
         return data
+
+    def get_size(self, obj):
+        return obj.photo.size
 
     def get_extension(self, obj):
         return obj.get_file_extension()[1:]

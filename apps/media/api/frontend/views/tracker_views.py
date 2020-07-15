@@ -353,7 +353,7 @@ class TrackerFolderList(generics.CreateAPIView):
             gen_mod = Company.objects.get(id=self.kwargs['pk'])
         elif model_name == 'bom':
             gen_mod = Bom.objects.get(id=self.kwargs['pk'])
-        company_folder = get_upload_folder_path(gen_mod, folder_name, False)
+        company_folder = get_upload_folder_path(gen_mod, '', False)
         folders_list = os.walk(company_folder)
         listOfFiles = list()
         for (dirpath, dirnames, filenames) in folders_list:

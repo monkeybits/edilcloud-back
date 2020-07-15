@@ -26,6 +26,9 @@ def get_upload_document_path(instance, filename):
     ext = pathlib.Path(filename).suffix
     filename = '{}{}'.format(slugify(instance.title), ext)
     media_root = get_media_root(instance.is_public)
+    if hasattr(instance, 'additional_path'):
+        return os.path.join(media_root, 'document', format(media_dir1), format(media_dir2), instance.additional_path,
+                            filename)
     return os.path.join(media_root, "document", format(media_dir1), format(media_dir2), filename)
 
 

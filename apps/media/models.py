@@ -27,6 +27,9 @@ def get_upload_photo_path(instance, filename):
     if hasattr(instance, 'title'):
         filename = '{}{}'.format(slugify(instance.title), ext)
     media_root = get_media_root(instance.is_public)
+    if hasattr(instance, 'additional_path'):
+        return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2), instance.additional_path, filename)
+
     return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2), filename)
 
 
@@ -36,6 +39,9 @@ def get_upload_video_path(instance, filename):
     ext = pathlib.Path(filename).suffix
     filename = '{}{}'.format(slugify(instance.title), ext)
     media_root = get_media_root(instance.is_public)
+    if hasattr(instance, 'additional_path'):
+        return os.path.join(media_root, 'video', format(media_dir1), format(media_dir2), instance.additional_path,
+                            filename)
     return os.path.join(media_root, 'video',format(media_dir1), format(media_dir2), filename)
 
 

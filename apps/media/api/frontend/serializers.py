@@ -90,6 +90,8 @@ class PhotoAddSerializer(
 
     def create(self, validated_data):
         self.get_array_from_string(validated_data)
+        if 'additional_path' in self.request.data:
+            validated_data['additional_path'] = self.request.data['additional_path']
         try:
             photo = self.profile.create_photo(validated_data)
             return photo
@@ -225,6 +227,8 @@ class VideoAddSerializer(
     def create(self, validated_data):
         self.get_array_from_string(validated_data)
         try:
+            if 'additional_path' in self.request.data:
+                validated_data['additional_path'] = self.request.data['additional_path']
             video = self.profile.create_video(validated_data)
             return video
         except Exception as err:

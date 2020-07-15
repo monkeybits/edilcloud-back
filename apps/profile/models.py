@@ -2988,6 +2988,7 @@ class OwnerProfile(Profile):
     # ------ DOCUMENT ------
 
     def create_document(self, document_dict):
+        additional_path = None
         if document_dict['content_type'].model == 'project':
             self.get_project(document_dict['object_id'])
         elif document_dict['content_type'].model == 'company':
@@ -2998,12 +2999,15 @@ class OwnerProfile(Profile):
             self.get_bom(document_dict['object_id'])
         else:
             raise django_exception.OwnerProfilePermissionDenied(_('Please select the correct content type'))
-
+        if 'additional_path' in document_dict:
+            additional_path = document_dict.pop('additional_path')
         document = Document(
             creator=self.user,
             last_modifier=self.user,
             **document_dict
         )
+        if additional_path:
+            document.additional_path = additional_path
         if 'name' in document_dict['document']:
             document.document.save(document_dict['document'].name, document_dict['document'])
         document.save()
@@ -3130,6 +3134,7 @@ class OwnerProfile(Profile):
     # ------ PHOTO ------
 
     def create_photo(self, photo_dict):
+        additional_path = None
         if photo_dict['content_type'].model == 'project':
             self.get_project(photo_dict['object_id'])
         elif photo_dict['content_type'].model == 'company':
@@ -3138,13 +3143,17 @@ class OwnerProfile(Profile):
             self.get_bom(photo_dict['object_id'])
         else:
             raise django_exception.OwnerProfilePermissionDenied(_('Please select the correct content type'))
-
+        if 'additional_path' in photo_dict:
+            additional_path = photo_dict.pop('additional_path')
         photo = Photo(
             creator=self.user,
             last_modifier=self.user,
             pub_date=datetime.datetime.now(),
             **photo_dict
         )
+        if additional_path:
+            photo.additional_path = additional_path
+
         if 'name' in photo_dict['photo']:
             photo.photo.save(photo_dict['photo'].name, photo_dict['photo'])
         photo.save()
@@ -3257,6 +3266,7 @@ class OwnerProfile(Profile):
     # ------ VIDEO ------
 
     def create_video(self, video_dict):
+        additional_path = None
         if video_dict['content_type'].model == 'project':
             self.get_project(video_dict['object_id'])
         elif video_dict['content_type'].model == 'company':
@@ -3265,13 +3275,16 @@ class OwnerProfile(Profile):
             self.get_bom(video_dict['object_id'])
         else:
             raise django_exception.OwnerProfilePermissionDenied(_('Please select the correct content type'))
-
+        if 'additional_path' in video_dict:
+            additional_path = video_dict.pop('additional_path')
         video = Video(
             creator=self.user,
             last_modifier=self.user,
             pub_date=datetime.datetime.now(),
             **video_dict
         )
+        if additional_path:
+            video.additional_path = additional_path
         if 'name' in video_dict['video']:
             video.video.save(video_dict['video'].name, video_dict['video'])
         video.save()

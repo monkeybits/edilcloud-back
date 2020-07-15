@@ -76,6 +76,8 @@ class DocumentAddSerializer(
 
     def create(self, validated_data):
         try:
+            if 'additional_path' in self.request.data:
+                validated_data['additional_path'] = self.request.data['additional_path']
             document = self.profile.create_document(validated_data)
             return document
         except Exception as err:

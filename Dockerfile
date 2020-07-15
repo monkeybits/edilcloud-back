@@ -12,4 +12,7 @@ RUN pip install "gunicorn>=19.8,<19.9"
 RUN pip install -r requirements.txt
 COPY . /office2017.whistle.it/
 RUN cd /var/log/ && mkdir django && touch whistle-api_exceptions.log
-CMD gunicorn web.wsgi:application
+
+EXPOSE 80
+
+CMD python manage.py runserver 0.0.0.0:80

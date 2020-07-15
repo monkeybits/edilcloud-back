@@ -69,6 +69,16 @@ tracker_urlpatterns = [
         r'^files/download/(?P<pk>\d+)/public/$',
         generic_views.PublicVideoDownloadView.as_view(),
         name='public_video_download'
+    ),
+    url(
+        r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/list/$',
+        tracker_views.TrackerFolderList.as_view(),
+        name='tracker_folder_list'
+    ),
+    url(
+        r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/add/$',
+        tracker_views.TrackerFolderAdd.as_view(),
+        name='tracker_folder_add'
     )
 ]
 

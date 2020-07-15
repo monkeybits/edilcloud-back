@@ -22,6 +22,7 @@ from apps.project.api.frontend import serializers as project_serializers
 from apps.profile.api.frontend import serializers as profile_serializers
 from apps.quotation.api.frontend import serializers as quotation_serializers
 from apps.document.api.frontend import serializers as document_serializers
+from web.api.pagination import ThuxPageNumberPagination
 from web.api.permissions import RoleAccessPermission
 from web.api.views import (
     QuerysetMixin,
@@ -1184,6 +1185,7 @@ class TrackerCompanyPhotoListView(
     permission_classes = (RoleAccessPermission,)
     permission_roles = settings.MEMBERS
     serializer_class = media_serializers.PhotoSerializer
+    pagination_class = ThuxPageNumberPagination
 
     def __init__(self, *args, **kwargs):
         self.photo_response_include_fields = [

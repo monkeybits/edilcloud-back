@@ -1,17 +1,26 @@
 # -*- coding: utf-8 -*-
+import os
+import pathlib
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from rest_framework import generics, status, views
+from rest_framework.response import Response
 
+from apps.profile.models import Company
+from apps.project.models import Project
+from apps.quotation.models import Bom
 from web.api.permissions import RoleAccessPermission
-from web.api.views import JWTPayloadMixin, WhistleGenericViewMixin, DownloadViewMixin
+from web.api.views import JWTPayloadMixin, WhistleGenericViewMixin, DownloadViewMixin, get_media_root
 from .. import serializers
 from web.drf import exceptions as django_api_exception
-
+from apps.profile import models as profile_models
+from apps.project import models as project_models
+from apps.quotation import models as quotation_models
 
 class TrackerPhotoMixin(
         JWTPayloadMixin):
@@ -271,3 +280,83 @@ class TrackerVideoDownloadView(
     permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1,)
     file_field_name = 'video'
+
+def get_upload_folder_path(instance, folder, is_public, create=False):
+    media_dir1 = instance._meta.model_name
+    media_dir2 = slugify(instance.__str__().lower())
+    media_root = get_media_root(is_public)
+    if create:
+        os.makedirs(os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2), folder))
+    return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2))
+
+class TrackerFolderAdd(generics.CreateAPIView):
+    """
+    Folder add
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1,)
+
+    def post(self, request, *args, **kwargs):
+        content_type = ContentType.objects.get(model=self.kwargs['type'])
+        folder_name = request.data['name']
+        model_name = content_type.model
+        if model_name == 'company':
+            generic_model = profile_models.Company
+        elif model_name == 'project':
+            generic_model = project_models.Project
+        elif model_name == 'bom':
+            generic_model = quotation_models.Bom
+        else:
+            raise ValidationError("Model Not Found")
+
+        if not generic_model.objects.filter(pk=self.kwargs['pk']):
+            raise ValidationError("Object Not Found")
+
+        if model_name == 'project':
+            gen_mod = Project.objects.get(id=self.kwargs['pk'])
+        elif model_name == 'company':
+            gen_mod = Company.objects.get(id=self.kwargs['pk'])
+        elif model_name == 'bom':
+            gen_mod = Bom.objects.get(id=self.kwargs['pk'])
+        company_folder = get_upload_folder_path(gen_mod, folder_name, False, True)
+        folders_list = os.walk(company_folder)
+        listOfFiles = list()
+        for (dirpath, dirnames, filenames) in folders_list:
+            listOfFiles += [os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1] for dirname in dirnames]
+        return Response(status=status.HTTP_204_NO_CONTENT, data="Folder created")
+
+class TrackerFolderList(generics.CreateAPIView):
+    """
+    Folder add
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1,)
+
+    def get(self, request, *args, **kwargs):
+        content_type = ContentType.objects.get(model=self.kwargs['type'])
+        folder_name = request.data['name']
+        model_name = content_type.model
+        if model_name == 'company':
+            generic_model = profile_models.Company
+        elif model_name == 'project':
+            generic_model = project_models.Project
+        elif model_name == 'bom':
+            generic_model = quotation_models.Bom
+        else:
+            raise ValidationError("Model Not Found")
+
+        if not generic_model.objects.filter(pk=self.kwargs['pk']):
+            raise ValidationError("Object Not Found")
+
+        if model_name == 'project':
+            gen_mod = Project.objects.get(id=self.kwargs['pk'])
+        elif model_name == 'company':
+            gen_mod = Company.objects.get(id=self.kwargs['pk'])
+        elif model_name == 'bom':
+            gen_mod = Bom.objects.get(id=self.kwargs['pk'])
+        company_folder = get_upload_folder_path(gen_mod, folder_name, False)
+        folders_list = os.walk(company_folder)
+        listOfFiles = list()
+        for (dirpath, dirnames, filenames) in folders_list:
+            listOfFiles += [os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1] for dirname in dirnames]
+        return Response(status=status.HTTP_200_OK, data=listOfFiles)

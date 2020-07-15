@@ -281,12 +281,16 @@ class TrackerVideoDownloadView(
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1,)
     file_field_name = 'video'
 
-def get_upload_folder_path(instance, folder, is_public, create=False):
+def get_upload_folder_path(instance, subpath, folder, is_public, create=False):
     media_dir1 = instance._meta.model_name
     media_dir2 = slugify(instance.__str__().lower())
     media_root = get_media_root(is_public)
     if create:
-        os.makedirs(os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2), folder))
+        if subpath == '' or subpath == '/':
+            os.makedirs(os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2),  folder))
+        else:
+            os.makedirs(os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2), subpath,folder))
+
     return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2))
 
 class TrackerFolderAdd(generics.CreateAPIView):
@@ -299,6 +303,7 @@ class TrackerFolderAdd(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         content_type = ContentType.objects.get(model=self.kwargs['type'])
         folder_name = request.data['name']
+        subpath = request.data['path']
         model_name = content_type.model
         if model_name == 'company':
             generic_model = profile_models.Company
@@ -318,11 +323,7 @@ class TrackerFolderAdd(generics.CreateAPIView):
             gen_mod = Company.objects.get(id=self.kwargs['pk'])
         elif model_name == 'bom':
             gen_mod = Bom.objects.get(id=self.kwargs['pk'])
-        company_folder = get_upload_folder_path(gen_mod, folder_name, False, True)
-        folders_list = os.walk(company_folder)
-        listOfFiles = list()
-        for (dirpath, dirnames, filenames) in folders_list:
-            listOfFiles += [os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1] for dirname in dirnames]
+        get_upload_folder_path(gen_mod, subpath, folder_name, False, True)
         return Response(status=status.HTTP_204_NO_CONTENT, data="Folder created")
 
 class TrackerFolderList(generics.CreateAPIView):
@@ -353,7 +354,7 @@ class TrackerFolderList(generics.CreateAPIView):
             gen_mod = Company.objects.get(id=self.kwargs['pk'])
         elif model_name == 'bom':
             gen_mod = Bom.objects.get(id=self.kwargs['pk'])
-        company_folder = get_upload_folder_path(gen_mod, '', False)
+        company_folder = get_upload_folder_path(gen_mod, '', '', False)
         folders_list = os.walk(company_folder)
         listOfFiles = list()
         for (dirpath, dirnames, filenames) in folders_list:

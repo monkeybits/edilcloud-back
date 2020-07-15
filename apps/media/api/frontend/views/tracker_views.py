@@ -334,7 +334,6 @@ class TrackerFolderList(generics.CreateAPIView):
 
     def get(self, request, *args, **kwargs):
         content_type = ContentType.objects.get(model=self.kwargs['type'])
-        folder_name = request.data['name']
         model_name = content_type.model
         if model_name == 'company':
             generic_model = profile_models.Company

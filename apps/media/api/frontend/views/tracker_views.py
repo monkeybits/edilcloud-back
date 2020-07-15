@@ -323,8 +323,16 @@ class TrackerFolderAdd(generics.CreateAPIView):
             gen_mod = Company.objects.get(id=self.kwargs['pk'])
         elif model_name == 'bom':
             gen_mod = Bom.objects.get(id=self.kwargs['pk'])
-        get_upload_folder_path(gen_mod, subpath, folder_name, False, True)
-        return Response(status=status.HTTP_204_NO_CONTENT, data="Folder created")
+        try:
+            company_folder = get_upload_folder_path(gen_mod, subpath, folder_name, False, True)
+            folders_list = os.walk(company_folder)
+            listOfFiles = list()
+            for (dirpath, dirnames, filenames) in folders_list:
+                listOfFiles += [os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[1] for dirname in
+                                dirnames]
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=str(e))
+        return Response(status=status.HTTP_201_CREATED, data=listOfFiles)
 
 class TrackerFolderList(generics.CreateAPIView):
     """
@@ -358,5 +366,5 @@ class TrackerFolderList(generics.CreateAPIView):
         folders_list = os.walk(company_folder)
         listOfFiles = list()
         for (dirpath, dirnames, filenames) in folders_list:
-            listOfFiles += [os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1] for dirname in dirnames]
+            listOfFiles += [os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[1] for dirname in dirnames]
         return Response(status=status.HTTP_200_OK, data=listOfFiles)

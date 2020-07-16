@@ -293,6 +293,19 @@ def get_upload_folder_path(instance, subpath, folder, is_public, create=False):
 
     return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2))
 
+def get_size_format(b, factor=1024, suffix="B"):
+    """
+    Scale bytes to its proper byte format
+    e.g:
+        1253656 => '1.20MB'
+        1253656678 => '1.17GB'
+    """
+    for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
+        if b < factor:
+            return "{:0.2f}{}{}".format(b, unit, suffix)
+        b /= factor
+    return "{:0.2f}Y{}".format(b, suffix)
+
 class TrackerFolderAdd(generics.CreateAPIView):
     """
     Folder add
@@ -328,8 +341,15 @@ class TrackerFolderAdd(generics.CreateAPIView):
             folders_list = os.walk(company_folder)
             listOfFiles = list()
             for (dirpath, dirnames, filenames) in folders_list:
-                listOfFiles += [os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[1] for dirname in
-                                dirnames]
+                listOfFiles += [
+                    {
+                        'path':
+                            os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[
+                                1],
+                        'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+                    }
+                    for dirname in dirnames
+                ]
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=str(e))
         return Response(status=status.HTTP_201_CREATED, data=listOfFiles)
@@ -364,7 +384,14 @@ class TrackerFolderList(generics.CreateAPIView):
             gen_mod = Bom.objects.get(id=self.kwargs['pk'])
         company_folder = get_upload_folder_path(gen_mod, '', '', False)
         folders_list = os.walk(company_folder)
+        print(folders_list)
         listOfFiles = list()
         for (dirpath, dirnames, filenames) in folders_list:
-            listOfFiles += [os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[1] for dirname in dirnames]
+            listOfFiles += [
+                {
+                    'path': os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[1],
+                    'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+                }
+                for dirname in dirnames
+            ]
         return Response(status=status.HTTP_200_OK, data=listOfFiles)

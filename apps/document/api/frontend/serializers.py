@@ -18,6 +18,7 @@ class DocumentSerializer(
         DynamicFieldsModelSerializer):
     extension = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField(read_only=True)
+    relative_path = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Document
@@ -28,6 +29,9 @@ class DocumentSerializer(
 
     def get_extension(self, obj):
         return obj.get_file_extension()
+
+    def get_relative_path(self, obj):
+        return obj.document.url.split("company/" + str(obj.content_object.id))[1]
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view

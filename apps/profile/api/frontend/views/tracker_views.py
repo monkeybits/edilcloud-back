@@ -993,7 +993,7 @@ class TrackerCompanyCompanyDocumentListView(
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
             'date_create', 'date_last_modify', 'status',
-            'extension', 'size', 'relative_path'
+            'extension', 'size', 'relative_path', 'folder_relative_path'
         ]
         super(TrackerCompanyCompanyDocumentListView, self).__init__(*args, **kwargs)
 
@@ -1213,7 +1213,7 @@ class TrackerCompanyCompanyPhotoListView(
     def __init__(self, *args, **kwargs):
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo', 'extension',
-             'note', 'is_public', 'size', 'relative_path'
+             'note', 'is_public', 'size', 'relative_path', 'folder_relative_path'
         ]
         super(TrackerCompanyCompanyPhotoListView, self).__init__(*args, **kwargs)
 
@@ -1402,7 +1402,7 @@ class TrackerCompanyCompanyVideoListView(
     def __init__(self, *args, **kwargs):
         self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
-            'extension', 'note', 'is_public', 'size', 'relative_path'
+            'extension', 'note', 'is_public', 'size', 'relative_path', 'folder_relative_path'
         ]
         super(TrackerCompanyCompanyVideoListView, self).__init__(*args, **kwargs)
 

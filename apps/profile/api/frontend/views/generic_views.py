@@ -63,7 +63,7 @@ class CompanyPhotoListView(
 
     def __init__(self, *args, **kwargs):
         self.photo_response_include_fields = ['id', 'title', 'pub_date', 'photo', 'extension',
-            'photo_64', 'note', 'tags', 'relative_path']
+            'photo_64', 'note', 'tags', 'relative_path', 'folder_relative_path']
         super(CompanyPhotoListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):

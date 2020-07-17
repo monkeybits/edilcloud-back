@@ -22,6 +22,7 @@ class PhotoSerializer(
     photo_64 = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField()
     relative_path = serializers.SerializerMethodField()
+    folder_relative_path = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Photo
@@ -32,6 +33,12 @@ class PhotoSerializer(
 
     def get_relative_path(self, obj):
         return obj.photo.url.split(obj.content_object.slug)[1]
+
+    def get_folder_relative_path(self, obj):
+        splitted = obj.photo.url.split(obj.content_object.slug)[1].rsplit('/', 1)[0]
+        if splitted != '':
+            return splitted.split('/', 1)[1]
+        return splitted
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -171,6 +178,7 @@ class VideoSerializer(
     extension = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField()
     relative_path = serializers.SerializerMethodField()
+    folder_relative_path = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Video
@@ -184,6 +192,12 @@ class VideoSerializer(
 
     def get_relative_path(self, obj):
         return obj.video.url.split(obj.content_object.slug)[1]
+
+    def get_folder_relative_path(self, obj):
+        splitted = obj.video.url.split(obj.content_object.slug)[1].rsplit('/', 1)[0]
+        if splitted != '':
+            return splitted.split('/', 1)[1]
+        return splitted
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view

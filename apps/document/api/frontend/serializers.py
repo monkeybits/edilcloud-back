@@ -19,6 +19,7 @@ class DocumentSerializer(
     extension = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField(read_only=True)
     relative_path = serializers.SerializerMethodField()
+    folder_relative_path = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Document
@@ -29,6 +30,12 @@ class DocumentSerializer(
 
     def get_extension(self, obj):
         return obj.get_file_extension()
+
+    def get_folder_relative_path(self, obj):
+        splitted = obj.document.url.split("company/" + str(obj.content_object.id))[1].rsplit('/', 1)[0]
+        if splitted != '':
+            return splitted.split('/', 1)[1]
+        return splitted
 
     def get_relative_path(self, obj):
         return obj.document.url.split("company/" + str(obj.content_object.id))[1]

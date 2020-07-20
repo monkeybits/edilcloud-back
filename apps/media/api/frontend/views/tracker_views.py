@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import pathlib
+import shutil
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -395,3 +396,56 @@ class TrackerFolderList(generics.CreateAPIView):
                 for dirname in dirnames
             ]
         return Response(status=status.HTTP_200_OK, data=listOfFiles)
+
+def get_upload_folder_path2(instance, subpath, folder, is_public, create=False, type='photo'):
+    media_dir1 = instance._meta.model_name
+    media_dir2 = slugify(instance.__str__().lower())
+    media_root = get_media_root(is_public)
+    if create:
+        if subpath == '' or subpath == '/':
+            os.makedirs(os.path.join(media_root, type, format(media_dir1), format(media_dir2),  folder))
+        else:
+            os.makedirs(os.path.join(media_root, type, format(media_dir1), format(media_dir2), subpath,folder))
+
+    return os.path.join(media_root, type, format(media_dir1), format(media_dir2))
+
+class TrackerFolderDeleteView(generics.DestroyAPIView):
+    """
+    Delete a company photo
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+
+    def delete(self, request, *args, **kwargs):
+        folder_name = self.request.query_params.get('name')
+        if folder_name:
+            content_type = ContentType.objects.get(model=self.kwargs['type'])
+            model_name = content_type.model
+            if model_name == 'company':
+                generic_model = profile_models.Company
+            elif model_name == 'project':
+                generic_model = project_models.Project
+            elif model_name == 'bom':
+                generic_model = quotation_models.Bom
+            else:
+                raise ValidationError("Model Not Found")
+
+            if not generic_model.objects.filter(pk=self.kwargs['pk']):
+                raise ValidationError("Object Not Found")
+
+            if model_name == 'project':
+                gen_mod = Project.objects.get(id=self.kwargs['pk'])
+            elif model_name == 'company':
+                gen_mod = Company.objects.get(id=self.kwargs['pk'])
+            elif model_name == 'bom':
+                gen_mod = Bom.objects.get(id=self.kwargs['pk'])
+            for type in ['photo', 'video', 'document']:
+                company_folder = get_upload_folder_path2(gen_mod, '', '', False, False, type)
+                try:
+                    shutil.rmtree(os.path.join(company_folder, folder_name))  # remove dir and all contains
+                except Exception as e:
+                    continue
+            return Response(status=status.HTTP_200_OK, data="Folder deleted successfully")
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data="Enter a folder name for deleting one")
+

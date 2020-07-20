@@ -35,7 +35,7 @@ class DocumentSerializer(
         url = obj.document.url
         if '%20' in obj.document.url:
             url = obj.document.url.replace('%20', ' ')
-        if len(url.split(obj.content_object.id)) >= 2:
+        if len(url.split("company/" + str(obj.content_object.id))) >= 2:
             splitted = url.split("company/" + str(obj.content_object.id))[1].rsplit('/', 1)[0]
             if splitted != '':
                 return splitted.split('/', 1)[1]

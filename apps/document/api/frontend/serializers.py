@@ -32,13 +32,25 @@ class DocumentSerializer(
         return obj.get_file_extension()
 
     def get_folder_relative_path(self, obj):
-        splitted = obj.document.url.split("company/" + str(obj.content_object.id))[1].rsplit('/', 1)[0]
-        if splitted != '':
-            return splitted.split('/', 1)[1]
-        return splitted
+        url = obj.document.url
+        if '%20' in obj.document.url:
+            url = obj.document.url.replace('%20', ' ')
+        if len(url.split(obj.content_object.id)) >= 2:
+            splitted = url.split("company/" + str(obj.content_object.id))[1].rsplit('/', 1)[0]
+            if splitted != '':
+                return splitted.split('/', 1)[1]
+            return splitted
+        else:
+            return url
 
     def get_relative_path(self, obj):
-        return obj.document.url.split("company/" + str(obj.content_object.id))[1]
+        url = obj.document.url
+        if '%20' in obj.document.url:
+            url = obj.document.url.replace('%20', ' ')
+        if len(url.split("company/" + str(obj.content_object.id))) >= 2:
+            return url.split("company/" + str(obj.content_object.id))[1]
+        else:
+            return url
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view

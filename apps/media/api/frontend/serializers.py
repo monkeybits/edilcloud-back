@@ -32,13 +32,25 @@ class PhotoSerializer(
         return obj.get_file_extension()[1:]
 
     def get_relative_path(self, obj):
-        return obj.photo.url.split(obj.content_object.slug)[1]
+        url = obj.photo.url
+        if '%20' in obj.photo.url:
+            url = obj.photo.url.replace('%20', ' ')
+        if len(url.split(obj.content_object.slug)) >= 2:
+            return url.split(obj.content_object.slug)[1]
+        else:
+            return url
 
     def get_folder_relative_path(self, obj):
-        splitted = obj.photo.url.split(obj.content_object.slug)[1].rsplit('/', 1)[0]
-        if splitted != '':
-            return splitted.split('/', 1)[1]
-        return splitted
+        url = obj.photo.url
+        if '%20' in obj.photo.url:
+            url = obj.photo.url.replace('%20', ' ')
+        if len(url.split(obj.content_object.slug)) >= 2:
+            splitted = url.split(obj.content_object.slug)[1].rsplit('/', 1)[0]
+            if splitted != '':
+                return splitted.split('/', 1)[1]
+            return splitted
+        else:
+            return url
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -191,13 +203,25 @@ class VideoSerializer(
         return obj.get_file_extension()
 
     def get_relative_path(self, obj):
-        return obj.video.url.split(obj.content_object.slug)[1]
+        url = obj.video.url
+        if '%20' in obj.video.url:
+            url = obj.video.url.replace('%20', ' ')
+        if len(url.split(obj.content_object.slug)) >= 2:
+            return url.split(obj.content_object.slug)[1]
+        else:
+            return url
 
     def get_folder_relative_path(self, obj):
-        splitted = obj.video.url.split(obj.content_object.slug)[1].rsplit('/', 1)[0]
-        if splitted != '':
-            return splitted.split('/', 1)[1]
-        return splitted
+        url = obj.video.url
+        if '%20' in obj.video.url:
+            url = obj.video.url.replace('%20', ' ')
+        if len(url.split(obj.content_object.slug)) >= 2:
+            splitted = url.split(obj.content_object.slug)[1].rsplit('/', 1)[0]
+            if splitted != '':
+                return splitted.split('/', 1)[1]
+            return splitted
+        else:
+            return url
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view

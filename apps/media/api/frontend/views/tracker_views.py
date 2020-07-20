@@ -311,7 +311,7 @@ class TrackerFolderAdd(generics.CreateAPIView):
     Folder add
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1,)
+    permission_roles = settings.MEMBERS
 
     def post(self, request, *args, **kwargs):
         content_type = ContentType.objects.get(model=self.kwargs['type'])
@@ -359,7 +359,7 @@ class TrackerFolderList(generics.CreateAPIView):
     Folder add
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1,)
+    permission_roles = settings.MEMBERS
 
     def get(self, request, *args, **kwargs):
         content_type = ContentType.objects.get(model=self.kwargs['type'])

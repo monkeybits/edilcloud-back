@@ -82,8 +82,9 @@ class Photo(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     )
     photo = models.ImageField(
         storage=photo_fs,
+        max_length=1000,
         upload_to=get_upload_photo_path,
-        verbose_name=_('image'),
+        verbose_name=_('image')
     )
     is_public = models.BooleanField(
         default=False,

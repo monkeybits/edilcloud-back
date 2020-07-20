@@ -404,7 +404,7 @@ FAKER_LOCALE = None
 FAKER_PROVIDERS = None
 
 
-UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media_private')
+UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media')
 
 PROTOCOL = 'http'
 DEFAULT_FROM_EMAIL = 'edilcloud.activation@gmail.com'

@@ -22,7 +22,7 @@ doc_fs = FileSystemStorage(location=settings.BASE_DIR, base_url="/")
 def get_upload_document_path(instance, filename):
     # TODO tree upload
     media_dir1 = instance.content_object._meta.model_name
-    media_dir2 = instance.content_object.id
+    media_dir2 = instance.content_object.slug
     ext = pathlib.Path(filename).suffix
     filename = '{}{}'.format(slugify(instance.title), ext)
     media_root = get_media_root(instance.is_public)

@@ -183,5 +183,5 @@ def get_first_last_dates_of_month_and_year(month, year):
 
 def get_media_root(public):
     if public:
-        return 'media'
-    return 'media_private'
+        return 'media/public'
+    return 'media/private'

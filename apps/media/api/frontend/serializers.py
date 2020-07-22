@@ -46,7 +46,8 @@ class PhotoSerializer(
             url = obj.photo.url.replace('%20', ' ')
         if len(url.split(obj.content_object.slug.lower())) >= 2:
             splitted = url.split(obj.content_object.slug.lower())[1].rsplit('/', 1)[0]
-            if splitted != '':
+            print(splitted)
+            if splitted != '' and splitted != '/':
                 return splitted.split('/', 1)[1]
             return splitted
         else:

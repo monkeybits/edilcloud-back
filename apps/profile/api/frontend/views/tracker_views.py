@@ -334,11 +334,13 @@ class TrackerCompanyProfileAddView(
         self.profile_request_include_fields = [
             'first_name', 'last_name', 'email',
             'language', 'position', 'user', 'phone',
-            'fax', 'mobile', 'note', 'role'
+            'fax', 'mobile', 'note', 'role',
+            'can_access_files', 'can_access_chat'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email',
-            'language', 'position', 'photo', 'role', 'is_shared', 'is_in_showroom'
+            'language', 'position', 'photo', 'role', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
         ]
         super(TrackerCompanyProfileAddView, self).__init__(*args, **kwargs)
 
@@ -363,11 +365,13 @@ class TrackerCompanyInviteProfileAddView(
         self.profile_request_include_fields = [
             'first_name', 'last_name', 'email',
             'language', 'position', 'user', 'phone',
-            'fax', 'mobile', 'note', 'role'
+            'fax', 'mobile', 'note', 'role',
+            'can_access_files', 'can_access_chat'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email',
-            'language', 'position', 'photo', 'role', 'is_shared', 'is_in_showroom'
+            'language', 'position', 'photo', 'role', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
         ]
         super(TrackerCompanyInviteProfileAddView, self).__init__(*args, **kwargs)
 
@@ -400,8 +404,8 @@ class TrackerCompanyProfileListView(
 
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'is_shared',
-                                                'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+                                                'is_in_showroom',             'can_access_files', 'can_access_chat']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn',             'can_access_files', 'can_access_chat']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyProfileListView, self).__init__(*args, **kwargs)
 
@@ -428,7 +432,7 @@ class TrackerCompanyProfileDetailView(
             'id', 'first_name', 'last_name', 'email',
             'language', 'position', 'role', 'fax',
             'mobile', 'note', 'phone', 'photo', 'is_shared', 'is_in_showroom',
-            'company_invitation_date', 'profile_invitation_date', 'talk_count'
+            'company_invitation_date', 'profile_invitation_date', 'talk_count',             'can_access_files', 'can_access_chat'
         ]
         super(TrackerCompanyProfileDetailView, self).__init__(*args, **kwargs)
 
@@ -448,13 +452,14 @@ class TrackerCompanyProfileEditView(
         self.profile_request_include_fields = [
             'first_name', 'last_name', 'email',
             'language', 'position', 'user', 'phone',
-            'fax', 'mobile', 'note', 'role', 'photo'
+            'fax', 'mobile', 'note', 'role', 'photo',             'can_access_files', 'can_access_chat'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email', 'phone',
             'language', 'fax', 'company', 'user', 'role', 'position',
             'status', 'uidb36', 'token', 'photo', 'company_invitation_date',
-            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom'
+            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'ssn', 'logo'
@@ -479,7 +484,8 @@ class TrackerCompanyProfileEnableView(
         self.profile_request_include_fields = []
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email',
-            'language', 'position', 'is_shared', 'is_in_showroom'
+            'language', 'position', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
         ]
         super(TrackerCompanyProfileEnableView, self).__init__(*args, **kwargs)
 
@@ -851,13 +857,15 @@ class TrackerCompanyEditView(
             'name', 'slug', 'brand', 'description', 'ssn',
             'vat_number', 'url',
             'email', 'phone', 'phone2', 'fax',
-            'note', 'logo', 'category'
+            'note', 'logo', 'category',
+            'can_access_files', 'can_access_chat'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'brand', 'description', 'ssn',
             'vat_number', 'url',
             'email', 'phone', 'phone2', 'fax',
-            'note', 'logo', 'category'
+            'note', 'logo', 'category',
+            'can_access_files', 'can_access_chat'
         ]
         super(TrackerCompanyEditView, self).__init__(*args, **kwargs)
 

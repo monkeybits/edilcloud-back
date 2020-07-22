@@ -263,7 +263,7 @@ class CompanyStaffListView(
     serializer_class = serializers.ProfileSerializer
 
     def __init__(self, *args, **kwargs):
-        self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user']
+        self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'can_access_files', 'can_access_chat']
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(CompanyStaffListView, self).__init__(*args, **kwargs)

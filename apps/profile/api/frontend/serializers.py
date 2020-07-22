@@ -410,17 +410,27 @@ class CompanyDisableSerializer(
         return company
 
 
-class ProfileSerializer(
+class ProfileSerializer(JWTPayloadMixin,
         DynamicFieldsModelSerializer):
     role = serializers.ReadOnlyField(source="get_role")
     company = CompanySerializer()
     user = UserSerializer()
     is_main = serializers.SerializerMethodField()
     talk_count = serializers.SerializerMethodField()
+    can_access_files = serializers.SerializerMethodField(read_only=True)
+    can_access_chat = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = models.Profile
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -433,6 +443,30 @@ class ProfileSerializer(
 
     def get_talk_count(self, obj):
         return obj.talks.count()
+
+    def get_can_access_files(self, obj):
+        payload = self.get_payload()
+        # Todo: Under review
+        try:
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            if self.profile:
+                return self.profile.can_access_files
+            else:
+                return 0
+        except:
+            return 0
+
+    def get_can_access_chat(self, obj):
+        payload = self.get_payload()
+        # Todo: Under review
+        try:
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            if self.profile:
+                return self.profile.can_access_chat
+            else:
+                return 0
+        except:
+            return 0
 
 
 class MainProfileAddSerializer(

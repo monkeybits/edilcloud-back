@@ -1685,7 +1685,8 @@ class TrackerCompanyStaffListView(
             'id', 'first_name', 'last_name', 'email', 'phone', 'mobile',
             'language', 'fax', 'company', 'user', 'role', 'position',
             'status', 'uidb36', 'token', 'photo', 'company_invitation_date',
-            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom'
+            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'ssn', 'logo', 'is_supplier'

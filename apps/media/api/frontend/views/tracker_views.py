@@ -290,6 +290,8 @@ def get_upload_folder_path(instance, subpath, folder, is_public, create=False):
         if subpath == '' or subpath == '/':
             os.makedirs(os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2),  folder))
         else:
+            if len(subpath.split('/')) == 3:
+                return False
             os.makedirs(os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2), subpath,folder))
 
     return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2))
@@ -339,6 +341,10 @@ class TrackerFolderAdd(generics.CreateAPIView):
             gen_mod = Bom.objects.get(id=self.kwargs['pk'])
         try:
             company_folder = get_upload_folder_path(gen_mod, subpath, folder_name, False, True)
+            if company_folder == False:
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={
+                    'error': 'Folder not created. Max subfolders limit is 3'
+                })
             folders_list = os.walk(company_folder)
             listOfFiles = list()
             for (dirpath, dirnames, filenames) in folders_list:
@@ -352,7 +358,9 @@ class TrackerFolderAdd(generics.CreateAPIView):
                     for dirname in dirnames
                 ]
         except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=str(e))
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={
+                'error': "Folder already exists"
+            })
         return Response(status=status.HTTP_201_CREATED, data=listOfFiles)
 
 class TrackerFolderList(generics.CreateAPIView):
@@ -384,6 +392,10 @@ class TrackerFolderList(generics.CreateAPIView):
         elif model_name == 'bom':
             gen_mod = Bom.objects.get(id=self.kwargs['pk'])
         company_folder = get_upload_folder_path(gen_mod, '', '', False)
+        if company_folder == False:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={
+                'error': 'Folder not created. Max subfolders limit is 3'
+            })
         folders_list = os.walk(company_folder)
         print(folders_list)
         listOfFiles = list()
@@ -441,6 +453,10 @@ class TrackerFolderDeleteView(generics.DestroyAPIView):
                 gen_mod = Bom.objects.get(id=self.kwargs['pk'])
             for type in ['photo', 'video', 'document']:
                 company_folder = get_upload_folder_path2(gen_mod, '', '', False, False, type)
+                if company_folder == False:
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data={
+                        'error': 'Folder not created. Max subfolders limit is 3'
+                    })
                 try:
                     shutil.rmtree(os.path.join(company_folder, folder_name))  # remove dir and all contains
                 except Exception as e:

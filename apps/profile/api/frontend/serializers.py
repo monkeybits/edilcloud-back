@@ -597,7 +597,8 @@ class ProfileEditSerializer(
 
 
 class ProfileEnableSerializer(
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -616,8 +617,12 @@ class ProfileEnableSerializer(
 
     def update(self, instance, validated_data):
         try:
-            generic_profile = self.request.user.get_profile_by_id(instance.id, instance.status)
-            profile = generic_profile.enable_profile()
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            staff_list = profile.list_approve_profiles_inactive()
+            profile_to_enable = staff_list.filter(id=instance.id)
+            if profile_to_enable:
+                profile = profile_to_enable[0].enable_profile()
             return profile
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
@@ -626,7 +631,8 @@ class ProfileEnableSerializer(
 
 
 class ProfileDisableSerializer(
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -645,8 +651,12 @@ class ProfileDisableSerializer(
 
     def update(self, instance, validated_data):
         try:
-            generic_profile = self.request.user.get_profile_by_id(instance.id, instance.status)
-            profile = generic_profile.disable_profile()
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            staff_list = profile.list_approve_profiles()
+            profile_to_disable = staff_list.filter(id=instance.id)
+            if profile_to_disable:
+                profile = profile_to_disable[0].disable_profile()
             return profile
         except Exception as err:
             raise django_api_exception.WhistleAPIException(

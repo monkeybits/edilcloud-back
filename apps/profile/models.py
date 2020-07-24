@@ -1499,6 +1499,12 @@ class OwnerProfile(Profile):
         """
         return self.company.profiles.all()
 
+    def list_approve_profiles_inactive(self):
+        """
+        Get all company profiles linked to the company
+        """
+        return self.company.profiles.company_invitation_approve_inactive()
+
     def get_profile(self, profile_id):
         profile = self.list_profiles().get(id=profile_id)
         return profile

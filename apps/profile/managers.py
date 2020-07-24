@@ -116,6 +116,15 @@ class ProfileQuerySet(models.QuerySet):
             invitation_refuse_date__isnull=True,
         )
 
+    def company_invitation_approve_inactive(self):
+        return self.filter(
+            status=0,
+            # user__isnull=False,
+            company_invitation_date__isnull=False,
+            profile_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=True,
+        )
+
     def company_invitation_refuse(self):
         return self.filter(
             status=1,
@@ -195,6 +204,9 @@ class ProfileManager(models.Manager):
 
     def company_invitation_approve(self):
         return self.get_queryset().company_invitation_approve()
+
+    def company_invitation_approve_inactive(self):
+        return self.get_queryset().company_invitation_approve_inactive()
 
     def company_invitation_refuse(self):
         return self.get_queryset().company_invitation_refuse()

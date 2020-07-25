@@ -61,6 +61,7 @@ class Document(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     )
     document = models.FileField(
         storage=doc_fs,
+        max_length=1000,
         upload_to=get_upload_document_path,
         verbose_name=_('certification'),
     )

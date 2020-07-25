@@ -147,6 +147,7 @@ class Video(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     )
     video = models.FileField(
         storage=video_fs,
+        max_length=1000,
         upload_to=get_upload_video_path,
         verbose_name=_('video'),
     )

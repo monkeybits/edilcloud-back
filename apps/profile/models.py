@@ -1487,6 +1487,17 @@ class OwnerProfile(Profile):
         """
         return self.company.profiles.company_invitation_approve()
 
+    def list_approve_profiles_and_external(self):
+        """
+        Get all company profiles linked to the company and external owners
+        """
+        return Profile.objects.filter(
+            Q(company__profiles=self.company.profiles.company_invitation_approve()) |\
+            Q(role='o') |\
+            Q(role='d'))\
+            .filter(status=1)\
+            .distinct()
+
     def list_refuse_profiles(self):
         """
         Get all company profiles linked to the company

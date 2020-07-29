@@ -417,6 +417,7 @@ class ProfileSerializer(
     user = UserSerializer()
     is_main = serializers.SerializerMethodField()
     talk_count = serializers.SerializerMethodField()
+    is_external = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Profile
@@ -433,6 +434,14 @@ class ProfileSerializer(
 
     def get_talk_count(self, obj):
         return obj.talks.count()
+
+    def get_is_external(self, obj):
+        payload = self.context['view'].get_payload()
+        profile = self.context['request'].user.get_profile_by_id(payload['extra']['profile']['id'])
+        if obj in profile.company.profiles.company_invitation_approve():
+            return False
+        else:
+            return True
 
 
 class MainProfileAddSerializer(

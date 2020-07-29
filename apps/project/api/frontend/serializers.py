@@ -482,8 +482,15 @@ class TeamAddSerializer(
 
     def create(self, validated_data):
         try:
-            member = self.profile.create_member(validated_data)
-            return member
+            is_external = self.context['request'].query_params.get('is_external')
+            if is_external.lower() == 'true':
+                # add company with invitation
+                member = self.profile.create_member(validated_data)
+                return member
+            else:
+                # don't invite but add without invitation
+                member = self.profile.create_member(validated_data)
+                return member
         except django_exception.ProjectMemberAddPermissionDenied as err:
             raise django_api_exception.ProjectMemberAddAPIPermissionDenied(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))

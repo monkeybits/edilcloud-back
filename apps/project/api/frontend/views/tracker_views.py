@@ -1594,7 +1594,6 @@ class TrackerProjectTeamAddView(
             request.data['project'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
-
 class TrackerTeamEditView(
         WhistleGenericViewMixin,
         TrackerTeamMixin,

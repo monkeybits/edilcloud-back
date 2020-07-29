@@ -482,6 +482,11 @@ tracker_urlpatterns = [
         name='tracker_company_staff_list'
     ),
     url(
+        r'^company/(?P<type>(request|approve|refuse|waiting){1})/staff_list_and_external/$',
+        tracker_views.TrackerCompanyStaffListAndExternalView.as_view(),
+        name='tracker_company_staff_list_and_external'
+    ),
+    url(
         r'^company/(?P<type>(request|approve|refuse|waiting){1})/staff_list/disabled/$',
         tracker_views.TrackerCompanyStaffListDisabledView.as_view(),
         name='tracker_company_staff_list_disabled'

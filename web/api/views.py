@@ -30,7 +30,7 @@ class QuerysetMixin(object):
                 if key.endswith('__isnull'):
                     filters[key] = json.loads(value.lower())
                 elif key.endswith('__in'):
-                    filters[key] = value.split(',')[:-1]
+                    filters[key] = value.split(',')
                 else:
                     filters[key] = value
         return filters

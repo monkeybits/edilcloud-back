@@ -90,6 +90,16 @@ tracker_urlpatterns = [
         tracker_views.TrackerProjectTeamAddView.as_view(),
         name='tracker_project_team_add'
     ),
+    # url(
+    #     r'^project/invite/profile_add/(?P<pk>\d+)/$',
+    #     tracker_views.TrackerProjectInviteProfileAddView.as_view(),
+    #     name='tracker_invite_company_profile_add'
+    # ),
+    # url(
+    #     r'^project/(?P<type>(request|approve|refuse|waiting){1})/staff_list/$',
+    #     tracker_views.TrackerProjectStaffListView.as_view(),
+    #     name='tracker_company_staff_list'
+    # ),
     url(
         r'^project/(?P<pk>\d+)/task_add/$',
         tracker_views.TrackerProjectTaskAddView.as_view(),

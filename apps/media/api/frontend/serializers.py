@@ -44,10 +44,9 @@ class PhotoSerializer(
         url = obj.photo.url
         if '%20' in obj.photo.url:
             url = obj.photo.url.replace('%20', ' ')
-        if len(url.split(obj.content_object.slug.lower())) >= 2:
-            splitted = url.split(obj.content_object.slug.lower())[1].rsplit('/', 1)[0]
-            print(splitted)
-            if splitted != '' and splitted != '/':
+        if len(url.split("company/" + obj.content_object.slug)) >= 2:
+            splitted = url.split("company/" + obj.content_object.slug)[1].rsplit('/', 1)[0]
+            if splitted != '':
                 return splitted.split('/', 1)[1]
             return splitted
         else:
@@ -216,8 +215,8 @@ class VideoSerializer(
         url = obj.video.url
         if '%20' in obj.video.url:
             url = obj.video.url.replace('%20', ' ')
-        if len(url.split(obj.content_object.slug.lower())) >= 2:
-            splitted = url.split(obj.content_object.slug.lower())[1].rsplit('/', 1)[0]
+        if len(url.split("company/" + obj.content_object.slug)) >= 2:
+            splitted = url.split("company/" + obj.content_object.slug)[1].rsplit('/', 1)[0]
             if splitted != '':
                 return splitted.split('/', 1)[1]
             return splitted

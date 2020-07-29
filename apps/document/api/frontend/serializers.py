@@ -29,14 +29,18 @@ class DocumentSerializer(
         return obj.document.size
 
     def get_extension(self, obj):
-        return obj.get_file_extension()
+        return obj.get_file_extension()[1:]
 
     def get_folder_relative_path(self, obj):
         url = obj.document.url
         if '%20' in obj.document.url:
             url = obj.document.url.replace('%20', ' ')
-        if len(url.split("company/" + obj.content_object.slug)) >= 2:
-            splitted = url.split("company/" + obj.content_object.slug)[1].rsplit('/', 1)[0]
+        if hasattr(obj.content_object, 'slug'):
+            identity_folder = obj.content_object.slug
+        else:
+            identity_folder = str(obj.content_object.id)
+        if len(url.split(identity_folder)) >= 2:
+            splitted = url.split(identity_folder)[1].rsplit('/', 1)[0]
             if splitted != '':
                 return splitted.split('/', 1)[1]
             return splitted
@@ -47,8 +51,12 @@ class DocumentSerializer(
         url = obj.document.url
         if '%20' in obj.document.url:
             url = obj.document.url.replace('%20', ' ')
-        if len(url.split("company/" + obj.content_object.slug)) >= 2:
-            return url.split("company/" + obj.content_object.slug)[1]
+        if hasattr(obj.content_object, 'slug'):
+            identity_folder = obj.content_object.slug
+        else:
+            identity_folder = str(obj.content_object.id)
+        if len(url.split(identity_folder)) >= 2:
+            return url.split(identity_folder)[1]
         else:
             return url
 

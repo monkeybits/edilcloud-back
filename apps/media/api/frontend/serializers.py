@@ -35,8 +35,12 @@ class PhotoSerializer(
         url = obj.photo.url
         if '%20' in obj.photo.url:
             url = obj.photo.url.replace('%20', ' ')
-        if len(url.split(obj.content_object.slug.lower())) >= 2:
-            return url.split(obj.content_object.slug.lower())[1]
+        if hasattr(obj.content_object, 'slug'):
+            identity_folder = obj.content_object.slug.lower()
+        else:
+            identity_folder = str(obj.content_object.id)
+        if len(url.split(identity_folder)) >= 2:
+            return url.split(identity_folder)[1]
         else:
             return url
 
@@ -44,8 +48,12 @@ class PhotoSerializer(
         url = obj.photo.url
         if '%20' in obj.photo.url:
             url = obj.photo.url.replace('%20', ' ')
-        if len(url.split("company/" + obj.content_object.slug)) >= 2:
-            splitted = url.split("company/" + obj.content_object.slug)[1].rsplit('/', 1)[0]
+        if hasattr(obj.content_object, 'slug'):
+            identity_folder = obj.content_object.slug.lower()
+        else:
+            identity_folder = str(obj.content_object.id)
+        if len(url.split(identity_folder)) >= 2:
+            splitted = url.split(identity_folder)[1].rsplit('/', 1)[0]
             if splitted != '':
                 return splitted.split('/', 1)[1]
             return splitted
@@ -206,8 +214,12 @@ class VideoSerializer(
         url = obj.video.url
         if '%20' in obj.video.url:
             url = obj.video.url.replace('%20', ' ')
-        if len(url.split(obj.content_object.slug.lower())) >= 2:
-            return url.split(obj.content_object.slug.lower())[1]
+        if hasattr(obj.content_object, 'slug'):
+            identity_folder = obj.content_object.slug.lower()
+        else:
+            identity_folder = str(obj.content_object.id)
+        if len(url.split(identity_folder)) >= 2:
+            return url.split(identity_folder)[1]
         else:
             return url
 
@@ -215,8 +227,12 @@ class VideoSerializer(
         url = obj.video.url
         if '%20' in obj.video.url:
             url = obj.video.url.replace('%20', ' ')
-        if len(url.split("company/" + obj.content_object.slug)) >= 2:
-            splitted = url.split("company/" + obj.content_object.slug)[1].rsplit('/', 1)[0]
+        if hasattr(obj.content_object, 'slug'):
+            identity_folder = obj.content_object.slug.lower()
+        else:
+            identity_folder = str(obj.content_object.id)
+        if len(url.split(identity_folder)) >= 2:
+            splitted = url.split(identity_folder)[1].rsplit('/', 1)[0]
             if splitted != '':
                 return splitted.split('/', 1)[1]
             return splitted

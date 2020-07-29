@@ -821,7 +821,10 @@ class TrackerProjectPhotoListView(
     serializer_class = media_serializers.PhotoSerializer
 
     def __init__(self, *args, **kwargs):
-        self.photo_response_include_fields = ['id', 'title', 'pub_date', 'photo']
+        self.photo_response_include_fields = [
+            'id', 'title', 'pub_date', 'photo',
+            'extension', 'size', 'relative_path', 'folder_relative_path'
+        ]
         super(TrackerProjectPhotoListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -850,7 +853,10 @@ class TrackerProjectVideoListView(
     serializer_class = media_serializers.VideoSerializer
 
     def __init__(self, *args, **kwargs):
-        self.photo_response_include_fields = ['id', 'title', 'pub_date', 'video']
+        self.photo_response_include_fields = [
+            'id', 'title', 'pub_date', 'video',
+            'extension', 'size', 'relative_path', 'folder_relative_path'
+        ]
         super(TrackerProjectVideoListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -909,7 +915,10 @@ class TrackerProjectDocumentListView(
     serializer_class = document_serializers.DocumentSerializer
 
     def __init__(self, *args, **kwargs):
-        self.document_response_include_fields = ['id', 'title', 'description', 'document', 'date_create']
+        self.document_response_include_fields = [
+            'id', 'title', 'description', 'document', 'date_create',
+            'extension', 'size', 'relative_path', 'folder_relative_path'
+        ]
         super(TrackerProjectDocumentListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):

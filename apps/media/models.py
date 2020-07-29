@@ -22,7 +22,7 @@ video_fs = FileSystemStorage(location=settings.BASE_DIR, base_url="/")
 
 def get_upload_photo_path(instance, filename):
     media_dir1 = instance.content_object._meta.model_name
-    media_dir2 = slugify(instance.content_object.__str__().lower())
+    media_dir2 = instance.content_object.slug
     ext = pathlib.Path(filename).suffix
     if hasattr(instance, 'title'):
         filename = '{}{}'.format(slugify(instance.title), ext)
@@ -35,7 +35,7 @@ def get_upload_photo_path(instance, filename):
 
 def get_upload_video_path(instance, filename):
     media_dir1 = instance.content_object._meta.model_name
-    media_dir2 = slugify(instance.content_object.__str__().lower())
+    media_dir2 = instance.content_object.slug
     ext = pathlib.Path(filename).suffix
     filename = '{}{}'.format(slugify(instance.title), ext)
     media_root = get_media_root(instance.is_public)

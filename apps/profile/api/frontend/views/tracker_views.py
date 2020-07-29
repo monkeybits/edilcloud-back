@@ -2017,7 +2017,7 @@ class TrackerCompanyProjectListView(
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'status',
             'profiles', 'shared_project', 'typology', 'completed',
-            'shared_companies', 'task_companies'
+            'shared_companies', 'task_companies', 'logo'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'ssn', 'logo'

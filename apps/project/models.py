@@ -18,6 +18,7 @@ from django.template.defaultfilters import truncatechars
 from django.db.models import Q, Count
 from django.utils.text import slugify
 
+from web.api.views import get_media_root
 from web.core.models import UserModel, DateModel, StatusModel, OrderedModel, CleanModel
 from . import managers
 from web import exceptions as django_exception
@@ -36,7 +37,9 @@ def get_upload_logo_path(instance, filename):
     media_dir = slugify(instance.name[0:2])
     ext = pathlib.Path(filename).suffix
     filename = '{}{}'.format(slugify(instance.name), ext)
-    return os.path.join(u"project", u"logo", u"{0}".format(media_dir), filename)
+    media_root1 = get_media_root(True)
+    media_root = media_root1.split('/')[1]
+    return os.path.join(media_root, u"project", u"logo", u"{0}".format(media_dir), filename)
 
 def get_upload_post_path(instance, filename):
     last_post = Post.objects.last().pk

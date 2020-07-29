@@ -485,10 +485,14 @@ class TeamAddSerializer(
             is_external = self.context['request'].query_params.get('is_external')
             if is_external.lower() == 'true':
                 # add company with invitation
+                validated_data['project_invitation_date'] = datetime.datetime.now()
+                validated_data['status'] = 0
                 member = self.profile.create_member(validated_data)
                 return member
             else:
                 # don't invite but add without invitation
+                validated_data['project_invitation_date'] = datetime.datetime.now()
+                validated_data['status'] = 1
                 member = self.profile.create_member(validated_data)
                 return member
         except django_exception.ProjectMemberAddPermissionDenied as err:

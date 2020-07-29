@@ -151,6 +151,11 @@ tracker_urlpatterns = [
         name='tracker_project_team_list'
     ),
     url(
+        r'^project/(?P<pk>\d+)/(?P<type>(request|approve|refuse|waiting){1})/team_list/$',
+        tracker_views.TrackerProjectTeamListView.as_view(),
+        name='tracker_project_team_list'
+    ),
+    url(
         r'^project/(?P<pk>\d+)/talk_list/$',
         tracker_views.TrackerProjectTalkListView.as_view(),
         name='tracker_project_talk_list'

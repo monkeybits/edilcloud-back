@@ -390,7 +390,6 @@ class TrackerCompanyInviteProfileAddView(
         request.data['company_invitation_date'] = datetime.datetime.now()
         return self.create(request, *args, **kwargs)
 
-
 class TrackerCompanyProfileListView(
         JWTPayloadMixin,
         QuerysetMixin,
@@ -1712,6 +1711,51 @@ class TrackerCompanyStaffListView(
         generic = 'list_'+self.kwargs.get('type')+'_profiles'
         self.queryset = getattr(profile, generic)()
         return super(TrackerCompanyStaffListView, self).get_queryset().filter(status=1)
+
+class TrackerProjectStaffListView(
+        JWTPayloadMixin,
+        QuerysetMixin,
+        generics.ListAPIView):
+    """
+    Get all company staffs
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.ProfileSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'email', 'phone', 'mobile',
+            'language', 'fax', 'company', 'user', 'role', 'position',
+            'status', 'uidb36', 'token', 'photo', 'company_invitation_date',
+            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'is_supplier'
+        ]
+        self.user_response_include_fields = [
+            'id', 'first_name', 'last_name'
+        ]
+        super(TrackerCompanyStaffListView, self).__init__(*args, **kwargs)
+
+    def get_filters(self):
+        filters = super(TrackerProjectStaffListView, self).get_filters()
+        if filters:
+            if len(filters) != 1:
+                query = []
+                for key, value in enumerate(filters):
+                    query.append(tuple((value, filters[value])))
+                return reduce(operator.or_, [Q(x) for x in query])
+        return filters
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        generic = 'list_'+self.kwargs.get('type')+'_profiles'
+        self.queryset = getattr(profile, generic)()
+        return super(TrackerProjectStaffListView, self).get_queryset().filter(status=1)
+
 
 class TrackerCompanyStaffListAndExternalView(
         JWTPayloadMixin,

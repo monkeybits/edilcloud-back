@@ -131,6 +131,7 @@ class ProfileQuerySet(models.QuerySet):
                 role=settings.DELEGATE
             )
         )
+
     def company_invitation_approve_inactive(self):
         return self.filter(
             status=0,

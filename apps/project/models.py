@@ -663,6 +663,14 @@ class Team(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         choices=settings.PROJECT_TEAM_ROLE_CHOICES,
         verbose_name=_('role'),
     )
+    project_invitation_date = models.DateTimeField(
+        blank=True, null=True,
+        verbose_name=_('project invitation date'),
+    )
+    invitation_refuse_date = models.DateTimeField(
+        blank=True, null=True,
+        verbose_name=_('invitation refuse date'),
+    )
 
     class Meta:
         verbose_name = _('team')

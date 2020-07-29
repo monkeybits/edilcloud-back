@@ -1719,6 +1719,7 @@ class OwnerProfile(Profile):
                 last_modifier=self.user,
                 profile=self,
                 project=project,
+                project_invitation_date=datetime.datetime.now(),
                 role=settings.OWNER
             )
             team.save()
@@ -2201,12 +2202,38 @@ class OwnerProfile(Profile):
         member.save()
         return member
 
-    def list_members(self, project_id):
+    def list_approve_members(self, project_id):
         """
-        Get all members of a company project
+        Get all members of a company project approved
         """
         project = self.list_projects().get(id=project_id)
-        return project.members.all()
+        return project.members.filter(
+            status=1,
+            project_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=True,
+        )
+
+    def list_waiting_members(self, project_id):
+        """
+        Get all members of a company project waiting
+        """
+        project = self.list_projects().get(id=project_id)
+        return project.members.filter(
+            status=0,
+            project_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=True,
+        )
+
+    def list_refuse_members(self, project_id):
+        """
+        Get all members of a company project refused
+        """
+        project = self.list_projects().get(id=project_id)
+        return project.members.filter(
+            status=0,
+            project_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=False,
+        )
 
     def list_parent_members(self, project_id):
         """
@@ -2239,7 +2266,7 @@ class OwnerProfile(Profile):
         """
         Enable a company project member, if it is disabled
         """
-        member = self.list_members(member.project.id).get(id=member.id)
+        member = self.list_waiting_members(member.project.id).get(id=member.id)
         if member.status == 0:
             member.status = 1
             member.save()
@@ -2249,9 +2276,13 @@ class OwnerProfile(Profile):
         """
         Disable a company project member, if it is enabled
         """
-        member = self.list_members(member.project.id).get(id=member.id)
+        member = self.list_waiting_members(member.project.id).get(id=member.id)
         if member.status == 1:
             member.status = 0
+            member.save()
+        else:
+            member.status = 0
+            member.invitation_refuse_date = datetime.datetime.now()
             member.save()
         return member
 
@@ -3776,8 +3807,6 @@ class Level1Profile(OwnerProfile):
         delattr(OwnerProfile, 'remove_task_activity')
         delattr(OwnerProfile, 'create_member')
         delattr(OwnerProfile, 'edit_member')
-        delattr(OwnerProfile, 'enable_member')
-        delattr(OwnerProfile, 'disable_member')
         delattr(OwnerProfile, 'remove_member')
         delattr(OwnerProfile, 'create_bom')
         delattr(OwnerProfile, 'edit_bom')

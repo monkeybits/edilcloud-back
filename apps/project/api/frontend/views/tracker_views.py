@@ -712,7 +712,9 @@ class TrackerProjectTeamListView(
         try:
             payload = self.get_payload()
             profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-            self.queryset = profile.list_members(self.kwargs.get('pk'))
+            generic = 'list_' + self.kwargs.get('type') + '_members'
+            self.queryset = getattr(profile, generic)(self.kwargs.get('pk'))
+            #self.queryset = profile.list_members(self.kwargs.get('pk'))
             return super(TrackerProjectTeamListView, self).get_queryset()
         except ObjectDoesNotExist as err:
             raise django_api_exception.ProjectAPIDoesNotExist(

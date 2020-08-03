@@ -31,7 +31,7 @@ from . import managers
 from apps.document.models import Document
 from apps.media.models import Photo, Video
 from apps.message.models import Talk, Message
-from apps.project.models import Project, Team, Task, Activity, InternalProject, SharedProject, InternalSharedProject, \
+from apps.project.models import Project, Team, Task, Activity, \
     Post, Comment, TaskPostAssignment
 from apps.quotation.models import Bom, BomRow, Offer, Certification, Quotation, QuotationRow, FavouriteOffer, \
     BoughtOffer, BomArchive, QuotationArchive
@@ -1733,36 +1733,15 @@ class OwnerProfile(Profile):
         else:
             raise django_exception.ProjectClonePermissionDenied(_('Internal Project can\'t be cloned'))
 
+    def list_projects_basic(self):
+        return self.company.projects.filter(
+            Q(profiles__in=[self.id]) | Q(company=self.company)).distinct()
+
     def list_projects(self):
         """
         Get all company projects
         """
-        return self.company.projects.filter(
-            Q(profiles__in=[self.id]) | Q(company=self.company)).distinct()
-
-    def list_internal_projects(self):
-        """
-        Get all company projects
-        """
-        # Todo: FIX
-        # return Project.objects.filter(
-        #     tasks__isnull=False).filter(
-        #     tasks__assigned_company=self.company).annotate(
-        #     tasks__assigned_company__count=Count('tasks__assigned_company', distinct=True)).filter(
-        #     tasks__assigned_company__count=1)
-        return InternalProject.objects.filter(company=self.company)
-
-    def list_shared_projects(self):
-        """
-        Get all company projects
-        """
-        # Todo: FIX
-        # return self.company.projects.all().order_by('-date_create')
-        return Project.objects.filter(
-            tasks__isnull=False).exclude(tasks__assigned_company=self.company)
-        # return self.company.projects.filter(
-        #     typology=settings.PROJECT_PROJECT_SHARED
-        # )
+        return Project.objects.filter(Q(company=self.company) | Q(members__profile__in=[self], members__status=1)).distinct()
 
     def get_generic_project(self, project_id):
         return Project.objects.get(pk=project_id)
@@ -1825,16 +1804,6 @@ class OwnerProfile(Profile):
     # ------ PROJECT TASK ------
 
     def create_task(self, task_dict):
-        # Internal typology is not allowed to assign a task to a different company.
-        # if (
-        #     'project' in task_dict
-        #     and task_dict['project']
-        # ):
-        #     project = self.list_projects().get(id=task_dict['project'].id)
-        #     if project.is_internal_project:
-        #         if 'assigned_company' in task_dict and task_dict['assigned_company'] != project.company:
-        #             task_dict['assigned_company'] = project.company
-
         task = Task(
             creator=self.user,
             last_modifier=self.user,
@@ -1901,6 +1870,7 @@ class OwnerProfile(Profile):
         Get all company tasks of a company project
         """
         project = self.list_projects().get(id=project.id)
+        #return project.tasks.filter(Q(assigned_company=self.company) | Q(project__company_id=self.company.id))
         return project.tasks.all()
 
     def list_tasks_and_parent_tasks(self, project):
@@ -2206,7 +2176,7 @@ class OwnerProfile(Profile):
         """
         Get all members of a company project approved
         """
-        project = self.list_projects().get(id=project_id)
+        project = self.list_projects_basic().get(id=project_id)
         return project.members.filter(
             status=1,
             project_invitation_date__isnull=False,
@@ -2247,8 +2217,7 @@ class OwnerProfile(Profile):
         Get a company project member
         """
         # Todo: Ameliorate
-        project = self.list_projects().get(members__id=member_id)
-        member = project.members.all().get(id=member_id)
+        member = Team.objects.get(id=member_id)
         return member
 
     def edit_member(self, member_dict):
@@ -2266,7 +2235,6 @@ class OwnerProfile(Profile):
         """
         Enable a company project member, if it is disabled
         """
-        member = self.list_waiting_members(member.project.id).get(id=member.id)
         if member.status == 0:
             member.status = 1
             member.save()

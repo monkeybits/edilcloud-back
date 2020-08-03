@@ -246,6 +246,11 @@ tracker_urlpatterns = [
         name='tracker_task_delete'
     ),
     url(
+        r'^team/inviation_list/$',
+        tracker_views.TrackerTeamInviationListView.as_view(),
+        name='tracker_team_detail'
+    ),
+    url(
         r'^team/(?P<pk>\d+)/$',
         tracker_views.TrackerTeamDetailView.as_view(),
         name='tracker_team_detail'

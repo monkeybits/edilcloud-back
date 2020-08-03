@@ -39,7 +39,6 @@ class ProjectSerializer(
     typology = serializers.ReadOnlyField(source='get_typology')
     completed = serializers.ReadOnlyField(source='get_completed_perc')
     shared_companies = serializers.ReadOnlyField(source='get_shared_companies')
-    task_companies = profile_serializers.CompanySerializer(source='get_shared_companies_qs', many=True)
     messages_count = serializers.ReadOnlyField(source='get_messages_count')
     days_for_gantt = serializers.SerializerMethodField(source='get_days_for_gantt')
     project_owner = profile_serializers.CompanySerializer(source='get_project_owner')
@@ -47,7 +46,6 @@ class ProjectSerializer(
     referent = profile_serializers.ProfileSerializer()
     profiles = profile_serializers.ProfileSerializer(many=True)
     creator = profile_serializers.UserSerializer()
-    shared_project = ProjectGenericSerializer()
 
     class Meta:
         model = models.Project
@@ -258,6 +256,7 @@ class TaskSerializer(
     workers = profile_serializers.ProfileSerializer(many=True)
     share_status = serializers.ReadOnlyField(source="get_share_status")
     shared_task = TaskGenericSerializer()
+    only_read = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Task
@@ -269,6 +268,13 @@ class TaskSerializer(
             return view.task_response_include_fields
         return super(TaskSerializer, self).get_field_names(*args, **kwargs)
 
+    def get_only_read(self, obj):
+        payload = self.context['view'].get_payload()
+        profile = self.context['request'].user.get_profile_by_id(payload['extra']['profile']['id'])
+        if obj.project.company == profile.company or obj.assigned_company == profile.company:
+            return False
+        else:
+            return True
 
 class TaskAddSerializer(
     DynamicFieldsModelSerializer,

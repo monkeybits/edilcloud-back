@@ -285,6 +285,9 @@ class TrackerVideoDownloadView(
 def get_upload_folder_path(instance, subpath, folder, is_public, create=False):
     media_dir1 = instance._meta.model_name
     media_dir2 = slugify(instance.__str__().lower())
+    if media_dir1 == 'project':
+        media_dir1 = 'genericproject'
+        media_dir2 = instance.pk
     media_root = get_media_root(is_public)
     if create:
         if subpath == '' or subpath == '/':
@@ -347,16 +350,27 @@ class TrackerFolderAdd(generics.CreateAPIView):
                 })
             folders_list = os.walk(company_folder)
             listOfFiles = list()
-            for (dirpath, dirnames, filenames) in folders_list:
-                listOfFiles += [
-                    {
-                        'path':
-                            os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[
+            if model_name == 'project':
+                for (dirpath, dirnames, filenames) in folders_list:
+                    listOfFiles += [
+                        {
+                            'path': os.path.join(dirpath, dirname).split('genericproject/' + self.kwargs['pk'] + '/')[
                                 1],
-                        'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
-                    }
-                    for dirname in dirnames
-                ]
+                            'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+                        }
+                        for dirname in dirnames
+                    ]
+            else:
+                for (dirpath, dirnames, filenames) in folders_list:
+                    listOfFiles += [
+                        {
+                            'path':
+                                os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[
+                                    1],
+                            'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+                        }
+                        for dirname in dirnames
+                    ]
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={
                 'error': "Folder already exists"
@@ -399,19 +413,32 @@ class TrackerFolderList(generics.CreateAPIView):
         folders_list = os.walk(company_folder)
         print(folders_list)
         listOfFiles = list()
-        for (dirpath, dirnames, filenames) in folders_list:
-            listOfFiles += [
-                {
-                    'path': os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[1],
-                    'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
-                }
-                for dirname in dirnames
-            ]
+        if model_name == 'project':
+            for (dirpath, dirnames, filenames) in folders_list:
+                listOfFiles += [
+                    {
+                        'path': os.path.join(dirpath, dirname).split('genericproject/' + self.kwargs['pk'] + '/')[1],
+                        'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+                    }
+                    for dirname in dirnames
+                ]
+        else:
+            for (dirpath, dirnames, filenames) in folders_list:
+                listOfFiles += [
+                    {
+                        'path': os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[1],
+                        'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+                    }
+                    for dirname in dirnames
+                ]
         return Response(status=status.HTTP_200_OK, data=listOfFiles)
 
 def get_upload_folder_path2(instance, subpath, folder, is_public, create=False, type='photo'):
     media_dir1 = instance._meta.model_name
     media_dir2 = slugify(instance.__str__().lower())
+    if media_dir1 == 'project':
+        media_dir1 = 'genericproject'
+        media_dir2 = instance.pk
     media_root = get_media_root(is_public)
     if create:
         if subpath == '' or subpath == '/':

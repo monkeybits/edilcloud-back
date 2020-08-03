@@ -42,18 +42,6 @@ class TaskTeamInlineAdmin(admin.TabularInline):
     raw_id_fields = ('task', 'profile', )
     verbose_name_plural = _('Task Workers')
 
-
-class InternalProjectInlineAdmin(admin.TabularInline):
-    model = models.Project
-    extra = 0
-    fields = (
-        'company', 'referent', 'name',
-        'date_start', 'date_end',
-    )
-    raw_id_fields = ('company', 'referent',)
-    verbose_name_plural = _('Internal Projects')
-
-
 class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
     class Media:
         js = (
@@ -62,7 +50,7 @@ class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (_('general_information'), {
             'fields': (
-                'company', 'referent', 'shared_project',
+                'company', 'referent',
                 'name', 'description',
                 'date_start', 'date_end', 'tags', 'logo', 'note'
             )
@@ -79,10 +67,10 @@ class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
             )
         }),
     )
-    inlines = (TeamInlineAdmin, TaskInlineAdmin, InternalProjectInlineAdmin,)
+    inlines = (TeamInlineAdmin, TaskInlineAdmin,)
     list_display = (
         'id', 'status', 'company', 'logo',
-        'referent', 'get_shared_project_short_name',
+        'referent',
         'name', 'get_members_count', 'get_tasks_count',
         'date_start', 'date_end', 'tags', 'get_completed_perc'
     )
@@ -96,106 +84,6 @@ class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
     list_filter = (
         'status',
     )
-    search_fields = (
-        'company__name', 'name', 'description',
-        'tags',
-    )
-    raw_id_fields = ('company', 'shared_project', 'referent',)
-
-
-class InternalProjectAdmin(UserAdminMixin, admin.ModelAdmin):
-    """
-    Internal Projects doesn't share projects
-    """
-    class Media:
-        js = (
-            'js/project/project.js',
-        )
-    fieldsets = (
-        (_('general_information'), {
-            'fields': (
-                'company', 'referent', 'shared_project',
-                'name', 'description',
-                'date_start', 'date_end', 'tags',
-            )
-        }),
-        (_('visualization_admin'), {
-            'classes': ('collapse',),
-            'fields': ('ordering', 'status')
-        }),
-        (_('logs_admin'), {
-            'classes': ('collapse',),
-            'fields': (
-                'creator', 'date_create', 'last_modifier',
-                'date_last_modify',
-            )
-        }),
-    )
-    inlines = (TeamInlineAdmin, TaskInlineAdmin,)
-    list_display = (
-        'id', 'status', 'company',
-        'referent', 'get_shared_project_short_name',
-        'name', 'get_members_count', 'get_tasks_count',
-        'date_start', 'date_end', 'tags',
-    )
-    readonly_fields = (
-        'creator', 'date_create', 'last_modifier',
-        'date_last_modify',
-    )
-    list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
-    show_full_result_count = False
-    list_editable = ('status',)
-    list_filter = ('status',)
-    search_fields = (
-        'company__name', 'name', 'description',
-        'tags',
-    )
-    raw_id_fields = ('company', 'shared_project', 'referent',)
-
-
-class SharedProjectAdmin(UserAdminMixin, admin.ModelAdmin):
-    """
-    Shared Projects doesn't have teams.
-    """
-    class Media:
-        js = (
-            'js/project/project.js',
-        )
-    fieldsets = (
-        (_('general_information'), {
-            'fields': (
-                'company', 'referent',
-                'name', 'description',
-                'date_start', 'date_end', 'tags',
-            )
-        }),
-        (_('visualization_admin'), {
-            'classes': ('collapse',),
-            'fields': ('ordering', 'status')
-        }),
-        (_('logs_admin'), {
-            'classes': ('collapse',),
-            'fields': (
-                'creator', 'date_create', 'last_modifier',
-                'date_last_modify',
-            )
-        }),
-    )
-    inlines = (TaskInlineAdmin, InternalProjectInlineAdmin,)
-    list_display = (
-        'id', 'status', 'company',
-        'referent',
-        'name', 'get_members_count', 'get_tasks_count',
-        'date_start', 'date_end', 'tags',
-    )
-    readonly_fields = (
-        'creator', 'date_create', 'last_modifier',
-        'date_last_modify',
-    )
-    list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
-    show_full_result_count = False
-    list_editable = ('status',)
-    list_filter = ('status',)
     search_fields = (
         'company__name', 'name', 'description',
         'tags',
@@ -282,10 +170,6 @@ class CommentAdmin(UserAdminMixin, admin.ModelAdmin):
     list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
 
 admin.site.register(models.Project, ProjectAdmin)
-admin.site.register(models.InternalProject, InternalProjectAdmin)
-admin.site.register(models.SharedProject, SharedProjectAdmin)
-admin.site.register(models.InternalSharedProject, ProjectAdmin)
-admin.site.register(models.GenericProject, ProjectAdmin)
 admin.site.register(models.Task, TaskAdmin)
 admin.site.register(models.Post, PostAdmin)
 admin.site.register(models.Comment, CommentAdmin)

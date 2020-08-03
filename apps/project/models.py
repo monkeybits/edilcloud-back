@@ -157,14 +157,6 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
-        if self.is_generic_project:
-            self.__class__ = GenericProject
-        elif self.is_internal_project:
-            self.__class__ = InternalProject
-        elif self.is_shared_project:
-            self.__class__ = SharedProject
-        elif self.is_internal_shared_project:
-            self.__class__ = InternalSharedProject
 
     def __str__(self):
         return '{}: {} - {}'.format(self.company, self.referent, self.name)
@@ -184,14 +176,6 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
         return self.tasks.all()
 
     get_tasks.fget.short_description = _('Tasks')
-
-    @property
-    def get_shared_project_short_name(self):
-        if self.shared_project:
-            return truncatechars(self.shared_project, 50)
-        return self.shared_project
-
-    get_shared_project_short_name.fget.short_description = _('Shared Project')
 
     @property
     def get_members_count(self):
@@ -229,49 +213,6 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
         task.save()
         return task
 
-    # @property
-    # def is_internal_project(self):
-    #     projects = Project.objects.filter(tasks__isnull=False).filter(
-    #         tasks__assigned_company=self.company).annotate(
-    #         tasks__assigned_company__count=Count('tasks__assigned_company', distinct=True)).filter(
-    #         tasks__assigned_company__count=1)
-    #     return True if projects else False
-    #
-    # @property
-    # def is_shared_project(self):
-    #     projects = Project.objects.filter(
-    #         tasks__isnull=False).exclude(tasks__assigned_company=self.company)
-    #     return True if projects else False
-    #
-    # @property
-    # def is_internal_shared_project(self):
-    #     projects = Project.objects.filter(tasks__isnull=False).filter(
-    #         tasks__assigned_company=self.company).annotate(
-    #         tasks__assigned_company__count=Count('tasks__assigned_company', distinct=True)).filter(
-    #         tasks__assigned_company__count__gt=1)
-    #     return True if projects else False
-
-    @property
-    def is_internal_project(self):
-        return True if self.tasks.exclude(
-            assigned_company=self.company).count() == 0 else False
-
-    @property
-    def is_shared_project(self):
-        companies = self.tasks.filter(assigned_company=self.company).count()
-        external_companies = self.tasks.exclude(assigned_company=self.company).count()
-        return True if companies == 0 and external_companies != 0 else False
-
-    @property
-    def is_internal_shared_project(self):
-        companies = self.tasks.filter(assigned_company=self.company).count()
-        external_companies = self.tasks.exclude(assigned_company=self.company).count()
-        return True if companies != 0 and external_companies != 0 else False
-
-    @property
-    def is_generic_project(self):
-        return True if self.tasks.count() == 0 else False
-
     def get_completed_perc(self):
         # Todo: Improve percentage calculation
         total_percentage = 0
@@ -282,31 +223,6 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
         if total_duration == 0 & total_percentage == 0:
             return 0
         return "%.0f" % (total_percentage/total_duration)
-
-    def get_typology(self):
-        if self.is_generic_project:
-            return 'g'
-        elif self.is_internal_project:
-            return 'i'
-        elif self.is_shared_project:
-            return 's'
-        elif self.is_internal_shared_project:
-            return 'is'
-
-    def get_shared_companies(self):
-        return self.tasks.exclude(assigned_company__isnull=True).exclude(
-            assigned_company=self.company
-        ).values('assigned_company__id', 'assigned_company__name', 'assigned_company__logo')
-        # return Project.objects.filter(
-        #     shared_project=self
-        # ).values('company__id', 'company__name', 'company__logo')
-
-    def get_shared_companies_qs(self):
-        from apps.profile.models import Company
-        companies = Company.objects.filter(assigned_tasks__project=self).exclude(
-            id=self.company.id
-        )
-        return companies
 
     @property
     def get_messages_count(self):
@@ -322,233 +238,6 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
             return self.shared_project.company
         return self.company
 
-
-@python_2_unicode_compatible
-class InternalProject(Project):
-    objects = managers.InternalProjectManager()
-
-    class Meta:
-        proxy = True
-        verbose_name = _('internal project')
-        verbose_name_plural = _('internal projects')
-        permissions = (
-            ("list_internalproject", "can list internal project"),
-            ("detail_internalproject", "can detail internal project"),
-            ("disable_internalproject", "can disable internal project"),
-        )
-
-    def __str__(self):
-        return '{}: {} - {}'.format(self.company, self.referent, self.name)
-
-
-@python_2_unicode_compatible
-class SharedProject(Project):
-    objects = managers.SharedProjectManager()
-
-    class Meta:
-        proxy = True
-        verbose_name = _('shared project')
-        verbose_name_plural = _('shared projects')
-        permissions = (
-            ("list_sharedproject", "can list shared project"),
-            ("detail_sharedproject", "can detail shared project"),
-            ("disable_sharedproject", "can disable shared project"),
-        )
-
-    def __str__(self):
-        return '{}: {} - {}'.format(self.company, self.referent, self.name)
-
-    def clone(self, assignedCompanyId):
-        """
-        clone the project shared in internal projects for any company assigned to tasks
-        internal tasks have to insert by hand
-        """
-        shared_project = Project.objects.get(pk=self.pk)
-        shared_company_ids = list(self.internal_projects.all().values_list('company__id', flat=True))
-        if self.tasks.count() == 0:
-            raise django_exception.ProjectClonePermissionDenied(_('Please create a task before sharing a project'))
-        task_list = self.tasks.filter(assigned_company_id=assignedCompanyId).exclude(
-                        Q(assigned_company__in=shared_company_ids) and
-                        Q(assigned_company=self.company)).order_by('assigned_company')
-        for task in task_list:
-            # if there are new companies
-            if task.assigned_company.id not in shared_company_ids:
-                shared_company_ids.append(task.assigned_company.id)
-                internal_project = shared_project
-                internal_project.name = task.project.name
-                internal_project.company_id = task.assigned_company.id
-                internal_project.referent = None
-                internal_project.id = None
-                internal_project.shared_project = self
-                internal_project.save()
-
-
-@python_2_unicode_compatible
-class InternalSharedProject(Project):
-    objects = managers.InternalSharedProjectManager()
-
-    class Meta:
-        proxy = True
-        verbose_name = _('internal shared project')
-        verbose_name_plural = _('internal shared projects')
-        permissions = (
-            ("list_internalsharedproject", "can list internal shared project"),
-            ("detail_internalsharedproject", "can detail internal shared project"),
-            ("disable_internalsharedproject", "can disable internal shared project"),
-        )
-
-    def __str__(self):
-        return '{}: {} - {}'.format(self.company, self.referent, self.name)
-
-    def clone(self, assignedCompanyId):
-        """
-        clone the project shared in internal projects for any company assigned to tasks
-        internal tasks have to insert by hand
-        """
-        shared_project = Project.objects.get(pk=self.pk)
-        shared_company_ids = list(self.internal_projects.all().values_list('company__id', flat=True))
-        if self.tasks.count() == 0:
-            raise django_exception.ProjectClonePermissionDenied(_('Please create a task before sharing a project'))
-        for task in self.tasks.filter(assigned_company_id=assignedCompanyId).exclude(
-                        Q(assigned_company__in=shared_company_ids) and
-                        Q(assigned_company=self.company)).order_by('assigned_company'):
-            # if there are new companies
-            if task.assigned_company.id not in shared_company_ids:
-                shared_company_ids.append(task.assigned_company.id)
-                internal_project = shared_project
-                internal_project.name = task.project.name
-                internal_project.company_id = task.assigned_company.id
-                internal_project.referent = None
-                internal_project.id = None
-                internal_project.shared_project = self
-                internal_project.save()
-
-
-@python_2_unicode_compatible
-class GenericProject(Project):
-    objects = managers.GenericProjectManager()
-
-    class Meta:
-        proxy = True
-        verbose_name = _('generic project')
-        verbose_name_plural = _('generic projects')
-        permissions = (
-            ("list_genericproject", "can list generic project"),
-            ("detail_genericproject", "can detail generic project"),
-            ("disable_genericproject", "can disable generic project"),
-        )
-
-    def __str__(self):
-        return '{}: {} - {}'.format(self.company, self.referent, self.name)
-
-    def clone(self):
-        """
-        clone the project shared in internal projects for any company assigned to tasks
-        internal tasks have to insert by hand
-        """
-        shared_project = Project.objects.get(pk=self.pk)
-        shared_company_ids = list(self.internal_projects.all().values_list('company__id', flat=True))
-        if self.tasks.count() == 0:
-            raise django_exception.ProjectClonePermissionDenied(_('Please create a task before sharing a project'))
-        for task in self.tasks.exclude(
-                        Q(assigned_company__in=shared_company_ids) and Q(assigned_company=self.company)).order_by(
-                'assigned_company'):
-            # if there are new companies
-            if task.assigned_company.id not in shared_company_ids:
-                shared_company_ids.append(task.assigned_company.id)
-                internal_project = shared_project
-                internal_project.name = task.project.name
-                internal_project.company_id = task.assigned_company.id
-                internal_project.referent = None
-                internal_project.id = None
-                internal_project.shared_project = self
-                internal_project.save()
-
-@python_2_unicode_compatible
-class Post(models.Model):
-    sub_task = models.ForeignKey('project.Activity', on_delete=models.CASCADE, null=True, blank=True)
-    task = models.ForeignKey('project.Task', on_delete=models.CASCADE, null=True, blank=True)
-    author = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
-    is_public = models.BooleanField(
-        default=True,
-        verbose_name=_('is public')
-    )
-    text = models.TextField()
-    created_date = models.DateTimeField(
-            default=timezone.now)
-    published_date = models.DateTimeField(
-            blank=True, null=True)
-    media = models.FileField(blank=True, default="", upload_to=get_upload_post_path)
-
-    def publish(self):
-        self.published_date = timezone.now()
-
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        self.publish()
-        super().save(force_insert=False, force_update=False, using=None,
-             update_fields=None)
-
-
-    def list_posts(self):
-        """
-        Get all company projects
-        """
-        return self.company.projects.filter(
-            Q(profiles__in=[self.id]) | Q(company=self.company)).distinct()
-
-    def __str__(self):
-        if self.task:
-            return "New post for task #" + str(self.task.id) + "by " + self.author.user.get_full_name()
-        else:
-            return "New post for subtask #" + str(self.sub_task.id) + "by " + self.author.user.get_full_name()
-
-@python_2_unicode_compatible
-class Comment(models.Model):
-    parent = models.ForeignKey('self',
-                            null=True,
-                            blank=True,
-                            related_name='replies',
-                            on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    author = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
-    text = models.TextField()
-    created_date = models.DateTimeField(
-        default=timezone.now)
-
-    class Meta:
-        verbose_name = _('comment')
-        verbose_name_plural = _('comments')
-        permissions = (
-            ("list_comment", "can list comment"),
-            ("detail_comment", "can detail comment"),
-            ("disable_comment", "can disable comment"),
-        )
-        ordering = ['-created_date']
-        get_latest_by = "created_date"
-
-    def __str__(self):
-        return "Comment #" + str(self.id) + " of post #" + str(self.post.id)
-
-
-@python_2_unicode_compatible
-class TaskPostAssignment(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
-    task = models.ForeignKey('project.Task', on_delete=models.CASCADE)
-    post = models.ForeignKey('project.Post', on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = _('task')
-        verbose_name_plural = _('taskpostassignments')
-        permissions = (
-            ("list_task_post_assignment", "can list task post assignment"),
-            ("detail_task_post_assignment", "can detail task post assignment"),
-            ("disable_task_post_assignment", "can disable task post assignment"),
-        )
-        ordering = ['-date_last_modify']
-        get_latest_by = "date_create"
-
-    def __str__(self):
-        return "Post #" + str(self.post.pk) + " shared to Task #" + str(self.task.pk)
 
 
 @python_2_unicode_compatible
@@ -646,6 +335,60 @@ class Task(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         else:
             raise django_exception.ProjectClonePermissionDenied(_('Task clone failed due to internal_project not found'))
 
+@python_2_unicode_compatible
+class Activity(CleanModel, UserModel, DateModel, OrderedModel):
+    task = models.ForeignKey(
+        Task,
+        on_delete=models.CASCADE,
+        related_name='activities',
+        verbose_name=_('task')
+    )
+    profile = models.ForeignKey(
+        'profile.Profile',
+        on_delete=models.CASCADE,
+        related_name='activities',
+        verbose_name=_('worker'),
+    )
+    title = models.CharField(
+        max_length=255,
+        db_index=True,
+        verbose_name=_("title"),
+    )
+    description = models.TextField(
+        verbose_name=_('description'),
+    )
+    status = models.CharField(
+        choices=settings.PROJECT_ACTIVITY_STATUS_CHOICES,
+        default='to-do',
+        max_length=25,
+        verbose_name=_('status'),
+    )
+    datetime_start = models.DateTimeField(
+        verbose_name=_('start date time'),
+    )
+    datetime_end = models.DateTimeField(
+        verbose_name=_('end date time'),
+    )
+
+    class Meta:
+        verbose_name = _('activity')
+        verbose_name_plural = _('activities')
+        permissions = (
+            ("list_activity", "can list activity"),
+            ("detail_activity", "can detail activity"),
+            ("disable_activity", "can disable activity"),
+        )
+        ordering = ['-date_last_modify']
+        get_latest_by = "date_create"
+
+    def __str__(self):
+        return '{} {} ({})'.format(
+            self.task.name, self.profile, self.title,
+        )
+
+    @property
+    def duration(self):
+        return (self.datetime_end.date() - self.datetime_start.date()).days + 1
 
 @python_2_unicode_compatible
 class Team(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
@@ -707,56 +450,86 @@ class Team(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
 
 
 @python_2_unicode_compatible
-class Activity(CleanModel, UserModel, DateModel, OrderedModel):
-    task = models.ForeignKey(
-        Task,
-        on_delete=models.CASCADE,
-        related_name='activities',
-        verbose_name=_('task')
+class Post(models.Model):
+    sub_task = models.ForeignKey('project.Activity', on_delete=models.CASCADE, null=True, blank=True)
+    task = models.ForeignKey('project.Task', on_delete=models.CASCADE, null=True, blank=True)
+    author = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
+    is_public = models.BooleanField(
+        default=True,
+        verbose_name=_('is public')
     )
-    profile = models.ForeignKey(
-        'profile.Profile',
-        on_delete=models.CASCADE,
-        related_name='activities',
-        verbose_name=_('worker'),
-    )
-    title = models.CharField(
-        max_length=255,
-        db_index=True,
-        verbose_name=_("title"),
-    )
-    description = models.TextField(
-        verbose_name=_('description'),
-    )
-    status = models.CharField(
-        choices=settings.PROJECT_ACTIVITY_STATUS_CHOICES,
-        default='to-do',
-        max_length=25,
-        verbose_name=_('status'),
-    )
-    datetime_start = models.DateTimeField(
-        verbose_name=_('start date time'),
-    )
-    datetime_end = models.DateTimeField(
-        verbose_name=_('end date time'),
-    )
+    text = models.TextField()
+    created_date = models.DateTimeField(
+            default=timezone.now)
+    published_date = models.DateTimeField(
+            blank=True, null=True)
+    media = models.FileField(blank=True, default="", upload_to=get_upload_post_path)
+
+    def publish(self):
+        self.published_date = timezone.now()
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        self.publish()
+        super().save(force_insert=False, force_update=False, using=None,
+             update_fields=None)
+
+
+    def list_posts(self):
+        """
+        Get all company projects
+        """
+        return self.company.projects.filter(
+            Q(profiles__in=[self.id]) | Q(company=self.company)).distinct()
+
+    def __str__(self):
+        if self.task:
+            return "New post for task #" + str(self.task.id) + "by " + self.author.user.get_full_name()
+        else:
+            return "New post for subtask #" + str(self.sub_task.id) + "by " + self.author.user.get_full_name()
+
+@python_2_unicode_compatible
+class Comment(models.Model):
+    parent = models.ForeignKey('self',
+                            null=True,
+                            blank=True,
+                            related_name='replies',
+                            on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
+    text = models.TextField()
+    created_date = models.DateTimeField(
+        default=timezone.now)
 
     class Meta:
-        verbose_name = _('activity')
-        verbose_name_plural = _('activities')
+        verbose_name = _('comment')
+        verbose_name_plural = _('comments')
         permissions = (
-            ("list_activity", "can list activity"),
-            ("detail_activity", "can detail activity"),
-            ("disable_activity", "can disable activity"),
+            ("list_comment", "can list comment"),
+            ("detail_comment", "can detail comment"),
+            ("disable_comment", "can disable comment"),
+        )
+        ordering = ['-created_date']
+        get_latest_by = "created_date"
+
+    def __str__(self):
+        return "Comment #" + str(self.id) + " of post #" + str(self.post.id)
+
+@python_2_unicode_compatible
+class TaskPostAssignment(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
+    task = models.ForeignKey('project.Task', on_delete=models.CASCADE)
+    post = models.ForeignKey('project.Post', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('task')
+        verbose_name_plural = _('taskpostassignments')
+        permissions = (
+            ("list_task_post_assignment", "can list task post assignment"),
+            ("detail_task_post_assignment", "can detail task post assignment"),
+            ("disable_task_post_assignment", "can disable task post assignment"),
         )
         ordering = ['-date_last_modify']
         get_latest_by = "date_create"
 
     def __str__(self):
-        return '{} {} ({})'.format(
-            self.task.name, self.profile, self.title,
-        )
-
-    @property
-    def duration(self):
-        return (self.datetime_end.date() - self.datetime_start.date()).days + 1
+        return "Post #" + str(self.post.pk) + " shared to Task #" + str(self.task.pk)

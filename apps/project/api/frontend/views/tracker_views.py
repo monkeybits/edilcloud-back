@@ -11,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import generics, status
 
+from apps.project.models import Team
 from web.api.permissions import RoleAccessPermission
 from web.api.views import QuerysetMixin, JWTPayloadMixin, WhistleGenericViewMixin
 from apps.project.api.frontend import serializers
@@ -853,7 +854,7 @@ class TrackerProjectVideoListView(
     serializer_class = media_serializers.VideoSerializer
 
     def __init__(self, *args, **kwargs):
-        self.photo_response_include_fields = [
+        self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
             'extension', 'size', 'relative_path', 'folder_relative_path'
         ]
@@ -1236,7 +1237,7 @@ class TrackerProjectTaskListView(
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
-            'workers', 'share_status', 'shared_task'
+            'workers', 'share_status', 'shared_task', 'only_read'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1554,6 +1555,31 @@ class TrackerTeamMixin(
             self.serializer_class = serializers.TeamSerializer
         else:
             self.serializer_class = output_serializer
+
+class TrackerTeamInviationListView(
+    TrackerTeamMixin,
+    generics.ListAPIView
+):
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE)
+    serializer_class = serializers.TeamSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.team_response_include_fields = ['id', 'project', 'profile', 'role', 'status']
+        self.project_response_include_fields = ['id', 'name', 'description', 'date_start', 'date_end',]
+        self.profile_response_include_fields = ['id', 'first_name', 'last_name']
+        super(TrackerTeamInviationListView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            self.queryset = Team.objects.filter(profile=profile.id, status=0)
+            return super(TrackerTeamInviationListView, self).get_queryset()
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.ProjectAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
 
 
 class TrackerTeamDetailView(

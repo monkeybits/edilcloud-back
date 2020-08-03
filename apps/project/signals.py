@@ -14,10 +14,10 @@ from web.core.middleware.thread_local import get_current_profile
 from web.core.utils import get_html_message, get_bell_notification_status, get_email_notification_status
 
 
-@receiver([post_save, post_delete], sender=project_models.InternalProject)
-@receiver([post_save, post_delete], sender=project_models.SharedProject)
-@receiver([post_save, post_delete], sender=project_models.InternalSharedProject)
-@receiver([post_save, post_delete], sender=project_models.GenericProject)
+# @receiver([post_save, post_delete], sender=project_models.SharedProject)
+# @receiver([post_save, post_delete], sender=project_models.InternalSharedProject)
+# @receiver([post_save, post_delete], sender=project_models.GenericProject)
+@receiver([post_save, post_delete], sender=project_models.Project)
 def project_notification(sender, instance, **kwargs):
     company_staff = instance.profiles.all().union(
         instance.company.get_owners_and_delegates()

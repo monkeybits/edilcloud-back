@@ -695,7 +695,10 @@ class TrackerProjectTeamListView(
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'position',
-            'email', 'phone', 'note', 'role', 'language'
+            'email', 'phone', 'note', 'role', 'language', 'company'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name'
         ]
         super(TrackerProjectTeamListView, self).__init__(*args, **kwargs)
 

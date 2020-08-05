@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers, status
@@ -101,7 +101,7 @@ class MessageAddSerializer(
 
     def validate(self, data):
         data = self.request.data
-        model_name = data['talk']['content_type'].model
+        model_name = ContentType.objects.get(id=data['talk']['content_type_id']).model
         if model_name == 'profile':
             generic_model = profile_models.Profile
         elif model_name == 'company':

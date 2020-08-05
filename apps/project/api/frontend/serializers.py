@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers, status
 
+from apps.message.api.frontend.serializers import TalkSerializer
 from ... import models
 from apps.profile.api.frontend import serializers as profile_serializers
 from apps.document.api.frontend import serializers as document_serializers
@@ -45,6 +46,7 @@ class ProjectSerializer(
     company = profile_serializers.CompanySerializer()
     referent = profile_serializers.ProfileSerializer()
     profiles = profile_serializers.ProfileSerializer(many=True)
+    talks = TalkSerializer(many=True)
     creator = profile_serializers.UserSerializer()
 
     class Meta:

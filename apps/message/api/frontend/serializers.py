@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, status
 from rest_framework.serializers import ValidationError
 
+from apps.profile.api.frontend.serializers import ProfileSerializer
+from apps.profile.models import Profile
 from ... import models
 from apps.profile import models as profile_models
 from apps.project import models as project_models
@@ -60,7 +62,19 @@ class TalkMessageSerializer(
         return super(TalkMessageSerializer, self).get_field_names(*args, **kwargs)
 
     def get_messages(self, obj):
-        return obj.messages.all().values('id', 'body', 'sender')
+        messages_list_json = []
+        messages = obj.messages.all().values('id', 'body', 'sender', 'date_create')
+        for message in messages:
+            profile = Profile.objects.get(id=message['sender'])
+            message['sender'] = {
+                'id': profile.id,
+                'first_name': profile.first_name,
+                'last_name': profile.last_name,
+                'photo': profile.photo if profile.photo != '' else None,
+                'role': profile.role,
+                'company': profile.company.id,
+            }
+        return messages
 
 
 class TalkAddSerializer(
@@ -79,13 +93,14 @@ class TalkAddSerializer(
 class MessageAddSerializer(
         JWTPayloadMixin,
         DynamicFieldsModelSerializer):
-    talk = TalkAddSerializer()
+    talk = TalkAddSerializer(required=False)
 
     class Meta:
         model = models.Message
         fields = '__all__'
 
     def validate(self, data):
+        data = self.request.data
         model_name = data['talk']['content_type'].model
         if model_name == 'profile':
             generic_model = profile_models.Profile

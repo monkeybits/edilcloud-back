@@ -103,7 +103,7 @@ class TrackerMessageAddView(
         if not 'talk' in request.data:
             request.data['talk'] = dict()
 
-        request.data['talk']['content_type'] = ContentType.objects.get(model=self.kwargs['type']).id
+        request.data['talk']['content_type'] = ContentType.objects.get(model=self.kwargs['type'])
         request.data['talk']['object_id'] = self.kwargs['pk']
         return self.create(request, *args, **kwargs)
 
@@ -212,7 +212,6 @@ class TrackerTalkDetailView(
     def __init__(self, *args, **kwargs):
         self.talk_message_response_include_fields = ['id', 'code', 'messages']
         super(TrackerTalkDetailView, self).__init__( *args, **kwargs)
-
 
 class TrackerTalkDeleteView(
         TrackerTalkMixin,

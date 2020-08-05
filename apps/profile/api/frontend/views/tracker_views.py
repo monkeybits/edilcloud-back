@@ -1105,7 +1105,7 @@ class TrackerCompanyTalkListView(
     serializer_class = message_serializers.TalkSerializer
 
     def __init__(self, *args, **kwargs):
-        self.talk_response_include_fields = ['id', 'code']
+        self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         super(TrackerCompanyTalkListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -2017,13 +2017,16 @@ class TrackerCompanyProjectListView(
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'status',
             'profiles', 'typology', 'completed',
-            'shared_companies', 'logo'
+            'shared_companies', 'logo', 'talks'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'ssn', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
+        ]
+        self.talk_response_include_fields = [
+            'id', 'code'
         ]
         super(TrackerCompanyProjectListView, self).__init__(*args, **kwargs)
 

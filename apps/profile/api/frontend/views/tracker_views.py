@@ -857,14 +857,14 @@ class TrackerCompanyEditView(
             'vat_number', 'url',
             'email', 'phone', 'phone2', 'fax',
             'note', 'logo', 'category',
-            'can_access_files', 'can_access_chat'
+            'color'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'brand', 'description', 'ssn',
             'vat_number', 'url',
             'email', 'phone', 'phone2', 'fax',
             'note', 'logo', 'category',
-            'can_access_files', 'can_access_chat'
+            'color'
         ]
         super(TrackerCompanyEditView, self).__init__(*args, **kwargs)
 

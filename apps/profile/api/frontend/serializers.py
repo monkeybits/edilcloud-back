@@ -19,34 +19,6 @@ from web.api.serializers import DynamicFieldsModelSerializer
 User = get_user_model()
 
 
-palette_color = [
-    '1b112c',
-    '413047',
-    '543e54',
-    '75596f',
-    '91718b',
-    'b391aa',
-    'ccb3c6',
-    'e3cfe3',
-    'fff7ff',
-    'fffbb5',
-    'faf38e',
-    'f7d076',
-    'fa9c69',
-    'eb7363',
-    'e84545',
-    'c22e53',
-    '943054',
-    '612147',
-    '3d173c',
-    '3f233c',
-    '66334b',
-    '8c4b63',
-    'c16a7d',
-    'e5959f',
-    'ffccd0',
-]
-
 class UserSerializer(
         DynamicFieldsModelSerializer):
     class Meta:
@@ -102,7 +74,6 @@ class CompanySerializer(
     partnership = serializers.SerializerMethodField(read_only=True)
     can_access_files = serializers.SerializerMethodField(read_only=True)
     can_access_chat = serializers.SerializerMethodField(read_only=True)
-    color = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = models.Company
@@ -179,9 +150,6 @@ class CompanySerializer(
                 return 0
         except:
             return 0
-
-    def get_color(self, obj):
-        return '#' + random.choice(palette_color)
 
 class PartnershipSerializer(
         DynamicFieldsModelSerializer):

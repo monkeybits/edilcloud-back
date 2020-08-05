@@ -311,6 +311,11 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         verbose_name=_('category'),
         help_text=_('Company Categories'),
     )
+    color = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name=_("color")
+    )
 
     class Meta:
         verbose_name = _('company')

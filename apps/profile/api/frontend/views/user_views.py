@@ -294,7 +294,7 @@ class ProfileListView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo', 'creator'
+            'ssn', 'logo', 'creator', 'color'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'

@@ -104,6 +104,7 @@ class TrackerMessageAddView(
             request.data['talk'] = dict()
 
         request.data['talk']['content_type'] = ContentType.objects.get(model=self.kwargs['type'])
+        request.data['talk']['content_type_id'] = request.data['talk']['content_type'].id
         request.data['talk']['object_id'] = self.kwargs['pk']
         return self.create(request, *args, **kwargs)
 

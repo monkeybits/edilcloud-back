@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import operator
+import random
 from functools import reduce
 
 from django.db.models import Q
@@ -18,6 +19,33 @@ from web.drf import exceptions as django_api_exception
 from web import exceptions as django_exception
 from web.api.views import WhistleGenericViewMixin, JWTPayloadMixin
 
+palette_color = [
+    '1b112c',
+    '413047',
+    '543e54',
+    '75596f',
+    '91718b',
+    'b391aa',
+    'ccb3c6',
+    'e3cfe3',
+    'fff7ff',
+    'fffbb5',
+    'faf38e',
+    'f7d076',
+    'fa9c69',
+    'eb7363',
+    'e84545',
+    'c22e53',
+    '943054',
+    '612147',
+    '3d173c',
+    '3f233c',
+    '66334b',
+    '8c4b63',
+    'c16a7d',
+    'e5959f',
+    'ffccd0',
+]
 
 class UserProfileMixin(
         JWTPayloadMixin):
@@ -56,12 +84,12 @@ class CompanyAddView(
         self.company_request_include_fields = [
             'name', 'slug', 'brand', 'ssn', 'vat_number',
             'url', 'email', 'phone', 'phone2', 'fax', 'logo',
-            'note', 'category', 'description', 'is_supplier'
+            'note', 'category', 'description', 'is_supplier', 'color'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'brand', 'ssn', 'vat_number',
             'url', 'email', 'phone', 'phone2', 'fax', 'logo',
-            'note', 'category'
+            'note', 'category', 'color'
         ]
         super(CompanyAddView, self).__init__(*args, **kwargs)
     
@@ -78,6 +106,7 @@ class CompanyAddView(
             for row in qs:
                 category_field[row.code] = row.name
             request.data['category'] = json.dumps(category_field)
+        request.data['color'] = '#' + random.choice(palette_color)
         return super(CompanyAddView, self).post(request, *args, **kwargs)
 
 

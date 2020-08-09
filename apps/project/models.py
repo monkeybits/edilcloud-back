@@ -287,6 +287,19 @@ class Task(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         default=0,
         verbose_name=_('progress percentage'),
     )
+    alert = models.BooleanField(
+        default=False,
+        verbose_name=_('alert')
+    )
+    starred = models.BooleanField(
+        default=False,
+        verbose_name=_('starred')
+    )
+    note = models.TextField(
+        max_length=500,
+        null=True, blank=True,
+        verbose_name=_('note')
+    )
 
     class Meta:
         verbose_name = _('task')
@@ -368,6 +381,19 @@ class Activity(CleanModel, UserModel, DateModel, OrderedModel):
     )
     datetime_end = models.DateTimeField(
         verbose_name=_('end date time'),
+    )
+    alert = models.BooleanField(
+        default=False,
+        verbose_name=_('alert')
+    )
+    starred = models.BooleanField(
+        default=False,
+        verbose_name=_('starred')
+    )
+    note = models.TextField(
+        max_length=500,
+        null=True, blank=True,
+        verbose_name=_('note')
     )
 
     class Meta:

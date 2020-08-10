@@ -74,6 +74,7 @@ class CompanySerializer(
     partnership = serializers.SerializerMethodField(read_only=True)
     can_access_files = serializers.SerializerMethodField(read_only=True)
     can_access_chat = serializers.SerializerMethodField(read_only=True)
+    color_project = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Company
@@ -91,6 +92,12 @@ class CompanySerializer(
             return view.company_response_include_fields
         return super(CompanySerializer, self).get_field_names(*args, **kwargs)
 
+    def get_color_project(self, obj):
+        obj_color = obj.projectcompanycolorassignment_set.all().filter(project=self.context['view'].kwargs['pk'])
+        if obj_color:
+            return obj_color[0].color
+        else:
+            return None
     def get_can_access_files(self, obj):
         payload = self.get_payload()
         # Todo: Under review

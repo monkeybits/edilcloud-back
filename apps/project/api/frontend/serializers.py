@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
+import random
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
@@ -13,7 +15,35 @@ from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
+from ...models import ProjectCompanyColorAssignment
 
+palette_color = [
+    '1b112c',
+    '413047',
+    '543e54',
+    '75596f',
+    '91718b',
+    'b391aa',
+    'ccb3c6',
+    'e3cfe3',
+    'fff7ff',
+    'fffbb5',
+    'faf38e',
+    'f7d076',
+    'fa9c69',
+    'eb7363',
+    'e84545',
+    'c22e53',
+    '943054',
+    '612147',
+    '3d173c',
+    '3f233c',
+    '66334b',
+    '8c4b63',
+    'c16a7d',
+    'e5959f',
+    'ffccd0',
+]
 
 class ProjectGenericSerializer(
     DynamicFieldsModelSerializer):
@@ -145,6 +175,9 @@ class ProjectAddSerializer(
     def create(self, validated_data):
         try:
             project = self.profile.create_project(validated_data)
+            ProjectCompanyColorAssignment.objects.create(
+                project=project, company=project.company, color='#' + random.choice(palette_color)
+            )
             return project
         except Exception as exc:
             if type(exc).__name__ == 'ValidationError':
@@ -504,12 +537,20 @@ class TeamAddSerializer(
                 validated_data['project_invitation_date'] = datetime.datetime.now()
                 validated_data['status'] = 0
                 member = self.profile.create_member(validated_data)
+                if not ProjectCompanyColorAssignment.objects.filter(project=member.project, company=self.profile.company).exists():
+                    ProjectCompanyColorAssignment.objects.create(
+                        project=member.project, company=self.profile.company, color='#' + random.choice(palette_color)
+                    )
                 return member
             else:
                 # don't invite but add without invitation
                 validated_data['project_invitation_date'] = datetime.datetime.now()
                 validated_data['status'] = 1
                 member = self.profile.create_member(validated_data)
+                if not ProjectCompanyColorAssignment.objects.filter(project=member.project, company=self.profile.company).exists():
+                    ProjectCompanyColorAssignment.objects.create(
+                        project=member.project, company=self.profile.company, color='#' + random.choice(palette_color)
+                    )
                 return member
         except django_exception.ProjectMemberAddPermissionDenied as err:
             raise django_api_exception.ProjectMemberAddAPIPermissionDenied(

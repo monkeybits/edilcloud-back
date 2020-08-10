@@ -1283,13 +1283,13 @@ class TrackerProjectTaskAddView(
         self.task_request_include_fields = [
             'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'shared_task', 'alert',
-            'starred', 'note'
+            'starred', 'note', 'progress'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
             'workers', 'share_status', 'shared_task', 'alert',
-            'starred', 'note'
+            'starred', 'note', 'progress'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',

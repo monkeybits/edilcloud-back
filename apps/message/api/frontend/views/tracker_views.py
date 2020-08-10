@@ -90,7 +90,7 @@ class TrackerMessageAddView(
             'id', 'first_name', 'last_name', 'photo', 'role', 'company'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'category'
+            'id', 'name', 'category', 'color_project'
         ]
         self.talk_response_include_fields = [
             'id', 'code', 'content_type_name', 'object_id'

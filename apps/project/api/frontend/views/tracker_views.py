@@ -800,7 +800,7 @@ class TrackerProjectMessageListView(
             'id', 'first_name', 'last_name', 'photo', 'role', 'company'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'category'
+            'id', 'name', 'category', 'color_project'
         ]
         super(TrackerProjectMessageListView, self).__init__(*args, **kwargs)
 

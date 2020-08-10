@@ -474,6 +474,12 @@ class Team(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             return "Worker"
         return self.role
 
+@python_2_unicode_compatible
+class ProjectCompanyColorAssignment(models.Model):
+    project = models.ForeignKey('project.Project', on_delete=models.CASCADE)
+    company = models.ForeignKey('profile.Company', on_delete=models.CASCADE)
+    color = models.CharField(max_length=10)
+
 
 @python_2_unicode_compatible
 class Post(models.Model):

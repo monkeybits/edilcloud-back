@@ -1282,13 +1282,13 @@ class TrackerProjectTaskAddView(
     def __init__(self, *args, **kwargs):
         self.task_request_include_fields = [
             'project', 'name', 'assigned_company', 'date_start',
-            'date_end', 'date_completed', 'shared_task', 'alert'
+            'date_end', 'date_completed', 'shared_task', 'alert',
             'starred', 'note'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
-            'workers', 'share_status', 'shared_task','alert'
+            'workers', 'share_status', 'shared_task', 'alert',
             'starred', 'note'
         ]
         self.project_response_include_fields = [
@@ -1771,17 +1771,17 @@ class TrackerTaskActivityAddView(
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
             'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end','alert',
+            'datetime_start', 'datetime_end', 'alert',
             'starred', 'note'
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end','alert',
+            'datetime_start', 'datetime_end', 'alert',
             'starred', 'note'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
-            'date_end', 'date_completed','alert',
+            'date_end', 'date_completed', 'alert',
             'starred', 'note'
         ]
         self.project_response_include_fields = [
@@ -1815,12 +1815,12 @@ class TrackerTaskActivityListView(
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end','alert',
+            'datetime_start', 'datetime_end', 'alert',
             'starred', 'note'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
-            'date_end', 'date_completed','alert',
+            'date_end', 'date_completed', 'alert',
             'starred', 'note'
         ]
         self.project_response_include_fields = [
@@ -1921,7 +1921,7 @@ class TrackerActivityEditView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end','alert',
+            'datetime_start', 'datetime_end', 'alert',
             'starred', 'note'
         ]
         self.task_response_include_fields = [

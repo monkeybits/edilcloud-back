@@ -376,11 +376,11 @@ class Activity(CleanModel, UserModel, DateModel, OrderedModel):
         max_length=25,
         verbose_name=_('status'),
     )
-    datetime_start = models.DateTimeField(
-        verbose_name=_('start date time'),
+    datetime_start = models.DateField(
+        verbose_name=_('start date'),
     )
-    datetime_end = models.DateTimeField(
-        verbose_name=_('end date time'),
+    datetime_end = models.DateField(
+        verbose_name=_('end date'),
     )
     alert = models.BooleanField(
         default=False,

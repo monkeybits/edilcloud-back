@@ -121,7 +121,6 @@ class TrackerPhotoEditView(
             self.photo_request_include_fields.remove('photo')
         return self.update(request, *args, **kwargs)
 
-
 class TrackerPhotoDeleteView(
         TrackerPhotoMixin,
         generics.RetrieveDestroyAPIView):
@@ -376,6 +375,88 @@ class TrackerFolderAdd(generics.CreateAPIView):
                 'error': "Folder already exists"
             })
         return Response(status=status.HTTP_201_CREATED, data=listOfFiles)
+
+def get_move_folder_path(instance, source_folder, dest_folder, is_public, create=False):
+    media_dir1 = instance._meta.model_name
+    media_dir2 = slugify(instance.__str__().lower())
+    if media_dir1 == 'project':
+        media_dir1 = 'project'
+        media_dir2 = instance.pk
+    media_root = get_media_root(is_public)
+    for name in ['photo', 'video', 'document']:
+        source = os.path.join(media_root, name, format(media_dir1), format(media_dir2),  source_folder)
+        destination = os.path.join(media_root, name, format(media_dir1), format(media_dir2),  dest_folder)
+        try:
+            shutil.move(source, destination)
+        except Exception:
+            continue
+    return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2))
+
+class TrackerFolderMove(generics.CreateAPIView):
+    """
+    Folder move
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+
+    def post(self, request, *args, **kwargs):
+        content_type = ContentType.objects.get(model=self.kwargs['type'])
+        from_folder = request.data['from']
+        to_folder = request.data['to']
+        model_name = content_type.model
+        if model_name == 'company':
+            generic_model = profile_models.Company
+        elif model_name == 'project':
+            generic_model = project_models.Project
+        elif model_name == 'bom':
+            generic_model = quotation_models.Bom
+        else:
+            raise ValidationError("Model Not Found")
+
+        if not generic_model.objects.filter(pk=self.kwargs['pk']):
+            raise ValidationError("Object Not Found")
+
+        if model_name == 'project':
+            gen_mod = Project.objects.get(id=self.kwargs['pk'])
+        elif model_name == 'company':
+            gen_mod = Company.objects.get(id=self.kwargs['pk'])
+        elif model_name == 'bom':
+            gen_mod = Bom.objects.get(id=self.kwargs['pk'])
+        try:
+            company_folder = get_move_folder_path(gen_mod, from_folder, to_folder, False, True)
+            if company_folder == False:
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={
+                    'error': 'Folder not created. Max subfolders limit is 3'
+                })
+            folders_list = os.walk(company_folder)
+            listOfFiles = list()
+            if model_name == 'project':
+                for (dirpath, dirnames, filenames) in folders_list:
+                    listOfFiles += [
+                        {
+                            'path': os.path.join(dirpath, dirname).split('project/' + self.kwargs['pk'] + '/')[
+                                1],
+                            'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+                        }
+                        for dirname in dirnames
+                    ]
+            else:
+                for (dirpath, dirnames, filenames) in folders_list:
+                    listOfFiles += [
+                        {
+                            'path':
+                                os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[
+                                    1],
+                            'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+                        }
+                        for dirname in dirnames
+                    ]
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={
+                'error': "Folder already exists"
+            })
+        return Response(status=status.HTTP_201_CREATED, data=listOfFiles)
+
 
 class TrackerFolderList(generics.CreateAPIView):
     """

@@ -191,7 +191,6 @@ class PhotoEditSerializer(
     def get_extension(self, obj):
         return obj.get_file_extension()[1:]
 
-
 class VideoSerializer(
         DynamicFieldsModelSerializer):
 

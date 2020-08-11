@@ -21,14 +21,19 @@ tracker_urlpatterns = [
         name='tracker_photo_add'
     ),
     url(
-        r'^photo/(?P<type>(project|company|bom){1})/(?P<pk>[0-9]+)/move/$',
-        tracker_views.TrackerPhotoAddView.as_view(),
-        name='tracker_photo_add'
-    ),
-    url(
-        r'^photo/move/(?P<pk>\d+)/$',
+        r'^photo/(?P<pk>[0-9]+)/move/$',
         tracker_views.TrackerPhotoMoveView.as_view(),
         name='tracker_photo_move'
+    ),
+    url(
+        r'^video/(?P<pk>[0-9]+)/move/$',
+        tracker_views.TrackerVideoMoveView.as_view(),
+        name='tracker_video_move'
+    ),
+    url(
+        r'^document/(?P<pk>[0-9]+)/move/$',
+        tracker_views.TrackerDocumentMoveView.as_view(),
+        name='tracker_document_move'
     ),
     url(
         r'^photo/delete/(?P<pk>\d+)/$',

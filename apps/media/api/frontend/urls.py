@@ -21,9 +21,19 @@ tracker_urlpatterns = [
         name='tracker_photo_add'
     ),
     url(
-        r'^photo/edit/(?P<pk>\d+)/$',
-        tracker_views.TrackerPhotoEditView.as_view(),
-        name='tracker_photo_edit'
+        r'^photo/(?P<pk>[0-9]+)/move/$',
+        tracker_views.TrackerPhotoMoveView.as_view(),
+        name='tracker_photo_move'
+    ),
+    url(
+        r'^video/(?P<pk>[0-9]+)/move/$',
+        tracker_views.TrackerVideoMoveView.as_view(),
+        name='tracker_video_move'
+    ),
+    url(
+        r'^document/(?P<pk>[0-9]+)/move/$',
+        tracker_views.TrackerDocumentMoveView.as_view(),
+        name='tracker_document_move'
     ),
     url(
         r'^photo/delete/(?P<pk>\d+)/$',
@@ -79,6 +89,11 @@ tracker_urlpatterns = [
         r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/add/$',
         tracker_views.TrackerFolderAdd.as_view(),
         name='tracker_folder_add'
+    ),
+    url(
+        r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/move/$',
+        tracker_views.TrackerFolderMove.as_view(),
+        name='tracker_folder_move'
     ),
     url(
         r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/delete/$',

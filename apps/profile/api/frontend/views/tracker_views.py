@@ -444,7 +444,7 @@ class TrackerCompanyProfileEditView(
     Company can edit company profile
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
     serializer_class = serializers.ProfileEditSerializer
 
     def __init__(self, *args, **kwargs):

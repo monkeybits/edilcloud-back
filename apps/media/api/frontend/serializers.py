@@ -43,7 +43,7 @@ class PhotoSerializer(
         if '%20' in obj.photo.url:
             url = obj.photo.url.replace('%20', ' ')
         if hasattr(obj.content_object, 'slug'):
-            identity_folder = obj.content_object.slug.lower()
+            identity_folder = obj.content_object.slug
         else:
             identity_folder = str(obj.content_object.id)
         if len(url.split(identity_folder)) >= 2:
@@ -56,7 +56,7 @@ class PhotoSerializer(
         if '%20' in obj.photo.url:
             url = obj.photo.url.replace('%20', ' ')
         if hasattr(obj.content_object, 'slug'):
-            identity_folder = obj.content_object.slug.lower()
+            identity_folder = obj.content_object.slug
         else:
             identity_folder = str(obj.content_object.id)
         if len(url.split(identity_folder)) >= 2:
@@ -291,7 +291,7 @@ class VideoSerializer(
         if '%20' in obj.video.url:
             url = obj.video.url.replace('%20', ' ')
         if hasattr(obj.content_object, 'slug'):
-            identity_folder = obj.content_object.slug.lower()
+            identity_folder = obj.content_object.slug
         else:
             identity_folder = str(obj.content_object.id)
         if len(url.split(identity_folder)) >= 2:
@@ -304,7 +304,7 @@ class VideoSerializer(
         if '%20' in obj.video.url:
             url = obj.video.url.replace('%20', ' ')
         if hasattr(obj.content_object, 'slug'):
-            identity_folder = obj.content_object.slug.lower()
+            identity_folder = obj.content_object.slug
         else:
             identity_folder = str(obj.content_object.id)
         if len(url.split(identity_folder)) >= 2:

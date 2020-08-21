@@ -1739,9 +1739,6 @@ class OwnerProfile(Profile):
             raise django_exception.ProjectClonePermissionDenied(_('Internal Project can\'t be cloned'))
 
     def list_projects_basic(self):
-        print(self.company.projects)
-        print(self.company.projects.filter(
-            Q(profiles__in=[self.id]) | Q(company=self.company)))
         return self.company.projects.filter(
             Q(profiles__in=[self.id]) | Q(company=self.company)).distinct()
 
@@ -2184,8 +2181,7 @@ class OwnerProfile(Profile):
         """
         Get all members of a company project approved
         """
-        project = self.list_projects_basic().get(id=project_id)
-        print(project)
+        project = self.list_projects().get(id=project_id)
         return project.members.filter(
             status=1,
             project_invitation_date__isnull=False,

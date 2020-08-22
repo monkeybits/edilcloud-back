@@ -13,6 +13,6 @@ REST_FRAMEWORK_DOCS = {
 SECRET_KEY = '393bf48ry80euefh7ye09euh2f2920hef29r03infbef82938eup13'
 BASE_URL = 'www.edilcloud.it'
 PROTOCOL = 'https'
-
+SECURE_SSL_REDIRECT = True
 STRIPE_PUBLISHABLE_KEY = '<your live publishable key here>'
 STRIPE_SECRET_KEY = '<your live secret key here>'

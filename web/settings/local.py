@@ -13,7 +13,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-PROTOCOL = 'https'
+PROTOCOL = 'http'
 DEFAULT_FROM_EMAIL = 'edilcloud.activation@gmail.com'
 SERVER_EMAIL = 'edilcloud.activation@gmail.com'
 EMAIL_USE_TLS = True

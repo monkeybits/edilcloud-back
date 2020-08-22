@@ -698,7 +698,7 @@ class TrackerProjectTeamListView(
             'email', 'phone', 'note', 'role', 'language', 'company'
         ]
         self.company_response_include_fields = [
-            'id', 'name'
+            'id', 'name', 'color_project'
         ]
         super(TrackerProjectTeamListView, self).__init__(*args, **kwargs)
 
@@ -800,7 +800,7 @@ class TrackerProjectMessageListView(
             'id', 'first_name', 'last_name', 'photo', 'role', 'company'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'category'
+            'id', 'name', 'category', 'color_project'
         ]
         super(TrackerProjectMessageListView, self).__init__(*args, **kwargs)
 
@@ -1240,14 +1240,15 @@ class TrackerProjectTaskListView(
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
-            'workers', 'share_status', 'shared_task', 'only_read'
+            'workers', 'share_status', 'shared_task', 'only_read',
+            'alert', 'starred', 'note'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
             'date_end', 'shared_project'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'color_project'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -1281,19 +1282,21 @@ class TrackerProjectTaskAddView(
     def __init__(self, *args, **kwargs):
         self.task_request_include_fields = [
             'project', 'name', 'assigned_company', 'date_start',
-            'date_end', 'date_completed', 'shared_task'
+            'date_end', 'date_completed', 'shared_task', 'alert',
+            'starred', 'note', 'progress'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
-            'workers', 'share_status', 'shared_task'
+            'workers', 'share_status', 'shared_task', 'alert',
+            'starred', 'note', 'progress'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
             'date_end',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'color_project'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo',
@@ -1438,11 +1441,15 @@ class TrackerTaskEditView(
     def __init__(self, *args, **kwargs):
         self.task_request_include_fields = [
             'name', 'assigned_company', 'date_start',
-            'date_end', 'date_completed', 'project', 'progress'
+            'date_end', 'date_completed', 'project', 'progress',
+            'alert',
+            'starred', 'note'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
-            'date_end', 'date_completed', 'progress', 'status', 'share_status'
+            'date_end', 'date_completed', 'progress', 'status', 'share_status',
+            'alert',
+            'starred', 'note'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1764,15 +1771,18 @@ class TrackerTaskActivityAddView(
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
             'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end',
+            'datetime_start', 'datetime_end', 'alert',
+            'starred', 'note'
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end',
+            'datetime_start', 'datetime_end', 'alert',
+            'starred', 'note'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
-            'date_end', 'date_completed'
+            'date_end', 'date_completed', 'alert',
+            'starred', 'note'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1805,11 +1815,13 @@ class TrackerTaskActivityListView(
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end',
+            'datetime_start', 'datetime_end', 'alert',
+            'starred', 'note'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
-            'date_end', 'date_completed'
+            'date_end', 'date_completed', 'alert',
+            'starred', 'note'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1904,14 +1916,19 @@ class TrackerActivityEditView(
         self.activity_request_include_fields = [
             'profile', 'title', 'description', 'status',
             'datetime_start', 'datetime_end',
+            'alert',
+            'starred', 'note'
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end',
+            'datetime_start', 'datetime_end', 'alert',
+            'starred', 'note'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
-            'date_end', 'date_completed'
+            'date_end', 'date_completed',
+            'alert',
+            'starred', 'note'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',

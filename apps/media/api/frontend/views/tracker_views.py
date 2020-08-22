@@ -11,7 +11,10 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from rest_framework import generics, status, views
 from rest_framework.response import Response
+from django.core.files.images import ImageFile
 
+from apps.document.models import Document
+from apps.media.models import Photo, Video
 from apps.profile.models import Company
 from apps.project.models import Project
 from apps.quotation.models import Bom
@@ -94,6 +97,132 @@ class TrackerPhotoAddView(
         request.data['object_id'] = self.kwargs['pk']
         return self.create(request, *args, **kwargs)
 
+class TrackerPhotoMoveView(
+        WhistleGenericViewMixin,
+        TrackerPhotoMixin,
+        generics.UpdateAPIView):
+    """
+    Move a single photo
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.PhotoMoveSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.photo_request_include_fields = [
+            'to', 'photo'
+        ]
+        self.photo_response_include_fields = [
+            'id', 'title', 'pub_date', 'photo', 'is_public',
+            'tags', 'note', 'photo_64', 'extension'
+        ]
+        super(TrackerPhotoMoveView, self).__init__(*args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        obj = Photo.objects.get(pk=self.kwargs.get('pk'))
+        current_path = obj.photo.url
+        from_folder = self.request.data['from']
+        to_folder = self.request.data['to']
+        if from_folder == '':
+            rel_path = current_path.split(current_path.split('/', 6)[-1])
+        else:
+            rel_path = current_path.split(from_folder)
+        if to_folder == '':
+            final_path = rel_path[0] + to_folder + rel_path[1].split('/', 1)[1]
+        else:
+            if from_folder == '':
+                final_path = rel_path[0] + to_folder + '/' + current_path.split('/', 6)[-1]
+            else:
+                final_path = rel_path[0] + to_folder + rel_path[1]
+        os.rename(current_path.split('/',1)[1], final_path.split('/',1)[1])
+        obj.photo.name = final_path.split('/',1)[1]
+        obj.save()
+        return Response(status=status.HTTP_200_OK, data="File moved successfully")
+
+class TrackerVideoMoveView(
+        WhistleGenericViewMixin,
+        TrackerPhotoMixin,
+        generics.UpdateAPIView):
+    """
+    Move a single video
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.PhotoMoveSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.photo_request_include_fields = [
+            'to'
+        ]
+        self.photo_response_include_fields = [
+            'id', 'title', 'pub_date', 'photo', 'is_public',
+            'tags', 'note', 'photo_64', 'extension'
+        ]
+        super(TrackerVideoMoveView, self).__init__(*args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        obj = Video.objects.get(pk=self.kwargs.get('pk'))
+        current_path = obj.video.url
+        from_folder = self.request.data['from']
+        to_folder = self.request.data['to']
+        if from_folder == '':
+            rel_path = current_path.split(current_path.split('/', 6)[-1])
+        else:
+            rel_path = current_path.split(from_folder)
+        if to_folder == '':
+            final_path = rel_path[0] + to_folder + rel_path[1].split('/', 1)[1]
+        else:
+            if from_folder == '':
+                final_path = rel_path[0] + to_folder + '/' + current_path.split('/', 6)[-1]
+            else:
+                final_path = rel_path[0] + to_folder + rel_path[1]
+        os.rename(current_path.split('/',1)[1], final_path.split('/',1)[1])
+        obj.video.name = final_path.split('/',1)[1]
+        obj.save()
+        return Response(status=status.HTTP_200_OK, data="File moved successfully")
+
+class TrackerDocumentMoveView(
+        WhistleGenericViewMixin,
+        TrackerPhotoMixin,
+        generics.UpdateAPIView):
+    """
+    Move a single video
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.PhotoMoveSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.photo_request_include_fields = [
+            'to'
+        ]
+        self.photo_response_include_fields = [
+            'id', 'title', 'pub_date', 'photo', 'is_public',
+            'tags', 'note', 'photo_64', 'extension'
+        ]
+        super(TrackerDocumentMoveView, self).__init__(*args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        obj = Document.objects.get(pk=self.kwargs.get('pk'))
+        current_path = obj.document.url
+        from_folder = self.request.data['from']
+        to_folder = self.request.data['to']
+        if from_folder == '':
+            rel_path = current_path.split(current_path.split('/', 6)[-1])
+        else:
+            rel_path = current_path.split(from_folder)
+        if to_folder == '':
+            final_path = rel_path[0] + to_folder + rel_path[1].split('/', 1)[1]
+        else:
+            if from_folder == '':
+                final_path = rel_path[0] + to_folder + '/' + current_path.split('/', 6)[-1]
+            else:
+                final_path = rel_path[0] + to_folder + rel_path[1]
+        os.rename(current_path.split('/',1)[1], final_path.split('/',1)[1])
+        obj.document.name = final_path.split('/',1)[1]
+        obj.save()
+        return Response(status=status.HTTP_200_OK, data="File moved successfully")
+
 
 class TrackerPhotoEditView(
         WhistleGenericViewMixin,
@@ -120,7 +249,6 @@ class TrackerPhotoEditView(
         if not 'photo' in request.data or type(request.data['photo']) == str:
             self.photo_request_include_fields.remove('photo')
         return self.update(request, *args, **kwargs)
-
 
 class TrackerPhotoDeleteView(
         TrackerPhotoMixin,
@@ -376,6 +504,88 @@ class TrackerFolderAdd(generics.CreateAPIView):
                 'error': "Folder already exists"
             })
         return Response(status=status.HTTP_201_CREATED, data=listOfFiles)
+
+def get_move_folder_path(instance, source_folder, dest_folder, is_public, create=False):
+    media_dir1 = instance._meta.model_name
+    media_dir2 = slugify(instance.__str__().lower())
+    if media_dir1 == 'project':
+        media_dir1 = 'project'
+        media_dir2 = instance.pk
+    media_root = get_media_root(is_public)
+    for name in ['photo', 'video', 'document']:
+        source = os.path.join(media_root, name, format(media_dir1), format(media_dir2),  source_folder)
+        destination = os.path.join(media_root, name, format(media_dir1), format(media_dir2),  dest_folder)
+        try:
+            shutil.move(source, destination)
+        except Exception:
+            continue
+    return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2))
+
+class TrackerFolderMove(generics.CreateAPIView):
+    """
+    Folder move
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+
+    def post(self, request, *args, **kwargs):
+        content_type = ContentType.objects.get(model=self.kwargs['type'])
+        from_folder = request.data['from']
+        to_folder = request.data['to']
+        model_name = content_type.model
+        if model_name == 'company':
+            generic_model = profile_models.Company
+        elif model_name == 'project':
+            generic_model = project_models.Project
+        elif model_name == 'bom':
+            generic_model = quotation_models.Bom
+        else:
+            raise ValidationError("Model Not Found")
+
+        if not generic_model.objects.filter(pk=self.kwargs['pk']):
+            raise ValidationError("Object Not Found")
+
+        if model_name == 'project':
+            gen_mod = Project.objects.get(id=self.kwargs['pk'])
+        elif model_name == 'company':
+            gen_mod = Company.objects.get(id=self.kwargs['pk'])
+        elif model_name == 'bom':
+            gen_mod = Bom.objects.get(id=self.kwargs['pk'])
+        try:
+            company_folder = get_move_folder_path(gen_mod, from_folder, to_folder, False, True)
+            if company_folder == False:
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={
+                    'error': 'Folder not created. Max subfolders limit is 3'
+                })
+            folders_list = os.walk(company_folder)
+            listOfFiles = list()
+            if model_name == 'project':
+                for (dirpath, dirnames, filenames) in folders_list:
+                    listOfFiles += [
+                        {
+                            'path': os.path.join(dirpath, dirname).split('project/' + self.kwargs['pk'] + '/')[
+                                1],
+                            'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+                        }
+                        for dirname in dirnames
+                    ]
+            else:
+                for (dirpath, dirnames, filenames) in folders_list:
+                    listOfFiles += [
+                        {
+                            'path':
+                                os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[
+                                    1],
+                            'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+                        }
+                        for dirname in dirnames
+                    ]
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={
+                'error': "Folder already exists"
+            })
+        return Response(status=status.HTTP_201_CREATED, data=listOfFiles)
+
 
 class TrackerFolderList(generics.CreateAPIView):
     """

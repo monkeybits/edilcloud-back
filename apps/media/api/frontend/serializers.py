@@ -1,18 +1,25 @@
 # -*- coding: utf-8 -*-
 
 import base64
+import os
+
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from rest_framework import serializers, status
 from rest_framework.serializers import ValidationError
 
+from apps.profile.models import Company
+from apps.project.models import Project
+from apps.quotation.models import Bom
 from ... import models
 from apps.profile import models as profile_models
 from apps.project import models as project_models
 from apps.quotation import models as quotation_models
 from web.drf import exceptions as django_api_exception
-from web.api.views import JWTPayloadMixin, ArrayFieldInMultipartMixin
+from web.api.views import JWTPayloadMixin, ArrayFieldInMultipartMixin, get_media_root
 from web.api.serializers import DynamicFieldsModelSerializer
+from django.utils.text import slugify
 
 
 class PhotoSerializer(
@@ -36,7 +43,7 @@ class PhotoSerializer(
         if '%20' in obj.photo.url:
             url = obj.photo.url.replace('%20', ' ')
         if hasattr(obj.content_object, 'slug'):
-            identity_folder = obj.content_object.slug.lower()
+            identity_folder = obj.content_object.slug
         else:
             identity_folder = str(obj.content_object.id)
         if len(url.split(identity_folder)) >= 2:
@@ -49,7 +56,7 @@ class PhotoSerializer(
         if '%20' in obj.photo.url:
             url = obj.photo.url.replace('%20', ' ')
         if hasattr(obj.content_object, 'slug'):
-            identity_folder = obj.content_object.slug.lower()
+            identity_folder = obj.content_object.slug
         else:
             identity_folder = str(obj.content_object.id)
         if len(url.split(identity_folder)) >= 2:
@@ -144,6 +151,76 @@ class PhotoAddSerializer(
     def get_extension(self, obj):
         return obj.get_file_extension()[1:]
 
+def get_upload_folder_path2(instance, subpath, folder, is_public, create=False, type='photo'):
+    media_dir1 = instance._meta.model_name
+    media_dir2 = slugify(instance.__str__().lower())
+    if media_dir1 == 'project':
+        media_dir1 = 'genericproject'
+        media_dir2 = instance.pk
+    media_root = get_media_root(is_public)
+    if create:
+        if subpath == '' or subpath == '/':
+            os.makedirs(os.path.join(media_root, type, format(media_dir1), format(media_dir2),  folder))
+        else:
+            os.makedirs(os.path.join(media_root, type, format(media_dir1), format(media_dir2), subpath,folder))
+
+    return os.path.join(media_root, type, format(media_dir1), format(media_dir2))
+
+class PhotoMoveSerializer(
+        JWTPayloadMixin,
+        ArrayFieldInMultipartMixin,
+        DynamicFieldsModelSerializer):
+    to = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Photo
+        fields = '__all__'
+
+    # def validate(self, data):
+    #     model_name = data['content_type'].model
+    #     if model_name == 'company':
+    #         generic_model = profile_models.Company
+    #     elif model_name == 'project':
+    #         generic_model = project_models.Project
+    #     elif model_name == 'bom':
+    #         generic_model = quotation_models.Bom
+    #     else:
+    #         raise ValidationError("Model Not Found")
+    #
+    #     if not generic_model.objects.filter(pk=data['object_id']):
+    #         raise ValidationError("Object Not Found")
+    #     return data
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        self.view = self.get_view
+        if self.view:
+            return self.view.photo_request_include_fields
+        return super(PhotoMoveSerializer, self).get_field_names(*args, **kwargs)
+
+    def get_to(self, obj):
+        return self.request.data['to']
+
+    def get_photo_64(self, obj):
+        f = open(obj.photo.path, 'rb')
+        image = File(f)
+        data = base64.b64encode(image.read())
+        f.close()
+        return data
+
+    def get_size(self, obj):
+        return obj.photo.size
+
+    def get_extension(self, obj):
+        return obj.get_file_extension()[1:]
+
 
 class PhotoEditSerializer(
         JWTPayloadMixin,
@@ -191,7 +268,6 @@ class PhotoEditSerializer(
     def get_extension(self, obj):
         return obj.get_file_extension()[1:]
 
-
 class VideoSerializer(
         DynamicFieldsModelSerializer):
 
@@ -215,7 +291,7 @@ class VideoSerializer(
         if '%20' in obj.video.url:
             url = obj.video.url.replace('%20', ' ')
         if hasattr(obj.content_object, 'slug'):
-            identity_folder = obj.content_object.slug.lower()
+            identity_folder = obj.content_object.slug
         else:
             identity_folder = str(obj.content_object.id)
         if len(url.split(identity_folder)) >= 2:
@@ -228,7 +304,7 @@ class VideoSerializer(
         if '%20' in obj.video.url:
             url = obj.video.url.replace('%20', ' ')
         if hasattr(obj.content_object, 'slug'):
-            identity_folder = obj.content_object.slug.lower()
+            identity_folder = obj.content_object.slug
         else:
             identity_folder = str(obj.content_object.id)
         if len(url.split(identity_folder)) >= 2:

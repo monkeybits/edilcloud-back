@@ -2181,7 +2181,7 @@ class OwnerProfile(Profile):
         """
         Get all members of a company project approved
         """
-        project = self.list_projects_basic().get(id=project_id)
+        project = self.list_projects().get(id=project_id)
         return project.members.filter(
             status=1,
             project_invitation_date__isnull=False,

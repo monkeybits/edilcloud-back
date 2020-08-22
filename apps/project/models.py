@@ -287,6 +287,19 @@ class Task(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         default=0,
         verbose_name=_('progress percentage'),
     )
+    alert = models.BooleanField(
+        default=False,
+        verbose_name=_('alert')
+    )
+    starred = models.BooleanField(
+        default=False,
+        verbose_name=_('starred')
+    )
+    note = models.TextField(
+        max_length=500,
+        null=True, blank=True,
+        verbose_name=_('note')
+    )
 
     class Meta:
         verbose_name = _('task')
@@ -363,11 +376,24 @@ class Activity(CleanModel, UserModel, DateModel, OrderedModel):
         max_length=25,
         verbose_name=_('status'),
     )
-    datetime_start = models.DateTimeField(
-        verbose_name=_('start date time'),
+    datetime_start = models.DateField(
+        verbose_name=_('start date'),
     )
-    datetime_end = models.DateTimeField(
-        verbose_name=_('end date time'),
+    datetime_end = models.DateField(
+        verbose_name=_('end date'),
+    )
+    alert = models.BooleanField(
+        default=False,
+        verbose_name=_('alert')
+    )
+    starred = models.BooleanField(
+        default=False,
+        verbose_name=_('starred')
+    )
+    note = models.TextField(
+        max_length=500,
+        null=True, blank=True,
+        verbose_name=_('note')
     )
 
     class Meta:
@@ -447,6 +473,12 @@ class Team(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         elif self.role == settings.LEVEL_2:
             return "Worker"
         return self.role
+
+@python_2_unicode_compatible
+class ProjectCompanyColorAssignment(models.Model):
+    project = models.ForeignKey('project.Project', on_delete=models.CASCADE)
+    company = models.ForeignKey('profile.Company', on_delete=models.CASCADE)
+    color = models.CharField(max_length=10)
 
 
 @python_2_unicode_compatible

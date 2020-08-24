@@ -1746,7 +1746,10 @@ class OwnerProfile(Profile):
         """
         Get all company projects
         """
-        return Project.objects.filter(Q(company=self.company) | Q(members__profile__in=[self], members__status=1)).distinct()
+        if self.role == 'o' or self.role == 'd':
+            return Project.objects.filter(Q(company=self.company) | Q(members__profile__in=[self], members__status=1)).distinct()
+        else:
+            return Project.objects.filter(Q(members__profile__in=[self], members__status=1)).distinct()
 
     def get_generic_project(self, project_id):
         return Project.objects.get(pk=project_id)

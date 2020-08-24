@@ -74,8 +74,8 @@ class ProfileQuerySet(models.QuerySet):
 
     def profile_invitation_approve(self):
         return self.filter(
-            # status=1,
-            # user__isnull=False,
+            status=1,
+            user__isnull=False,
             company_invitation_date__isnull=False,
             profile_invitation_date__isnull=False,
             invitation_refuse_date__isnull=True,
@@ -93,7 +93,7 @@ class ProfileQuerySet(models.QuerySet):
     def company_invitation_request(self):
         return self.filter(
             status=1,
-            user__isnull=False,
+            user__isnull=True,
             company_invitation_date__isnull=True,
             profile_invitation_date__isnull=False,
             invitation_refuse_date__isnull=True,
@@ -102,16 +102,16 @@ class ProfileQuerySet(models.QuerySet):
     def company_invitation_waiting(self):
         return self.filter(
             status=1,
-            user__isnull=False,
+            user__isnull=True,
             company_invitation_date__isnull=False,
-            profile_invitation_date__isnull=True,
+            profile_invitation_date__isnull=False,
             invitation_refuse_date__isnull=True,
         )
 
     def company_invitation_approve(self):
         return self.filter(
             status=1,
-            # user__isnull=False,
+            user__isnull=False,
             company_invitation_date__isnull=False,
             profile_invitation_date__isnull=False,
             invitation_refuse_date__isnull=True,

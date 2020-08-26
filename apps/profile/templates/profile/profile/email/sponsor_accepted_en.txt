@@ -8,7 +8,7 @@ Sponsorship Details:
    Expiration date: {{expiration_date}}
 
 
-WhistlePRO allows all actors of constructions to collaborate,
+Edilcloud allows all actors of constructions to collaborate,
 share informations and choose materials from preferred suppliers.
 
 --------------------------------------

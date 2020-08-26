@@ -43,7 +43,7 @@ def profile_notification(sender, instance, **kwargs):
             if instance.__create:
                 registration_link = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL, 'pages/auth/register')
                 from_mail = settings.NOTIFY_NOTIFY_NO_REPLY_EMAIL
-                subject = _('Your email is added to WhistlePRO')
+                subject = _('Your email is added to Edilcloud')
                 context = {
                     'logo_url': os.path.join(
                         settings.PROTOCOL + '://',

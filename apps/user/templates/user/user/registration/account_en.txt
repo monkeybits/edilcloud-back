@@ -1,6 +1,6 @@
 
 Dear {{first_name}},
-  Thank you for registering with WhistlePRO.
+  Thank you for registering with Edilcloud.
 
   Your account is not yet active.
 
@@ -10,13 +10,13 @@ Dear {{first_name}},
 
 
 
-WhistlePRO allows all actors of constructions to collaborate,
+Edilcloud allows all actors of constructions to collaborate,
 share informations and choose materials from preferred suppliers.
 
 --------------------------------------
 Thanks,
 
-WhistlePRO Team
+Edilcloud Team
 
 
 

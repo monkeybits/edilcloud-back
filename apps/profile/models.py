@@ -161,9 +161,9 @@ def send_account_verification_email(self, to_email=None, language_code=None):
     if not language_code:
         language_code = 'en'
 
-    subject = 'WhistlePRO Account Activation'
+    subject = 'Edilcloud Account Activation'
     if language_code == 'it':
-        subject = 'Attivazione account WhistlePRO'
+        subject = 'Attivazione account Edilcloud'
 
     account_activation_token = UserTokenGenerator()
     context = {
@@ -181,7 +181,7 @@ def send_account_verification_email(self, to_email=None, language_code=None):
         "protocol": settings.PROTOCOL,
         "base_url": settings.BASE_URL
     }
-    subject = "Whistle Account Activation"
+    subject = "Edilcloud Account Activation"
 
     # Text message
     text_message = render_to_string('user/user/registration/account_{}.txt'.format(language_code), context)
@@ -944,9 +944,9 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         }
 
         if language_code == 'en':
-            subject = "WhistlePRO Company {} Profile Activation".format(self.company)
+            subject = "Edilcloud Company {} Profile Activation".format(self.company)
         else:
-            subject = "Attivazione nuovo profilo WhistlePRO per l'impresa {}".format(self.company)
+            subject = "Attivazione nuovo profilo Edilcloud per l'impresa {}".format(self.company)
         # Text message
         text_message = render_to_string('profile/profile/email/profile_{}.txt'.format(language_code), context)
 
@@ -1492,16 +1492,20 @@ class OwnerProfile(Profile):
         """
         return self.company.profiles.company_invitation_approve()
 
-    def list_approve_profiles_and_external(self):
+    def list_approve_profiles_and_external(self, is_creator):
         """
         Get all company profiles linked to the company and external owners
         """
-        return Profile.objects.filter(
-            Q(company__profiles__in=self.company.profiles.company_invitation_approve()) |\
-            Q(role='o') |\
-            Q(role='d'))\
-            .filter(status=1)\
-            .distinct()
+        print(is_creator)
+        if is_creator:
+            return Profile.objects.filter(
+                Q(company__profiles__in=self.company.profiles.company_invitation_approve()) | \
+                Q(role='o') | \
+                Q(role='d')) \
+                .filter(status=1) \
+                .distinct()
+        else:
+            return self.company.profiles.company_invitation_approve()
 
     def list_refuse_profiles(self):
         """

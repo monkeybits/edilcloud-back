@@ -20,6 +20,7 @@ from apps.product.models import Category
 from apps.profile.models import Company
 from apps.project.api.frontend import serializers as project_serializers
 from apps.profile.api.frontend import serializers as profile_serializers
+from apps.project.models import Project
 from apps.quotation.api.frontend import serializers as quotation_serializers
 from apps.document.api.frontend import serializers as document_serializers
 from web.api.permissions import RoleAccessPermission
@@ -1801,7 +1802,16 @@ class TrackerCompanyStaffListAndExternalView(
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         generic = 'list_'+self.kwargs.get('type')+'_profiles_and_external'
-        self.queryset = getattr(profile, generic)()
+        is_creator = None
+        if 'project_id' in self.request.query_params:
+            project_id = self.request.query_params.get('project_id')
+            project = Project.objects.get(id=project_id)
+            creator = project.creator
+            if creator == profile.user:
+                is_creator = True
+            else:
+                is_creator = False
+        self.queryset = getattr(profile, generic)(is_creator)
         return super(TrackerCompanyStaffListAndExternalView, self).get_queryset().filter(status=1)
 
 

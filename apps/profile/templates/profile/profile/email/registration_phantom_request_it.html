@@ -1,0 +1,23 @@
+{% extends 'email/base_email_it.html' %}
+
+{% block content %}
+<p>
+    Gentile {{recipient_first_name}} {{recipient_last_name}}, <br/>
+    <strong>La tua email {{recipient_email}} è stata aggiunta in WhistlePRO all'interno dello staff dell'impresa {{company_name}}</strong>.
+    <br/>
+</p>
+<p>
+    Per accedere a WhistlePRo seguire le istruzioni seguenti: <br/>
+    <ul>
+        <li>Accedere al link <a href="{{registration_page}}">Registrazione</a> oppure copiare il seguente link
+            <strong>{{registration_page}}</strong> e incollarlo all'interno del browser.
+        </li>
+        <li>
+            Seguire i passi per effettuare la registrazione a WhistlePRO. Utilizzare l'email {{recipient_email}} come email di registrazione.
+        </li>
+        <li>
+            Quando la registrazione è completata, accedere a WhistlePRO e creare un profilo principale.
+        </li>
+    </ul>
+</p>
+{% endblock %}

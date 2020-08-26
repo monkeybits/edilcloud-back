@@ -1,0 +1,30 @@
+Gentile WhistlePRO,
+
+l'impresa {{ company_name }} ha richiesto di diventare sponsor della piattaforma.
+
+
+Contatti:
+{{owner_name}} - {{ company_name }}:
+Mobile: {{company_mobile}}
+Tel: {{company_phone}}
+Email: {{company_email}}
+Site: {{company_url}}
+
+
+
+WhistlePRO permette a tutti gli attori del settore costruzioni di
+collaborare, condividere informazioni e scegliere i materiali dai fornitori
+preferiti.
+
+--------------------------------------
+Grazie,
+
+Il Team WhistlePRO
+
+
+
+Puoi trovare le risposte alle domande più frequenti qui: http://www.whistlepro.it/faq/.
+Puoi comunque contattarci inviando una mail a info@whistlepro.it.
+
+Whistle srl è una società registrata in Italia con partita IVA 04160940161
+Il nostro ufficio è registrato in via Santa Liberata 11, 24050 Bariano (BG) Italia

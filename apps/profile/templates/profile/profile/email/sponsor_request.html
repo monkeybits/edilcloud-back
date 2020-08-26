@@ -1,0 +1,17 @@
+{% extends 'email/base_email_it.html' %}
+
+{% block content %}
+<p>
+Gentile Team WhistlePro,
+<strong>l'impresa {{ company_name }} ha richiesto di diventare sponsor della piattaforma.</strong>
+<br/>
+<br/>
+Contatti:
+<strong>{{owner_name}}:</strong><br>
+<small>{{ company_name }}</small><br>
+<strong>Mobile:</strong> {{company_mobile}}<br>
+<strong>Tel:</strong> {{company_phone}}<br>
+<strong>Email:</strong> {{company_email}}<br>
+<strong>Site:</strong> {{company_url}}<br>
+</p>
+{% endblock %}

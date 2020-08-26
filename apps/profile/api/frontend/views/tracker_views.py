@@ -1710,6 +1710,9 @@ class TrackerCompanyStaffListView(
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         generic = 'list_'+self.kwargs.get('type')+'_profiles'
         self.queryset = getattr(profile, generic)()
+        if 'exclude__role__in' in self.request.query_params:
+            params = self.request.query_params.get('exclude__role__in')
+            self.queryset = self.queryset.exclude(role__in=params.split(','))
         return super(TrackerCompanyStaffListView, self).get_queryset().filter(status=1)
 
 class TrackerProjectStaffListView(

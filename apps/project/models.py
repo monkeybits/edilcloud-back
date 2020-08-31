@@ -482,7 +482,7 @@ class ProjectCompanyColorAssignment(models.Model):
 
 
 @python_2_unicode_compatible
-class Post(models.Model):
+class Post(OrderedModel):
     sub_task = models.ForeignKey('project.Activity', on_delete=models.CASCADE, null=True, blank=True)
     task = models.ForeignKey('project.Task', on_delete=models.CASCADE, null=True, blank=True)
     author = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
@@ -496,6 +496,11 @@ class Post(models.Model):
     published_date = models.DateTimeField(
             blank=True, null=True)
     media = models.FileField(blank=True, default="", upload_to=get_upload_post_path)
+
+    class Meta:
+        verbose_name = _('post')
+        verbose_name_plural = _('posts')
+        ordering = ('-created_date', )
 
     def publish(self):
         self.published_date = timezone.now()
@@ -521,7 +526,7 @@ class Post(models.Model):
             return "New post for subtask #" + str(self.sub_task.id) + "by " + self.author.user.get_full_name()
 
 @python_2_unicode_compatible
-class Comment(models.Model):
+class Comment(OrderedModel):
     parent = models.ForeignKey('self',
                             null=True,
                             blank=True,
@@ -541,7 +546,7 @@ class Comment(models.Model):
             ("detail_comment", "can detail comment"),
             ("disable_comment", "can disable comment"),
         )
-        ordering = ['-created_date']
+        ordering = ['created_date']
         get_latest_by = "created_date"
 
     def __str__(self):

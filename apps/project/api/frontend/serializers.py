@@ -498,7 +498,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     def get_comments(self, obj):
-        comments = obj.comment_set.all()
+        comments = obj.comment_set.all().order_by('-created_by')
         comments_list = []
         for comment in comments:
             serializer = CommentSerializer(data=comment)

@@ -336,6 +336,11 @@ tracker_urlpatterns = [
         name='tracker_activity_comment_add'
     ),
     url(
+        r'^comment/(?P<pk>\d+)/replies_list/$',
+        tracker_views.TrackerCommentRepliesListView.as_view(),
+        name='tracker_comment_replies_list'
+    ),
+    url(
         r'^post/(?P<pk>\d+)/share_to_task/$',
         tracker_views.TrackerSharePostToTaskView.as_view(),
         name='tracker_activity_task_post_share'

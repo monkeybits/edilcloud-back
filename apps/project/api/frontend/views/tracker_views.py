@@ -2118,6 +2118,35 @@ class TrackerPostCommentListView(
         self.queryset = profile.list_post_comments(self.kwargs.get('pk', None))
         return super(TrackerPostCommentListView, self).get_queryset()
 
+class TrackerCommentRepliesListView(
+        WhistleGenericViewMixin,
+        TrackerTaskActivityMixin,
+        generics.ListAPIView):
+    """
+    List of comment replies
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    serializer_class = serializers.CommentSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerCommentRepliesListView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        self.queryset = profile.list_comment_replies(self.kwargs.get('pk', None))
+        return super(TrackerCommentRepliesListView, self).get_queryset()
+
 class TrackerCommentMixin(
         JWTPayloadMixin):
     """

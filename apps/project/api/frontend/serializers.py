@@ -16,7 +16,7 @@ from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
-from ...models import ProjectCompanyColorAssignment
+from ...models import ProjectCompanyColorAssignment, Comment
 
 palette_color = [
     '1b112c',
@@ -462,6 +462,7 @@ class TeamSerializer(
 
 class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     author = ProfileSerializer()
+    replies_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Comment
@@ -475,6 +476,26 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
+    def get_replies_set(self, obj):
+        comments_list = []
+        comments = Comment.objects.filter(parent=obj.id)
+        for comment in comments:
+            comments_list.append(
+                {
+                    'id': comment.id,
+                    'text': comment.text,
+                    'author': {
+                        'id': comment.author.id,
+                        'user': {
+                            'id': comment.author.user.id,
+                            'username': comment.author.user.username
+                        },
+                    },
+                    'created_date': comment.created_date,
+                    'parent': comment.parent.id if comment.parent is not None else None
+                }
+            )
+        return comments_list
 
 class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     comment_set = CommentSerializer(many=True)

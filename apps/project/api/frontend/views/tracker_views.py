@@ -1998,7 +1998,7 @@ class TrackerActivityPostAddView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user',
+            'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
@@ -2059,7 +2059,7 @@ class TrackerActivityPostListView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user',
+            'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
@@ -2106,7 +2106,7 @@ class TrackerPostCommentListView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user',
+            'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
@@ -2166,7 +2166,7 @@ class TrackerPostCommentAddView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user',
+            'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']

@@ -461,6 +461,8 @@ class TeamSerializer(
 
 
 class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
+    author = ProfileSerializer()
+
     class Meta:
         model = models.Comment
         fields = '__all__'

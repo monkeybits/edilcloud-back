@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, status
 
 from apps.message.api.frontend.serializers import TalkSerializer
+from apps.profile.api.frontend.serializers import ProfileSerializer, UserSerializer
 from ... import models
 from apps.profile.api.frontend import serializers as profile_serializers
 from apps.document.api.frontend import serializers as document_serializers
@@ -475,6 +476,7 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
 
 class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     comment_set = CommentSerializer(many=True)
+    author = ProfileSerializer()
 
     class Meta:
         model = models.Post

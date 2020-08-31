@@ -1,0 +1,21 @@
+{% extends 'email/base_email.html' %}
+
+{% block heading %}
+    {{ subject }}
+{% endblock %}
+
+{% block username %}
+    Dear <strong>{{ first_name }} {{ last_name }}</strong>
+{% endblock %}
+
+{% block content %}
+    {{ body|safe }}
+{% endblock %}
+
+{% block final_content %}
+    {{ final_body|safe }}
+{% endblock %}
+
+{% block routing %}
+    <a href="{{ endpoint }}" target="_blank" class="btn-primary">Review The Event</a>
+{% endblock %}

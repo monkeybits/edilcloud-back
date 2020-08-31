@@ -13,6 +13,8 @@ from apps.profile import models as profile_models
 from apps.notify import models as notify_models
 from web.core.middleware.thread_local import get_current_profile
 from web.core.utils import get_html_message, get_bell_notification_status, get_email_notification_status
+from socketIO_client import SocketIO, LoggingNamespace, BaseNamespace
+from websocket import create_connection
 
 
 @receiver([post_save, post_delete], sender=message_models.Message)
@@ -87,5 +89,7 @@ def message_notification(sender, instance, **kwargs):
             recipient_objs,
             batch_size=100
         )
+        # socketIO = SocketIO("127.0.0.1", "5000")
+        # socketIO.emit("chat_channel", "New message")
     except Exception as e:
         print(e)

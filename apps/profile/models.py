@@ -839,6 +839,13 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         post_obj = Post.objects.get(id=post)
         return post_obj.comment_set.all()
 
+    def list_comment_replies(self, comment):
+        """
+        Get all comments of a specific post
+        """
+        comments = Comment.objects.filter(parent=comment)
+        return comments
+
     def edit_preference(self, preference_dict):
         """
         Update profile preference

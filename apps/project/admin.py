@@ -47,7 +47,7 @@ class ActivityPostsInlineAdmin(admin.TabularInline):
     extra = 0
     exclude = (
         'creator', 'last_modifier', 'date_create',
-        'date_last_modify', 'ordering',
+        'date_last_modify', 'ordering', 'photos'
     )
     raw_id_fields = ('author', )
     verbose_name_plural = _('Posts')
@@ -190,7 +190,7 @@ class PostAdmin(UserAdminMixin, admin.ModelAdmin):
         (_('general_information'), {
             'fields': (
                 'sub_task', 'author',
-                'text', 'photos'
+                'text'
             )
         }),
     )

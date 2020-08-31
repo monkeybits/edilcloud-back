@@ -828,6 +828,7 @@ class PostCommentAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
+
     class Meta:
         model = models.Comment
         fields = '__all__'

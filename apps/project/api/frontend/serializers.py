@@ -466,7 +466,8 @@ class FilteredListSerializer(serializers.ListSerializer):
       the model instance"""
 
     def to_representation(self, data):
-        data = data.filter(parent__isnull=True)
+        if type(data) is not list:
+            data = data.filter(parent__isnull=True)
         return super(FilteredListSerializer, self).to_representation(data)
 
 
@@ -492,7 +493,14 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
         comments = Comment.objects.filter(parent=obj.id)
         for comment in comments:
             try:
-                author_photo = comment.author.photo.url
+                photo_url = comment.author.photo.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                author_photo = protocol + host + photo_url
             except:
                 author_photo = None
             comments_list.append(

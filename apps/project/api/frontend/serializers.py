@@ -480,6 +480,10 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
         comments_list = []
         comments = Comment.objects.filter(parent=obj.id)
         for comment in comments:
+            try:
+                author_photo = comment.author.photo.url
+            except:
+                author_photo = None
             comments_list.append(
                 {
                     'id': comment.id,
@@ -488,8 +492,13 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
                         'id': comment.author.id,
                         'user': {
                             'id': comment.author.user.id,
-                            'username': comment.author.user.username
+                            'username': comment.author.user.username,
+                            "first_name": comment.author.user.first_name,
+                            "last_name": comment.author.user.last_name
                         },
+                        "photo": author_photo,
+                        "first_name": comment.author.first_name,
+                        "last_name": comment.author.last_name
                     },
                     'created_date': comment.created_date,
                     'parent': comment.parent.id if comment.parent is not None else None

@@ -1993,6 +1993,15 @@ class TrackerActivityPostAddView(
             'id', 'author', 'text', 'sub_task', 'media',
             'published_date', 'created_date',
         ]
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
         super(TrackerActivityPostAddView, self).__init__(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -2152,6 +2161,15 @@ class TrackerPostCommentAddView(
             'id', 'author', 'post', 'parent', 'text',
             'created_date'
         ]
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
         super(TrackerPostCommentAddView, self).__init__(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):

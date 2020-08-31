@@ -2044,6 +2044,18 @@ class TrackerActivityPostListView(
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
     serializer_class = serializers.PostSerializer
 
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerActivityPostListView, self).__init__(*args, **kwargs)
+
     def get_queryset(self):
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])

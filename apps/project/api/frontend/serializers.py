@@ -460,12 +460,23 @@ class TeamSerializer(
         return super(TeamSerializer, self).get_field_names(*args, **kwargs)
 
 
+class FilteredListSerializer(serializers.ListSerializer):
+    """Serializer to filter the active system, which is a boolen field in
+       System Model. The value argument to to_representation() method is
+      the model instance"""
+
+    def to_representation(self, data):
+        data = data.filter(parent__isnull=True)
+        return super(FilteredListSerializer, self).to_representation(data)
+
+
 class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     author = ProfileSerializer()
     replies_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Comment
+        list_serializer_class = FilteredListSerializer
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):

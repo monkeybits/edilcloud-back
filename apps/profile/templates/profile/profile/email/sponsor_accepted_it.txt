@@ -1,12 +1,11 @@
 
- Gentile {{first_name}},
-   grazie per esserti registrato in Edilcloud.</strong>.
+Gentile {{recipient_first_name}} {{recipient_last_name}},
+    La tua richiesta di sponsorizzazione è stata accettata.
 
-    Il tuo account non è ancora attivo.
 
-    Per completare la registrazione, copia e incolla il seguente link all'interno del browser:
-    {{ endpoint }}
-
+Dettaglio Sponsor::
+   Categorie: {{tags}}
+   Data di scadenza: {{expiration_date}}
 
 
 Edilcloud permette a tutti gli attori del settore costruzioni di

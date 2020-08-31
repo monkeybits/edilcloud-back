@@ -1,11 +1,14 @@
+Gentile Edilcloud,
 
- Gentile {{first_name}},
-   grazie per esserti registrato in Edilcloud.</strong>.
+l'impresa {{ company_name }} ha richiesto di diventare sponsor della piattaforma.
 
-    Il tuo account non è ancora attivo.
 
-    Per completare la registrazione, copia e incolla il seguente link all'interno del browser:
-    {{ endpoint }}
+Contatti:
+{{owner_name}} - {{ company_name }}:
+Mobile: {{company_mobile}}
+Tel: {{company_phone}}
+Email: {{company_email}}
+Site: {{company_url}}
 
 
 

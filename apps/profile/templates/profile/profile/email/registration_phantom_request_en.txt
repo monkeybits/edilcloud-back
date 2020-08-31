@@ -1,0 +1,25 @@
+
+Dear {{recipient_first_name}} {{recipient_last_name}},
+    Your email{{recipient_email}} was added to Edilcloud within the staff of the {{company_name}} company.
+
+    To access Edilcloud follow the instructions below:
+        - Copy the link {{registration_page}} and paste it in the browser
+        - Follow the steps to register with WhistlePRO. Use the email {{recipient_email}} as email in registration procedure.
+        - When registration is complete, log in to WhistlePRO and create a main profile.
+
+
+Edilcloud allows all actors of constructions to collaborate,
+share informations and choose materials from preferred suppliers.
+
+--------------------------------------
+Thanks,
+
+Edilcloud Team
+
+
+
+You can find the answers to the most frequently asked questions here: http://www.whistlepro.it/faq/.
+You can still write us at info@whistlepro.it.
+
+Whistle srl is a company registered in Italy with VAT number 04160940161
+Our office is registered in via Santa Liberata 11, 24050 Bariano (BG) Italy

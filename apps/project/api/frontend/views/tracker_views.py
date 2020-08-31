@@ -1993,6 +1993,15 @@ class TrackerActivityPostAddView(
             'id', 'author', 'text', 'sub_task', 'media',
             'published_date', 'created_date',
         ]
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
         super(TrackerActivityPostAddView, self).__init__(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -2000,7 +2009,7 @@ class TrackerActivityPostAddView(
             request.POST._mutable = True
 
         if request.data:
-            request.data['activity'] = self.kwargs.get('pk', None)[0]
+            request.data['activity'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
 class TrackerTaskPostAddView(
@@ -2044,6 +2053,18 @@ class TrackerActivityPostListView(
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
     serializer_class = serializers.PostSerializer
 
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerActivityPostListView, self).__init__(*args, **kwargs)
+
     def get_queryset(self):
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
@@ -2079,11 +2100,52 @@ class TrackerPostCommentListView(
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
     serializer_class = serializers.CommentSerializer
 
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerPostCommentListView, self).__init__(*args, **kwargs)
+
     def get_queryset(self):
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         self.queryset = profile.list_post_comments(self.kwargs.get('pk', None))
         return super(TrackerPostCommentListView, self).get_queryset()
+
+class TrackerCommentRepliesListView(
+        WhistleGenericViewMixin,
+        TrackerTaskActivityMixin,
+        generics.ListAPIView):
+    """
+    List of comment replies
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    serializer_class = serializers.CommentSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerCommentRepliesListView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        self.queryset = profile.list_comment_replies(self.kwargs.get('pk', None))
+        return super(TrackerCommentRepliesListView, self).get_queryset()
 
 class TrackerCommentMixin(
         JWTPayloadMixin):
@@ -2128,6 +2190,15 @@ class TrackerPostCommentAddView(
             'id', 'author', 'post', 'parent', 'text',
             'created_date'
         ]
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
         super(TrackerPostCommentAddView, self).__init__(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):

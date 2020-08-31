@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, status
 
 from apps.message.api.frontend.serializers import TalkSerializer
+from apps.profile.api.frontend.serializers import ProfileSerializer, UserSerializer
 from ... import models
 from apps.profile.api.frontend import serializers as profile_serializers
 from apps.document.api.frontend import serializers as document_serializers
@@ -15,7 +16,7 @@ from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
-from ...models import ProjectCompanyColorAssignment
+from ...models import ProjectCompanyColorAssignment, Comment
 
 palette_color = [
     '1b112c',
@@ -459,9 +460,24 @@ class TeamSerializer(
         return super(TeamSerializer, self).get_field_names(*args, **kwargs)
 
 
+class FilteredListSerializer(serializers.ListSerializer):
+    """Serializer to filter the active system, which is a boolen field in
+       System Model. The value argument to to_representation() method is
+      the model instance"""
+
+    def to_representation(self, data):
+        if type(data) is not list:
+            data = data.filter(parent__isnull=True)
+        return super(FilteredListSerializer, self).to_representation(data)
+
+
 class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
+    author = ProfileSerializer()
+    replies_set = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Comment
+        list_serializer_class = FilteredListSerializer
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -472,9 +488,46 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
+    def get_replies_set(self, obj):
+        comments_list = []
+        comments = Comment.objects.filter(parent=obj.id)
+        for comment in comments:
+            try:
+                photo_url = comment.author.photo.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                author_photo = protocol + host + photo_url
+            except:
+                author_photo = None
+            comments_list.append(
+                {
+                    'id': comment.id,
+                    'text': comment.text,
+                    'author': {
+                        'id': comment.author.id,
+                        'user': {
+                            'id': comment.author.user.id,
+                            'username': comment.author.user.username,
+                            "first_name": comment.author.user.first_name,
+                            "last_name": comment.author.user.last_name
+                        },
+                        "photo": author_photo,
+                        "first_name": comment.author.first_name,
+                        "last_name": comment.author.last_name
+                    },
+                    'created_date': comment.created_date,
+                    'parent': comment.parent.id if comment.parent is not None else None
+                }
+            )
+        return comments_list
 
 class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     comment_set = CommentSerializer(many=True)
+    author = ProfileSerializer()
 
     class Meta:
         model = models.Post
@@ -498,7 +551,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     def get_comments(self, obj):
-        comments = obj.comment_set.all()
+        comments = obj.comment_set.all().order_by('-created_by')
         comments_list = []
         for comment in comments:
             serializer = CommentSerializer(data=comment)
@@ -824,6 +877,7 @@ class PostCommentAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
+
     class Meta:
         model = models.Comment
         fields = '__all__'

@@ -31,6 +31,7 @@ ipython-genutils==0.2.0
 itypes==1.1.0
 jedi==0.10.2
 Jinja2==2.9.6
+kafka-python==2.0.1
 MarkupSafe==1.1.1
 oauthlib==2.0.2
 olefile==0.44
@@ -60,6 +61,7 @@ simplejson==3.11.1
 six==1.10.0
 social-auth-app-django==1.2.0
 social-auth-core==1.4.0
+socketIO-client==0.7.2
 sqlparse==0.2.3
 stripe==2.48.0
 traitlets==4.3.2
@@ -67,4 +69,5 @@ typing==3.6.1
 uritemplate==3.0.0
 urllib3==1.21.1
 wcwidth==0.1.7
+websocket-client==0.57.0
 xlrd==1.1.0

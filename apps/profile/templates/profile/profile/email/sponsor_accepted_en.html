@@ -1,0 +1,13 @@
+{% extends 'email/base_email_en.html' %}
+
+{% block content %}
+<p>
+    Dear {{recipient_first_name}} {{recipient_last_name}}, <br/>
+    <strong>Your sponsorship request has been accepted</strong>.<br/>
+</p>
+<p>
+    Sponsorship Details: <br/>
+    <strong>Categories</strong>: {{tags}}<br/>
+    <strong>Expiration date</strong>: {{expiration_date}}<br/>
+</p>
+{% endblock %}

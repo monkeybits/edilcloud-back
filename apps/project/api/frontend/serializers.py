@@ -873,9 +873,9 @@ class TeamAddSerializer(
                 validated_data['project_invitation_date'] = datetime.datetime.now()
                 validated_data['status'] = 0
                 member = self.profile.create_member(validated_data)
-                if not ProjectCompanyColorAssignment.objects.filter(project=member.project, company=self.profile.company).exists():
+                if not ProjectCompanyColorAssignment.objects.filter(project=member.project, company=member.profile.company).exists():
                     ProjectCompanyColorAssignment.objects.create(
-                        project=member.project, company=self.profile.company, color=choose_random_color(self.profile.company, member.project)
+                        project=member.project, company=member.profile.company, color=choose_random_color(member.profile.company, member.project)
                     )
                 return member
             else:
@@ -883,9 +883,9 @@ class TeamAddSerializer(
                 validated_data['project_invitation_date'] = datetime.datetime.now()
                 validated_data['status'] = 1
                 member = self.profile.create_member(validated_data)
-                if not ProjectCompanyColorAssignment.objects.filter(project=member.project, company=self.profile.company).exists():
+                if not ProjectCompanyColorAssignment.objects.filter(project=member.project, company=member.profile.company).exists():
                     ProjectCompanyColorAssignment.objects.create(
-                        project=member.project, company=self.profile.company, color=choose_random_color(self.profile.company, member.project)
+                        project=member.project, company=member.profile.company, color=choose_random_color(member.profile.company, member.project)
                     )
                 return member
         except django_exception.ProjectMemberAddPermissionDenied as err:

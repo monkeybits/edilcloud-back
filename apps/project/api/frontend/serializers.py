@@ -19,18 +19,18 @@ from web.api.serializers import DynamicFieldsModelSerializer
 from ...models import ProjectCompanyColorAssignment, Comment
 
 palette_color = [
-    '#d32f2f'
-    '#7b1fa2'
-    '#303f9f'
-    '#00796b'
-    '#00e5ff'
-    '#1b5e20'
-    '#76ff03'
-    '#ffeb3b'
-    '#ff6f00'
-    '#795548'
-    '#212121'
-    '#ff4081'
+    '#d32f2f',
+    '#7b1fa2',
+    '#303f9f',
+    '#00796b',
+    '#00e5ff',
+    '#1b5e20',
+    '#76ff03',
+    '#ffeb3b',
+    '#ff6f00',
+    '#795548',
+    '#212121',
+    '#ff4081',
 ]
 palette_color2 = [
 '#F44336',

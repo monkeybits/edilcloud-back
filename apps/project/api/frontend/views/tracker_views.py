@@ -9,11 +9,13 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 
-from rest_framework import generics, status
+from rest_framework import generics, status, views
 
+from apps.document.api.frontend.views.tracker_views import TrackerDocumentMixin
+from apps.media.api.frontend.views.tracker_views import TrackerPhotoMixin, TrackerVideoMixin
 from apps.project.models import Team
 from web.api.permissions import RoleAccessPermission
-from web.api.views import QuerysetMixin, JWTPayloadMixin, WhistleGenericViewMixin
+from web.api.views import QuerysetMixin, JWTPayloadMixin, WhistleGenericViewMixin, DownloadViewMixin
 from apps.project.api.frontend import serializers
 from apps.media.api.frontend import serializers as media_serializers
 from apps.document.api.frontend import serializers as document_serializers
@@ -2273,3 +2275,25 @@ class TrackerTaskPostsListView(WhistleGenericViewMixin,
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         self.queryset = profile.list_task_posts(self.kwargs.get('pk', None))
         return super(TrackerTaskPostsListView, self).get_queryset()
+
+
+
+class TrackerProjectPhotoDownloadView(
+        TrackerPhotoMixin, DownloadViewMixin,
+        views.APIView):
+    """
+    Download a photo
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2, )
+    file_field_name = 'photo'
+
+class TrackerProjectVideoDownloadView(
+        TrackerVideoMixin, DownloadViewMixin,
+        views.APIView):
+    """
+    Download a photo
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2, )
+    file_field_name = 'video'

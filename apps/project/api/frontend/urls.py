@@ -350,6 +350,16 @@ tracker_urlpatterns = [
         tracker_views.TrackerTaskPostsListView.as_view(),
         name='tracker_activity_task_posts'
     ),
+    url(
+        r'^photo/download/(?P<pk>\d+)/$',
+        tracker_views.TrackerProjectPhotoDownloadView.as_view(),
+        name='tracker_project_document_download'
+    ),
+    url(
+        r'^video/download/(?P<pk>\d+)/$',
+        tracker_views.TrackerProjectVideoDownloadView.as_view(),
+        name='tracker_project_document_download'
+    ),
 ]
 
 urlpatterns = user_urlpatterns + generic_urlpatterns + tracker_urlpatterns

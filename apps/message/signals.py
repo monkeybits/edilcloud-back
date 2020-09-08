@@ -89,7 +89,11 @@ def message_notification(sender, instance, **kwargs):
             recipient_objs,
             batch_size=100
         )
-        # socketIO = SocketIO("127.0.0.1", "5000")
-        # socketIO.emit("chat_channel", "New message")
+        SOCKET_HOST = os.environ.get('SOCKET_HOST')
+        SOCKET_PORT = os.environ.get('SOCKET_PORT')
+        socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
+        socketIO.emit("chat_channel", {
+            "message": "New Message"
+        })
     except Exception as e:
         print(e)

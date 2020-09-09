@@ -837,7 +837,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         Get all comments of a specific post
         """
         post_obj = Post.objects.get(id=post)
-        return post_obj.comment_set.all()
+        return post_obj.comment_set.filter(parent__isnull=True)
 
     def list_comment_replies(self, comment):
         """

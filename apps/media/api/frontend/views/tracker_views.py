@@ -414,18 +414,20 @@ def get_upload_folder_path(instance, subpath, folder, is_public, create=False):
     media_dir1 = instance._meta.model_name
     media_dir2 = slugify(instance.__str__().lower())
     if media_dir1 == 'project':
-        media_dir1 = 'genericproject'
+        media_dir1 = 'project'
         media_dir2 = instance.pk
     media_root = get_media_root(is_public)
-    if create:
-        if subpath == '' or subpath == '/':
-            os.makedirs(os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2),  folder))
-        else:
-            if len(subpath.split('/')) == 3:
-                return False
-            os.makedirs(os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2), subpath,folder))
+    for name in ['photo', 'video', 'document']:
+        if create:
+            if subpath == '' or subpath == '/':
+                os.makedirs(os.path.join(media_root, name, format(media_dir1), format(media_dir2),  folder))
+            else:
+                if len(subpath.split('/')) == 3:
+                    return False
+                os.makedirs(os.path.join(media_root, name, format(media_dir1), format(media_dir2), subpath,folder))
 
     return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2))
+
 
 def get_size_format(b, factor=1024, suffix="B"):
     """
@@ -482,7 +484,7 @@ class TrackerFolderAdd(generics.CreateAPIView):
                 for (dirpath, dirnames, filenames) in folders_list:
                     listOfFiles += [
                         {
-                            'path': os.path.join(dirpath, dirname).split('genericproject/' + self.kwargs['pk'] + '/')[
+                            'path': os.path.join(dirpath, dirname).split('project/' + self.kwargs['pk'] + '/')[
                                 1],
                             'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
                         }
@@ -501,7 +503,7 @@ class TrackerFolderAdd(generics.CreateAPIView):
                     ]
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={
-                'error': "Folder already exists"
+                'error': e.__str__()
             })
         return Response(status=status.HTTP_201_CREATED, data=listOfFiles)
 
@@ -627,7 +629,7 @@ class TrackerFolderList(generics.CreateAPIView):
             for (dirpath, dirnames, filenames) in folders_list:
                 listOfFiles += [
                     {
-                        'path': os.path.join(dirpath, dirname).split('genericproject/' + self.kwargs['pk'] + '/')[1],
+                        'path': os.path.join(dirpath, dirname).split('project/' + self.kwargs['pk'] + '/')[1],
                         'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
                     }
                     for dirname in dirnames
@@ -647,7 +649,7 @@ def get_upload_folder_path2(instance, subpath, folder, is_public, create=False, 
     media_dir1 = instance._meta.model_name
     media_dir2 = slugify(instance.__str__().lower())
     if media_dir1 == 'project':
-        media_dir1 = 'genericproject'
+        media_dir1 = 'project'
         media_dir2 = instance.pk
     media_root = get_media_root(is_public)
     if create:

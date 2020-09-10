@@ -2211,9 +2211,7 @@ class TrackerPostCommentAddView(
             request.data['post'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
-class TrackerPostDeleteView(
-        TrackerPostMixin,
-        generics.RetrieveDestroyAPIView):
+class TrackerPostDeleteView(generics.RetrieveDestroyAPIView):
     """
     Delete a talk
     """

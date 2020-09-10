@@ -1144,6 +1144,29 @@ class TrackerPostMixin(
         else:
             self.serializer_class = output_serializer
 
+class TrackerPostObjectMixin(
+        JWTPayloadMixin):
+    """
+    Company Project Task Mixin
+    """
+    def get_object(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            post = profile.get_post(self.kwargs.get('pk', None))
+            self.check_object_permissions(self.request, task)
+            return post
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.TaskAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+    def set_output_serializer(self, output_serializer=None):
+        if output_serializer is None:
+            self.serializer_class = serializers.PostSerializer
+        else:
+            self.serializer_class = output_serializer
+
 class TrackerProjectInternalTaskListView(
         JWTPayloadMixin,
         QuerysetMixin,
@@ -2211,7 +2234,9 @@ class TrackerPostCommentAddView(
             request.data['post'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
-class TrackerPostDeleteView(generics.RetrieveDestroyAPIView):
+class TrackerPostDeleteView(
+        TrackerPostObjectMixin,
+        generics.RetrieveDestroyAPIView):
     """
     Delete a talk
     """

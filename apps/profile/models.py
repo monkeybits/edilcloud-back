@@ -2003,6 +2003,14 @@ class OwnerProfile(Profile):
         task = project.tasks.all().get(id=task_id)
         return task
 
+    def get_post(self, post_id):
+        """
+        Get a company project
+        """
+        # Todo: Ameliorate
+        post = Post.objects.get(id=post_id)
+        return post
+
     def edit_task(self, task_dict):
         """
         Update a company task

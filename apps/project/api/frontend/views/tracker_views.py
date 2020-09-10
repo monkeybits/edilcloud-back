@@ -1154,10 +1154,10 @@ class TrackerPostObjectMixin(
             payload = self.get_payload()
             profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
             post = profile.get_post(self.kwargs.get('pk', None))
-            self.check_object_permissions(self.request, task)
+            self.check_object_permissions(self.request, post)
             return post
         except ObjectDoesNotExist as err:
-            raise django_api_exception.TaskAPIDoesNotExist(
+            raise django_api_exception.PostAPIDoesNotExist(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 

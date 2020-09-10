@@ -2011,6 +2011,10 @@ class OwnerProfile(Profile):
         post = Post.objects.get(id=post_id)
         return post
 
+    def get_comment(self, comment_id):
+        comment = Comment.objects.get(id=comment_id)
+        return comment
+
     def edit_task(self, task_dict):
         """
         Update a company task

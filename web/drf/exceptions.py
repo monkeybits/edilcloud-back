@@ -161,6 +161,9 @@ class TaskAPIDoesNotExist(WhistleAPIException):
 class PostAPIDoesNotExist(WhistleAPIException):
     pass
 
+class CommentAPIDoesNotExist(WhistleAPIException):
+    pass
+
 class CertificationAPIDoesNotExist(WhistleAPIException):
     pass
 

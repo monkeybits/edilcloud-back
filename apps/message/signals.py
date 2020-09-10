@@ -89,11 +89,32 @@ def message_notification(sender, instance, **kwargs):
             recipient_objs,
             batch_size=100
         )
-        # SOCKET_HOST = os.environ.get('SOCKET_HOST')
-        # SOCKET_PORT = os.environ.get('SOCKET_PORT')
-        # socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
-        # socketIO.emit("chat_channel", {
-        #     "message": "New Message"
-        # })
+        SOCKET_HOST = os.environ.get('SOCKET_HOST')
+        SOCKET_PORT = os.environ.get('SOCKET_PORT')
+        socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
+        socketIO.emit("chat_channel", {
+            "message": {
+                "id": notify_obj.id,
+                "body": notify_obj.body,
+                "talk": {
+                    "id": instance.talk.id,
+                    "code": instance.talk.code,
+                    "content_type_name": instance.talk.content_type.name,
+                    "object_id": instance.talk.object_id,
+                },
+                "sender": {
+                    "id": notify_obj.sender.id,
+                    "first_name": notify_obj.sender.first_name,
+                    "last_name": notify_obj.sender.last_name,
+                    "photo": None,
+                    "role": notify_obj.sender.role,
+                    "company": {
+                        "id": notify_obj.sender.company.id,
+                        "name": notify_obj.sender.company.name,
+                        "category": {}
+                    }
+                }
+            }
+        })
     except Exception as e:
         print(e)

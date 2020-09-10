@@ -2211,6 +2211,36 @@ class TrackerPostCommentAddView(
             request.data['post'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
+class TrackerPostDeleteView(
+        TrackerPostMixin,
+        generics.RetrieveDestroyAPIView):
+    """
+    Delete a talk
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.PostSerializer
+
+    def perform_destroy(self, instance):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        profile.remove_post(instance)
+
+class TrackerCommentDeleteView(
+        TrackerPostMixin,
+        generics.RetrieveDestroyAPIView):
+    """
+    Delete a talk
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.CommentSerializer
+
+    def perform_destroy(self, instance):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        profile.remove_comment(instance)
+
 class TrackerSharePostToTaskMixin(
         JWTPayloadMixin):
     """

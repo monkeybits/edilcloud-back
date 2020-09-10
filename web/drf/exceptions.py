@@ -158,6 +158,8 @@ class TeamAPIDoesNotExist(WhistleAPIException):
 class TaskAPIDoesNotExist(WhistleAPIException):
     pass
 
+class PostAPIDoesNotExist(WhistleAPIException):
+    pass
 
 class CertificationAPIDoesNotExist(WhistleAPIException):
     pass

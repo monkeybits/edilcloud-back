@@ -34,7 +34,7 @@ pipeline {
 //             steps {
 //                 sh 'sudo ssh jenkins01@$VM_IP "sudo -S docker service update --force --image web-$GIT_TARGET_BRANCH:$BUILD_ID web"'
 //           }
-        }
+        //}
     }
 //      post {
 //         success {

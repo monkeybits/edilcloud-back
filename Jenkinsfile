@@ -12,21 +12,21 @@ pipeline {
                 sh 'echo $GIT_BRANCH'
                 sh 'echo $GIT_COMMIT'
                 echo 'Building'
-                sh 'sudo docker build -t web-$GIT_TARGET_BRANCH:$BUILD_ID .'
-                sh 'sudo docker tag web-$GIT_TARGET_BRANCH:$BUILD_ID'
+                sh 'docker build -t web-$GIT_TARGET_BRANCH:$BUILD_ID .'
+                sh 'docker tag web-$GIT_TARGET_BRANCH:$BUILD_ID'
             }
         }
 
         stage('Push image build') {
              steps {
-                sh 'sudo docker push web-$GIT_TARGET_BRANCH:$BUILD_ID'
+                sh 'docker push web-$GIT_TARGET_BRANCH:$BUILD_ID'
             }
         }
 
         stage('Push image as latest to registry') {
             steps {
-                sh 'sudo docker tag web-$GIT_TARGET_BRANCH:$BUILD_ID web-$GIT_TARGET_BRANCH:latest'
-                sh 'sudo docker push web-$GIT_TARGET_BRANCH:latest'
+                sh 'docker tag web-$GIT_TARGET_BRANCH:$BUILD_ID web-$GIT_TARGET_BRANCH:latest'
+                sh 'docker push web-$GIT_TARGET_BRANCH:latest'
         }
         }
 

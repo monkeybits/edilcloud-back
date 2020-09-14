@@ -563,6 +563,7 @@ class TaskSerializer(
     assigned_company = profile_serializers.CompanySerializer()
     workers = profile_serializers.ProfileSerializer(many=True)
     share_status = serializers.ReadOnlyField(source="get_share_status")
+    activities = serializers.SerializerMethodField()
     shared_task = TaskGenericSerializer()
     only_read = serializers.SerializerMethodField()
 
@@ -583,6 +584,11 @@ class TaskSerializer(
             return False
         else:
             return True
+
+    def get_activities(self, obj):
+        activities = obj.activities.all()
+        serializer = ActivitySerializer(activities, many=True)
+        return serializer.data
 
 class TaskAddSerializer(
     DynamicFieldsModelSerializer,
@@ -1000,6 +1006,12 @@ class TeamDisableSerializer(
         member = self.profile.disable_member(instance)
         return member
 
+
+class ActivitySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Activity
+        fields = '__all__'
 
 class TaskActivitySerializer(
     DynamicFieldsModelSerializer):

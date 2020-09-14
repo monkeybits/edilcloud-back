@@ -489,7 +489,6 @@ class MediaAssignment(OrderedModel):
     class Meta:
         verbose_name = _('image assignment')
         verbose_name_plural = _('image assignments')
-        ordering = ('-created_date', )
 
 @python_2_unicode_compatible
 class Post(OrderedModel):

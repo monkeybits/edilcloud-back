@@ -1289,7 +1289,7 @@ class TrackerProjectTaskListView(
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
             'workers', 'share_status', 'shared_task', 'only_read',
-            'alert', 'starred', 'note'
+            'alert', 'starred', 'note', 'activities'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',

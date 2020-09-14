@@ -16,7 +16,7 @@ from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
-from ...models import ProjectCompanyColorAssignment, Comment
+from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment
 
 palette_color = [
     '#d32f2f',
@@ -813,10 +813,15 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
                 }
             )
         return comments_list
+class MediaAssignmentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
+    class Meta:
+        model = models.MediaAssignment
+        fields = '__all__'
 
 class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     comment_set = CommentSerializer(many=True)
     author = ProfileSerializer()
+    media = MediaAssignmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Post

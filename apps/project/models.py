@@ -42,8 +42,26 @@ def get_upload_logo_path(instance, filename):
     return os.path.join(media_root, u"project", u"logo", u"{0}".format(media_dir), filename)
 
 def get_upload_post_path(instance, filename):
-    last_post = Post.objects.last().pk
-    return os.path.join(u"subtasks", u"{0}".format(instance.sub_task_id), u"posts", u"{0}".format(str(last_post + 1)), filename)
+    if instance.task != None:
+        task = instance.task.id
+        return os.path.join(u"tasks", u"{0}".format(str(task)), filename)
+    if instance.activity != None:
+        act = instance.activity
+        task = act.task.id
+        return os.path.join(u"tasks", u"{0}".format(str(task)), "activities", u"{0}".format(str(act.id)), filename)
+    if instance.post != None:
+        post = instance.post
+        act = post.sub_task
+        task = act.task.id
+        return os.path.join(u"tasks", u"{0}".format(str(task)), "activities", u"{0}".format(str(act.id)), "posts", u"{0}".format(str(post.id)),filename)
+    if instance.comment != None:
+        comment = instance.comment
+        post = comment.post
+        act = post.sub_task
+        task = act.task.id
+        return os.path.join(u"tasks", u"{0}".format(str(task)), "activities", u"{0}".format(str(act.id)), "posts",
+                            u"{0}".format(str(post.id)), "comments",
+                            u"{0}".format(str(comment.id)), filename)
 
 @Field.register_lookup
 class NotEqual(Lookup):
@@ -484,12 +502,13 @@ class ProjectCompanyColorAssignment(models.Model):
 class MediaAssignment(OrderedModel):
     post = models.ForeignKey('project.Post', on_delete=models.CASCADE, null=True, blank=True)
     comment = models.ForeignKey('project.Comment', on_delete=models.CASCADE, null=True, blank=True)
+    activity = models.ForeignKey('project.Activity', on_delete=models.CASCADE, null=True, blank=True)
+    task = models.ForeignKey('project.Task', on_delete=models.CASCADE, null=True, blank=True)
     media = models.FileField(blank=True, default="", upload_to=get_upload_post_path)
 
     class Meta:
         verbose_name = _('image assignment')
         verbose_name_plural = _('image assignments')
-        ordering = ('-created_date', )
 
 @python_2_unicode_compatible
 class Post(OrderedModel):

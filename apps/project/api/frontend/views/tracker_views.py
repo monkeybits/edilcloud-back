@@ -2038,7 +2038,7 @@ class TrackerActivityPostAddView(
             'published_date', 'created_date',
         ]
         self.activity_response_include_fields = [
-            'id', 'author', 'text', 'sub_task', 'media',
+            'id', 'author', 'text', 'sub_task',
             'published_date', 'created_date',
         ]
         self.user_response_include_fields = [
@@ -2077,7 +2077,7 @@ class TrackerTaskPostAddView(
             'published_date', 'created_date',
         ]
         self.activity_response_include_fields = [
-            'id', 'author', 'text', 'task', 'sub_task', 'media',
+            'id', 'author', 'text', 'task', 'sub_task',
             'published_date', 'created_date',
         ]
         super(TrackerTaskPostAddView, self).__init__(*args, **kwargs)

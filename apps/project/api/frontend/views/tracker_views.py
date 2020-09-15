@@ -1289,7 +1289,7 @@ class TrackerProjectTaskListView(
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
             'workers', 'share_status', 'shared_task', 'only_read',
-            'alert', 'starred', 'note'
+            'alert', 'starred', 'note', 'activities'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -2034,7 +2034,7 @@ class TrackerActivityPostAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'text', 'media',
+            'text',
             'published_date', 'created_date',
         ]
         self.activity_response_include_fields = [
@@ -2073,7 +2073,7 @@ class TrackerTaskPostAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'text', 'media',
+            'text',
             'published_date', 'created_date',
         ]
         self.activity_response_include_fields = [

@@ -2135,6 +2135,10 @@ class TrackerTaskPostListView(
     serializer_class = serializers.PostSerializer
 
     def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
         self.profile_response_include_fields = [
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'

@@ -821,6 +821,14 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         task_obj = Task.objects.get(id=task)
         return task_obj.post_set.all()
 
+    def remove_post(self, post):
+        post = Post.objects.get(id=post.id)
+        post.delete()
+
+    def remove_comment(self, comment):
+        comment = Comment.objects.get(id=comment.id)
+        comment.delete()
+
     def list_task_posts(self, task):
         """
         Get all posts of a specific activity
@@ -1994,6 +2002,18 @@ class OwnerProfile(Profile):
         project = self.list_projects().get(tasks__id=task_id)
         task = project.tasks.all().get(id=task_id)
         return task
+
+    def get_post(self, post_id):
+        """
+        Get a company project
+        """
+        # Todo: Ameliorate
+        post = Post.objects.get(id=post_id)
+        return post
+
+    def get_comment(self, comment_id):
+        comment = Comment.objects.get(id=comment_id)
+        return comment
 
     def edit_task(self, task_dict):
         """

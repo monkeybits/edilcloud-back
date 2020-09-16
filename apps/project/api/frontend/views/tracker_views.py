@@ -1144,6 +1144,52 @@ class TrackerPostMixin(
         else:
             self.serializer_class = output_serializer
 
+class TrackerPostObjectMixin(
+        JWTPayloadMixin):
+    """
+    Company Project Task Mixin
+    """
+    def get_object(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            post = profile.get_post(self.kwargs.get('pk', None))
+            self.check_object_permissions(self.request, post)
+            return post
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.PostAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+    def set_output_serializer(self, output_serializer=None):
+        if output_serializer is None:
+            self.serializer_class = serializers.PostSerializer
+        else:
+            self.serializer_class = output_serializer
+
+class TrackerCommentObjectMixin(
+        JWTPayloadMixin):
+    """
+    Company Project Task Mixin
+    """
+    def get_object(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            comment = profile.get_comment(self.kwargs.get('pk', None))
+            self.check_object_permissions(self.request, comment)
+            return comment
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.CommentAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+    def set_output_serializer(self, output_serializer=None):
+        if output_serializer is None:
+            self.serializer_class = serializers.CommentSerializer
+        else:
+            self.serializer_class = output_serializer
+
 class TrackerProjectInternalTaskListView(
         JWTPayloadMixin,
         QuerysetMixin,
@@ -1243,7 +1289,7 @@ class TrackerProjectTaskListView(
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
             'workers', 'share_status', 'shared_task', 'only_read',
-            'alert', 'starred', 'note'
+            'alert', 'starred', 'note', 'activities'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1988,11 +2034,11 @@ class TrackerActivityPostAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'text', 'media',
+            'text',
             'published_date', 'created_date',
         ]
         self.activity_response_include_fields = [
-            'id', 'author', 'text', 'sub_task', 'media',
+            'id', 'author', 'text', 'sub_task',
             'published_date', 'created_date',
         ]
         self.user_response_include_fields = [
@@ -2027,12 +2073,16 @@ class TrackerTaskPostAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'text', 'media',
+            'text',
             'published_date', 'created_date',
         ]
         self.activity_response_include_fields = [
-            'id', 'author', 'text', 'task', 'sub_task', 'media',
+            'id', 'author', 'text', 'task', 'sub_task',
             'published_date', 'created_date',
+        ]
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'photo', 'position',
+            'role', 'email', 'fax', 'phone'
         ]
         super(TrackerTaskPostAddView, self).__init__(*args, **kwargs)
 
@@ -2210,6 +2260,36 @@ class TrackerPostCommentAddView(
         if request.data:
             request.data['post'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
+
+class TrackerPostDeleteView(
+        TrackerPostObjectMixin,
+        generics.RetrieveDestroyAPIView):
+    """
+    Delete a talk
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.PostSerializer
+
+    def perform_destroy(self, instance):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        profile.remove_post(instance)
+
+class TrackerCommentDeleteView(
+        TrackerCommentObjectMixin,
+        generics.RetrieveDestroyAPIView):
+    """
+    Delete a talk
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.CommentSerializer
+
+    def perform_destroy(self, instance):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        profile.remove_comment(instance)
 
 class TrackerSharePostToTaskMixin(
         JWTPayloadMixin):

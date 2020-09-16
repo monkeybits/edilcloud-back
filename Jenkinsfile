@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-       GIT_TARGET_BRANCH = "dev"
-       VM_IP = "3.9.170.59"
+       GIT_TARGET_BRANCH = "dev_project_refactor"
+       VM_IP = "35.176.179.55"
    }
     stages {
         stage('Build image') {
@@ -30,11 +30,11 @@ pipeline {
         }
         }
 
-         stage('Update services with new image') {
-            steps {
-                sh 'ssh jenkins01@$VM_IP "sudo -S docker service update --force --image web-$GIT_TARGET_BRANCH:$BUILD_ID web"'
-        }
-        }
+//          stage('Update services with new image') {
+//             steps {
+//                 sh 'sudo ssh jenkins01@$VM_IP "sudo -S docker service update --force --image web-$GIT_TARGET_BRANCH:$BUILD_ID web"'
+//           }
+        //}
     }
 //      post {
 //         success {

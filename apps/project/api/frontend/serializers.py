@@ -16,7 +16,7 @@ from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
-from ...models import ProjectCompanyColorAssignment, Comment
+from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment
 
 palette_color = [
     '#d32f2f',
@@ -563,6 +563,7 @@ class TaskSerializer(
     assigned_company = profile_serializers.CompanySerializer()
     workers = profile_serializers.ProfileSerializer(many=True)
     share_status = serializers.ReadOnlyField(source="get_share_status")
+    activities = serializers.SerializerMethodField()
     shared_task = TaskGenericSerializer()
     only_read = serializers.SerializerMethodField()
 
@@ -583,6 +584,11 @@ class TaskSerializer(
             return False
         else:
             return True
+
+    def get_activities(self, obj):
+        activities = obj.activities.all()
+        serializer = ActivitySerializer(activities, many=True)
+        return serializer.data
 
 class TaskAddSerializer(
     DynamicFieldsModelSerializer,
@@ -738,6 +744,7 @@ class FilteredListSerializer(serializers.ListSerializer):
 class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     author = ProfileSerializer()
     replies_set = serializers.SerializerMethodField()
+    #media_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Comment
@@ -751,6 +758,30 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
             self.request = kwargs['context']['request']
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    # def get_media_set(self, obj):
+    #     media_list = []
+    #     medias = MediaAssignment.objects.filter(comment=obj)
+    #     for media in medias:
+    #         try:
+    #             photo_url = media.media.url
+    #             protocol = self.context['request'].is_secure()
+    #             if protocol:
+    #                 protocol = 'https://'
+    #             else:
+    #                 protocol = 'http://'
+    #             host = self.context['request'].get_host()
+    #             media_url = protocol + host + photo_url
+    #         except:
+    #             media_url = None
+    #         media_list.append(
+    #             {
+    #                 "media_url": media_url,
+    #                 "comment": media.comment.id,
+    #                 "post": media.post.id if media.post != None else None
+    #             }
+    #         )
+    #         return media_list
 
     def get_replies_set(self, obj):
         comments_list = []
@@ -801,7 +832,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'published_date',
             'sub_task',
             'task',
-            'media',
+            #'media',
             'text',
             'comment_set'
         ]
@@ -976,6 +1007,12 @@ class TeamDisableSerializer(
         return member
 
 
+class ActivitySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Activity
+        fields = '__all__'
+
 class TaskActivitySerializer(
     DynamicFieldsModelSerializer):
     task = TaskSerializer()
@@ -1149,6 +1186,11 @@ class ActivityPostAddSerializer(
             validated_data['activity'] = self.request.data['activity']
             files = list(self.request.FILES.values())
             activity_post = self.author.create_activity_post(validated_data)
+            # for file in files:
+            #     MediaAssignment.objects.create(
+            #         post=activity_post,
+            #         media=file
+            #     )
             return activity_post
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(
@@ -1190,6 +1232,12 @@ class PostCommentAddSerializer(
                         {'parent': _('Cannot assign to a parent that already have a parent')}
                     )
             post_comment = self.author.create_post_comment(validated_data)
+            files = list(self.request.FILES.values())
+            # for file in files:
+            #     MediaAssignment.objects.create(
+            #         comment=post_comment,
+            #         media=file
+            #     )
             return post_comment
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(

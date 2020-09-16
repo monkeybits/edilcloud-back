@@ -336,6 +336,16 @@ tracker_urlpatterns = [
         name='tracker_activity_comment_add'
     ),
     url(
+        r'^post/delete/(?P<pk>\d+)/$',
+        tracker_views.TrackerPostDeleteView.as_view(),
+        name='tracker_post_delete'
+    ),
+    url(
+        r'^comment/delete/(?P<pk>\d+)/$',
+        tracker_views.TrackerCommentDeleteView.as_view(),
+        name='tracker_comment_delete'
+    ),
+    url(
         r'^comment/(?P<pk>\d+)/replies_list/$',
         tracker_views.TrackerCommentRepliesListView.as_view(),
         name='tracker_comment_replies_list'

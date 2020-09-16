@@ -480,6 +480,15 @@ class ProjectCompanyColorAssignment(models.Model):
     company = models.ForeignKey('profile.Company', on_delete=models.CASCADE)
     color = models.CharField(max_length=10)
 
+@python_2_unicode_compatible
+class MediaAssignment(OrderedModel):
+    post = models.ForeignKey('project.Post', on_delete=models.CASCADE, null=True, blank=True)
+    comment = models.ForeignKey('project.Comment', on_delete=models.CASCADE, null=True, blank=True)
+    media = models.FileField(blank=True, default="", upload_to=get_upload_post_path)
+
+    class Meta:
+        verbose_name = _('image assignment')
+        verbose_name_plural = _('image assignments')
 
 @python_2_unicode_compatible
 class Post(OrderedModel):
@@ -495,7 +504,6 @@ class Post(OrderedModel):
             default=timezone.now)
     published_date = models.DateTimeField(
             blank=True, null=True)
-    media = models.FileField(blank=True, default="", upload_to=get_upload_post_path)
 
     class Meta:
         verbose_name = _('post')

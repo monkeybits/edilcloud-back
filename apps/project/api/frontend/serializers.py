@@ -819,10 +819,15 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
                 }
             )
         return comments_list
+class MediaAssignmentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
+    class Meta:
+        model = models.MediaAssignment
+        fields = '__all__'
 
 class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     comment_set = CommentSerializer(many=True)
     author = ProfileSerializer()
+    media = MediaAssignmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Post

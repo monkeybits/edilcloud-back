@@ -236,9 +236,27 @@ class ProjectCompanyColorAssignmentAdmin(UserAdminMixin, admin.ModelAdmin):
     )
     list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
 
+class MediaAssignmentAdmin(UserAdminMixin, admin.ModelAdmin):
+    fieldsets = (
+        (_('general_information'), {
+            'fields': (
+                'post',
+                'comment',
+                'task',
+                'activity',
+                'media',
+            )
+        }),
+    )
+    list_display = (
+        'id', 'comment', 'task',  'activity', 'media'
+    )
+    list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
+
 admin.site.register(models.Project, ProjectAdmin)
 admin.site.register(models.Task, TaskAdmin)
 admin.site.register(models.Activity, ActivityAdmin)
 admin.site.register(models.Post, PostAdmin)
 admin.site.register(models.Comment, CommentAdmin)
+admin.site.register(models.MediaAssignment, MediaAssignmentAdmin)
 admin.site.register(models.ProjectCompanyColorAssignment, ProjectCompanyColorAssignmentAdmin)

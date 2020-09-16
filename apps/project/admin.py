@@ -189,13 +189,13 @@ class PostAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (_('general_information'), {
             'fields': (
-                'sub_task', 'author',
+                'sub_task', 'author', 'task',
                 'text'
             )
         }),
     )
     list_display = (
-        'id', 'author', 'sub_task',
+        'id', 'author', 'sub_task', 'task',
         'text'
     )
     readonly_fields = (

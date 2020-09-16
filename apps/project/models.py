@@ -51,14 +51,22 @@ def get_upload_post_path(instance, filename):
         return os.path.join(u"tasks", u"{0}".format(str(task)), "activities", u"{0}".format(str(act.id)), filename)
     if instance.post != None:
         post = instance.post
-        act = post.sub_task
-        task = act.task.id
+        if post.task == None:
+            act = post.sub_task
+            task = act.task.id
+        else:
+            act = post.task
+            task = act.id
         return os.path.join(u"tasks", u"{0}".format(str(task)), "activities", u"{0}".format(str(act.id)), "posts", u"{0}".format(str(post.id)),filename)
     if instance.comment != None:
         comment = instance.comment
         post = comment.post
-        act = post.sub_task
-        task = act.task.id
+        if post.task == None:
+            act = post.sub_task
+            task = act.task.id
+        else:
+            act = post.task
+            task = act.id
         return os.path.join(u"tasks", u"{0}".format(str(task)), "activities", u"{0}".format(str(act.id)), "posts",
                             u"{0}".format(str(post.id)), "comments",
                             u"{0}".format(str(comment.id)), filename)

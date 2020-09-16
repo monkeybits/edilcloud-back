@@ -2091,7 +2091,7 @@ class TrackerTaskPostAddView(
             request.POST._mutable = True
 
         if request.data:
-            request.data['task'] = self.kwargs.get('pk', None)[0]
+            request.data['task'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
 class TrackerActivityPostListView(

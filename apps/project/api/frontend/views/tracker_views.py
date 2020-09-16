@@ -13,7 +13,7 @@ from rest_framework import generics, status, views
 
 from apps.document.api.frontend.views.tracker_views import TrackerDocumentMixin
 from apps.media.api.frontend.views.tracker_views import TrackerPhotoMixin, TrackerVideoMixin
-from apps.project.models import Team
+from apps.project.models import Team, MediaAssignment
 from web.api.permissions import RoleAccessPermission
 from web.api.views import QuerysetMixin, JWTPayloadMixin, WhistleGenericViewMixin, DownloadViewMixin
 from apps.project.api.frontend import serializers
@@ -1289,7 +1289,11 @@ class TrackerProjectTaskListView(
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
             'workers', 'share_status', 'shared_task', 'only_read',
-            'alert', 'starred', 'note', 'activities'
+            'alert', 'starred', 'note', 'activities', 'media_set'
+        ]
+        self.activity_response_include_fields = [
+            'id', 'task', 'profile', 'title', 'description', 'status',
+            'datetime_start', 'datetime_end', 'media_set'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1337,7 +1341,7 @@ class TrackerProjectTaskAddView(
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
             'workers', 'share_status', 'shared_task', 'alert',
-            'starred', 'note', 'progress'
+            'starred', 'note', 'progress', 'media_set'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1825,12 +1829,12 @@ class TrackerTaskActivityAddView(
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
-            'starred', 'note'
+            'starred', 'note',
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
             'date_end', 'date_completed', 'alert',
-            'starred', 'note'
+            'starred', 'note', 'media_set'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -2252,7 +2256,7 @@ class TrackerPostCommentAddView(
         ]
         self.activity_response_include_fields = [
             'id', 'author', 'post', 'parent', 'text',
-            'created_date'
+            'created_date', 'media_set'
         ]
         self.user_response_include_fields = [
             'id', 'username',

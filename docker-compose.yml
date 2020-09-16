@@ -32,4 +32,3 @@ volumes:
 
 networks:
   streams:
-    external: true

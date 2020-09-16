@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import os
 import random
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -556,6 +557,45 @@ class TaskGenericSerializer(
             return view.task_response_include_fields
         return super(TaskGenericSerializer, self).get_field_names(*args, **kwargs)
 
+class ActivitySerializer(DynamicFieldsModelSerializer):
+    media_set = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Activity
+        fields = '__all__'
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.activity_response_include_fields
+        return super(ActivitySerializer, self).get_field_names(*args, **kwargs)
+
+    def get_media_set(self, obj):
+        media_list = []
+        medias = MediaAssignment.objects.filter(activity=obj)
+        for media in medias:
+            try:
+                photo_url = media.media.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
+            name, extension = os.path.splitext(media.media.name)
+            media_list.append(
+                {
+                    "media_url": media_url,
+                    "size": media.media.size,
+                    "name": name.split('/')[-1],
+                    "extension": extension,
+                    "activity": media.activity.id,
+                }
+            )
+        return media_list
 
 class TaskSerializer(
     DynamicFieldsModelSerializer):
@@ -563,9 +603,10 @@ class TaskSerializer(
     assigned_company = profile_serializers.CompanySerializer()
     workers = profile_serializers.ProfileSerializer(many=True)
     share_status = serializers.ReadOnlyField(source="get_share_status")
-    activities = serializers.SerializerMethodField()
+    activities = ActivitySerializer(many=True)
     shared_task = TaskGenericSerializer()
     only_read = serializers.SerializerMethodField()
+    media_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Task
@@ -576,6 +617,34 @@ class TaskSerializer(
         if view:
             return view.task_response_include_fields
         return super(TaskSerializer, self).get_field_names(*args, **kwargs)
+
+
+    def get_media_set(self, obj):
+        media_list = []
+        medias = MediaAssignment.objects.filter(task=obj)
+        for media in medias:
+            try:
+                photo_url = media.media.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
+            name, extension = os.path.splitext(media.media.name)
+            media_list.append(
+                {
+                    "media_url": media_url,
+                    "size": media.media.size,
+                    "name": name.split('/')[-1],
+                    "extension": extension,
+                    "task": media.task.id,
+                }
+            )
+            return media_list
 
     def get_only_read(self, obj):
         payload = self.context['view'].get_payload()
@@ -594,6 +663,8 @@ class TaskAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
+    media_set = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Task
         fields = '__all__'
@@ -605,6 +676,33 @@ class TaskAddSerializer(
             self.request = kwargs['context']['request']
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_media_set(self, obj):
+        media_list = []
+        medias = MediaAssignment.objects.filter(task=obj)
+        for media in medias:
+            try:
+                photo_url = media.media.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
+            name, extension = os.path.splitext(media.media.name)
+            media_list.append(
+                {
+                    "media_url": media_url,
+                    "size": media.media.size,
+                    "name": name.split('/')[-1],
+                    "extension": extension,
+                    "task": media.task.id,
+                }
+            )
+        return media_list
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -620,6 +718,12 @@ class TaskAddSerializer(
 
     def create(self, validated_data):
         task = self.profile.create_task(validated_data)
+        files = list(self.request.FILES.values())
+        for file in files:
+            MediaAssignment.objects.create(
+                task=task,
+                media=file
+            )
         return task
 
 
@@ -744,7 +848,7 @@ class FilteredListSerializer(serializers.ListSerializer):
 class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     author = ProfileSerializer()
     replies_set = serializers.SerializerMethodField()
-    #media_set = serializers.SerializerMethodField()
+    media_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Comment
@@ -759,29 +863,32 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
-    # def get_media_set(self, obj):
-    #     media_list = []
-    #     medias = MediaAssignment.objects.filter(comment=obj)
-    #     for media in medias:
-    #         try:
-    #             photo_url = media.media.url
-    #             protocol = self.context['request'].is_secure()
-    #             if protocol:
-    #                 protocol = 'https://'
-    #             else:
-    #                 protocol = 'http://'
-    #             host = self.context['request'].get_host()
-    #             media_url = protocol + host + photo_url
-    #         except:
-    #             media_url = None
-    #         media_list.append(
-    #             {
-    #                 "media_url": media_url,
-    #                 "comment": media.comment.id,
-    #                 "post": media.post.id if media.post != None else None
-    #             }
-    #         )
-    #         return media_list
+    def get_media_set(self, obj):
+        media_list = []
+        medias = MediaAssignment.objects.filter(comment=obj)
+        for media in medias:
+            try:
+                photo_url = media.media.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
+            name, extension = os.path.splitext(media.media.name)
+            media_list.append(
+                {
+                    "media_url": media_url,
+                    "size": media.media.size,
+                    "name": name.split('/')[-1],
+                    "extension": extension,
+                    "comment": media.comment.id,
+                }
+            )
+        return media_list
 
     def get_replies_set(self, obj):
         comments_list = []
@@ -814,15 +921,22 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
                         "first_name": comment.author.first_name,
                         "last_name": comment.author.last_name
                     },
+                    'media_set': self.get_media_set(comment),
                     'created_date': comment.created_date,
                     'parent': comment.parent.id if comment.parent is not None else None
                 }
             )
         return comments_list
 
+class MediaAssignmentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
+    class Meta:
+        model = models.MediaAssignment
+        fields = '__all__'
+
 class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     comment_set = CommentSerializer(many=True)
     author = ProfileSerializer()
+    media_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Post
@@ -832,7 +946,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'published_date',
             'sub_task',
             'task',
-            #'media',
+            'media_set',
             'text',
             'comment_set'
         ]
@@ -844,6 +958,33 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             self.request = kwargs['context']['request']
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_media_set(self, obj):
+        media_list = []
+        medias = MediaAssignment.objects.filter(post=obj)
+        for media in medias:
+            try:
+                photo_url = media.media.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
+            name, extension = os.path.splitext(media.media.name)
+            media_list.append(
+                {
+                    "media_url": media_url,
+                    "size": media.media.size,
+                    "name": name.split('/')[-1],
+                    "extension": extension,
+                    "post": media.post.id,
+                }
+            )
+        return media_list
 
     def get_comments(self, obj):
         comments = obj.comment_set.all().order_by('-created_by')
@@ -1007,12 +1148,6 @@ class TeamDisableSerializer(
         return member
 
 
-class ActivitySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = models.Activity
-        fields = '__all__'
-
 class TaskActivitySerializer(
     DynamicFieldsModelSerializer):
     task = TaskSerializer()
@@ -1052,6 +1187,9 @@ class TaskActivityAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
+    media_set = serializers.SerializerMethodField(read_only=True)
+    note = serializers.CharField(max_length=150, allow_blank=True, required=False)
+
     class Meta:
         model = models.Activity
         fields = '__all__'
@@ -1063,6 +1201,33 @@ class TaskActivityAddSerializer(
             self.request = kwargs['context']['request']
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_media_set(self, obj):
+        media_list = []
+        medias = MediaAssignment.objects.filter(activity=obj)
+        for media in medias:
+            try:
+                photo_url = media.media.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
+            name, extension = os.path.splitext(media.media.name)
+            media_list.append(
+                {
+                    "media_url": media_url,
+                    "size": media.media.size,
+                    "name": name.split('/')[-1],
+                    "extension": extension,
+                    "activity": media.activity.id,
+                }
+            )
+        return media_list
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -1079,6 +1244,12 @@ class TaskActivityAddSerializer(
     def create(self, validated_data):
         try:
             task_activity = self.profile.create_task_activity(validated_data)
+            files = list(self.request.FILES.values())
+            for file in files:
+                MediaAssignment.objects.create(
+                    activity=task_activity,
+                    media=file
+                )
             return task_activity
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(
@@ -1128,6 +1299,7 @@ class TaskPostAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
+
     class Meta:
         model = models.Post
         fields = '__all__'
@@ -1151,8 +1323,13 @@ class TaskPostAddSerializer(
             validated_data['author'] = self.author
             validated_data['task'] = self.request.data['task']
             files = list(self.request.FILES.values())
-            activity_post = self.author.create_task_post(validated_data)
-            return activity_post
+            task_post = self.author.create_task_post(validated_data)
+            for file in files:
+                MediaAssignment.objects.create(
+                    post=task_post,
+                    media=file
+                )
+            return task_post
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
@@ -1162,6 +1339,7 @@ class ActivityPostAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
+
     class Meta:
         model = models.Post
         fields = '__all__'
@@ -1186,11 +1364,11 @@ class ActivityPostAddSerializer(
             validated_data['activity'] = self.request.data['activity']
             files = list(self.request.FILES.values())
             activity_post = self.author.create_activity_post(validated_data)
-            # for file in files:
-            #     MediaAssignment.objects.create(
-            #         post=activity_post,
-            #         media=file
-            #     )
+            for file in files:
+                MediaAssignment.objects.create(
+                    post=activity_post,
+                    media=file
+                )
             return activity_post
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(
@@ -1202,6 +1380,7 @@ class PostCommentAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
+    media_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Comment
@@ -1221,6 +1400,33 @@ class PostCommentAddSerializer(
             return view.activity_request_include_fields
         return super(PostCommentAddSerializer, self).get_field_names(*args, **kwargs)
 
+    def get_media_set(self, obj):
+        media_list = []
+        medias = MediaAssignment.objects.filter(comment=obj)
+        for media in medias:
+            try:
+                photo_url = media.media.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
+            name, extension = os.path.splitext(media.media.name)
+            media_list.append(
+                {
+                    "media_url": media_url,
+                    "size": media.media.size,
+                    "name": name.split('/')[-1],
+                    "extension": extension,
+                    "comment": media.comment.id,
+                }
+            )
+        return media_list
+
     def create(self, validated_data):
         try:
             validated_data['author'] = self.author
@@ -1231,13 +1437,13 @@ class PostCommentAddSerializer(
                     raise serializers.ValidationError(
                         {'parent': _('Cannot assign to a parent that already have a parent')}
                     )
-            post_comment = self.author.create_post_comment(validated_data)
             files = list(self.request.FILES.values())
-            # for file in files:
-            #     MediaAssignment.objects.create(
-            #         comment=post_comment,
-            #         media=file
-            #     )
+            post_comment = self.author.create_post_comment(validated_data)
+            for file in files:
+                MediaAssignment.objects.create(
+                    comment=post_comment,
+                    media=file
+                )
             return post_comment
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(

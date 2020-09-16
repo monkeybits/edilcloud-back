@@ -1186,11 +1186,11 @@ class ActivityPostAddSerializer(
             validated_data['activity'] = self.request.data['activity']
             files = list(self.request.FILES.values())
             activity_post = self.author.create_activity_post(validated_data)
-            for file in files:
-                MediaAssignment.objects.create(
-                    post=activity_post,
-                    media=file
-                )
+            # for file in files:
+            #     MediaAssignment.objects.create(
+            #         post=activity_post,
+            #         media=file
+            #     )
             return activity_post
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(
@@ -1233,11 +1233,11 @@ class PostCommentAddSerializer(
                     )
             post_comment = self.author.create_post_comment(validated_data)
             files = list(self.request.FILES.values())
-            for file in files:
-                MediaAssignment.objects.create(
-                    comment=post_comment,
-                    media=file
-                )
+            # for file in files:
+            #     MediaAssignment.objects.create(
+            #         comment=post_comment,
+            #         media=file
+            #     )
             return post_comment
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(

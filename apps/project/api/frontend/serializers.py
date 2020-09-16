@@ -16,7 +16,7 @@ from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
-from ...models import ProjectCompanyColorAssignment, Comment
+from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment
 
 palette_color = [
     '#d32f2f',
@@ -744,7 +744,7 @@ class FilteredListSerializer(serializers.ListSerializer):
 class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     author = ProfileSerializer()
     replies_set = serializers.SerializerMethodField()
-    media_set = serializers.SerializerMethodField()
+    #media_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Comment
@@ -759,29 +759,29 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
-    def get_media_set(self, obj):
-        media_list = []
-        medias = MediaAssignment.objects.filter(comment=obj)
-        for media in medias:
-            try:
-                photo_url = media.media.url
-                protocol = self.context['request'].is_secure()
-                if protocol:
-                    protocol = 'https://'
-                else:
-                    protocol = 'http://'
-                host = self.context['request'].get_host()
-                media_url = protocol + host + photo_url
-            except:
-                media_url = None
-            media_list.append(
-                {
-                    "media_url": media_url,
-                    "comment": media.comment.id,
-                    "post": media.post.id if media.post != None else None
-                }
-            )
-            return media_list
+    # def get_media_set(self, obj):
+    #     media_list = []
+    #     medias = MediaAssignment.objects.filter(comment=obj)
+    #     for media in medias:
+    #         try:
+    #             photo_url = media.media.url
+    #             protocol = self.context['request'].is_secure()
+    #             if protocol:
+    #                 protocol = 'https://'
+    #             else:
+    #                 protocol = 'http://'
+    #             host = self.context['request'].get_host()
+    #             media_url = protocol + host + photo_url
+    #         except:
+    #             media_url = None
+    #         media_list.append(
+    #             {
+    #                 "media_url": media_url,
+    #                 "comment": media.comment.id,
+    #                 "post": media.post.id if media.post != None else None
+    #             }
+    #         )
+    #         return media_list
 
     def get_replies_set(self, obj):
         comments_list = []
@@ -832,7 +832,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'published_date',
             'sub_task',
             'task',
-            'media',
+            #'media',
             'text',
             'comment_set'
         ]

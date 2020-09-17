@@ -2091,7 +2091,7 @@ class TrackerTaskPostAddView(
             request.POST._mutable = True
 
         if request.data:
-            request.data['task'] = self.kwargs.get('pk', None)[0]
+            request.data['task'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
 class TrackerActivityPostListView(
@@ -2133,6 +2133,18 @@ class TrackerTaskPostListView(
     permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
     serializer_class = serializers.PostSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerTaskPostListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
         payload = self.get_payload()

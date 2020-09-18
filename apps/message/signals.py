@@ -95,7 +95,7 @@ def message_notification(sender, instance, **kwargs):
         socketIO.emit("chat_channel", {
             "message": {
                 "id": notify_obj.id,
-                "body": notify_obj.body,
+                "body": instance.body,
                 "talk": {
                     "id": instance.talk.id,
                     "code": instance.talk.code,

@@ -527,6 +527,10 @@ class Post(OrderedModel):
         default=True,
         verbose_name=_('is public')
     )
+    alert = models.BooleanField(
+        default=False,
+        verbose_name=_('alert')
+    )
     text = models.TextField()
     created_date = models.DateTimeField(
             default=timezone.now)

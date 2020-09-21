@@ -1770,6 +1770,17 @@ class OwnerProfile(Profile):
         else:
             return Project.objects.filter(Q(members__profile__in=[self], members__status=1)).distinct()
 
+    def list_post_alert_projects(self):
+        activities_list = []
+        projects = self.list_projects()
+        for project in projects:
+            tasks = self.list_tasks(project)
+            for task in tasks:
+                activities = self.list_task_activities(task)
+                for act in activities:
+                    activities_list.append(act)
+        return Post.objects.filter(alert=True, sub_task__in=activities_list)
+
     def get_generic_project(self, project_id):
         return Project.objects.get(pk=project_id)
 

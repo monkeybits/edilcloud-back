@@ -560,6 +560,7 @@ class TaskGenericSerializer(
 
 class ActivitySerializer(DynamicFieldsModelSerializer):
     media_set = serializers.SerializerMethodField()
+    workers = ProfileSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Activity

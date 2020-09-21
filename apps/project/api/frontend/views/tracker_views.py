@@ -2156,6 +2156,15 @@ class TrackerTaskPostListView(
         self.queryset = profile.list_task_own_posts(self.kwargs.get('pk', None))
         return super(TrackerTaskPostListView, self).get_queryset()
 
+    def get_filters(self):
+        filters = super(TrackerTaskPostListView, self).get_filters()
+        if filters:
+            if len(filters) != 1:
+                query = []
+                for key, value in enumerate(filters):
+                    query.append(tuple((value, filters[value])))
+                return reduce(operator.or_, [Q(x) for x in query])
+        return filters
 
 class TrackerPostCommentListView(
         WhistleGenericViewMixin,

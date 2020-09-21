@@ -2100,6 +2100,7 @@ class TrackerTaskPostAddView(
 
 class TrackerActivityPostListView(
         WhistleGenericViewMixin,
+        QuerysetMixin,
         TrackerTaskActivityMixin,
         generics.ListAPIView):
     """
@@ -2126,6 +2127,16 @@ class TrackerActivityPostListView(
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         self.queryset = profile.list_activity_posts(self.kwargs.get('pk', None))
         return super(TrackerActivityPostListView, self).get_queryset()
+
+    def get_filters(self):
+        filters = super(TrackerTaskPostListView, self).get_filters()
+        if filters:
+            if len(filters) != 1:
+                query = []
+                for key, value in enumerate(filters):
+                    query.append(tuple((value, filters[value])))
+                return reduce(operator.or_, [Q(x) for x in query])
+        return filters
 
 class TrackerTaskPostListView(
         WhistleGenericViewMixin,

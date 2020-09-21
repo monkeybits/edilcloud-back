@@ -2077,7 +2077,7 @@ class TrackerTaskPostAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'text',
+            'text', 'alert',
             'published_date', 'created_date',
         ]
         self.activity_response_include_fields = [

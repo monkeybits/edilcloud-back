@@ -2129,6 +2129,7 @@ class TrackerActivityPostListView(
 
 class TrackerTaskPostListView(
         WhistleGenericViewMixin,
+        QuerysetMixin,
         TrackerTaskActivityMixin,
         generics.ListAPIView):
     """

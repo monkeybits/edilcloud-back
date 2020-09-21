@@ -948,7 +948,8 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'task',
             'media_set',
             'text',
-            'comment_set'
+            'comment_set',
+            'alert'
         ]
 
     def __init__(self, *args, **kwargs):

@@ -51,6 +51,11 @@ tracker_urlpatterns = [
         name='tracker_project_list'
     ),
     url(
+        r'^post_list_alert/$',
+        tracker_views.TrackerPostListAlertView.as_view(),
+        name='tracker_post_list_alert'
+    ),
+    url(
         r'^project/(?P<pk>\d+)/$',
         tracker_views.TrackerProjectDetailView.as_view(),
         name='tracker_project_detail'

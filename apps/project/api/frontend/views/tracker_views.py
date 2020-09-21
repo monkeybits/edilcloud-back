@@ -108,6 +108,31 @@ class TrackerProjectListView(
         self.queryset = profile.list_projects()
         return super(TrackerProjectListView, self).get_queryset()
 
+class TrackerPostListAlertView(
+        JWTPayloadMixin,
+        QuerysetMixin,
+        generics.ListAPIView):
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.PostSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerPostListAlertView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        self.queryset = profile.list_post_alert_projects()
+        return super(TrackerPostListAlertView, self).get_queryset()
 
 class TrackerProjectParentDetailView(
         TrackerProjectParentMixin,
@@ -2129,7 +2154,7 @@ class TrackerActivityPostListView(
         return super(TrackerActivityPostListView, self).get_queryset()
 
     def get_filters(self):
-        filters = super(TrackerTaskPostListView, self).get_filters()
+        filters = super(TrackerActivityPostListView, self).get_filters()
         if filters:
             if len(filters) != 1:
                 query = []

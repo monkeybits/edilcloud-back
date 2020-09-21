@@ -10,6 +10,7 @@ from rest_framework import serializers, status
 
 from apps.message.api.frontend.serializers import TalkSerializer
 from apps.profile.api.frontend.serializers import ProfileSerializer, UserSerializer
+from apps.profile.models import Profile
 from ... import models
 from apps.profile.api.frontend import serializers as profile_serializers
 from apps.document.api.frontend import serializers as document_serializers
@@ -1152,8 +1153,9 @@ class TeamDisableSerializer(
 class TaskActivitySerializer(
     DynamicFieldsModelSerializer):
     task = TaskSerializer()
-    profile = profile_serializers.ProfileSerializer()
+    workers = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), many=True, write_only=True)
     days_for_gantt = serializers.SerializerMethodField(source='get_days_for_gantt')
+    workers = ProfileSerializer(many=True)
 
     class Meta:
         model = models.Activity
@@ -1190,6 +1192,7 @@ class TaskActivityAddSerializer(
     serializers.ModelSerializer):
     media_set = serializers.SerializerMethodField(read_only=True)
     note = serializers.CharField(max_length=150, allow_blank=True, required=False)
+    workers = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), many=True)
 
     class Meta:
         model = models.Activity

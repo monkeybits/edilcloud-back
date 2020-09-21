@@ -2136,14 +2136,19 @@ class OwnerProfile(Profile):
     def create_task_activity(self, activity_dict):
         task = self.get_task(activity_dict['task'].id)
         # Todo: Put the following logic in a new function
-        task.project.members.all().get(profile__id=activity_dict['profile'].id)
-
+        #act_list = []
+        workers = activity_dict.pop('workers')
         task_worker = Activity(
             creator=self.user,
             last_modifier=self.user,
             **activity_dict
         )
+        for worker in workers:
+            task.project.members.all().get(profile__id=worker.id)
+            task_worker.save()
+            task_worker.workers.add(worker)
         task_worker.save()
+        #act_list.append(task_worker)
         return task_worker
 
     def list_task_internal_activities(self, project_id):

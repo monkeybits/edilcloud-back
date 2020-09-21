@@ -108,7 +108,7 @@ class TrackerProjectListView(
         self.queryset = profile.list_projects()
         return super(TrackerProjectListView, self).get_queryset()
 
-class TrackerPostListAlertView(
+class TrackerActivityPostListAlertView(
         JWTPayloadMixin,
         QuerysetMixin,
         generics.ListAPIView):
@@ -126,13 +126,40 @@ class TrackerPostListAlertView(
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
-        super(TrackerPostListAlertView, self).__init__(*args, **kwargs)
+        super(TrackerActivityPostListAlertView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-        self.queryset = profile.list_post_alert_projects()
-        return super(TrackerPostListAlertView, self).get_queryset()
+        self.queryset = profile.list_post_alert_all_activities()
+        return super(TrackerActivityPostListAlertView, self).get_queryset()
+
+class TrackerTaskPostListAlertView(
+        JWTPayloadMixin,
+        QuerysetMixin,
+        generics.ListAPIView):
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.PostSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerTaskPostListAlertView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        self.queryset = profile.list_post_alert_all_tasks()
+        return super(TrackerTaskPostListAlertView, self).get_queryset()
+
 
 class TrackerProjectParentDetailView(
         TrackerProjectParentMixin,

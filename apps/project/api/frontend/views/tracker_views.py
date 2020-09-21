@@ -1847,12 +1847,12 @@ class TrackerTaskActivityAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'task', 'profile', 'title', 'description', 'status',
+            'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
             'starred', 'note'
         ]
         self.activity_response_include_fields = [
-            'id', 'task', 'profile', 'title', 'description', 'status',
+            'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
             'starred', 'note',
         ]
@@ -1891,7 +1891,7 @@ class TrackerTaskActivityListView(
 
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
-            'id', 'task', 'profile', 'title', 'description', 'status',
+            'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
             'starred', 'note'
         ]

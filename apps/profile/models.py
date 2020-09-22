@@ -2031,6 +2031,15 @@ class OwnerProfile(Profile):
         post = Post.objects.get(id=post_id)
         return post
 
+    def edit_post(self, post_dict):
+        """
+        Update a company project
+        """
+        post = self.get_post(post_dict['id'])
+        post.__dict__.update(**post_dict)
+        post.save()
+        return post
+
     def get_comment(self, comment_id):
         comment = Comment.objects.get(id=comment_id)
         return comment

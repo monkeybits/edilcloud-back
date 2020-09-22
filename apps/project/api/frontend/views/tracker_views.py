@@ -1904,6 +1904,43 @@ class TrackerTaskActivityAddView(
             request.data['task'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
+class TrackerTaskAttachmentAddView(
+        WhistleGenericViewMixin,
+        TrackerTaskMixin,
+        generics.CreateAPIView):
+    """
+    Create a company project task activity
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    serializer_class = serializers.TaskAttachmentAddSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.task_request_include_fields = [
+        ]
+        self.task_response_include_fields = [
+            'id', 'project', 'name', 'assigned_company', 'date_start',
+            'date_end', 'date_completed', 'progress', 'status', 'media_set'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'photo'
+        ]
+        self.project_response_include_fields = [
+            'id', 'name', 'description', 'date_start',
+            'date_end',
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+        ]
+        super(TrackerTaskAttachmentAddView, self).__init__(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+
+        if request.data:
+            request.data['task'] = self.kwargs.get('pk', None)
+        return self.create(request, *args, **kwargs)
 
 class TrackerTaskActivityListView(
         TrackerTaskMixin,

@@ -341,6 +341,11 @@ tracker_urlpatterns = [
         name='tracker_task_post_add'
     ),
     url(
+        r'^post/(?P<pk>\d+)/edit/$',
+        tracker_views.TrackerPostEditView.as_view(),
+        name='tracker_edit_post'
+    ),
+    url(
         r'^post/(?P<pk>\d+)/comment_list/$',
         tracker_views.TrackerPostCommentListView.as_view(),
         name='tracker_post_comment_list'

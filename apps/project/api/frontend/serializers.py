@@ -488,6 +488,33 @@ class ProjectEditSerializer(
         project = self.profile.edit_project(validated_data)
         return project
 
+class PostEditSerializer(
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Post
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.post_request_include_fields
+        return super(PostEditSerializer, self).get_field_names(*args, **kwargs)
+
+    def update(self, instance, validated_data):
+        validated_data['id'] = instance.id
+        project = self.profile.edit_post(validated_data)
+        return project
 
 class ProjectEnableSerializer(
     DynamicFieldsModelSerializer,

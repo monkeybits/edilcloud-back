@@ -197,9 +197,12 @@ def task_notification(sender, instance, **kwargs):
 
 @receiver([post_save, post_delete], sender=project_models.Activity)
 def activity_notification(sender, instance, **kwargs):
-    company_staff = instance.task.workers.filter(id=instance.profile.id).union(
-        instance.task.project.company.get_owners_and_delegates()
-    )
+    try:
+        company_staff = instance.workers.filter(id=instance.profile.id).union(
+            instance.task.project.company.get_owners_and_delegates()
+        )
+    except:
+        return
     profile = get_current_profile()
     # If there is no JWT token in the request,
     # then we don't create notifications (Useful at admin & shell for debugging)

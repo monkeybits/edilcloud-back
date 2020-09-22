@@ -286,12 +286,12 @@ class Task(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         related_name='assigned_tasks',
         verbose_name=_('assigned company'),
     )
-    workers = models.ManyToManyField(
-        'profile.Profile',
-        through='Activity',
-        related_name='tasks',
-        verbose_name=_('workers')
-    )
+    # workers = models.ManyToManyField(
+    #     'profile.Profile',
+    #     through='Activity',
+    #     related_name='tasks',
+    #     verbose_name=_('workers')
+    # )
     shared_task = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
@@ -382,11 +382,16 @@ class Activity(CleanModel, UserModel, DateModel, OrderedModel):
         related_name='activities',
         verbose_name=_('task')
     )
-    profile = models.ForeignKey(
+    # profile = models.ForeignKey(
+    #     'profile.Profile',
+    #     on_delete=models.CASCADE,
+    #     related_name='activities',
+    #     verbose_name=_('worker'),
+    # )
+    workers = models.ManyToManyField(
         'profile.Profile',
-        on_delete=models.CASCADE,
         related_name='activities',
-        verbose_name=_('worker'),
+        verbose_name=_('workers')
     )
     title = models.CharField(
         max_length=255,
@@ -434,8 +439,8 @@ class Activity(CleanModel, UserModel, DateModel, OrderedModel):
         get_latest_by = "date_create"
 
     def __str__(self):
-        return '{} {} ({})'.format(
-            self.task.name, self.profile, self.title,
+        return '{} ({})'.format(
+            self.task.name, self.title,
         )
 
     @property
@@ -526,6 +531,10 @@ class Post(OrderedModel):
     is_public = models.BooleanField(
         default=True,
         verbose_name=_('is public')
+    )
+    alert = models.BooleanField(
+        default=False,
+        verbose_name=_('alert')
     )
     text = models.TextField()
     created_date = models.DateTimeField(

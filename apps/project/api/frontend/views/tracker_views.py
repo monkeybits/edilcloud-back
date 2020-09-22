@@ -108,6 +108,58 @@ class TrackerProjectListView(
         self.queryset = profile.list_projects()
         return super(TrackerProjectListView, self).get_queryset()
 
+class TrackerActivityPostListAlertView(
+        JWTPayloadMixin,
+        QuerysetMixin,
+        generics.ListAPIView):
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.PostSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerActivityPostListAlertView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        self.queryset = profile.list_post_alert_all_activities()
+        return super(TrackerActivityPostListAlertView, self).get_queryset()
+
+class TrackerTaskPostListAlertView(
+        JWTPayloadMixin,
+        QuerysetMixin,
+        generics.ListAPIView):
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.PostSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerTaskPostListAlertView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        self.queryset = profile.list_post_alert_all_tasks()
+        return super(TrackerTaskPostListAlertView, self).get_queryset()
+
 
 class TrackerProjectParentDetailView(
         TrackerProjectParentMixin,
@@ -1288,11 +1340,11 @@ class TrackerProjectTaskListView(
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
-            'workers', 'share_status', 'shared_task', 'only_read',
+            'share_status', 'shared_task', 'only_read',
             'alert', 'starred', 'note', 'activities', 'media_set'
         ]
         self.activity_response_include_fields = [
-            'id', 'task', 'profile', 'title', 'description', 'status',
+            'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'media_set'
         ]
         self.project_response_include_fields = [
@@ -1822,12 +1874,12 @@ class TrackerTaskActivityAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'task', 'profile', 'title', 'description', 'status',
+            'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
             'starred', 'note'
         ]
         self.activity_response_include_fields = [
-            'id', 'task', 'profile', 'title', 'description', 'status',
+            'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
             'starred', 'note',
         ]
@@ -1866,7 +1918,7 @@ class TrackerTaskActivityListView(
 
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
-            'id', 'task', 'profile', 'title', 'description', 'status',
+            'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
             'starred', 'note'
         ]
@@ -2038,7 +2090,7 @@ class TrackerActivityPostAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'text',
+            'text', 'alert',
             'published_date', 'created_date',
         ]
         self.activity_response_include_fields = [
@@ -2077,7 +2129,7 @@ class TrackerTaskPostAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'text',
+            'text', 'alert',
             'published_date', 'created_date',
         ]
         self.activity_response_include_fields = [
@@ -2100,6 +2152,7 @@ class TrackerTaskPostAddView(
 
 class TrackerActivityPostListView(
         WhistleGenericViewMixin,
+        QuerysetMixin,
         TrackerTaskActivityMixin,
         generics.ListAPIView):
     """
@@ -2127,8 +2180,19 @@ class TrackerActivityPostListView(
         self.queryset = profile.list_activity_posts(self.kwargs.get('pk', None))
         return super(TrackerActivityPostListView, self).get_queryset()
 
+    def get_filters(self):
+        filters = super(TrackerActivityPostListView, self).get_filters()
+        if filters:
+            if len(filters) != 1:
+                query = []
+                for key, value in enumerate(filters):
+                    query.append(tuple((value, filters[value])))
+                return reduce(operator.or_, [Q(x) for x in query])
+        return filters
+
 class TrackerTaskPostListView(
         WhistleGenericViewMixin,
+        QuerysetMixin,
         TrackerTaskActivityMixin,
         generics.ListAPIView):
     """
@@ -2156,6 +2220,15 @@ class TrackerTaskPostListView(
         self.queryset = profile.list_task_own_posts(self.kwargs.get('pk', None))
         return super(TrackerTaskPostListView, self).get_queryset()
 
+    def get_filters(self):
+        filters = super(TrackerTaskPostListView, self).get_filters()
+        if filters:
+            if len(filters) != 1:
+                query = []
+                for key, value in enumerate(filters):
+                    query.append(tuple((value, filters[value])))
+                return reduce(operator.or_, [Q(x) for x in query])
+        return filters
 
 class TrackerPostCommentListView(
         WhistleGenericViewMixin,

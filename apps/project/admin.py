@@ -39,7 +39,7 @@ class TaskTeamInlineAdmin(admin.TabularInline):
         'creator', 'last_modifier', 'date_create',
         'date_last_modify', 'ordering',
     )
-    raw_id_fields = ('task', 'profile', )
+    raw_id_fields = ('task', )
     verbose_name_plural = _('Task Workers')
 
 class ActivityPostsInlineAdmin(admin.TabularInline):
@@ -151,7 +151,7 @@ class ActivityAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (_('general_information'), {
             'fields': (
-                'task', 'profile', 'title', 'description',
+                'task', 'title', 'description',
                 'datetime_start', 'datetime_end', 'note', 'status', 'starred', 'alert'
             )
         }),
@@ -169,7 +169,7 @@ class ActivityAdmin(UserAdminMixin, admin.ModelAdmin):
     )
     inlines = (ActivityPostsInlineAdmin,)
     list_display = (
-        'task', 'profile', 'title', 'description',
+        'task', 'title', 'description',
         'datetime_start', 'datetime_end', 'note', 'status', 'starred', 'alert'
     )
     readonly_fields = (

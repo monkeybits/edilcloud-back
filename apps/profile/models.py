@@ -1770,6 +1770,26 @@ class OwnerProfile(Profile):
         else:
             return Project.objects.filter(Q(members__profile__in=[self], members__status=1)).distinct()
 
+    def list_post_alert_all_activities(self):
+        activities_list = []
+        projects = self.list_projects()
+        for project in projects:
+            tasks = self.list_tasks(project)
+            for task in tasks:
+                activities = self.list_task_activities(task)
+                for act in activities:
+                    activities_list.append(act)
+        return Post.objects.filter(alert=True, sub_task__in=activities_list)
+
+    def list_post_alert_all_tasks(self):
+        tasks_list = []
+        projects = self.list_projects()
+        for project in projects:
+            tasks = self.list_tasks(project)
+            for task in tasks:
+                tasks_list.append(task)
+        return Post.objects.filter(alert=True, task__in=tasks_list)
+
     def get_generic_project(self, project_id):
         return Project.objects.get(pk=project_id)
 
@@ -2125,14 +2145,19 @@ class OwnerProfile(Profile):
     def create_task_activity(self, activity_dict):
         task = self.get_task(activity_dict['task'].id)
         # Todo: Put the following logic in a new function
-        task.project.members.all().get(profile__id=activity_dict['profile'].id)
-
+        #act_list = []
+        workers = activity_dict.pop('workers')
         task_worker = Activity(
             creator=self.user,
             last_modifier=self.user,
             **activity_dict
         )
+        for worker in workers:
+            task.project.members.all().get(profile__id=worker.id)
+            task_worker.save()
+            task_worker.workers.add(worker)
         task_worker.save()
+        #act_list.append(task_worker)
         return task_worker
 
     def list_task_internal_activities(self, project_id):

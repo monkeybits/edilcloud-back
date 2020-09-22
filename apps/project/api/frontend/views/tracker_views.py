@@ -2496,9 +2496,9 @@ class TrackerSharePostToTaskView(
     serializer_class = serializers.SharePostToTaskSerializer
 
     def __init__(self, *args, **kwargs):
-        self.activity_request_include_fields = [
+        self.post_request_include_fields = [
         ]
-        self.activity_response_include_fields = [
+        self.post_response_include_fields = [
             'id', 'task', 'post'
         ]
         super(TrackerSharePostToTaskView, self).__init__(*args, **kwargs)
@@ -2508,7 +2508,7 @@ class TrackerSharePostToTaskView(
             request.POST._mutable = True
             setattr(request.data, '_mutable', True)
 
-        post_id = self.kwargs.get('pk', None)[0]
+        post_id = self.kwargs.get('pk', None)
         if post_id:
             request.data['post'] = post_id
         return self.create(request, *args, **kwargs)
@@ -2519,6 +2519,18 @@ class TrackerTaskPostsListView(WhistleGenericViewMixin,
     permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE)
     serializer_class = serializers.PostSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerTaskPostsListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
         payload = self.get_payload()

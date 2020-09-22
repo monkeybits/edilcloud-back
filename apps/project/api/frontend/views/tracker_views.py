@@ -1016,7 +1016,7 @@ class TrackerProjectParentGanttIntervalDetailView(
     def __init__(self, *args, **kwargs):
         self.task_response_include_fields = [
             'id', 'name', 'assigned_company', 'date_start',
-            'date_end', 'date_completed', 'workers', 'progress'
+            'date_end', 'date_completed', 'progress'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -1054,7 +1054,7 @@ class TrackerProjectGanttIntervalDetailView(
     def __init__(self, *args, **kwargs):
         self.task_response_include_fields = [
             'id', 'name', 'assigned_company', 'date_start',
-            'date_end', 'date_completed', 'workers', 'progress', 'shared_task'
+            'date_end', 'date_completed', 'progress', 'shared_task'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -1092,7 +1092,7 @@ class TrackerProjectInternalGanttDetailView(
     def __init__(self, *args, **kwargs):
         self.task_response_include_fields = [
             'id', 'name', 'assigned_company', 'date_start',
-            'date_end', 'date_completed', 'workers', 'progress'
+            'date_end', 'date_completed', 'progress'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -1128,7 +1128,7 @@ class TrackerProjectGanttDetailView(
     def __init__(self, *args, **kwargs):
         self.task_response_include_fields = [
             'id', 'name', 'assigned_company', 'date_start',
-            'date_end', 'date_completed', 'workers', 'progress'
+            'date_end', 'date_completed', 'progress'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -1257,7 +1257,6 @@ class TrackerProjectInternalTaskListView(
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
-            'workers',
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1299,7 +1298,7 @@ class TrackerProjectParentTaskListView(
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
-            'workers', 'share_status', 'shared_task'
+            'share_status', 'shared_task'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1392,7 +1391,7 @@ class TrackerProjectTaskAddView(
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
-            'workers', 'share_status', 'shared_task', 'alert',
+            'share_status', 'shared_task', 'alert',
             'starred', 'note', 'progress', 'media_set'
         ]
         self.project_response_include_fields = [
@@ -1458,7 +1457,7 @@ class TrackerTaskShareView(
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
-            'workers', 'shared_task'
+            'shared_task'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1502,7 +1501,7 @@ class TrackerTaskCloneView(
         self.task_response_include_fields = [
             'id', 'project', 'name', 'assigned_company', 'date_start',
             'date_end', 'date_completed', 'progress', 'status',
-            'workers', 'shared_task'
+            'shared_task'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',

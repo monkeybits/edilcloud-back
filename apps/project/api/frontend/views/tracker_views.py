@@ -2399,7 +2399,7 @@ class TrackerSharePostToTaskMixin(
 
     def set_output_serializer(self, output_serializer=None):
         if output_serializer is None:
-            self.serializer_class = serializers.SharePostToTaskSerialzier
+            self.serializer_class = serializers.SharePostToTaskSerializer
         else:
             self.serializer_class = output_serializer
 

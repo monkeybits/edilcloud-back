@@ -132,8 +132,11 @@ def team_notification(sender, instance, **kwargs):
 
 @receiver([post_save, post_delete], sender=project_models.Task)
 def task_notification(sender, instance, **kwargs):
-    company_staff = instance.workers.all()
-    profile = get_current_profile()
+    try:
+        company_staff = instance.workers.all()
+        profile = get_current_profile()
+    except:
+        return
     # If there is no JWT token in the request,
     # then we don't create notifications (Useful at admin & shell for debugging)
     if not profile:

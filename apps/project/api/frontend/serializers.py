@@ -603,7 +603,6 @@ class TaskSerializer(
     DynamicFieldsModelSerializer):
     project = ProjectSerializer()
     assigned_company = profile_serializers.CompanySerializer()
-    workers = profile_serializers.ProfileSerializer(many=True)
     share_status = serializers.ReadOnlyField(source="get_share_status")
     activities = ActivitySerializer(many=True)
     shared_task = TaskGenericSerializer()

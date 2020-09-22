@@ -797,7 +797,10 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
 
     def share_post(self, post_dict):
         post = Post.objects.get(id=post_dict['post'])
-        task = post.sub_task.task
+        try:
+            task = post.sub_task.task
+        except:
+            task = post.task
         post_dict.pop('post')
         task_post_ass = TaskPostAssignment(
             post=post,

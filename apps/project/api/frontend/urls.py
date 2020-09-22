@@ -286,6 +286,11 @@ tracker_urlpatterns = [
         name='tracker_team_delete'
     ),
     url(
+        r'^task/(?P<pk>\d+)/attachment_add/$',
+        tracker_views.TrackerTaskAttachmentAddView.as_view(),
+        name='tracker_task_attachment_add'
+    ),
+    url(
         r'^task/(?P<pk>\d+)/activity_add/$',
         tracker_views.TrackerTaskActivityAddView.as_view(),
         name='tracker_task_activity_add'

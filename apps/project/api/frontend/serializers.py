@@ -18,7 +18,7 @@ from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
-from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment
+from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment, Task
 
 palette_color = [
     '#d32f2f',
@@ -603,7 +603,6 @@ class TaskSerializer(
     DynamicFieldsModelSerializer):
     project = ProjectSerializer()
     assigned_company = profile_serializers.CompanySerializer()
-    workers = profile_serializers.ProfileSerializer(many=True)
     share_status = serializers.ReadOnlyField(source="get_share_status")
     activities = ActivitySerializer(many=True)
     shared_task = TaskGenericSerializer()
@@ -646,7 +645,7 @@ class TaskSerializer(
                     "task": media.task.id,
                 }
             )
-            return media_list
+        return media_list
 
     def get_only_read(self, obj):
         payload = self.context['view'].get_payload()
@@ -660,6 +659,74 @@ class TaskSerializer(
         activities = obj.activities.all()
         serializer = ActivitySerializer(activities, many=True)
         return serializer.data
+
+class TaskAttachmentAddSerializer(
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
+    media_set = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Task
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_media_set(self, obj):
+        media_list = []
+        medias = MediaAssignment.objects.filter(task=obj)
+        for media in medias:
+            try:
+                photo_url = media.media.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
+            name, extension = os.path.splitext(media.media.name)
+            media_list.append(
+                {
+                    "media_url": media_url,
+                    "size": media.media.size,
+                    "name": name.split('/')[-1],
+                    "extension": extension,
+                    "task": media.task.id,
+                }
+            )
+        return media_list
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.task_request_include_fields
+        return super(TaskAttachmentAddSerializer, self).get_field_names(*args, **kwargs)
+
+    def validate(self, attrs):
+        if 'date_start' in attrs and 'date_end' in attrs:
+            if attrs['date_start'] > attrs['date_end']:
+                raise serializers.ValidationError('EndDate should be greater than StartDate')
+        return attrs
+
+    def create(self, validated_data):
+        id = self.request.data.pop('task')[0]
+        task = Task.objects.get(id=id)
+        files = list(self.request.FILES.values())
+        for file in files:
+            MediaAssignment.objects.create(
+                task=task,
+                media=file
+            )
+        return task
 
 class TaskAddSerializer(
     DynamicFieldsModelSerializer,

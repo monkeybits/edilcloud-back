@@ -1576,7 +1576,8 @@ class SharePostToTaskSerializer(
         try:
             validated_data['creator'] = self.author.user
             validated_data['last_modifier'] = self.author.user
-            validated_data['post'] = self.request.data['post']
+            view = self.get_view
+            validated_data['post'] = view.get_object().id
             post = self.author.share_post(validated_data)
             return post
         except ObjectDoesNotExist as err:

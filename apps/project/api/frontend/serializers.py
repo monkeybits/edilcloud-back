@@ -1564,7 +1564,7 @@ class SharePostToTaskSerializer(
         if context:
             self.request = kwargs['context']['request']
             payload = self.get_payload()
-            self.post = kwargs.get('post', None)
+            self.post = kwargs.get('pk', None)
             self.author = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     def get_field_names(self, *args, **kwargs):

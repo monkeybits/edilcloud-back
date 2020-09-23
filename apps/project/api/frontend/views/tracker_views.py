@@ -2077,13 +2077,13 @@ class TrackerActivityEditView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'profile', 'title', 'description', 'status',
+            'title', 'description', 'status',
             'datetime_start', 'datetime_end',
-            'alert',
+            'alert', 'workers',
             'starred', 'note'
         ]
         self.activity_response_include_fields = [
-            'id', 'task', 'profile', 'title', 'description', 'status',
+            'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
             'starred', 'note'
         ]

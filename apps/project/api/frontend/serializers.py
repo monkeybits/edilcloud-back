@@ -1360,6 +1360,8 @@ class TaskActivityEditSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
+    workers = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), many=True)
+
     class Meta:
         model = models.Activity
         fields = '__all__'

@@ -2184,7 +2184,7 @@ class OwnerProfile(Profile):
         Get all company activities of a company project task
         """
         task = self.get_task(task.id)
-        return task.activities.all()
+        return task.activities.all().order_by('date_create')
 
     def list_project_parent_activities(self, project_id):
         project = self.get_parent_project(project_id)

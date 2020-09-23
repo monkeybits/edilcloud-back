@@ -2506,11 +2506,9 @@ class TrackerSharePostToTaskView(
     def post(self, request, *args, **kwargs):
         if not request.POST._mutable:
             request.POST._mutable = True
-            setattr(request.data, '_mutable', True)
 
-        post_id = self.kwargs.get('pk', None)
-        if post_id:
-            request.data['post'] = post_id
+        if request.data:
+            request.data['post'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
 class TrackerTaskPostsListView(WhistleGenericViewMixin,

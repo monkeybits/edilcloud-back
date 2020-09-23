@@ -1564,7 +1564,6 @@ class SharePostToTaskSerializer(
         if context:
             self.request = kwargs['context']['request']
             payload = self.get_payload()
-            self.post = kwargs.get('pk', None)
             self.author = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     def get_field_names(self, *args, **kwargs):
@@ -1577,7 +1576,8 @@ class SharePostToTaskSerializer(
         try:
             validated_data['creator'] = self.author.user
             validated_data['last_modifier'] = self.author.user
-            validated_data['post'] = self.post
+            view = self.get_view
+            validated_data['post'] = view.get_object().id
             post = self.author.share_post(validated_data)
             return post
         except ObjectDoesNotExist as err:

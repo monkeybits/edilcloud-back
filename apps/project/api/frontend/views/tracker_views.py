@@ -2470,9 +2470,9 @@ class TrackerSharePostToTaskMixin(
         try:
             payload = self.get_payload()
             profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-            task = profile.get_task(self.kwargs.get('pk', None))
-            self.check_object_permissions(self.request, task)
-            return task
+            post = profile.get_post(self.kwargs.get('pk', None))
+            self.check_object_permissions(self.request, post)
+            return post
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskAPIDoesNotExist(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))

@@ -797,7 +797,10 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
 
     def share_post(self, post_dict):
         post = Post.objects.get(id=post_dict['post'])
-        task = post.sub_task.task
+        try:
+            task = post.sub_task.task
+        except:
+            task = post.task
         post_dict.pop('post')
         task_post_ass = TaskPostAssignment(
             post=post,
@@ -2031,6 +2034,15 @@ class OwnerProfile(Profile):
         post = Post.objects.get(id=post_id)
         return post
 
+    def edit_post(self, post_dict):
+        """
+        Update a company project
+        """
+        post = self.get_post(post_dict['id'])
+        post.__dict__.update(**post_dict)
+        post.save()
+        return post
+
     def get_comment(self, comment_id):
         comment = Comment.objects.get(id=comment_id)
         return comment
@@ -2172,7 +2184,7 @@ class OwnerProfile(Profile):
         Get all company activities of a company project task
         """
         task = self.get_task(task.id)
-        return task.activities.all()
+        return task.activities.all().order_by('date_create')
 
     def list_project_parent_activities(self, project_id):
         project = self.get_parent_project(project_id)

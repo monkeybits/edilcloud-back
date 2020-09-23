@@ -1196,6 +1196,29 @@ class TrackerPostMixin(
         else:
             self.serializer_class = output_serializer
 
+class TrackerPostEditMixin(
+        JWTPayloadMixin):
+    """
+    Company Project Task Mixin
+    """
+    def get_object(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            post = profile.get_post(self.kwargs.get('pk', None))
+            self.check_object_permissions(self.request, post)
+            return post
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.TaskAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+    def set_output_serializer(self, output_serializer=None):
+        if output_serializer is None:
+            self.serializer_class = serializers.PostSerializer
+        else:
+            self.serializer_class = output_serializer
+
 class TrackerPostObjectMixin(
         JWTPayloadMixin):
     """
@@ -1904,6 +1927,43 @@ class TrackerTaskActivityAddView(
             request.data['task'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
+class TrackerTaskAttachmentAddView(
+        WhistleGenericViewMixin,
+        TrackerTaskMixin,
+        generics.CreateAPIView):
+    """
+    Create a company project task activity
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    serializer_class = serializers.TaskAttachmentAddSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.task_request_include_fields = [
+        ]
+        self.task_response_include_fields = [
+            'id', 'project', 'name', 'assigned_company', 'date_start',
+            'date_end', 'date_completed', 'progress', 'status', 'media_set'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'photo'
+        ]
+        self.project_response_include_fields = [
+            'id', 'name', 'description', 'date_start',
+            'date_end',
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+        ]
+        super(TrackerTaskAttachmentAddView, self).__init__(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+
+        if request.data:
+            request.data['task'] = self.kwargs.get('pk', None)
+        return self.create(request, *args, **kwargs)
 
 class TrackerTaskActivityListView(
         TrackerTaskMixin,
@@ -2149,6 +2209,28 @@ class TrackerTaskPostAddView(
             request.data['task'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
+class TrackerPostEditView(
+        WhistleGenericViewMixin,
+        TrackerPostEditMixin,
+        generics.UpdateAPIView):
+    """
+    Create a Post for an activity
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
+    serializer_class = serializers.PostEditSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.post_request_include_fields = [
+            'text', 'alert',
+            'published_date', 'created_date',
+        ]
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'photo', 'position',
+            'role', 'email', 'fax', 'phone'
+        ]
+        super(TrackerPostEditView, self).__init__(*args, **kwargs)
+
 class TrackerActivityPostListView(
         WhistleGenericViewMixin,
         QuerysetMixin,
@@ -2388,9 +2470,9 @@ class TrackerSharePostToTaskMixin(
         try:
             payload = self.get_payload()
             profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-            task = profile.get_task(self.kwargs.get('pk', None))
-            self.check_object_permissions(self.request, task)
-            return task
+            post = profile.get_post(self.kwargs.get('pk', None))
+            self.check_object_permissions(self.request, post)
+            return post
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskAPIDoesNotExist(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
@@ -2414,9 +2496,9 @@ class TrackerSharePostToTaskView(
     serializer_class = serializers.SharePostToTaskSerializer
 
     def __init__(self, *args, **kwargs):
-        self.activity_request_include_fields = [
+        self.post_request_include_fields = [
         ]
-        self.activity_response_include_fields = [
+        self.post_response_include_fields = [
             'id', 'task', 'post'
         ]
         super(TrackerSharePostToTaskView, self).__init__(*args, **kwargs)
@@ -2424,11 +2506,9 @@ class TrackerSharePostToTaskView(
     def post(self, request, *args, **kwargs):
         if not request.POST._mutable:
             request.POST._mutable = True
-            setattr(request.data, '_mutable', True)
 
-        post_id = self.kwargs.get('pk', None)[0]
-        if post_id:
-            request.data['post'] = post_id
+        if request.data:
+            request.data['post'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
 class TrackerTaskPostsListView(WhistleGenericViewMixin,
@@ -2437,6 +2517,18 @@ class TrackerTaskPostsListView(WhistleGenericViewMixin,
     permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE)
     serializer_class = serializers.PostSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
+        ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        super(TrackerTaskPostsListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
         payload = self.get_payload()

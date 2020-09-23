@@ -286,6 +286,11 @@ tracker_urlpatterns = [
         name='tracker_team_delete'
     ),
     url(
+        r'^task/(?P<pk>\d+)/attachment_add/$',
+        tracker_views.TrackerTaskAttachmentAddView.as_view(),
+        name='tracker_task_attachment_add'
+    ),
+    url(
         r'^task/(?P<pk>\d+)/activity_add/$',
         tracker_views.TrackerTaskActivityAddView.as_view(),
         name='tracker_task_activity_add'
@@ -334,6 +339,11 @@ tracker_urlpatterns = [
         r'^task/(?P<pk>\d+)/add_post/$',
         tracker_views.TrackerTaskPostAddView.as_view(),
         name='tracker_task_post_add'
+    ),
+    url(
+        r'^post/(?P<pk>\d+)/edit/$',
+        tracker_views.TrackerPostEditView.as_view(),
+        name='tracker_edit_post'
     ),
     url(
         r'^post/(?P<pk>\d+)/comment_list/$',

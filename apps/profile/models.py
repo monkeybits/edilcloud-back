@@ -797,7 +797,10 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
 
     def share_post(self, post_dict):
         post = Post.objects.get(id=post_dict['post'])
-        task = post.sub_task.task
+        try:
+            task = post.sub_task.task
+        except:
+            task = post.task
         post_dict.pop('post')
         task_post_ass = TaskPostAssignment(
             post=post,
@@ -2029,6 +2032,15 @@ class OwnerProfile(Profile):
         """
         # Todo: Ameliorate
         post = Post.objects.get(id=post_id)
+        return post
+
+    def edit_post(self, post_dict):
+        """
+        Update a company project
+        """
+        post = self.get_post(post_dict['id'])
+        post.__dict__.update(**post_dict)
+        post.save()
         return post
 
     def get_comment(self, comment_id):

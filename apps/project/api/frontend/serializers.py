@@ -3,7 +3,7 @@ import datetime
 import os
 import random
 import subprocess
-
+import filetype
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
@@ -312,6 +312,13 @@ palette_color2 = [
   '#000000',
   '#FFFFFF',
 ]
+
+def get_filetype(file):
+    kind = filetype.guess(file)
+    if kind is None:
+        print('Cannot guess file type!')
+        return
+    return kind.mime
 
 class ProjectGenericSerializer(
     DynamicFieldsModelSerializer):
@@ -623,7 +630,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer):
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "activity": media.activity.id,
-                    "type": subprocess.check_output(['file', '--mime-type', media.media.name])
+                    "type": get_filetype(media.media)
                 }
             )
         return media_list
@@ -672,7 +679,7 @@ class TaskSerializer(
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "task": media.task.id,
-                    "type": subprocess.check_output(['file', '--mime-type', media.media.name])
+                    "type": get_filetype(media.media)
                 }
             )
         return media_list
@@ -731,7 +738,7 @@ class TaskAttachmentAddSerializer(
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "task": media.task.id,
-                    "type": subprocess.check_output(['file', '--mime-type', media.media.name])
+                    "type": get_filetype(media.media)
                 }
             )
         return media_list
@@ -800,7 +807,7 @@ class TaskAddSerializer(
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "task": media.task.id,
-                    "type": subprocess.check_output(['file', '--mime-type', media.media.name])
+                    "type": get_filetype(media.media)
                 }
             )
         return media_list
@@ -987,7 +994,7 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "comment": media.comment.id,
-                    "type": subprocess.check_output(['file', '--mime-type', media.media.name])
+                    "type": get_filetype(media.media)
                 }
             )
         return media_list
@@ -1085,7 +1092,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "post": media.post.id,
-                    "type": subprocess.check_output(['file', '--mime-type', media.media.name])
+                    "type": get_filetype(media.media)
                 }
             )
         return media_list
@@ -1331,7 +1338,7 @@ class TaskActivityAddSerializer(
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "activity": media.activity.id,
-                    "type": subprocess.check_output(['file', '--mime-type', media.media.name])
+                    "type": get_filetype(media.media)
                 }
             )
         return media_list
@@ -1532,7 +1539,7 @@ class PostCommentAddSerializer(
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "comment": media.comment.id,
-                    "type": subprocess.check_output(['file', '--mime-type', media.media.name])
+                    "type": get_filetype(media.media)
                 }
             )
         return media_list

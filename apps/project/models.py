@@ -435,7 +435,7 @@ class Activity(CleanModel, UserModel, DateModel, OrderedModel):
             ("detail_activity", "can detail activity"),
             ("disable_activity", "can disable activity"),
         )
-        ordering = ['-date_last_modify']
+        ordering = ['date_create']
         get_latest_by = "date_create"
 
     def __str__(self):

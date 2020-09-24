@@ -18,6 +18,11 @@ from websocket import create_connection
 
 from .models import MessageFileAssignment
 
+def get_filetype(file):
+    kind = filetype.guess(file)
+    if kind is None:
+        return
+    return kind.mime
 
 def get_files(obj):
     media_list = []
@@ -42,7 +47,8 @@ def get_files(obj):
                 "size": media.media.size,
                 "name": name.split('/')[-1],
                 "extension": extension,
-                "message": media.message.id,
+                "type": get_filetype(media.media),
+                "message": media.message.id
             }
         )
     return media_list

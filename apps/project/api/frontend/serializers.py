@@ -319,7 +319,6 @@ palette_color2 = [
 def get_filetype(file):
     kind = filetype.guess(file)
     if kind is None:
-        print('Cannot guess file type!')
         return
     return kind.mime
 

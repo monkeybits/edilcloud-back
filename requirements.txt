@@ -23,6 +23,7 @@ drfdocs==0.0.11
 ecdsa==0.13
 fake-factory==9999.9.9
 Faker==0.7.18
+filetype==1.0.7
 future==0.16.0
 idna==2.5
 ipdb==0.10.2

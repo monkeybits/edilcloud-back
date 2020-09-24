@@ -24,7 +24,6 @@ from apps.quotation.api.frontend import serializers as quotation_serializers
 from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 
-
 class TrackerProjectMixin(
         JWTPayloadMixin):
     """
@@ -1367,7 +1366,7 @@ class TrackerProjectTaskListView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end', 'media_set'
+            'datetime_start', 'datetime_end', 'media_set', 'team_workers'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -2077,13 +2076,13 @@ class TrackerActivityEditView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'profile', 'title', 'description', 'status',
+            'title', 'description', 'status',
             'datetime_start', 'datetime_end',
-            'alert',
+            'alert', 'workers',
             'starred', 'note'
         ]
         self.activity_response_include_fields = [
-            'id', 'task', 'profile', 'title', 'description', 'status',
+            'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
             'starred', 'note'
         ]

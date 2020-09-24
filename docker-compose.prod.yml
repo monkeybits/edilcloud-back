@@ -27,6 +27,7 @@ services:
     environment:
       - SOCKET_HOST=3.9.185.8
       - SOCKET_PORT=6969
+      - SOCKET_URL=https://ws.edilcloud.it
 volumes:
   postgres_data:
 

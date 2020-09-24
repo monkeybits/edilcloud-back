@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -10,6 +12,10 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from web.core.models import UserModel, DateModel, StatusModel, OrderedModel, CleanModel
+
+def get_upload_message_file_path(instance, filename):
+    talk = instance.message.talk.id
+    return os.path.join(u"talks", u"{0}".format(str(talk)), "messages", str(instance.message.id), filename)
 
 
 def talk_limit_choices_to():
@@ -102,3 +108,12 @@ class Message(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @classmethod
     def get_messages(cls):
         return cls.objects.all()
+
+@python_2_unicode_compatible
+class MessageFileAssignment(OrderedModel):
+    media = models.FileField(blank=True, default="", upload_to=get_upload_message_file_path)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('message file assignment')
+        verbose_name_plural = _('message filedocker assignments')

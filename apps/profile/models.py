@@ -3630,6 +3630,7 @@ class OwnerProfile(Profile):
             last_modifier=self.user,
             sender=self,
             talk=talk,
+            status=0,
             **message_dict
         )
         message.save()

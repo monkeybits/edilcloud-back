@@ -174,4 +174,12 @@ class MessageAddSerializer(
     def create(self, validated_data):
         validated_data.pop('files')
         message = self.profile.create_message(validated_data)
+        files = list(self.request.FILES.values())
+        for file in files:
+            MessageFileAssignment.objects.create(
+                message=message,
+                media=file
+            )
+        message.status = 1
+        message.save()
         return message

@@ -54,7 +54,7 @@ def message_notification(sender, instance, **kwargs):
     profile = get_current_profile()
     # If there is no JWT token in the request,
     # then we don't create notifications (Useful at admin & shell for debugging)
-    if not profile:
+    if not profile or instance.status == 0:
         return
 
     try:
@@ -120,13 +120,6 @@ def message_notification(sender, instance, **kwargs):
             recipient_objs,
             batch_size=100
         )
-        request = get_current_request()
-        files = list(request.FILES.values())
-        for file in files:
-            MessageFileAssignment.objects.create(
-                message=instance,
-                media=file
-            )
         files = get_files(instance)
         SOCKET_HOST = os.environ.get('SOCKET_HOST')
         SOCKET_PORT = os.environ.get('SOCKET_PORT')

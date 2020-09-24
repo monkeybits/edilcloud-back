@@ -172,7 +172,8 @@ class MessageAddSerializer(
         return super(MessageAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
-        validated_data.pop('files')
+        if 'files' in validated_data:
+            validated_data.pop('files')
         message = self.profile.create_message(validated_data)
         files = list(self.request.FILES.values())
         for file in files:

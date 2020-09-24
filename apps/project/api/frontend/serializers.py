@@ -2,6 +2,7 @@
 import datetime
 import os
 import random
+import subprocess
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
@@ -622,6 +623,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer):
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "activity": media.activity.id,
+                    "type": subprocess.check_output(['file', '--mime-type', name])
                 }
             )
         return media_list
@@ -670,6 +672,7 @@ class TaskSerializer(
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "task": media.task.id,
+                    "type": subprocess.check_output(['file', '--mime-type', name])
                 }
             )
         return media_list
@@ -728,6 +731,7 @@ class TaskAttachmentAddSerializer(
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "task": media.task.id,
+                    "type": subprocess.check_output(['file', '--mime-type', name])
                 }
             )
         return media_list
@@ -796,6 +800,7 @@ class TaskAddSerializer(
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "task": media.task.id,
+                    "type": subprocess.check_output(['file', '--mime-type', name])
                 }
             )
         return media_list
@@ -982,6 +987,7 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "comment": media.comment.id,
+                    "type": subprocess.check_output(['file', '--mime-type', name])
                 }
             )
         return media_list
@@ -1079,6 +1085,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "post": media.post.id,
+                    "type": subprocess.check_output(['file', '--mime-type', name])
                 }
             )
         return media_list
@@ -1324,6 +1331,7 @@ class TaskActivityAddSerializer(
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "activity": media.activity.id,
+                    "type": subprocess.check_output(['file', '--mime-type', name])
                 }
             )
         return media_list
@@ -1360,6 +1368,8 @@ class TaskActivityEditSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
+    workers = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), many=True)
+
     class Meta:
         model = models.Activity
         fields = '__all__'
@@ -1522,6 +1532,7 @@ class PostCommentAddSerializer(
                     "name": name.split('/')[-1],
                     "extension": extension,
                     "comment": media.comment.id,
+                    "type": subprocess.check_output(['file', '--mime-type', name])
                 }
             )
         return media_list

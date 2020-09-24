@@ -11,10 +11,47 @@ from django.conf import settings
 from . import models as message_models
 from apps.profile import models as profile_models
 from apps.notify import models as notify_models
-from web.core.middleware.thread_local import get_current_profile
+from web.core.middleware.thread_local import get_current_profile, get_current_request
 from web.core.utils import get_html_message, get_bell_notification_status, get_email_notification_status
 from socketIO_client import SocketIO, LoggingNamespace, BaseNamespace
 from websocket import create_connection
+
+from .models import MessageFileAssignment
+
+def get_filetype(file):
+    kind = filetype.guess(file)
+    if kind is None:
+        return
+    return kind.mime
+
+def get_files(obj):
+    media_list = []
+    request = get_current_request()
+    medias = MessageFileAssignment.objects.filter(message=obj)
+    for media in medias:
+        try:
+            photo_url = media.media.url
+            protocol = request.is_secure()
+            if protocol:
+                protocol = 'https://'
+            else:
+                protocol = 'http://'
+            host = request.get_host()
+            media_url = protocol + host + photo_url
+        except:
+            media_url = None
+        name, extension = os.path.splitext(media.media.name)
+        media_list.append(
+            {
+                "media_url": media_url,
+                "size": media.media.size,
+                "name": name.split('/')[-1],
+                "extension": extension,
+                "type": get_filetype(media.media),
+                "message": media.message.id
+            }
+        )
+    return media_list
 
 
 @receiver([post_save, post_delete], sender=message_models.Message)
@@ -23,7 +60,7 @@ def message_notification(sender, instance, **kwargs):
     profile = get_current_profile()
     # If there is no JWT token in the request,
     # then we don't create notifications (Useful at admin & shell for debugging)
-    if not profile:
+    if not profile or instance.status == 0:
         return
 
     try:
@@ -89,6 +126,7 @@ def message_notification(sender, instance, **kwargs):
             recipient_objs,
             batch_size=100
         )
+        files = get_files(instance)
         SOCKET_HOST = os.environ.get('SOCKET_HOST')
         SOCKET_PORT = os.environ.get('SOCKET_PORT')
         socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
@@ -113,7 +151,8 @@ def message_notification(sender, instance, **kwargs):
                         "name": notify_obj.sender.company.name,
                         "category": {}
                     }
-                }
+                },
+                "files": files
             }
         })
     except Exception as e:

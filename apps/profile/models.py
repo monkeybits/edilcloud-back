@@ -30,7 +30,7 @@ from . import managers
 # Todo: May be, use the following format: from apps.app import models as app_models
 from apps.document.models import Document
 from apps.media.models import Photo, Video
-from apps.message.models import Talk, Message
+from apps.message.models import Talk, Message, MessageFileAssignment
 from apps.project.models import Project, Team, Task, Activity, \
     Post, Comment, TaskPostAssignment
 from apps.quotation.models import Bom, BomRow, Offer, Certification, Quotation, QuotationRow, FavouriteOffer, \
@@ -3630,6 +3630,7 @@ class OwnerProfile(Profile):
             last_modifier=self.user,
             sender=self,
             talk=talk,
+            status=0,
             **message_dict
         )
         message.save()

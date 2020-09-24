@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
@@ -14,6 +16,7 @@ from apps.profile.api.frontend import serializers as profile_serializers
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin
 from web.api.serializers import DynamicFieldsModelSerializer
+from ...models import MessageFileAssignment
 
 
 class TalkSerializer(
@@ -89,15 +92,54 @@ class TalkAddSerializer(
             return view.talk_request_include_fields
         return super(TalkAddSerializer, self).get_field_names(*args, **kwargs)
 
+class MessageFileAssignmentSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.MessageFileAssignment
+        fields = '__all__'
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.messagefileassignment_request_include_fields
+        return super(MessageFileAssignmentSerializer, self).get_field_names(*args, **kwargs)
 
 class MessageAddSerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     talk = TalkAddSerializer(required=False)
+    messagefileassignment_set = MessageFileAssignmentSerializer(many=True)
 
     class Meta:
         model = models.Message
         fields = '__all__'
+
+    def get_files(self, obj):
+        media_list = []
+        medias = MessageFileAssignment.objects.filter(message=obj)
+        for media in medias:
+            try:
+                photo_url = media.media.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
+            name, extension = os.path.splitext(media.media.name)
+            media_list.append(
+                {
+                    "media_url": media_url,
+                    "size": media.media.size,
+                    "name": name.split('/')[-1],
+                    "extension": extension,
+                    "message": media.message.id,
+                }
+            )
+        return media_list
 
     def validate(self, data):
         data = self.request.data
@@ -130,10 +172,14 @@ class MessageAddSerializer(
         return super(MessageAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
-        try:
-            message = self.profile.create_message(validated_data)
-            return message
-        except Exception as err:
-            raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+        validated_data.pop('files')
+        message = self.profile.create_message(validated_data)
+        files = list(self.request.FILES.values())
+        for file in files:
+            MessageFileAssignment.objects.create(
+                message=message,
+                media=file
             )
+        message.status = 1
+        message.save()
+        return message

@@ -5,8 +5,11 @@ import random
 import subprocess
 import filetype
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
+from rest_framework_jwt.settings import api_settings
 
+jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 from rest_framework import serializers, status
 
 from apps.message.api.frontend.serializers import TalkSerializer
@@ -19,7 +22,7 @@ from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
-from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment, Task
+from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment, Task, Project
 
 palette_color = [
     '#d32f2f',
@@ -593,9 +596,10 @@ class TaskGenericSerializer(
             return view.task_response_include_fields
         return super(TaskGenericSerializer, self).get_field_names(*args, **kwargs)
 
-class ActivitySerializer(DynamicFieldsModelSerializer):
+class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
     media_set = serializers.SerializerMethodField()
     workers = ProfileSerializer(many=True, read_only=True)
+    team_workers = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Activity
@@ -606,6 +610,19 @@ class ActivitySerializer(DynamicFieldsModelSerializer):
         if view:
             return view.activity_response_include_fields
         return super(ActivitySerializer, self).get_field_names(*args, **kwargs)
+
+    def get_team_workers(self, obj):
+        request = self.context['request']
+        token = request.META['HTTP_AUTHORIZATION'].split()[1]
+        payload = jwt_decode_handler(token)
+        profile = request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        team = obj.task.project.members.filter(
+            status=1,
+            project_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=True,
+        )
+        workers = team.filter(role='worker')
+        return workers
 
     def get_media_set(self, obj):
         media_list = []

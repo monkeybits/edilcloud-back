@@ -621,8 +621,18 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
             project_invitation_date__isnull=False,
             invitation_refuse_date__isnull=True,
         )
+        list_workers = []
         workers = team.filter(role='w')
-        return workers
+        for worker in workers:
+            list_workers.append(
+                {
+                    'id': worker.id,
+                    'first_name': worker.profile.first_name,
+                    'last_name': worker.profile._last_name,
+                    'company': worker.company.name,
+                }
+            )
+        return list_workers
 
     def get_media_set(self, obj):
         media_list = []

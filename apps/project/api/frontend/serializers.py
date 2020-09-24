@@ -629,7 +629,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
                     'id': worker.id,
                     'first_name': worker.profile.first_name,
                     'last_name': worker.profile.last_name,
-                    'company': worker.company.name,
+                    'company': worker.profile.company.name,
                 }
             )
         return list_workers

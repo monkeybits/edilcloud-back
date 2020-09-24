@@ -621,7 +621,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
             project_invitation_date__isnull=False,
             invitation_refuse_date__isnull=True,
         )
-        workers = team.filter(role='worker')
+        workers = team.filter(role='w')
         return workers
 
     def get_media_set(self, obj):

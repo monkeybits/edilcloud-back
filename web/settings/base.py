@@ -443,4 +443,4 @@ class Dwg(EdilType):
                     buf[2] == 0x7) and
                 (buf[3] == 0x4 or buf[3] == 0x6 or
                     buf[3] == 0x8))
-filetype.types.insert(0, Dwg)
+#filetype.types.insert(0, Dwg)

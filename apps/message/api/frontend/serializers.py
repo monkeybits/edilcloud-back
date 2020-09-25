@@ -139,13 +139,13 @@ class MessageAddSerializer(
     JWTPayloadMixin,
     serializers.ModelSerializer):
     talk = TalkAddSerializer(required=False)
-    messagefileassignment_set = MessageFileAssignmentSerializer(many=True)
+    media_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Message
         fields = '__all__'
 
-    def get_files(self, obj):
+    def get_media_set(self, obj):
         media_list = []
         medias = MessageFileAssignment.objects.filter(message=obj)
         for media in medias:
@@ -203,8 +203,6 @@ class MessageAddSerializer(
         return super(MessageAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
-        if 'files' in validated_data:
-            validated_data.pop('files')
         message = self.profile.create_message(validated_data)
         files = list(self.request.FILES.values())
         for file in files:

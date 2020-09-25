@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-
 import os
 import configparser
-
 from django.conf import settings
 
 config = configparser.ConfigParser()

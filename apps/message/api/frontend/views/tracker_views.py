@@ -48,7 +48,7 @@ class TrackerMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'talk', 'sender', 'date_create', 'media_set'
+            'id', 'body', 'talk', 'sender', 'date_create', 'files'
         ]
         self.talk_response_include_fields = [
             'id', 'code', 'content_type_name', 'object_id'
@@ -84,7 +84,7 @@ class TrackerMessageAddView(
             'id', 'content_type', 'object_id'
         ]
         self.message_response_include_fields = [
-            'id', 'body', 'talk', 'sender', 'date_create', 'media_set'
+            'id', 'body', 'talk', 'sender', 'date_create', 'files'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'role', 'company'

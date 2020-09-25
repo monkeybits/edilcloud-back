@@ -48,7 +48,6 @@ class TalkSerializer(
 
 class MessageSerializer(
         DynamicFieldsModelSerializer):
-
     talk = TalkSerializer()
     sender = profile_serializers.ProfileSerializer()
     media_set = serializers.SerializerMethodField()

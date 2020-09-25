@@ -73,13 +73,17 @@ class MessageSerializer(
             except:
                 media_url = None
             name, extension = os.path.splitext(media.media.name)
+            if extension == '.mp3':
+                type = 'audio/mpeg'
+            else:
+                type = get_filetype(media.media)
             media_list.append(
                 {
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],
                     "extension": extension,
-                    "type": get_filetype(media.media),
+                    "type": type,
                     "message": media.message.id
                 }
             )

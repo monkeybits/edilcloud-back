@@ -3631,7 +3631,7 @@ class OwnerProfile(Profile):
             sender=self,
             talk=talk,
             status=0,
-            **message_dict
+            body=message_dict['body']
         )
         message.save()
         return message

@@ -54,18 +54,8 @@ class MessageSerializer(
     media_set = serializers.SerializerMethodField()
 
     class Meta:
-        from apps.project.api.frontend.serializers import FilteredListSerializer
         model = models.Message
-        list_serializer_class = FilteredListSerializer
         fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        context = kwargs.get('context', None)
-        if context:
-            self.request = kwargs['context']['request']
-            payload = self.get_payload()
-            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     def get_media_set(self, obj):
         media_list = []
@@ -95,12 +85,6 @@ class MessageSerializer(
                 }
             )
         return media_list
-
-    def get_field_names(self, *args, **kwargs):
-        view = self.get_view
-        if view:
-            return view.message_response_include_fields
-        return super(MessageSerializer, self).get_field_names(*args, **kwargs)
 
 
 class TalkMessageSerializer(

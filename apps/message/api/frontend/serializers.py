@@ -50,13 +50,13 @@ class MessageSerializer(
         DynamicFieldsModelSerializer):
     talk = TalkSerializer()
     sender = profile_serializers.ProfileSerializer()
-    media_set = serializers.SerializerMethodField()
+    files = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Message
         fields = '__all__'
 
-    def get_media_set(self, obj):
+    def get_files(self, obj):
         media_list = []
         request = self.context['request']
         medias = MessageFileAssignment.objects.filter(message=obj)

@@ -9,6 +9,7 @@ from rest_framework.serializers import ValidationError
 
 from apps.profile.api.frontend.serializers import ProfileSerializer
 from apps.profile.models import Profile
+from apps.project.api.frontend.serializers import FilteredListSerializer
 from ... import models
 from apps.profile import models as profile_models
 from apps.project import models as project_models
@@ -47,14 +48,23 @@ class TalkSerializer(
 
 
 class MessageSerializer(
-        DynamicFieldsModelSerializer):
+        DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     talk = TalkSerializer()
     sender = profile_serializers.ProfileSerializer()
     media_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Message
+        list_serializer_class = FilteredListSerializer
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     def get_media_set(self, obj):
         media_list = []
@@ -84,12 +94,6 @@ class MessageSerializer(
                 }
             )
         return media_list
-
-    def get_field_names(self, *args, **kwargs):
-        view = self.get_view
-        if view:
-            return view.message_response_include_fields
-        return super(MessageSerializer, self).get_field_names(*args, **kwargs)
 
 
 class TalkMessageSerializer(

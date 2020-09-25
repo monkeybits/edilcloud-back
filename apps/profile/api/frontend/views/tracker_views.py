@@ -962,7 +962,7 @@ class TrackerCompanyMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create'
+            'id', 'body', 'sender', 'date_create', 'media_set'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'

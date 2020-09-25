@@ -17,7 +17,19 @@ from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin
 from web.api.serializers import DynamicFieldsModelSerializer
 from ...models import MessageFileAssignment
+from ...signals import get_filetype
 
+
+class MessageFileAssignmentSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.MessageFileAssignment
+        fields = '__all__'
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.messagefileassignment_request_include_fields
+        return super(MessageFileAssignmentSerializer, self).get_field_names(*args, **kwargs)
 
 class TalkSerializer(
         DynamicFieldsModelSerializer):
@@ -38,10 +50,40 @@ class MessageSerializer(
         DynamicFieldsModelSerializer):
     talk = TalkSerializer()
     sender = profile_serializers.ProfileSerializer()
+    media_set = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Message
         fields = '__all__'
+
+    def get_media_set(self, obj):
+        media_list = []
+        request = self.context['request']
+        medias = MessageFileAssignment.objects.filter(message=obj)
+        for media in medias:
+            try:
+                photo_url = media.media.url
+                protocol = request.is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = request.get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
+            name, extension = os.path.splitext(media.media.name)
+            media_list.append(
+                {
+                    "media_url": media_url,
+                    "size": media.media.size,
+                    "name": name.split('/')[-1],
+                    "extension": extension,
+                    "type": get_filetype(media.media),
+                    "message": media.message.id
+                }
+            )
+        return media_list
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -91,17 +133,6 @@ class TalkAddSerializer(
         if view:
             return view.talk_request_include_fields
         return super(TalkAddSerializer, self).get_field_names(*args, **kwargs)
-
-class MessageFileAssignmentSerializer(DynamicFieldsModelSerializer):
-    class Meta:
-        model = models.MessageFileAssignment
-        fields = '__all__'
-
-    def get_field_names(self, *args, **kwargs):
-        view = self.get_view
-        if view:
-            return view.messagefileassignment_request_include_fields
-        return super(MessageFileAssignmentSerializer, self).get_field_names(*args, **kwargs)
 
 class MessageAddSerializer(
     DynamicFieldsModelSerializer,

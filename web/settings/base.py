@@ -3,6 +3,9 @@
 import os
 import datetime
 
+import filetype
+from filetype.types import Type as EdilType
+
 gettext = lambda s: s
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -418,3 +421,26 @@ EMAIL_HOST_PASSWORD = 'edilcloud-activation$'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 NEW_SPONSOR_REQUEST_RECIPIENT = 'edilcloud.activation@gmail.com'
+
+# override filetype package adding new types
+class Dwg(EdilType):
+    """
+    Implements the Zip archive type matcher.
+    """
+    MIME = 'image/vnd'
+    EXTENSION = 'dwg'
+
+    def __init__(self):
+        super(Dwg, self).__init__(
+            mime=Dwg.MIME,
+            extension=Dwg.EXTENSION
+        )
+
+    def match(self, buf):
+        return (len(buf) > 3 and
+                buf[0] == 0x50 and buf[1] == 0x4B and
+                (buf[2] == 0x3 or buf[2] == 0x5 or
+                    buf[2] == 0x7) and
+                (buf[3] == 0x4 or buf[3] == 0x6 or
+                    buf[3] == 0x8))
+#filetype.types.insert(0, Dwg)

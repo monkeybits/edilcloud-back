@@ -2,6 +2,7 @@
 
 import os
 
+import filetype
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
@@ -41,13 +42,17 @@ def get_files(obj):
         except:
             media_url = None
         name, extension = os.path.splitext(media.media.name)
+        if extension == '.wav':
+            type = 'audio/wav'
+        else:
+            type = get_filetype(media.media)
         media_list.append(
             {
                 "media_url": media_url,
                 "size": media.media.size,
                 "name": name.split('/')[-1],
                 "extension": extension,
-                "type": get_filetype(media.media),
+                "type": type,
                 "message": media.message.id
             }
         )

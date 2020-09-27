@@ -49,6 +49,7 @@ def get_files(obj):
         media_list.append(
             {
                 "media_url": media_url,
+                "id": media.id,
                 "size": media.media.size,
                 "name": name.split('/')[-1],
                 "extension": extension,

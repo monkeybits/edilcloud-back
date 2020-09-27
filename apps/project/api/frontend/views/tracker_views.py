@@ -1435,6 +1435,66 @@ class TrackerProjectTaskListView(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
+class TrackerGanttProjectTaskListView(
+        JWTPayloadMixin,
+        QuerysetMixin,
+        generics.ListAPIView):
+    """
+    Get all tasks w.r.t. project
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.TaskSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.task_response_include_fields = [
+            'id', 'project', 'name', 'assigned_company', 'date_start',
+            'date_end', 'date_completed', 'progress', 'status',
+            'share_status', 'shared_task', 'only_read',
+            'alert', 'starred', 'note', 'activities', 'media_set'
+        ]
+        self.activity_response_include_fields = [
+            'id', 'task', 'workers', 'title', 'description', 'status',
+            'datetime_start', 'datetime_end', 'media_set', 'team_workers'
+        ]
+        self.project_response_include_fields = [
+            'id', 'name', 'description', 'date_start',
+            'date_end', 'shared_project'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'color_project'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'photo'
+        ]
+        super(TrackerGanttProjectTaskListView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            project = profile.list_projects().get(pk=self.kwargs.get('pk'))
+            self.queryset = profile.list_tasks(project)
+            return super(TrackerGanttProjectTaskListView, self).get_queryset()
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.ProfileAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+    def list(self, request, *args, **kwargs):
+        response = super(TrackerGanttProjectTaskListView, self).list(request, *args, **kwargs)
+        data = response.data
+        mix_list = []
+        for d in data:
+            activities = d.pop('activities')
+            for a in activities:
+                a['parent'] = 1
+                mix_list.append(a)
+            d['parent'] = 0
+            mix_list.append(d)
+        response.data = mix_list
+        return response
+
 
 class TrackerProjectTaskAddView(
         WhistleGenericViewMixin,

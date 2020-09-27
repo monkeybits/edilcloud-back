@@ -196,6 +196,11 @@ tracker_urlpatterns = [
         name='tracker_project_task_list'
     ),
     url(
+        r'^gantt/project/(?P<pk>\d+)/task_list/$',
+        tracker_views.TrackerGanttProjectTaskListView.as_view(),
+        name='tracker_gantt_project_task_list'
+    ),
+    url(
         r'^project/(?P<pk>\d+)/document_list/$',
         tracker_views.TrackerProjectDocumentListView.as_view(),
         name='tracker_project_document_list'

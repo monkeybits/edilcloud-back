@@ -32,7 +32,7 @@ from apps.document.models import Document
 from apps.media.models import Photo, Video
 from apps.message.models import Talk, Message, MessageFileAssignment
 from apps.project.models import Project, Team, Task, Activity, \
-    Post, Comment, TaskPostAssignment
+    Post, Comment, TaskPostAssignment, MediaAssignment
 from apps.quotation.models import Bom, BomRow, Offer, Certification, Quotation, QuotationRow, FavouriteOffer, \
     BoughtOffer, BomArchive, QuotationArchive
 from apps.user.api.frontend.views.mixin import UserMixin, TokenGenerator as UserTokenGenerator
@@ -831,6 +831,10 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     def remove_comment(self, comment):
         comment = Comment.objects.get(id=comment.id)
         comment.delete()
+
+    def remove_attachment(self, attachment):
+        attachment = MediaAssignment.objects.get(id=attachment.id)
+        attachment.delete()
 
     def list_task_posts(self, task):
         """
@@ -2043,8 +2047,21 @@ class OwnerProfile(Profile):
         post.save()
         return post
 
+    def get_attachment(self, attachment_id):
+        attachment = MediaAssignment.objects.get(id=attachment_id)
+        return attachment
+
     def get_comment(self, comment_id):
         comment = Comment.objects.get(id=comment_id)
+        return comment
+
+    def edit_comment(self, comment_dict):
+        """
+        Update a company project
+        """
+        comment = self.get_comment(comment_dict['id'])
+        comment.__dict__.update(**comment_dict)
+        comment.save()
         return comment
 
     def edit_task(self, task_dict):
@@ -2247,6 +2264,13 @@ class OwnerProfile(Profile):
         )
         member.save()
         return member
+
+    def list_members(self, project_id):
+        """
+        Get all members of a company project
+        """
+        project = self.list_projects().get(id=project_id)
+        return project.members.all()
 
     def list_approve_members(self, project_id):
         """

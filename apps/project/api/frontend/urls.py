@@ -196,6 +196,11 @@ tracker_urlpatterns = [
         name='tracker_project_task_list'
     ),
     url(
+        r'^gantt/project/(?P<pk>\d+)/task_list/$',
+        tracker_views.TrackerGanttProjectTaskListView.as_view(),
+        name='tracker_gantt_project_task_list'
+    ),
+    url(
         r'^project/(?P<pk>\d+)/document_list/$',
         tracker_views.TrackerProjectDocumentListView.as_view(),
         name='tracker_project_document_list'
@@ -291,6 +296,11 @@ tracker_urlpatterns = [
         name='tracker_task_attachment_add'
     ),
     url(
+        r'^attachment/(?P<pk>\d+)/delete/$',
+        tracker_views.TrackerAttachmentDeleteView.as_view(),
+        name='tracker_attachment_delete'
+    ),
+    url(
         r'^task/(?P<pk>\d+)/activity_add/$',
         tracker_views.TrackerTaskActivityAddView.as_view(),
         name='tracker_task_activity_add'
@@ -354,6 +364,11 @@ tracker_urlpatterns = [
         r'^post/(?P<pk>\d+)/add_comment/$',
         tracker_views.TrackerPostCommentAddView.as_view(),
         name='tracker_activity_comment_add'
+    ),
+    url(
+        r'^comment/(?P<pk>\d+)/edit/$',
+        tracker_views.TrackerCommentEditView.as_view(),
+        name='tracker_edit_comment'
     ),
     url(
         r'^post/delete/(?P<pk>\d+)/$',

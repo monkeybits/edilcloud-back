@@ -526,6 +526,34 @@ class PostEditSerializer(
         project = self.profile.edit_post(validated_data)
         return project
 
+class CommentEditSerializer(
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Comment
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.comment_request_include_fields
+        return super(CommentEditSerializer, self).get_field_names(*args, **kwargs)
+
+    def update(self, instance, validated_data):
+        validated_data['id'] = instance.id
+        comment = self.profile.edit_comment(validated_data)
+        return comment
+
 class ProjectEnableSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
@@ -651,6 +679,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
             name, extension = os.path.splitext(media.media.name)
             media_list.append(
                 {
+                    "id": media.id,
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],
@@ -700,6 +729,7 @@ class TaskSerializer(
             name, extension = os.path.splitext(media.media.name)
             media_list.append(
                 {
+                    "id": media.id,
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],
@@ -759,6 +789,7 @@ class TaskAttachmentAddSerializer(
             name, extension = os.path.splitext(media.media.name)
             media_list.append(
                 {
+                    "id": media.id,
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],
@@ -828,6 +859,7 @@ class TaskAddSerializer(
             name, extension = os.path.splitext(media.media.name)
             media_list.append(
                 {
+                    "id": media.id,
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],
@@ -1015,6 +1047,7 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
             name, extension = os.path.splitext(media.media.name)
             media_list.append(
                 {
+                    "id": media.id,
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],
@@ -1113,6 +1146,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             name, extension = os.path.splitext(media.media.name)
             media_list.append(
                 {
+                    "id": media.id,
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],
@@ -1359,6 +1393,7 @@ class TaskActivityAddSerializer(
             name, extension = os.path.splitext(media.media.name)
             media_list.append(
                 {
+                    "id": media.id,
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],
@@ -1560,6 +1595,7 @@ class PostCommentAddSerializer(
             name, extension = os.path.splitext(media.media.name)
             media_list.append(
                 {
+                    "id": media.id,
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],

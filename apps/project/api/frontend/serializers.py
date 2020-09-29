@@ -368,12 +368,15 @@ class ProjectSerializer(
             if 'year' in view.kwargs: self.year = view.kwargs['year']
             return view.project_response_include_fields
         return super(ProjectSerializer, self).get_field_names(*args, **kwargs)
+
     def get_last_message_created(self, obj):
         talk = obj.talks.last()
-        if talk:
-            return talk.messages.all().last().date_create
-        else:
-            None
+        try:
+            if talk:
+                return talk.messages.all().last().date_create
+        except Exception:
+            pass
+        return None
 
 
     def get_days_for_gantt(self, obj):

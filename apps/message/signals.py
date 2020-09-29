@@ -136,6 +136,7 @@ def message_notification(sender, instance, **kwargs):
         SOCKET_HOST = os.environ.get('SOCKET_HOST')
         SOCKET_PORT = os.environ.get('SOCKET_PORT')
         socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
+        socketIO.emit('join', {'room': str(instance.talk.code), 'name': 'django-admin'})
         socketIO.emit("chat_channel", {
             "message": {
                 "id": notify_obj.id,
@@ -161,5 +162,8 @@ def message_notification(sender, instance, **kwargs):
                 "files": files
             }
         })
+        socketIO.emit('leave', {'room': str(instance.talk.code), 'name': 'django-admin'})
+        socketIO.disconnect()
+
     except Exception as e:
         print(e)

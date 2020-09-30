@@ -146,6 +146,9 @@ def message_notification(sender, instance, **kwargs):
             "headings": {
                 "en": "New Message from {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
             },
+            "android_channel_id": "8d3bd99c-1755-4a33-a043-60a92c8b153c",
+            "wp_wns_sound": "erotic_girl_sound",
+            "android_sound": "erotic_girl_sound",
             "data": {"custom_data": "New Message from Edilcloud"}
         }
 

@@ -149,7 +149,7 @@ def message_notification(sender, instance, **kwargs):
         company_profiles = notify_obj.sender.company.profiles
         list_profiles_id = []
         list_players_recipients = []
-        for profile in company_profiles:
+        for profile in company_profiles.all():
             list_profiles_id.append(str(profile.id))
         print(req_players.status_code, req_players.content)
 

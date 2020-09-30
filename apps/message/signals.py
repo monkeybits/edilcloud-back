@@ -157,7 +157,7 @@ def message_notification(sender, instance, **kwargs):
             print('player external user id')
             print(str(req_player['external_user_id']))
             if str(req_player['external_user_id']) in list_profiles_id:
-                list_players_recipients.append(req_player['identifier'])
+                list_players_recipients.append(req_player['id'])
 
         print('list ids')
         print(list_profiles_id)

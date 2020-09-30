@@ -2297,9 +2297,13 @@ class TrackerTaskPostAddView(
             'id', 'author', 'text', 'task', 'sub_task',
             'published_date', 'created_date',
         ]
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo', 'position',
-            'role', 'email', 'fax', 'phone'
+            'id', 'user', 'photo',
+            'company', 'role', 'email', 'first_name', 'last_name'
         ]
         super(TrackerTaskPostAddView, self).__init__(*args, **kwargs)
 

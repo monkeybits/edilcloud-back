@@ -151,9 +151,9 @@ def message_notification(sender, instance, **kwargs):
         list_players_recipients = []
         for profile in company_profiles.all():
             list_profiles_id.append(str(profile.id))
-        print(req_players.status_code, req_players.content)
+        print(req_players.status_code, req_players.json())
 
-        for req_player in req_players.content['players']:
+        for req_player in req_players.json()['players']:
             print('player external user id')
             print(str(req_player['external_user_id']))
             if str(req_player['external_user_id']) in list_profiles_id:

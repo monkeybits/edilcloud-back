@@ -2305,6 +2305,7 @@ class TrackerTaskPostAddView(
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
         super(TrackerTaskPostAddView, self).__init__(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):

@@ -51,6 +51,7 @@ class MessageSerializer(
     talk = TalkSerializer()
     sender = profile_serializers.ProfileSerializer()
     files = serializers.SerializerMethodField()
+    body = serializers.CharField(allow_blank=True)
 
     class Meta:
         model = models.Message

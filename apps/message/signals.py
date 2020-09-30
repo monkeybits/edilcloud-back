@@ -62,6 +62,9 @@ def get_files(obj):
 
 @receiver([post_save, post_delete], sender=message_models.Message)
 def message_notification(sender, instance, **kwargs):
+    import requests
+    import json
+
     company_staff = []
     profile = get_current_profile()
     # If there is no JWT token in the request,
@@ -132,6 +135,23 @@ def message_notification(sender, instance, **kwargs):
             recipient_objs,
             batch_size=100
         )
+        # send push notification
+
+        header = {"Content-Type": "application/json; charset=utf-8"}
+
+        payload = {
+            "app_id": "8fc7c8ff-a4c8-4642-823d-4675b809a3c9",
+            "include_player_ids": ["36ee3664-c816-4369-bff3-850409c8976a"],
+            "contents": {"en": "English Message"},
+            "headings": {
+                "en": "New Message from {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
+            },
+            "data": {"custom_data": "New Message from Edilcloud"}
+        }
+
+        req = requests.post("https://onesignal.com/api/v1/notifications", headers=header, data=json.dumps(payload))
+        print(req.status_code, req.reason)
+
         files = get_files(instance)
         SOCKET_HOST = os.environ.get('SOCKET_HOST')
         SOCKET_PORT = os.environ.get('SOCKET_PORT')

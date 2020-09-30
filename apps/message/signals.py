@@ -137,17 +137,43 @@ def message_notification(sender, instance, **kwargs):
         )
         # send push notification
 
-        header = {"Content-Type": "application/json; charset=utf-8"}
+        header = {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Basic ZWI0NmI5NGItMTJjZC00YWJhLWI5YTUtNjA3MTQ1ZDgzM2Vl"
+        }
+
+        req_players = requests.get(
+            "https://onesignal.com/api/v1/players?app_id=8fc7c8ff-a4c8-4642-823d-4675b809a3c9&limit=300&offset=0",
+            headers=header)
+        print(req_players)
+        company_profiles = notify_obj.sender.company.profiles
+        list_profiles_id = []
+        list_players_recipients = []
+        for profile in company_profiles:
+            list_profiles_id.append(str(profile.id))
+        print(req_players.status_code, req_players.content)
+
+        for req_player in req_players.content['players']:
+            print('player external user id')
+            print(str(req_player['external_user_id']))
+            if str(req_player['external_user_id']) in list_profiles_id:
+                list_players_recipients.append(req_player['identifier'])
+
+        print('list ids')
+        print(list_profiles_id)
+        print('list players to sent')
+        print(list_players_recipients)
 
         payload = {
             "app_id": "8fc7c8ff-a4c8-4642-823d-4675b809a3c9",
-            "include_player_ids": ["36ee3664-c816-4369-bff3-850409c8976a", "cca8ac2e-6ba8-4b76-9f10-918cc47c396a"],
+            "include_player_ids": list_players_recipients,
             "contents": {"en": instance.body},
             "headings": {
                 "en": "New Message from {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
             },
             "data": {"custom_data": "New Message from Edilcloud"}
         }
+
         # "android_channel_id": "8d3bd99c-1755-4a33-a043-60a92c8b153c",
         # "wp_wns_sound": "erotic_girl_sound",
         # "android_sound": "erotic_girl_sound",

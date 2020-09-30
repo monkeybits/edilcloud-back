@@ -141,7 +141,7 @@ def message_notification(sender, instance, **kwargs):
 
         payload = {
             "app_id": "8fc7c8ff-a4c8-4642-823d-4675b809a3c9",
-            "include_player_ids": ["36ee3664-c816-4369-bff3-850409c8976a"],
+            "include_player_ids": ["36ee3664-c816-4369-bff3-850409c8976a", "cca8ac2e-6ba8-4b76-9f10-918cc47c396a"],
             "contents": {"en": instance.body},
             "headings": {
                 "en": "New Message from {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)

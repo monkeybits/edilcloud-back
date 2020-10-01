@@ -80,6 +80,7 @@ class MessageSerializer(
                 type = get_filetype(media.media)
             media_list.append(
                 {
+                    "id": media.id,
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],

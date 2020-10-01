@@ -654,12 +654,15 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         list_workers = []
         workers = team.filter(role='w')
         for worker in workers:
+            is_exists = obj.workers.filter(id=worker.profile.id).exists()
             list_workers.append(
                 {
                     'id': worker.id,
                     'first_name': worker.profile.first_name,
                     'last_name': worker.profile.last_name,
+                    'photo': worker.profile.photo,
                     'company': worker.profile.company.name,
+                    'is_exists': is_exists
                 }
             )
         return list_workers

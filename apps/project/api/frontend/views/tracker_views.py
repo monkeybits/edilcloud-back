@@ -2068,6 +2068,7 @@ class TrackerTaskAttachmentAddView(
         return self.create(request, *args, **kwargs)
 
 class TrackerTaskActivityListView(
+        QuerysetMixin,
         TrackerTaskMixin,
         generics.ListAPIView):
     """

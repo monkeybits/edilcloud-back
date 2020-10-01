@@ -76,7 +76,8 @@ class Talk(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
 @python_2_unicode_compatible
 class Message(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     body = models.TextField(
-        verbose_name=_('body')
+        verbose_name=_('body'),
+        blank=True
     )
     talk = models.ForeignKey(
         Talk,

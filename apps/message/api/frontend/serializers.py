@@ -139,7 +139,6 @@ class MessageAddSerializer(
     JWTPayloadMixin,
     serializers.ModelSerializer):
     talk = TalkAddSerializer(required=False)
-    body = serializers.CharField(allow_blank=True)
     media_set = serializers.SerializerMethodField()
 
     class Meta:

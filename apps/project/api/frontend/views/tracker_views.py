@@ -2081,7 +2081,7 @@ class TrackerTaskActivityListView(
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
-            'starred', 'note'
+            'starred', 'note', 'team_workers'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',

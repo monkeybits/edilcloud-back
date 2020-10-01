@@ -51,6 +51,7 @@ class MessageSerializer(
     talk = TalkSerializer()
     sender = profile_serializers.ProfileSerializer()
     files = serializers.SerializerMethodField()
+    body = serializers.CharField(allow_blank=True)
 
     class Meta:
         model = models.Message
@@ -79,6 +80,7 @@ class MessageSerializer(
                 type = get_filetype(media.media)
             media_list.append(
                 {
+                    "id": media.id,
                     "media_url": media_url,
                     "size": media.media.size,
                     "name": name.split('/')[-1],

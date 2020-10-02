@@ -654,12 +654,15 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         list_workers = []
         workers = team.filter(role='w')
         for worker in workers:
+            is_exists = obj.workers.filter(id=worker.profile.id).exists()
             list_workers.append(
                 {
                     'id': worker.id,
                     'first_name': worker.profile.first_name,
                     'last_name': worker.profile.last_name,
+                    'photo': worker.profile.photo,
                     'company': worker.profile.company.name,
+                    'is_exists': is_exists
                 }
             )
         return list_workers
@@ -1328,6 +1331,7 @@ class TaskActivitySerializer(
     workers = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), many=True, write_only=True)
     days_for_gantt = serializers.SerializerMethodField(source='get_days_for_gantt')
     workers = ProfileSerializer(many=True)
+    team_workers = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Activity
@@ -1340,6 +1344,32 @@ class TaskActivitySerializer(
             if 'year' in view.kwargs: self.year = view.kwargs['year']
             return view.activity_response_include_fields
         return super(TaskActivitySerializer, self).get_field_names(*args, **kwargs)
+
+    def get_team_workers(self, obj):
+        request = self.context['request']
+        token = request.META['HTTP_AUTHORIZATION'].split()[1]
+        payload = jwt_decode_handler(token)
+        profile = request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        team = obj.task.project.members.filter(
+            status=1,
+            project_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=True,
+        )
+        list_workers = []
+        workers = team.filter(role='w')
+        for worker in workers:
+            is_exists = obj.workers.filter(id=worker.profile.id).exists()
+            list_workers.append(
+                {
+                    'id': worker.id,
+                    'first_name': worker.profile.first_name,
+                    'last_name': worker.profile.last_name,
+                    'photo': worker.profile.photo,
+                    'company': worker.profile.company.name,
+                    'is_exists': is_exists
+                }
+            )
+        return list_workers
 
     def get_days_for_gantt(self, obj):
         days = []

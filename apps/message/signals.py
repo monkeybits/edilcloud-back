@@ -18,6 +18,8 @@ from socketIO_client import SocketIO, LoggingNamespace, BaseNamespace
 from websocket import create_connection
 
 from .models import MessageFileAssignment
+from ..project.models import Project
+
 
 def get_filetype(file):
     kind = filetype.guess(file)
@@ -65,6 +67,16 @@ def addRedirectUrl(talk):
     if talk.content_type.name == 'project':
         return "https://www.edilcloud.it/apps/projects/{}".format(str(talk.object_id))
     return "https://www.edilcloud.it"
+
+def addHeading(talk, notify_obj):
+    if talk.content_type.name == 'company':
+        return "{} Company Chat".format(notify_obj.sender.company.name)
+    if talk.content_type.name == 'project':
+        pr = Project.objects.filter(id=talk.object_id)
+        if pr:
+            return "{} Project Chat".format(pr[0].name)
+        else:
+            return "Project Chat"
 
 @receiver([post_save, post_delete], sender=message_models.Message)
 def message_notification(sender, instance, **kwargs):
@@ -173,9 +185,11 @@ def message_notification(sender, instance, **kwargs):
         payload = {
             "app_id": "8fc7c8ff-a4c8-4642-823d-4675b809a3c9",
             "include_player_ids": list_players_recipients,
-            "contents": {"en": instance.body},
+            "contents": {
+                "en": "{} {}: {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name, instance.body)
+            },
             "headings": {
-                "en": "New Message from {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
+                "en": addHeading(instance.talk, notify_obj)
             },
             "data": {
                 "custom_data": "New Message from Edilcloud",

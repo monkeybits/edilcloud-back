@@ -59,6 +59,12 @@ def get_files(obj):
         )
     return media_list
 
+def addRedirectUrl(talk):
+    if talk.content_type.name == 'company':
+        return "https://www.edilcloud.it/apps/chat"
+    if talk.content_type.name == 'project':
+        return "https://www.edilcloud.it/apps/projects/{}".format(str(talk.object_id))
+    return "https://www.edilcloud.it"
 
 @receiver([post_save, post_delete], sender=message_models.Message)
 def message_notification(sender, instance, **kwargs):
@@ -146,7 +152,10 @@ def message_notification(sender, instance, **kwargs):
             "headings": {
                 "en": "New Message from {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
             },
-            "data": {"custom_data": "New Message from Edilcloud"}
+            "data": {
+                "custom_data": "New Message from Edilcloud",
+                "redirect_url": addRedirectUrl(instance.talk)
+            }
         }
 
         req = requests.post("https://onesignal.com/api/v1/notifications", headers=header, data=json.dumps(payload))

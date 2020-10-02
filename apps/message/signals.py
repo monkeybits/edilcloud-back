@@ -18,6 +18,8 @@ from socketIO_client import SocketIO, LoggingNamespace, BaseNamespace
 from websocket import create_connection
 
 from .models import MessageFileAssignment
+from ..project.models import Project
+
 
 def get_filetype(file):
     kind = filetype.guess(file)
@@ -65,6 +67,16 @@ def addRedirectUrl(talk):
     if talk.content_type.name == 'project':
         return "https://www.edilcloud.it/apps/projects/{}".format(str(talk.object_id))
     return "https://www.edilcloud.it"
+
+def addHeading(talk, notify_obj):
+    if talk.content_type.name == 'company':
+        return "{} Company Chat".format(notify_obj.sender.company.name)
+    if talk.content_type.name == 'project':
+        pr = Project.objects.filter(id=talk.object_id)
+        if pr:
+            return "{} Project Chat".format(pr[0].name)
+        else:
+            return "Project Chat"
 
 @receiver([post_save, post_delete], sender=message_models.Message)
 def message_notification(sender, instance, **kwargs):
@@ -143,14 +155,41 @@ def message_notification(sender, instance, **kwargs):
         )
         # send push notification
 
-        header = {"Content-Type": "application/json; charset=utf-8"}
+        header = {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Basic ZWI0NmI5NGItMTJjZC00YWJhLWI5YTUtNjA3MTQ1ZDgzM2Vl"
+        }
+
+        req_players = requests.get(
+            "https://onesignal.com/api/v1/players?app_id=8fc7c8ff-a4c8-4642-823d-4675b809a3c9&limit=300&offset=0",
+            headers=header)
+        print(req_players)
+        company_profiles = notify_obj.sender.company.profiles
+        list_profiles_id = []
+        list_players_recipients = []
+        for profile in company_profiles.all():
+            list_profiles_id.append(str(profile.id))
+        print(req_players.status_code, req_players.json())
+
+        for req_player in req_players.json()['players']:
+            print('player external user id')
+            print(str(req_player['external_user_id']))
+            if str(req_player['external_user_id']) in list_profiles_id:
+                list_players_recipients.append(req_player['id'])
+
+        print('list ids')
+        print(list_profiles_id)
+        print('list players to sent')
+        print(list_players_recipients)
 
         payload = {
             "app_id": "8fc7c8ff-a4c8-4642-823d-4675b809a3c9",
-            "include_player_ids": ["36ee3664-c816-4369-bff3-850409c8976a"],
-            "contents": {"en": "English Message"},
+            "include_player_ids": list_players_recipients,
+            "contents": {
+                "en": "{} {}: {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name, instance.body)
+            },
             "headings": {
-                "en": "New Message from {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
+                "en": addHeading(instance.talk, notify_obj)
             },
             "data": {
                 "custom_data": "New Message from Edilcloud",
@@ -158,13 +197,21 @@ def message_notification(sender, instance, **kwargs):
             }
         }
 
+        # "android_channel_id": "8d3bd99c-1755-4a33-a043-60a92c8b153c",
+        # "wp_wns_sound": "erotic_girl_sound",
+        # "android_sound": "erotic_girl_sound",
+
         req = requests.post("https://onesignal.com/api/v1/notifications", headers=header, data=json.dumps(payload))
         print(req.status_code, req.reason)
 
         files = get_files(instance)
         SOCKET_HOST = os.environ.get('SOCKET_HOST')
         SOCKET_PORT = os.environ.get('SOCKET_PORT')
-        socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
+        SOCKET_URL = os.environ.get('SOCKET_URL')
+        if SOCKET_URL:
+            socketIO = SocketIO(SOCKET_URL)
+        else:
+            socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
         socketIO.emit('join', {'room': str(instance.talk.code), 'name': 'django-admin'})
         socketIO.emit("chat_channel", {
             "message": {

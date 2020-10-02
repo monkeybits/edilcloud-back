@@ -194,7 +194,8 @@ def message_notification(sender, instance, **kwargs):
             "data": {
                 "custom_data": "New Message from Edilcloud",
                 "redirect_url": addRedirectUrl(instance.talk)
-            }
+            },
+            "small_icon": "ic_stat_onesignal_default"
         }
 
         # "android_channel_id": "8d3bd99c-1755-4a33-a043-60a92c8b153c",

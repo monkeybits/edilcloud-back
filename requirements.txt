@@ -21,6 +21,7 @@ djangorestframework-jwt==1.11.0
 docutils==0.13.1
 drfdocs==0.0.11
 ecdsa==0.13
+emoji==0.6.0
 fake-factory==9999.9.9
 Faker==0.7.18
 filetype==1.0.7

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-
+import emoji
 import filetype
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save, post_delete
@@ -186,7 +186,7 @@ def message_notification(sender, instance, **kwargs):
             "app_id": "8fc7c8ff-a4c8-4642-823d-4675b809a3c9",
             "include_player_ids": list_players_recipients,
             "contents": {
-                "en": "{} {}: {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name, instance.body)
+                "en": "{} {}: {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name, instance.body if instance.body != '' else emoji.emojize(':camera:'))
             },
             "headings": {
                 "en": addHeading(instance.talk, notify_obj)

@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import generics, status, views
+from rest_framework.response import Response
 
 from apps.document.api.frontend.views.tracker_views import TrackerDocumentMixin
 from apps.media.api.frontend.views.tracker_views import TrackerPhotoMixin, TrackerVideoMixin
@@ -1536,9 +1537,23 @@ class TrackerProjectTaskAddView(
             request.POST._mutable = True
 
         if request.data:
-            request.data['project'] = self.kwargs.get('pk', None)
+            if type(request.data) is list:
+                for dat in request.data:
+                    dat['project'] = self.kwargs.get('pk', None)
+
+                serializer = self.get_serializer(data=request.data, many=True)
+                serializer.is_valid(raise_exception=True)
+                input_serializer = serializer.save()
+                self.set_output_serializer()
+                output_serializer = self.get_serializer(self.serializer_class.Meta.model.objects.filter(project=self.kwargs.get('pk', None)), many=True)
+                return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                request.data['project'] = self.kwargs.get('pk', None)
+                return self.create(request, *args, **kwargs)
         return self.create(request, *args, **kwargs)
 
+    # def get_serializer(self, *args, **kwargs):
+    #     return self.get_serializer_class()(data=self.request.data, many=True)
 
 class TrackerTaskDetailView(
         TrackerTaskMixin,

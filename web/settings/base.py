@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.admindocs',
     'django_extensions',
     'debug_toolbar',
-    'mptt',
+    #'mptt',
 
     'rest_framework_docs',
 

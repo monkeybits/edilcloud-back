@@ -14,11 +14,13 @@ class UserModel(models.Model):
         settings.AUTH_USER_MODEL,
         related_name="%(app_label)s_%(class)s_creator",
         verbose_name=_("creator"),
+        on_delete=models.CASCADE
     )
     last_modifier = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='%(app_label)s_%(class)s_last_modifier',
         verbose_name=_("last modifier"),
+        on_delete=models.CASCADE
     )
 
     class Meta:

@@ -585,6 +585,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         blank=True, null=True,
         related_name='profiles',
         verbose_name=_('company'),
+        on_delete=models.DO_NOTHING
     )
     last_name = models.CharField(
         max_length=255,

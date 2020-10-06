@@ -454,6 +454,7 @@ class Offer(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         blank=True, null=True,
         related_name='offers',
         verbose_name=_('unit'),
+        on_delete=models.CASCADE
     )
     tags = ArrayField(
         models.CharField(
@@ -611,12 +612,14 @@ class BomArchive(CleanModel, UserModel, DateModel):
     bom = models.ForeignKey(
         Bom,
         related_name="archived_boms",
-        verbose_name=_('bom')
+        verbose_name=_('bom'),
+        on_delete=models.CASCADE
     )
     company = models.ForeignKey(
         'profile.Company',
         related_name='archived_boms',
-        verbose_name=_('company')
+        verbose_name=_('company'),
+        on_delete=models.CASCADE
     )
 
     class Meta:
@@ -637,12 +640,14 @@ class QuotationArchive(CleanModel, UserModel, DateModel):
     quotation = models.ForeignKey(
         Quotation,
         related_name="archived_quotations",
-        verbose_name=_('quotation')
+        verbose_name=_('quotation'),
+        on_delete=models.CASCADE
     )
     company = models.ForeignKey(
         'profile.Company',
         related_name='archived_quotations',
-        verbose_name=_('company')
+        verbose_name=_('company'),
+        on_delete=models.CASCADE
     )
 
     class Meta:

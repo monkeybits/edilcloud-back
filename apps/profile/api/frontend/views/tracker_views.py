@@ -341,7 +341,7 @@ class TrackerCompanyProfileAddView(
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email',
             'language', 'position', 'photo', 'role', 'is_shared', 'is_in_showroom',
-            'can_access_files', 'can_access_chat'
+            'can_access_files', 'can_access_chat', 'is_invited'
         ]
         super(TrackerCompanyProfileAddView, self).__init__(*args, **kwargs)
 

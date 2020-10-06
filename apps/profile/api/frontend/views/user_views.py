@@ -562,7 +562,7 @@ class ProfileAddView(
             'company_invitation_date', 'profile_invitation_date',
             'invitation_refuse_date', 'phone', 'language',
             'position', 'role', 'status', 'photo', 'fax', 'mobile', 'note',
-            'can_access_chat', 'can_access_files'
+            'can_access_chat', 'can_access_files', 'is_invited'
         ]
         super(ProfileAddView, self).__init__(*args, **kwargs)
 

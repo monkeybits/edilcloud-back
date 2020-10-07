@@ -655,14 +655,17 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         workers = team.filter(role='w')
         for worker in workers:
             is_exists = obj.workers.filter(id=worker.profile.id).exists()
-            photo_url = worker.profile.photo.url
-            protocol = self.context['request'].is_secure()
-            if protocol:
-                protocol = 'https://'
-            else:
-                protocol = 'http://'
-            host = self.context['request'].get_host()
-            media_url = protocol + host + photo_url
+            try:
+                photo_url = worker.profile.photo.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
             list_workers.append(
                 {
                     'id': worker.id,

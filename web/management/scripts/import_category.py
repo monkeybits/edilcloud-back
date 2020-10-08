@@ -1,10 +1,4 @@
 import csv
-import os
-import sys
-module_path = os.path.abspath(os.getcwd())
-if module_path not in sys.path:
-    sys.path.append(module_path)
-
 from apps.product.models import Category
 
 with open('./web/management/scripts/templates/category.csv') as f:

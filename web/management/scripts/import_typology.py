@@ -1,13 +1,10 @@
 import csv
-<<<<<<< HEAD
 import os
 import sys
 module_path = os.path.abspath(os.getcwd())
 if module_path not in sys.path:
     sys.path.append(module_path)
 
-=======
->>>>>>> fbda1977675db2fae78963031ce9505dabc9716d
 from apps.product.models import Typology
 
 with open('./web/management/scripts/templates/typology.csv') as f:

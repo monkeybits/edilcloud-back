@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from .base import *
-from .settings import *
+from web.settings.base import *
+from web.settings.settings import *
 
 try:
-    from .local import *
+    from web.settings.local import *
 except ImportError as e:
     pass

@@ -1,0 +1,74 @@
+A,A.01,Opere Stradali,Opere Stradali
+A,A.02,Opere Marittime e Aeroportuali,Opere Marittime e Aeroportuali
+A,A.03,Opere Idrauliche,Opere Idrauliche
+A,A.04,Fognature e Trattamento Rifiuti Liquidi,Fognature e Trattamento Rifiuti Liquidi
+A,A.05,Produzione e Distribuzione Energia,Produzione e Distribuzione Energia
+A,A.06,Trattamento Rifiuti Solidi,Trattamento Rifiuti Solidi
+A,A.07,"Rinforzi Strutturali, Giunti e Dissipatori","Rinforzi Strutturali, Giunti e Dissipatori"
+A,A.08,Opere Ferroviarie,Opere Ferroviarie
+A,A.09,Ferramenta,Ferramenta
+A,A.10,Vendita/noleggio macchine da lavoro,Vendita/noleggio macchine da lavoro
+B,B.01,Prefabbricati,Prefabbricati
+B,B.02,Costruzioni Civili e Industriali,Costruzioni Civili e Industriali
+B,B.03,Carpenteria,Carpenteria
+B,B.04,Bonifiche Amianto,Bonifiche Amianto
+B,B.05,Movimento Terra,Movimento Terra
+B,B.06,Intonaci,Intonaci
+B,B.07,Impermeabilizzazioni Edili,Impermeabilizzazioni Edili
+B,B.08,Cartongesso,Cartongesso
+B,B.09,Controsoffitti,Controsoffitti
+B,B.10,Ponteggi,Ponteggi
+B,B.11,Isolamento,Isolamento
+B,B.12,Vendita/noleggio macchine da Cantiere,Vendita/noleggio macchine da Cantiere
+B,B.13,Sicurezza Cantiere,Sicurezza Cantiere
+B,B.14,Ferramenta,Ferramenta
+C,C.01,Tinteggiatura,Tinteggiatura
+C,C.02,Pavimenti,Pavimenti
+C,C.03,Marmi e pietre,Marmi e pietre
+C,C.04,Lattoneria,Lattoneria
+C,C.05,Copertura/Facciate,Copertura/Facciate
+C,C.06,Serramenti,Serramenti
+C,C.07,Serramenti Industriali,Serramenti Industriali
+C,C.08,Vetraio,Vetraio
+C,C.09,Parquet,Parquet
+C,C.10,Ferro e acciaio,Fabbro
+C,C.11,Legno,Lavorazione Legno
+C,C.12,Piscine,Costruttori Piscine
+C,C.13,Spurghi,Spurghi
+C,C.14,Disinfestazioni,Disinfestazioni
+C,C.15,Pulizia,Pulizia
+C,C.16,Restauro,Restauro
+C,C.17,Mobili,Mobili
+C,C.18,Ferramenta ,Ferramenta
+C,C.19,Vendita/noleggio macchine da Cantiere,Vendita/noleggio macchine da Cantiere
+C,C.20,Giardinaggio,Giardinaggio
+D,D.01,Termico,Termico
+D,D.02,Idraulica,Idraulica
+D,D.03,Termoidraulica,Termoidraulica
+D,D.04,Climatizzazione,Climatizzazione
+D,D.05,Elettrico,Elettrico
+D,D.06,Domotica,Domotica
+D,D.07,Automazione,Automazione
+D,D.08,Antenne,Antenne
+D,D.09,Allarmi,Allarmi
+D,D.10,Reti,Reti
+D,D.11,Ascensore/Montascale/Montacarichi,Ascensore/Montascale/Montacarichi
+D,D.12,Geotermico,Geotermico
+D,D.13,Eolico,Eolico
+D,D.14,Biogas,Biogas
+D,D.15,Cogenerazione,Cogenerazione
+D,D.16,Solare Termico,Solare Termico
+D,D.17,Fotovoltaico,Fotovoltaico
+D,D.18,Sicurezza,Sicurezza
+D,D.19,Ferramenta,Ferramenta
+D,D.20,Vendita/noleggio macchine da Cantiere,Vendita/noleggio macchine da Cantiere
+E,E.01,Architetto Designer d'interno,Architetto Designer d'interno
+E,E.02,Architetto paesaggista/agronomo,Architetto paesaggista/agronomo
+E,E.03,Architetto urbanista,Architetto urbanista
+E,E.04,Ingegnere strutturista,Ingegnere strutturista
+E,E.05,Ingegnere impiantista,Ingegnere impiantista
+E,E.06,Ingegnere geotecnico,Ingegnere geotecnico
+E,E.07,Ingegnere urabanista,Ingegnere urabanista
+E,E.08,Direzioni Lavori,Direzioni Lavori
+E,E.09,Sicurezza,Sicurezza
+E,E.10,Geometra,Geometra

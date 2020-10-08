@@ -943,6 +943,12 @@ class TaskEditSerializer(
             task = self.profile.assign_task(validated_data)
         else:
             task = self.profile.edit_task(validated_data)
+        activities = self.profile.list_task_activities(task)
+        for act in activities:
+            duration = (task.date_start - instance.date_start).days
+            act.datetime_start = act.datetime_start + datetime.timedelta(days=duration)
+            act.datetime_end = act.datetime_end + datetime.timedelta(days=duration)
+            act.save()
         return task
 
 

@@ -29,6 +29,11 @@ pipeline {
                 }
             }
         }
+        stage('Update services with new image') {
+             steps {
+                 sh 'docker service update --force --image tbellini01/edilcloud-back:latest edilcloud_web'
+             }
+        }
         stage('Cleaning up') {
             steps {
                 sh "docker rmi $registry:$BUILD_NUMBER"

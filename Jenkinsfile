@@ -31,7 +31,6 @@ pipeline {
         }
     }
 
-
 //      post {
 //         success {
 //             slackSend(color: '#43ab39', message: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")

@@ -13,20 +13,14 @@ pipeline {
                 sh 'echo $GIT_COMMIT'
                 echo 'Building'
                 sh 'docker build -t edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID .'
-                sh 'docker tag edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID tbellini01/edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID'
-            }
-        }
-
-        stage('Push image build') {
-             steps {
-                sh 'docker push edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID'
+                sh 'docker tag edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID 3.9.185.8:10000/edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID'
             }
         }
 
         stage('Push image as latest to registry') {
             steps {
-                sh 'docker tag edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID tbellini01/edilcloud_back-$GIT_TARGET_BRANCH:latest'
-                sh 'docker push edilcloud_back-$GIT_TARGET_BRANCH:latest'
+                sh 'docker push 3.9.185.8:10000/edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID'
+                sh 'docker tag edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID 3.9.185.8:10000/edilcloud_back-$GIT_TARGET_BRANCH:latest'
         }
         }
 

@@ -24,7 +24,6 @@ pipeline {
             }
         }
 
-
          stage('Update services with new image') {
              steps {
                  sh 'docker service update --force --image 3.9.185.8:10000/edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID edilcloud_web'

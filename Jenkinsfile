@@ -3,9 +3,38 @@ pipeline {
     environment {
        GIT_TARGET_BRANCH = "test_aws"
        VM_IP = "3.9.185.8"
+       registry = "tbellini01/edilcloud-back"
+       registryCredential = ''
+       dockerImage = ''
    }
     stages {
-        stage('Build image') {
+         stage('Cloning our Git') {
+            steps {
+                git 'https://github.com/edilcloud/edilcloud-back.git'
+            }
+        }
+        stage('Building our image') {
+            steps {
+                script {
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
+        }
+        stage('Deploy our image') {
+            steps {
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Cleaning up') {
+            steps {
+                sh "docker rmi $registry:$BUILD_NUMBER"
+            }
+        }
+        /* stage('Build image') {
             steps {
                 // Print all the environment variables.
                 sh 'printenv'
@@ -28,7 +57,7 @@ pipeline {
              steps {
                  sh 'docker service update --force --image 3.9.185.8:10000/edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID edilcloud_web'
              }
-        }
+        } */
     }
 
 

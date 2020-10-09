@@ -4,7 +4,7 @@ pipeline {
        GIT_TARGET_BRANCH = "test_aws"
        VM_IP = "3.9.185.8"
        registry = "tbellini01/edilcloud-back"
-       registryCredential = ''
+       registryCredential = 'Oneplus3t'
        dockerImage = ''
    }
     stages {

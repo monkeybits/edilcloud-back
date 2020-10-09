@@ -10,7 +10,7 @@ pipeline {
     stages {
          stage('Cloning our Git') {
             steps {
-                git 'https://github.com/edilcloud/edilcloud-back.git'
+                git 'https://tommasobellini:Oneplus3t2@github.com/edilcloud/edilcloud-back.git'
             }
         }
         stage('Building our image') {

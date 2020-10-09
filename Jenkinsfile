@@ -21,14 +21,14 @@ pipeline {
             steps {
                 sh 'docker push 3.9.185.8:10000/edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID'
                 sh 'docker tag edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID 3.9.185.8:10000/edilcloud_back-$GIT_TARGET_BRANCH:latest'
-        }
+            }
         }
 
-//          stage('Update services with new image') {
-//             steps {
-//                 sh 'sudo ssh jenkins01@$VM_IP "sudo -S docker service update --force --image web-$GIT_TARGET_BRANCH:$BUILD_ID web"'
-//           }
-        //}
+         stage('Update services with new image') {
+             steps {
+                 sh '"sudo -S docker service update --force --image 3.9.185.8:10000/edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID edilcloud_back"'\/
+             }
+        }
     }
 //      post {
 //         success {

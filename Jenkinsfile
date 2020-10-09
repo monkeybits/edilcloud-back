@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-       GIT_TARGET_BRANCH = "dev_project_refactor"
-       VM_IP = "35.176.179.55"
+       GIT_TARGET_BRANCH = "test_aws"
+       VM_IP = "3.9.185.8"
    }
     stages {
         stage('Build image') {
@@ -12,21 +12,21 @@ pipeline {
                 sh 'echo $GIT_BRANCH'
                 sh 'echo $GIT_COMMIT'
                 echo 'Building'
-                sh 'docker build -t web-$GIT_TARGET_BRANCH:$BUILD_ID .'
-                sh 'docker tag web-$GIT_TARGET_BRANCH:$BUILD_ID'
+                sh 'docker build -t edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID .'
+                sh 'docker tag edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID'
             }
         }
 
         stage('Push image build') {
              steps {
-                sh 'docker push web-$GIT_TARGET_BRANCH:$BUILD_ID'
+                sh 'docker push edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID'
             }
         }
 
         stage('Push image as latest to registry') {
             steps {
-                sh 'docker tag web-$GIT_TARGET_BRANCH:$BUILD_ID web-$GIT_TARGET_BRANCH:latest'
-                sh 'docker push web-$GIT_TARGET_BRANCH:latest'
+                sh 'docker tag edilcloud_back-$GIT_TARGET_BRANCH:$BUILD_ID edilcloud_back-$GIT_TARGET_BRANCH:latest'
+                sh 'docker push edilcloud_back-$GIT_TARGET_BRANCH:latest'
         }
         }
 

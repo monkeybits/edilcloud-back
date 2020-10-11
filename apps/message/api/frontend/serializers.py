@@ -34,6 +34,7 @@ class MessageFileAssignmentSerializer(DynamicFieldsModelSerializer):
 class TalkSerializer(
         DynamicFieldsModelSerializer):
     content_type_name = serializers.ReadOnlyField(source="get_content_type_model")
+    unread_count = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Talk
@@ -45,6 +46,8 @@ class TalkSerializer(
             return view.talk_response_include_fields
         return super(TalkSerializer, self).get_field_names(*args, **kwargs)
 
+    def get_unread_count(self, obj):
+        return 0
 
 class MessageSerializer(
         DynamicFieldsModelSerializer):

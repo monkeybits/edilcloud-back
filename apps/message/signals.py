@@ -218,11 +218,12 @@ def message_notification(sender, instance, **kwargs):
             "message": {
                 "id": notify_obj.id,
                 "body": instance.body,
+                "read": False,
                 "talk": {
                     "id": instance.talk.id,
                     "code": instance.talk.code,
                     "content_type_name": instance.talk.content_type.name,
-                    "object_id": instance.talk.object_id,
+                    "object_id": instance.talk.object_id
                 },
                 "sender": {
                     "id": notify_obj.sender.id,

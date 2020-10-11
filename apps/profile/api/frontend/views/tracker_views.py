@@ -2040,7 +2040,7 @@ class TrackerCompanyProjectListView(
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
         ]
         self.talk_response_include_fields = [
-            'id', 'code'
+            'id', 'code', 'unread_count'
         ]
         super(TrackerCompanyProjectListView, self).__init__(*args, **kwargs)
 

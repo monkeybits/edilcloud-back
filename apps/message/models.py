@@ -91,6 +91,10 @@ class Message(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         related_name='sent_messages',
         verbose_name=_('sender'),
     )
+    unique_code = models.TextField(
+        verbose_name=_('unique_code'),
+        blank=True
+    )
 
     class Meta:
         verbose_name = _('message')

@@ -1100,6 +1100,7 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
                 {
                     'id': comment.id,
                     'text': comment.text,
+                    'unique_code': comment.unique_code,
                     'author': {
                         'id': comment.author.id,
                         'user': {
@@ -1140,7 +1141,8 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'media_set',
             'text',
             'comment_set',
-            'alert'
+            'alert',
+            'unique_code'
         ]
 
     def __init__(self, *args, **kwargs):

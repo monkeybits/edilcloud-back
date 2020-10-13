@@ -111,7 +111,7 @@ class TalkMessageSerializer(
 
     def get_messages(self, obj):
         messages_list_json = []
-        messages = obj.messages.all().values('id', 'body', 'sender', 'date_create')
+        messages = obj.messages.all().values('id', 'body', 'sender', 'date_create', 'unique_code')
         for message in messages:
             profile = Profile.objects.get(id=message['sender'])
             message['sender'] = {

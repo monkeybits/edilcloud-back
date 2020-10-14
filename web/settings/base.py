@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     'apps.project.apps.ProjectConfig',
     'apps.quotation.apps.QuotationConfig',
     'apps.user.apps.UserConfig',
-
+    'apps.pushpin.apps.PushpinConfig',
     'corsheaders',
 ]
 

@@ -209,39 +209,71 @@ def message_notification(sender, instance, **kwargs):
         SOCKET_HOST = os.environ.get('SOCKET_HOST')
         SOCKET_PORT = os.environ.get('SOCKET_PORT')
         SOCKET_URL = os.environ.get('SOCKET_URL')
-        if SOCKET_URL:
-            socketIO = SocketIO(SOCKET_URL)
-        else:
-            socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
-        socketIO.emit('join', {'room': str(instance.talk.code), 'name': 'django-admin'})
-        socketIO.emit("chat_channel", {
-            "message": {
-                "id": notify_obj.id,
-                "body": instance.body,
-                "read": False,
-                "talk": {
-                    "id": instance.talk.id,
-                    "code": instance.talk.code,
-                    "content_type_name": instance.talk.content_type.name,
-                    "object_id": instance.talk.object_id
-                },
-                "sender": {
-                    "id": notify_obj.sender.id,
-                    "first_name": notify_obj.sender.first_name,
-                    "last_name": notify_obj.sender.last_name,
-                    "photo": None,
-                    "role": notify_obj.sender.role,
-                    "company": {
-                        "id": notify_obj.sender.company.id,
-                        "name": notify_obj.sender.company.name,
-                        "category": {}
-                    }
-                },
-                "files": files
-            }
-        })
-        socketIO.emit('leave', {'room': str(instance.talk.code), 'name': 'django-admin'})
-        socketIO.disconnect()
+        # if SOCKET_URL:
+        #     socketIO = SocketIO(SOCKET_URL)
+        # else:
+        #     socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
+        # socketIO.emit('join', {'room': str(instance.talk.code), 'name': 'django-admin'})
+        # socketIO.emit("chat_channel", {
+        #     "message": {
+        #         "id": notify_obj.id,
+        #         "body": instance.body,
+        #         "read": False,
+        #         "talk": {
+        #             "id": instance.talk.id,
+        #             "code": instance.talk.code,
+        #             "content_type_name": instance.talk.content_type.name,
+        #             "object_id": instance.talk.object_id
+        #         },
+        #         "sender": {
+        #             "id": notify_obj.sender.id,
+        #             "first_name": notify_obj.sender.first_name,
+        #             "last_name": notify_obj.sender.last_name,
+        #             "photo": None,
+        #             "role": notify_obj.sender.role,
+        #             "company": {
+        #                 "id": notify_obj.sender.company.id,
+        #                 "name": notify_obj.sender.company.name,
+        #                 "category": {}
+        #             }
+        #         },
+        #         "files": files
+        #     }
+        # })
+        # socketIO.emit('leave', {'room': str(instance.talk.code), 'name': 'django-admin'})
+        # socketIO.disconnect()
+        from websocket import create_connection
+        ws = create_connection("ws://localhost:8000/ws/chat/chat_channel/")
+        print("Sending 'Hello, World'...")
+        ws.send(json.dumps(
+            {
+                "message":  {
+                    "id": notify_obj.id,
+                    "body": instance.body,
+                    "read": False,
+                    "talk": {
+                        "id": instance.talk.id,
+                        "code": instance.talk.code,
+                        "content_type_name": instance.talk.content_type.name,
+                        "object_id": instance.talk.object_id
+                    },
+                    "sender": {
+                        "id": notify_obj.sender.id,
+                        "first_name": notify_obj.sender.first_name,
+                        "last_name": notify_obj.sender.last_name,
+                        "photo": None,
+                        "role": notify_obj.sender.role,
+                        "company": {
+                            "id": notify_obj.sender.company.id,
+                            "name": notify_obj.sender.company.name,
+                            "category": {}
+                        }
+                    },
+                    "files": files
+                }
+             }))
+        print("Sent")
+        ws.close()
 
     except Exception as e:
         print(e)

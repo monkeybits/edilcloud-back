@@ -34,7 +34,8 @@ services:
       context: .
       dockerfile: ./config/nginx/Dockerfile
     ports:
-      - 80:80
+      - 8080:80
+      - 8443:443
     volumes:
       - ./config/nginx/conf.d:/etc/nginx/conf.d
     depends_on:

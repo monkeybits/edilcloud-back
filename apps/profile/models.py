@@ -3664,7 +3664,8 @@ class OwnerProfile(Profile):
             sender=self,
             talk=talk,
             status=0,
-            body=message_dict['body']
+            body=message_dict['body'],
+            unique_code=message_dict['unique_code']
         )
         message.save()
         return message

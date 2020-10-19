@@ -84,7 +84,7 @@ class TrackerMessageAddView(
             'id', 'content_type', 'object_id'
         ]
         self.message_response_include_fields = [
-            'id', 'body', 'talk', 'sender', 'date_create', 'files'
+            'id', 'body', 'talk', 'sender', 'date_create', 'files', 'unique_code'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'role', 'company'

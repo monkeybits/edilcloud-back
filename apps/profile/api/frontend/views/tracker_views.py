@@ -432,8 +432,10 @@ class TrackerCompanyProfileDetailView(
             'id', 'first_name', 'last_name', 'email',
             'language', 'position', 'role', 'fax',
             'mobile', 'note', 'phone', 'photo', 'is_shared', 'is_in_showroom',
-            'company_invitation_date', 'profile_invitation_date', 'talk_count',             'can_access_files', 'can_access_chat'
+            'company_invitation_date', 'profile_invitation_date', 'talk_count',
+            'can_access_files', 'can_access_chat', 'user'
         ]
+        self.user_response_include_fields = ['id', 'first_name', 'last_name', 'username']
         super(TrackerCompanyProfileDetailView, self).__init__(*args, **kwargs)
 
 
@@ -962,7 +964,7 @@ class TrackerCompanyMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create', 'files'
+            'id', 'body', 'sender', 'date_create', 'files', 'unique_code'
         ]
         self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         self.profile_response_include_fields = [
@@ -2557,7 +2559,7 @@ class TrackerProfileMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create'
+            'id', 'body', 'sender', 'date_create', 'unique_code'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
@@ -2582,7 +2584,7 @@ class TrackerProfileToProfileMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create'
+            'id', 'body', 'sender', 'date_create', 'unique_code'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'

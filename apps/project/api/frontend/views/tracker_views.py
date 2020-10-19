@@ -819,7 +819,7 @@ class TrackerProjectParentMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create'
+            'id', 'body', 'sender', 'date_create', 'unique_code'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'role', 'company'
@@ -848,7 +848,7 @@ class TrackerProjectMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create'
+            'id', 'body', 'sender', 'date_create', 'unique_code'
         ]
         self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         self.profile_response_include_fields = [

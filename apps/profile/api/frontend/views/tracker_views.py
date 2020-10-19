@@ -432,8 +432,10 @@ class TrackerCompanyProfileDetailView(
             'id', 'first_name', 'last_name', 'email',
             'language', 'position', 'role', 'fax',
             'mobile', 'note', 'phone', 'photo', 'is_shared', 'is_in_showroom',
-            'company_invitation_date', 'profile_invitation_date', 'talk_count',             'can_access_files', 'can_access_chat'
+            'company_invitation_date', 'profile_invitation_date', 'talk_count',
+            'can_access_files', 'can_access_chat', 'user'
         ]
+        self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyProfileDetailView, self).__init__(*args, **kwargs)
 
 

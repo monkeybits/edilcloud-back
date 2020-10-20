@@ -30,7 +30,7 @@ from . import managers
 # Todo: May be, use the following format: from apps.app import models as app_models
 from apps.document.models import Document
 from apps.media.models import Photo, Video
-from apps.message.models import Talk, Message, MessageFileAssignment
+from apps.message.models import Talk, Message, MessageFileAssignment, MessageProfileAssignment
 from apps.project.models import Project, Team, Task, Activity, \
     Post, Comment, TaskPostAssignment, MediaAssignment
 from apps.quotation.models import Bom, BomRow, Offer, Certification, Quotation, QuotationRow, FavouriteOffer, \
@@ -3667,6 +3667,12 @@ class OwnerProfile(Profile):
             body=message_dict['body']
         )
         message.save()
+        staffs = self.company.get_active_staff()
+        for staff in staffs:
+            MessageProfileAssignment.objects.create(
+                message=message,
+                profile=staff
+            )
         return message
 
     def list_messages(self):

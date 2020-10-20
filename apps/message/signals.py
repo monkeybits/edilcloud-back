@@ -245,34 +245,39 @@ def message_notification(sender, instance, **kwargs):
         from websocket import create_connection
         ws = create_connection("ws://localhost:8000/ws/chat/chat_channel/")
         print("Sending 'Hello, World'...")
-        ws.send(json.dumps(
-            {
-                "message":  {
-                    "id": notify_obj.id,
-                    "body": instance.body,
-                    "read": False,
-                    "talk": {
-                        "id": instance.talk.id,
-                        "code": instance.talk.code,
-                        "content_type_name": instance.talk.content_type.name,
-                        "object_id": instance.talk.object_id
-                    },
-                    "sender": {
-                        "id": notify_obj.sender.id,
-                        "first_name": notify_obj.sender.first_name,
-                        "last_name": notify_obj.sender.last_name,
-                        "photo": None,
-                        "role": notify_obj.sender.role,
-                        "company": {
-                            "id": notify_obj.sender.company.id,
-                            "name": notify_obj.sender.company.name,
-                            "category": {}
-                        }
-                    },
-                    "files": files
-                }
-             }))
-        print("Sent")
+        profiles_to_send = instance.messageprofileassignment_set.all()
+        for profile in profiles_to_send:
+            ws.send(json.dumps(
+                {
+                    "message":  {
+                        "id": notify_obj.id,
+                        "body": instance.body,
+                        "read": profile.read,
+                        "talk": {
+                            "id": instance.talk.id,
+                            "code": instance.talk.code,
+                            "content_type_name": instance.talk.content_type.name,
+                            "object_id": instance.talk.object_id
+                        },
+                        "sender": {
+                            "id": notify_obj.sender.id,
+                            "first_name": notify_obj.sender.first_name,
+                            "last_name": notify_obj.sender.last_name,
+                            "photo": None,
+                            "role": notify_obj.sender.role,
+                            "company": {
+                                "id": notify_obj.sender.company.id,
+                                "name": notify_obj.sender.company.name,
+                                "category": {}
+                            }
+                        },
+                        "dest": {
+                            "id": profile.pk
+                        },
+                        "files": files
+                    }
+                 }))
+            print("Sent")
         ws.close()
 
     except Exception as e:

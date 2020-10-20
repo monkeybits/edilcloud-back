@@ -11,7 +11,6 @@ from django.utils.crypto import get_random_string
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from apps.profile.models import Profile
 from web.core.models import UserModel, DateModel, StatusModel, OrderedModel, CleanModel
 
 def get_upload_message_file_path(instance, filename):
@@ -126,7 +125,7 @@ class MessageFileAssignment(OrderedModel):
 
 @python_2_unicode_compatible
 class MessageProfileAssignment(OrderedModel):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    profile = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
     read = models.BooleanField(default=False)
 

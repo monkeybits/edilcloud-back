@@ -25,7 +25,8 @@ services:
     depends_on:
       - db
     environment:
-      - SOCKET_HOST=35.176.179.55
+      - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
+      - SOCKET_HOST=3.9.185.8
       - SOCKET_PORT=6969
 
   nginx:

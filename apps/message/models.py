@@ -121,4 +121,14 @@ class MessageFileAssignment(OrderedModel):
 
     class Meta:
         verbose_name = _('message file assignment')
-        verbose_name_plural = _('message filedocker assignments')
+        verbose_name_plural = _('message file assignments')
+
+@python_2_unicode_compatible
+class MessageProfileAssignment(OrderedModel):
+    profile = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    read = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = _('message profile assignment')
+        verbose_name_plural = _('message profile assignments')

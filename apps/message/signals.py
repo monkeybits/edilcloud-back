@@ -206,9 +206,9 @@ def message_notification(sender, instance, **kwargs):
         print(req.status_code, req.reason)
 
         files = get_files(instance)
-        SOCKET_HOST = os.environ.get('SOCKET_HOST')
-        SOCKET_PORT = os.environ.get('SOCKET_PORT')
-        SOCKET_URL = os.environ.get('SOCKET_URL')
+        # SOCKET_HOST = os.environ.get('SOCKET_HOST')
+        # SOCKET_PORT = os.environ.get('SOCKET_PORT')
+        # SOCKET_URL = os.environ.get('SOCKET_URL')
         # if SOCKET_URL:
         #     socketIO = SocketIO(SOCKET_URL)
         # else:

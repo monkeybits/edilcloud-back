@@ -29,6 +29,13 @@ services:
       - SOCKET_HOST=3.9.185.8
       - SOCKET_PORT=6969
 
+  redis:
+    image: "redis:alpine"
+    networks:
+      - streams
+    ports:
+      - "6379:6379"
+
   nginx:
     image: nginx:1.13
     build:

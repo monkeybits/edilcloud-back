@@ -175,7 +175,7 @@ def send_account_verification_email(self, to_email=None, language_code=None):
         "first_name": self.username,
         "endpoint": os.path.join(
             settings.PROTOCOL+"://", settings.BASE_URL,
-            'user-account-activation', urlsafe_base64_encode(force_bytes(self.id)).decode("utf-8"),
+            'user-account-activation', urlsafe_base64_encode(force_bytes(self.id)),
             account_activation_token.make_token(self)
         ) + os.sep,
         "protocol": settings.PROTOCOL,

@@ -155,17 +155,17 @@ class ActivityAdmin(UserAdminMixin, admin.ModelAdmin):
                 'datetime_start', 'datetime_end', 'note', 'status', 'starred', 'alert'
             )
         }),
-        (_('visualization_admin'), {
-            'classes': ('collapse',),
-            'fields': ('ordering', 'status')
-        }),
-        (_('logs_admin'), {
-            'classes': ('collapse',),
-            'fields': (
-                'creator', 'date_create', 'last_modifier',
-                'date_last_modify',
-            )
-        }),
+        # (_('visualization_admin'), {
+        #     'classes': ('collapse',),
+        #     'fields': ('ordering', 'status')
+        # }),
+        # (_('logs_admin'), {
+        #     'classes': ('collapse',),
+        #     'fields': (
+        #         'creator', 'date_create', 'last_modifier',
+        #         'date_last_modify',
+        #     )
+        # }),
     )
     inlines = (ActivityPostsInlineAdmin,)
     list_display = (

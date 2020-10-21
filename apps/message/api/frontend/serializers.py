@@ -55,8 +55,9 @@ class TalkSerializer(
         return super(TalkSerializer, self).get_field_names(*args, **kwargs)
 
     def get_unread_count(self, obj):
-        counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False).count()
-        return counter
+        # counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False).count()
+        # return counter
+        return 0
 
 class MessageSerializer(
         DynamicFieldsModelSerializer):

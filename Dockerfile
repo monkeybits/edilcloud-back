@@ -9,7 +9,7 @@ RUN apt-get install gcc
 RUN pip install psycopg2
 RUN pip install -r requirements.txt
 COPY . /office2017.whistle.it/
-#ADD entrypoint.sh /entrypoint.sh
-#RUN chmod a+x /entrypoint.sh
+ADD entrypoint.sh /entrypoint.sh
+RUN chmod a+x /entrypoint.sh
 #ENTRYPOINT ["/entrypoint.sh"]
 RUN cd /var/log/ && mkdir django && touch whistle-api_exceptions.log

@@ -33,6 +33,9 @@ urlpatterns = [
     url(r'^api/frontend/profile/', include('apps.profile.api.frontend.urls', namespace='api_frontend_profile')),
     url(r'^api/frontend/project/', include('apps.project.api.frontend.urls', namespace='api_frontend_project')),
     url(r'^api/frontend/quotation/', include('apps.quotation.api.frontend.urls', namespace='api_frontend_quotation')),
+    url(r'^pushpin/', include('apps.pushpin.urls', namespace='pushpin')),
+    url('ws/', include('apps.ws.urls')),
+
 ]
 
 if settings.DEBUG:

@@ -214,6 +214,24 @@ class TrackerTalkDetailView(
         self.talk_message_response_include_fields = ['id', 'code', 'messages']
         super(TrackerTalkDetailView, self).__init__( *args, **kwargs)
 
+class TrackerTalkReadAllView(
+        TrackerTalkMixin,
+        generics.CreateAPIView):
+    """
+    Get a talk with all messages
+    """
+    serializer_class = serializers.TalkSerializer
+
+    def __init__(self, *args, **kwargs):
+        super(TrackerTalkReadAllView, self).__init__( *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        talk = self.get_object()
+        talk.read_all(profile)
+        return "ok"
+
 class TrackerTalkDeleteView(
         TrackerTalkMixin,
         generics.RetrieveDestroyAPIView):

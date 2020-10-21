@@ -29,6 +29,30 @@ services:
       - SOCKET_HOST=3.9.185.8
       - SOCKET_PORT=6969
       - SOCKET_URL=https://ws.edilcloud.it
+
+  redis:
+    image: "redis:alpine"
+    networks:
+      - streams
+    ports:
+      - "6379:6379"
+
+  nginx:
+    image: nginx:1.13
+    build:
+      context: .
+      dockerfile: ./config/nginx/Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - /etc/letsencrypt/:/etc/letsencrypt/
+    depends_on:
+      - web
+      - db
+    networks:
+      - streams
 volumes:
   postgres_data:
 

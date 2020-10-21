@@ -218,6 +218,7 @@ def message_notification(sender, instance, **kwargs):
             "message": {
                 "id": notify_obj.id,
                 "body": instance.body,
+                "unique_code": instance.unique_code,
                 "read": False,
                 "talk": {
                     "id": instance.talk.id,
@@ -242,6 +243,44 @@ def message_notification(sender, instance, **kwargs):
         })
         socketIO.emit('leave', {'room': str(instance.talk.code), 'name': 'django-admin'})
         socketIO.disconnect()
+
+        # from websocket import create_connection
+        # ws = create_connection("ws://35.176.179.55:8000/ws/chat/chat_channel/")
+        # print("Sending 'Hello, World'...")
+        # profiles_to_send = instance.messageprofileassignment_set.all()
+        # for profile in profiles_to_send:
+        #     ws.send(json.dumps(
+        #         {
+        #             "message":  {
+        #                 "id": notify_obj.id,
+        #                 "body": instance.body,
+        #                 "read": profile.read,
+        #                 "talk": {
+        #                     "id": instance.talk.id,
+        #                     "code": instance.talk.code,
+        #                     "content_type_name": instance.talk.content_type.name,
+        #                     "object_id": instance.talk.object_id
+        #                 },
+        #                 "sender": {
+        #                     "id": notify_obj.sender.id,
+        #                     "first_name": notify_obj.sender.first_name,
+        #                     "last_name": notify_obj.sender.last_name,
+        #                     "photo": None,
+        #                     "role": notify_obj.sender.role,
+        #                     "company": {
+        #                         "id": notify_obj.sender.company.id,
+        #                         "name": notify_obj.sender.company.name,
+        #                         "category": {}
+        #                     }
+        #                 },
+        #                 "dest": {
+        #                     "id": profile.profile.pk
+        #                 },
+        #                 "files": files
+        #             }
+        #          }))
+        #     print("Sent")
+        ws.close()
 
     except Exception as e:
         print(e)

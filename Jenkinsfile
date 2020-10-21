@@ -31,7 +31,7 @@ pipeline {
         }
         stage('Update services with new image') {
              steps {
-                 sh 'docker service update --force --image tbellini01/edilcloud-back'+ ":$BUILD_NUMBER"+ ' edilcloud2_web'
+                 sh 'docker service update --force --image tbellini01/edilcloud-back:latest edilcloud2_web'
              }
         }
         stage('Cleaning up') {

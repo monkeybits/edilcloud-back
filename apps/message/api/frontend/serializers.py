@@ -16,7 +16,7 @@ from apps.profile.api.frontend import serializers as profile_serializers
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin
 from web.api.serializers import DynamicFieldsModelSerializer
-from ...models import MessageFileAssignment
+from ...models import MessageFileAssignment, MessageProfileAssignment
 from ...signals import get_filetype
 
 
@@ -40,6 +40,14 @@ class TalkSerializer(
         model = models.Talk
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
@@ -47,7 +55,8 @@ class TalkSerializer(
         return super(TalkSerializer, self).get_field_names(*args, **kwargs)
 
     def get_unread_count(self, obj):
-        return 0
+        counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False).count()
+        return counter
 
 class MessageSerializer(
         DynamicFieldsModelSerializer):

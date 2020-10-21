@@ -72,6 +72,9 @@ class Talk(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     def get_content_type_model(self):
         return self.content_type.model
 
+    def read_all(self, profile):
+        MessageProfileAssignment.objects.filter(profile=profile, read=False).update(read=True)
+
 
 @python_2_unicode_compatible
 class Message(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):

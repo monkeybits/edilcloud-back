@@ -400,6 +400,7 @@ class Activity(CleanModel, UserModel, DateModel, OrderedModel):
     )
     description = models.TextField(
         verbose_name=_('description'),
+        null=False, blank=True
     )
     status = models.CharField(
         choices=settings.PROJECT_ACTIVITY_STATUS_CHOICES,

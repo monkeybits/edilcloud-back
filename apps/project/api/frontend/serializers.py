@@ -1413,6 +1413,7 @@ class TaskActivityAddSerializer(
     serializers.ModelSerializer):
     media_set = serializers.SerializerMethodField(read_only=True)
     note = serializers.CharField(max_length=150, allow_blank=True, required=False)
+    description = serializers.CharField(max_length=150, allow_blank=True, required=False)
     workers = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), many=True)
 
     class Meta:

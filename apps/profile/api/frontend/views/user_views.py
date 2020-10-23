@@ -587,7 +587,8 @@ class ProfileListView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo', 'creator', 'color'
+            'ssn', 'logo', 'creator', 'color', 'vat_number', 'description',
+            'fax', 'phone', 'phone2'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'

@@ -145,7 +145,7 @@ class TalkMessageSerializer(
                 'id': profile.id,
                 'first_name': profile.first_name,
                 'last_name': profile.last_name,
-                'photo': profile.photo if profile.photo != '' else None,
+                'photo': profile.photo.url if profile.photo != '' else None,
                 'role': profile.role,
                 'company': profile.company.id,
             }

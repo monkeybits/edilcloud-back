@@ -31,7 +31,9 @@ services:
 
   redis:
     image: "redis:alpine"
-    entrypoint: office2017.whistle.it/entrypoint_redis.sh
+    volumes:
+      - .:/office2017.whistle.it
+    entrypoint: entrypoint_redis.sh
     networks:
       - streams
     ports:

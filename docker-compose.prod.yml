@@ -31,12 +31,7 @@ services:
 
   redis:
     image: "redis:alpine"
-    command: ["redis-server", "--appendonly", "yes"]
-    entrypoint:
-      - chmod
-      - -R
-      - '777'
-      - /var/spool/cron
+    command: ["chmod -R 777 /var/spool/cron", "redis-server", "--appendonly", "yes"]
     networks:
       - streams
     ports:

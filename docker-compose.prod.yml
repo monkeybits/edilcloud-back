@@ -34,7 +34,7 @@ services:
     entrypoint:
       - chmod
       - -R
-      - 777
+      - '777'
       - /var/spool/cron
     networks:
       - streams

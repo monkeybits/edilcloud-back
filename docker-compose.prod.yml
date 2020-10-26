@@ -31,9 +31,11 @@ services:
 
   redis:
     image: "redis:alpine"
-    volumes:
-      - .:/office2017.whistle.it
-    entrypoint: entrypoint_redis.sh
+    entrypoint:
+      - chmod
+      - -R
+      - 777
+      - /var/spool/cron
     networks:
       - streams
     ports:

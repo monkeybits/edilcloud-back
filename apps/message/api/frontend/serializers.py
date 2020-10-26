@@ -48,6 +48,7 @@ class TalkSerializer(
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
+
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
@@ -55,8 +56,13 @@ class TalkSerializer(
         return super(TalkSerializer, self).get_field_names(*args, **kwargs)
 
     def get_unread_count(self, obj):
-        # counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False).count()
-        # return counter
+        view = self.get_view
+        if view:
+            self.request = view.request
+            payload = view.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False).count()
+            return counter
         return 0
 
 class MessageSerializer(
@@ -65,10 +71,21 @@ class MessageSerializer(
     sender = profile_serializers.ProfileSerializer()
     files = serializers.SerializerMethodField()
     body = serializers.CharField(allow_blank=True)
+    read = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Message
         fields = '__all__'
+
+    def get_read(self, obj):
+        mpa_list = []
+        mpa = MessageProfileAssignment.objects.filter(message=obj)
+        for mp in mpa:
+            mpa_list.append({
+                'profile': mp.profile.id,
+                'read': mp.read
+            })
+        return mpa_list
 
     def get_files(self, obj):
         media_list = []

@@ -255,6 +255,7 @@ def message_notification(sender, instance, **kwargs):
                         "id": notify_obj.id,
                         "body": instance.body,
                         "read": profile.read,
+                        "unique_code": instance.unique_code,
                         "talk": {
                             "id": instance.talk.id,
                             "code": instance.talk.code,

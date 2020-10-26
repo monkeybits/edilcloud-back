@@ -61,7 +61,11 @@ class TalkSerializer(
             self.request = view.request
             payload = view.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-            counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False).count()
+            # if obj.content_type.name == 'project':
+            #     project_id = obj.object_id
+            # else:
+            #     company_id = obj.object_id
+            counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False, message__talk=obj).count()
             return counter
         return 0
 

@@ -30,8 +30,7 @@ services:
       - SOCKET_PORT=6969
 
   redis:
-    image: "redis:alpine"
-    command: ["chmod -R 777 /var/spool/cron", "redis-server", "--appendonly", "yes"]
+    image: redis
     networks:
       - streams
     ports:

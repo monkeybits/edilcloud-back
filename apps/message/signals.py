@@ -3,12 +3,16 @@
 import os
 import emoji
 import filetype
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from channels.testing import WebsocketCommunicator
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
+from web.routing import application
 from . import models as message_models
 from apps.profile import models as profile_models
 from apps.notify import models as notify_models
@@ -20,6 +24,15 @@ from websocket import create_connection
 from .models import MessageFileAssignment
 from ..project.models import Project
 
+def event_triger(msg):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        'chat_chat_channel',
+        {
+            'type': 'chat_message',
+            'message': msg
+        }
+    )
 
 def get_filetype(file):
     kind = filetype.guess(file)
@@ -244,17 +257,19 @@ def message_notification(sender, instance, **kwargs):
         # socketIO.emit('leave', {'room': str(instance.talk.code), 'name': 'django-admin'})
         # socketIO.disconnect()
 
-        from websocket import create_connection
-        try:
-            print("ws://35.176.179.55:8000")
-            ws = create_connection("ws://35.176.179.55:8000/ws/chat/chat_channel/")
-        except:
-            print("wss://0.0.0.0:8000")
-            ws = create_connection("wss://0.0.0.0:8000/ws/chat/chat_channel/")
+        # from websocket import create_connection
+        # try:
+        #     print("ws://35.176.179.55:8000")
+        #     ws = create_connection("ws://35.176.179.55:8000/ws/chat/chat_channel/")
+        # except:
+        #     communicator = WebsocketCommunicator(application, "/ws/chat/chat_channel/")
+        #     communicator.send_json_to({'message': 'ciao'})
+
         print("Sending 'Hello, World'...")
+
         profiles_to_send = instance.messageprofileassignment_set.all()
         for profile in profiles_to_send:
-            ws.send(json.dumps(
+            event_triger(json.dumps(
                 {
                     "message":  {
                         "id": notify_obj.id,

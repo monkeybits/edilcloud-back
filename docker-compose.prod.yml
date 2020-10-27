@@ -15,7 +15,7 @@ services:
       - POSTGRES_PASSWORD=postgres
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000 --settings=web.settings.production
+    command: daphne -b 0.0.0.0 -p 8000 web.asgi:channel_layer
     volumes:
       - .:/office2017.whistle.it
     ports:
@@ -25,11 +25,39 @@ services:
     depends_on:
       - db
     environment:
+      - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
       - SOCKET_HOST=35.176.179.55
       - SOCKET_PORT=6969
+
+  redis:
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    networks:
+      - streams
+    ports:
+      - "6379:6379"
+
+  nginx:
+    image: nginx:1.13
+    build:
+      context: .
+      dockerfile: ./config/nginx/Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - /etc/letsencrypt/:/etc/letsencrypt/
+    depends_on:
+      - web
+      - db
+    networks:
+      - streams
 volumes:
   postgres_data:
-
+  redis-data:
 networks:
   streams:
     external: true

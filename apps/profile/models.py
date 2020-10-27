@@ -30,7 +30,7 @@ from . import managers
 # Todo: May be, use the following format: from apps.app import models as app_models
 from apps.document.models import Document
 from apps.media.models import Photo, Video
-from apps.message.models import Talk, Message, MessageFileAssignment
+from apps.message.models import Talk, Message, MessageFileAssignment, MessageProfileAssignment
 from apps.project.models import Project, Team, Task, Activity, \
     Post, Comment, TaskPostAssignment, MediaAssignment
 from apps.quotation.models import Bom, BomRow, Offer, Certification, Quotation, QuotationRow, FavouriteOffer, \
@@ -95,9 +95,13 @@ def create_main_profile(self, validated_data):
         profile.photo.save('photo', photo)
 
     # Link Profiles (Phantom)
-    Profile.objects.filter(
+    check_profiles = Profile.objects.filter(
         email=self.email, user__isnull=True
-    ).update(user=self)
+    )
+    if len(check_profiles) > 0:
+        check_profiles.update(user=self)
+        profile.is_invited = True
+        profile.save()
 
     return profile
 
@@ -669,6 +673,10 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     is_shared = models.BooleanField(
         default=False,
         verbose_name=_('is shared')
+    )
+    is_invited = models.BooleanField(
+        default=False,
+        verbose_name=_('is invited')
     )
     is_in_showroom = models.BooleanField(
         default=False,
@@ -1450,6 +1458,7 @@ class OwnerProfile(Profile):
             company=self.company,
             company_invitation_date=datetime.datetime.now(),
             profile_invitation_date=datetime.datetime.now(),
+            is_invited=True,
             **profile_dict
         )
         phantom.save()
@@ -3656,9 +3665,16 @@ class OwnerProfile(Profile):
             sender=self,
             talk=talk,
             status=0,
-            body=message_dict['body']
+            body=message_dict['body'],
+            unique_code=message_dict['unique_code']
         )
         message.save()
+        staffs = self.company.get_active_staff()
+        for staff in staffs:
+            MessageProfileAssignment.objects.create(
+                message=message,
+                profile=staff
+            )
         return message
 
     def list_messages(self):

@@ -819,7 +819,7 @@ class TrackerProjectParentMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create'
+            'id', 'body', 'sender', 'date_create', 'unique_code'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'role', 'company'
@@ -848,9 +848,9 @@ class TrackerProjectMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create'
+            'id', 'body', 'sender', 'date_create', 'unique_code'
         ]
-        self.talk_response_include_fields = ['id', 'code', 'content_type_name']
+        self.talk_response_include_fields = ['id', 'code', 'content_type_name', 'unread_count']
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'role', 'company'
         ]
@@ -2268,11 +2268,11 @@ class TrackerActivityPostAddView(
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
             'text', 'alert',
-            'published_date', 'created_date',
+            'published_date', 'created_date', 'unique_code'
         ]
         self.activity_response_include_fields = [
             'id', 'author', 'text', 'sub_task',
-            'published_date', 'created_date',
+            'published_date', 'created_date', 'unique_code'
         ]
         self.user_response_include_fields = [
             'id', 'username',
@@ -2307,11 +2307,11 @@ class TrackerTaskPostAddView(
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
             'text', 'alert',
-            'published_date', 'created_date',
+            'published_date', 'created_date', 'unique_code'
         ]
         self.activity_response_include_fields = [
             'id', 'author', 'text', 'task', 'sub_task',
-            'published_date', 'created_date',
+            'published_date', 'created_date', 'unique_code'
         ]
         self.user_response_include_fields = [
             'id', 'username',
@@ -2346,7 +2346,7 @@ class TrackerPostEditView(
     def __init__(self, *args, **kwargs):
         self.post_request_include_fields = [
             'text', 'alert',
-            'published_date', 'created_date',
+            'published_date', 'created_date', 'unique_code'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'position',
@@ -2529,11 +2529,11 @@ class TrackerPostCommentAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'text', 'created_date', 'parent'
+            'text', 'created_date', 'parent', 'unique_code'
         ]
         self.activity_response_include_fields = [
             'id', 'author', 'post', 'parent', 'text',
-            'created_date', 'media_set'
+            'created_date', 'media_set', 'unique_code'
         ]
         self.user_response_include_fields = [
             'id', 'username',
@@ -2568,7 +2568,7 @@ class TrackerCommentEditView(
 
     def __init__(self, *args, **kwargs):
         self.comment_request_include_fields = [
-            'text', 'created_date'
+            'text', 'created_date', 'unique_code'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'position',
@@ -2660,7 +2660,7 @@ class TrackerSharePostToTaskView(
         self.post_request_include_fields = [
         ]
         self.post_response_include_fields = [
-            'id', 'task', 'post'
+            'id', 'task', 'post', 'unique_code'
         ]
         super(TrackerSharePostToTaskView, self).__init__(*args, **kwargs)
 

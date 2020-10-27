@@ -16,7 +16,7 @@ from apps.profile.api.frontend import serializers as profile_serializers
 from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin
 from web.api.serializers import DynamicFieldsModelSerializer
-from ...models import MessageFileAssignment
+from ...models import MessageFileAssignment, MessageProfileAssignment
 from ...signals import get_filetype
 
 
@@ -34,10 +34,20 @@ class MessageFileAssignmentSerializer(DynamicFieldsModelSerializer):
 class TalkSerializer(
         DynamicFieldsModelSerializer):
     content_type_name = serializers.ReadOnlyField(source="get_content_type_model")
+    unread_count = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Talk
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -45,6 +55,19 @@ class TalkSerializer(
             return view.talk_response_include_fields
         return super(TalkSerializer, self).get_field_names(*args, **kwargs)
 
+    def get_unread_count(self, obj):
+        view = self.get_view
+        if view:
+            self.request = view.request
+            payload = view.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            # if obj.content_type.name == 'project':
+            #     project_id = obj.object_id
+            # else:
+            #     company_id = obj.object_id
+            counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False, message__talk=obj).count()
+            return counter
+        return 0
 
 class MessageSerializer(
         DynamicFieldsModelSerializer):
@@ -52,10 +75,21 @@ class MessageSerializer(
     sender = profile_serializers.ProfileSerializer()
     files = serializers.SerializerMethodField()
     body = serializers.CharField(allow_blank=True)
+    read = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Message
         fields = '__all__'
+
+    def get_read(self, obj):
+        mpa_list = []
+        mpa = MessageProfileAssignment.objects.filter(message=obj)
+        for mp in mpa:
+            mpa_list.append({
+                'profile': mp.profile.id,
+                'read': mp.read
+            })
+        return mpa_list
 
     def get_files(self, obj):
         media_list = []
@@ -108,14 +142,14 @@ class TalkMessageSerializer(
 
     def get_messages(self, obj):
         messages_list_json = []
-        messages = obj.messages.all().values('id', 'body', 'sender', 'date_create')
+        messages = obj.messages.all().values('id', 'body', 'sender', 'date_create', 'unique_code')
         for message in messages:
             profile = Profile.objects.get(id=message['sender'])
             message['sender'] = {
                 'id': profile.id,
                 'first_name': profile.first_name,
                 'last_name': profile.last_name,
-                'photo': profile.photo if profile.photo != '' else None,
+                'photo': profile.photo.url if profile.photo != '' else None,
                 'role': profile.role,
                 'company': profile.company.id,
             }

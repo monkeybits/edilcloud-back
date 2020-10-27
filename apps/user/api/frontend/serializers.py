@@ -162,7 +162,6 @@ class CustomLoginJWTSerializer(
                         raise serializers.ValidationError(msg)
 
                     payload = jwt_payload_handler(user)
-
                     return {
                         'token': jwt_encode_handler(payload),
                         'user': user

@@ -15,7 +15,7 @@ services:
       - POSTGRES_PASSWORD=postgres
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 web.asgi:channel_layer
     volumes:
       - .:/office2017.whistle.it
     ports:
@@ -25,8 +25,33 @@ services:
     depends_on:
       - db
     environment:
-      - SOCKET_HOST=192.168.1.14
+      - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
+      - SOCKET_HOST=35.176.179.55
       - SOCKET_PORT=6969
+  redis:
+    image: "redis:alpine"
+    networks:
+      - streams
+    ports:
+      - "6379:6379"
+
+#  pushpin:
+#    image: fanout/pushpin
+#    networks:
+#      - streams
+#    environment:
+#      - "target=web:8000"
+#      - "LOGNAME=nobody"
+#    volumes:
+#      - "./pushpin_routes:/etc/pushpin/routes"
+#    depends_on:
+#      - web
+#    ports:
+#      - "5561:5561"
+#      - "5562:5562"
+#      - "5563:5563"
+#      - "7999:7999"
+
 volumes:
   postgres_data:
 

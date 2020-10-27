@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-
+import emoji
 import filetype
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save, post_delete
@@ -186,7 +186,7 @@ def message_notification(sender, instance, **kwargs):
             "app_id": "8fc7c8ff-a4c8-4642-823d-4675b809a3c9",
             "include_player_ids": list_players_recipients,
             "contents": {
-                "en": "{} {}: {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name, instance.body)
+                "en": "{} {}: {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name, instance.body if instance.body != '' else emoji.emojize(':camera:'))
             },
             "headings": {
                 "en": addHeading(instance.talk, notify_obj)
@@ -206,41 +206,82 @@ def message_notification(sender, instance, **kwargs):
         print(req.status_code, req.reason)
 
         files = get_files(instance)
-        SOCKET_HOST = os.environ.get('SOCKET_HOST')
-        SOCKET_PORT = os.environ.get('SOCKET_PORT')
-        SOCKET_URL = os.environ.get('SOCKET_URL')
-        if SOCKET_URL:
-            socketIO = SocketIO(SOCKET_URL)
-        else:
-            socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
-        socketIO.emit('join', {'room': str(instance.talk.code), 'name': 'django-admin'})
-        socketIO.emit("chat_channel", {
-            "message": {
-                "id": notify_obj.id,
-                "body": instance.body,
-                "talk": {
-                    "id": instance.talk.id,
-                    "code": instance.talk.code,
-                    "content_type_name": instance.talk.content_type.name,
-                    "object_id": instance.talk.object_id,
-                },
-                "sender": {
-                    "id": notify_obj.sender.id,
-                    "first_name": notify_obj.sender.first_name,
-                    "last_name": notify_obj.sender.last_name,
-                    "photo": None,
-                    "role": notify_obj.sender.role,
-                    "company": {
-                        "id": notify_obj.sender.company.id,
-                        "name": notify_obj.sender.company.name,
-                        "category": {}
+        # SOCKET_HOST = os.environ.get('SOCKET_HOST')
+        # SOCKET_PORT = os.environ.get('SOCKET_PORT')
+        # SOCKET_URL = os.environ.get('SOCKET_URL')
+        # if SOCKET_URL:
+        #     socketIO = SocketIO(SOCKET_URL)
+        # else:
+        #     socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
+        # socketIO.emit('join', {'room': str(instance.talk.code), 'name': 'django-admin'})
+        # socketIO.emit("chat_channel", {
+        #     "message": {
+        #         "id": notify_obj.id,
+        #         "body": instance.body,
+        #         "unique_code": instance.unique_code,
+        #         "read": False,
+        #         "talk": {
+        #             "id": instance.talk.id,
+        #             "code": instance.talk.code,
+        #             "content_type_name": instance.talk.content_type.name,
+        #             "object_id": instance.talk.object_id
+        #         },
+        #         "sender": {
+        #             "id": notify_obj.sender.id,
+        #             "first_name": notify_obj.sender.first_name,
+        #             "last_name": notify_obj.sender.last_name,
+        #             "photo": None,
+        #             "role": notify_obj.sender.role,
+        #             "company": {
+        #                 "id": notify_obj.sender.company.id,
+        #                 "name": notify_obj.sender.company.name,
+        #                 "category": {}
+        #             }
+        #         },
+        #         "files": files
+        #     }
+        # })
+        # socketIO.emit('leave', {'room': str(instance.talk.code), 'name': 'django-admin'})
+        # socketIO.disconnect()
+
+        from websocket import create_connection
+        ws = create_connection("ws://35.176.179.55:8000/ws/chat/chat_channel/")
+        print("Sending 'Hello, World'...")
+        profiles_to_send = instance.messageprofileassignment_set.all()
+        for profile in profiles_to_send:
+            ws.send(json.dumps(
+                {
+                    "message":  {
+                        "id": notify_obj.id,
+                        "body": instance.body,
+                        "read": profile.read,
+                        "unique_code": instance.unique_code,
+                        "talk": {
+                            "id": instance.talk.id,
+                            "code": instance.talk.code,
+                            "content_type_name": instance.talk.content_type.name,
+                            "object_id": instance.talk.object_id
+                        },
+                        "sender": {
+                            "id": notify_obj.sender.id,
+                            "first_name": notify_obj.sender.first_name,
+                            "last_name": notify_obj.sender.last_name,
+                            "photo": None,
+                            "role": notify_obj.sender.role,
+                            "company": {
+                                "id": notify_obj.sender.company.id,
+                                "name": notify_obj.sender.company.name,
+                                "category": {}
+                            }
+                        },
+                        "dest": {
+                            "id": profile.profile.pk
+                        },
+                        "files": files
                     }
-                },
-                "files": files
-            }
-        })
-        socketIO.emit('leave', {'room': str(instance.talk.code), 'name': 'django-admin'})
-        socketIO.disconnect()
+                 }))
+            print("Sent")
+        ws.close()
 
     except Exception as e:
         print(e)

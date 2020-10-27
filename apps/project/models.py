@@ -541,6 +541,10 @@ class Post(OrderedModel):
             default=timezone.now)
     published_date = models.DateTimeField(
             blank=True, null=True)
+    unique_code = models.TextField(
+        verbose_name=_('unique_code'),
+        blank=True
+    )
 
     class Meta:
         verbose_name = _('post')
@@ -582,6 +586,10 @@ class Comment(OrderedModel):
     text = models.TextField()
     created_date = models.DateTimeField(
         default=timezone.now)
+    unique_code = models.TextField(
+        verbose_name=_('unique_code'),
+        blank=True
+    )
 
     class Meta:
         verbose_name = _('comment')

@@ -72,6 +72,9 @@ class Talk(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     def get_content_type_model(self):
         return self.content_type.model
 
+    def read_all(self, profile):
+        MessageProfileAssignment.objects.filter(profile=profile, read=False).update(read=True)
+
 
 @python_2_unicode_compatible
 class Message(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
@@ -90,6 +93,10 @@ class Message(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         on_delete=models.CASCADE,
         related_name='sent_messages',
         verbose_name=_('sender'),
+    )
+    unique_code = models.TextField(
+        verbose_name=_('unique_code'),
+        blank=True
     )
 
     class Meta:
@@ -117,4 +124,14 @@ class MessageFileAssignment(OrderedModel):
 
     class Meta:
         verbose_name = _('message file assignment')
-        verbose_name_plural = _('message filedocker assignments')
+        verbose_name_plural = _('message file assignments')
+
+@python_2_unicode_compatible
+class MessageProfileAssignment(OrderedModel):
+    profile = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    read = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = _('message profile assignment')
+        verbose_name_plural = _('message profile assignments')

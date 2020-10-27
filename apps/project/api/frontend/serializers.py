@@ -655,12 +655,23 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         workers = team.filter(role='w')
         for worker in workers:
             is_exists = obj.workers.filter(id=worker.profile.id).exists()
+            try:
+                photo_url = worker.profile.photo.url
+                protocol = self.context['request'].is_secure()
+                if protocol:
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                host = self.context['request'].get_host()
+                media_url = protocol + host + photo_url
+            except:
+                media_url = None
             list_workers.append(
                 {
                     'id': worker.id,
                     'first_name': worker.profile.first_name,
                     'last_name': worker.profile.last_name,
-                    'photo': worker.profile.photo,
+                    'photo': media_url,
                     'company': worker.profile.company.name,
                     'is_exists': is_exists
                 }
@@ -932,6 +943,12 @@ class TaskEditSerializer(
             task = self.profile.assign_task(validated_data)
         else:
             task = self.profile.edit_task(validated_data)
+        activities = self.profile.list_task_activities(task)
+        for act in activities:
+            duration = (task.date_start - instance.date_start).days
+            act.datetime_start = act.datetime_start + datetime.timedelta(days=duration)
+            act.datetime_end = act.datetime_end + datetime.timedelta(days=duration)
+            act.save()
         return task
 
 
@@ -1083,6 +1100,7 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
                 {
                     'id': comment.id,
                     'text': comment.text,
+                    'unique_code': comment.unique_code,
                     'author': {
                         'id': comment.author.id,
                         'user': {
@@ -1123,7 +1141,8 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'media_set',
             'text',
             'comment_set',
-            'alert'
+            'alert',
+            'unique_code'
         ]
 
     def __init__(self, *args, **kwargs):

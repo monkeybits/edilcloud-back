@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^api/frontend/profile/', include('apps.profile.api.frontend.urls')),
     url(r'^api/frontend/project/', include('apps.project.api.frontend.urls')),
     url(r'^api/frontend/quotation/', include('apps.quotation.api.frontend.urls')),
+    url('ws/', include('apps.ws.urls')),
 ]
 
 if settings.DEBUG:

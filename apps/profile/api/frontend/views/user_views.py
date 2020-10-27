@@ -562,7 +562,7 @@ class ProfileAddView(
             'company_invitation_date', 'profile_invitation_date',
             'invitation_refuse_date', 'phone', 'language',
             'position', 'role', 'status', 'photo', 'fax', 'mobile', 'note',
-            'can_access_chat', 'can_access_files'
+            'can_access_chat', 'can_access_files', 'is_invited'
         ]
         super(ProfileAddView, self).__init__(*args, **kwargs)
 
@@ -587,7 +587,8 @@ class ProfileListView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo', 'creator', 'color'
+            'ssn', 'logo', 'creator', 'color', 'vat_number', 'description',
+            'fax', 'phone', 'phone2'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'

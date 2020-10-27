@@ -245,7 +245,7 @@ def message_notification(sender, instance, **kwargs):
         # socketIO.disconnect()
 
         from websocket import create_connection
-        ws = create_connection("wss://35.176.179.55:8000/ws/chat/chat_channel/")
+        ws = create_connection("wss://back.edilcloud.ml/ws/chat/chat_channel/")
         print("Sending 'Hello, World'...")
         profiles_to_send = instance.messageprofileassignment_set.all()
         for profile in profiles_to_send:

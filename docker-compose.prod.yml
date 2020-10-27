@@ -30,7 +30,7 @@ services:
       - SOCKET_PORT=6969
 
   redis:
-    image: "redis:alpine"
+    image: redis
     networks:
       - streams
     ports:

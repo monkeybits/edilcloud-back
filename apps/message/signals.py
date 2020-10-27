@@ -246,8 +246,10 @@ def message_notification(sender, instance, **kwargs):
 
         from websocket import create_connection
         try:
+            print("ws://35.176.179.55:8000")
             ws = create_connection("ws://35.176.179.55:8000/ws/chat/chat_channel/")
         except:
+            print("wss://35.176.179.55:8000")
             ws = create_connection("wss://35.176.179.55:8000/ws/chat/chat_channel/")
         print("Sending 'Hello, World'...")
         profiles_to_send = instance.messageprofileassignment_set.all()

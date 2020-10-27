@@ -405,7 +405,9 @@ ACCOUNT_EMAIL_CONFIRMATION_HMAC = False
 CORS_ORIGIN_WHITELIST = (
     # List of Domain we want to allow
     'http://ec2-3-9-170-59.eu-west-2.compute.amazonaws.com:8000',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://www.edilcloud.ml',
+    'https://www.back.edilcloud.ml'
 )
 CORS_ORIGIN_ALLOW_ALL = True  # For now Allow ALL
 CORS_ALLOW_METHODS = (

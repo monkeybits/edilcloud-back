@@ -3669,7 +3669,19 @@ class OwnerProfile(Profile):
             unique_code=message_dict['unique_code']
         )
         message.save()
-        staffs = self.company.get_active_staff()
+        if talk.content_type.name == 'project':
+            staffs = []
+            project = Project.objects.get(id=talk.object_id)
+            teams = project.members.filter(
+                status=1,
+                project_invitation_date__isnull=False,
+                invitation_refuse_date__isnull=True,
+            )
+            for team in teams:
+                staffs.append(team.profile)
+        else:
+            staffs = self.company.get_active_staff()
+
         for staff in staffs:
             MessageProfileAssignment.objects.create(
                 message=message,

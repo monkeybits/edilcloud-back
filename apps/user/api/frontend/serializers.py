@@ -162,13 +162,13 @@ class CustomLoginJWTSerializer(
                         raise serializers.ValidationError(msg)
 
                     payload = jwt_payload_handler(user)
-
+                    profile = user.get_main_profile()
                     return {
                         'token': jwt_encode_handler(payload),
                         'user': user,
                         'profile': {
-                            'first_name': user.profile.first_name,
-                            'last_name': user.profile.last_name,
+                            'first_name': profile.first_name,
+                            'last_name': profile.last_name,
                         },
                     }
                 else:

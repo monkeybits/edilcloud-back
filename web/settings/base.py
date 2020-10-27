@@ -73,7 +73,7 @@ INSTALLED_APPS = [
 ASGI_APPLICATION = "web.routing.application"
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        "BACKEND": "asgi_redis.RedisChannelLayer",
         'CONFIG': {
             "hosts": [('redis', 6379)],
         },

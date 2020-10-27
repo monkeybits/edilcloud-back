@@ -165,7 +165,11 @@ class CustomLoginJWTSerializer(
 
                     return {
                         'token': jwt_encode_handler(payload),
-                        'user': user
+                        'user': user,
+                        'profile': {
+                            'first_name': user.profile.first_name,
+                            'last_name': user.profile.last_name,
+                        },
                     }
                 else:
                     msg = _('Unable to log in with provided credentials.')

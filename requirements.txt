@@ -4,7 +4,6 @@ attrs==20.2.0
 asgiref==1.1.2
 autobahn==20.7.1
 Automat==20.2.0
-asgi_redis==1.4.3
 certifi==2017.4.17
 cffi==1.14.3
 channels==1.1.8
@@ -101,3 +100,5 @@ websocket-client==0.57.0
 Werkzeug==0.16.1
 xlrd==1.1.0
 zope.interface==5.1.2
+daphne==1.0.0
+asgi-redis==1.2.0

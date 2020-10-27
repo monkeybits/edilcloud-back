@@ -15,7 +15,7 @@ services:
       - POSTGRES_PASSWORD=postgres
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 web.asgi:channel_layer
     volumes:
       - .:/office2017.whistle.it
     ports:
@@ -26,8 +26,7 @@ services:
       - db
     environment:
       - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
-      - DJANGO_SETTINGS_MODULE=web.settings.local
-      - SOCKET_HOST=192.168.1.14
+      - SOCKET_HOST=35.176.179.55
       - SOCKET_PORT=6969
   redis:
     image: "redis:alpine"

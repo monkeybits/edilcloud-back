@@ -3,7 +3,7 @@ async-timeout==3.0.1
 attrs==20.2.0
 autobahn==20.7.1
 Automat==20.2.0
-asgi_redis==2.0
+asgi_redis==1.4.3
 certifi==2017.4.17
 cffi==1.14.3
 channels==1.1.8

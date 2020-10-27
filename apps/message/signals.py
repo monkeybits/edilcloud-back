@@ -269,7 +269,7 @@ def message_notification(sender, instance, **kwargs):
 
         profiles_to_send = instance.messageprofileassignment_set.all()
         for profile in profiles_to_send:
-            event_triger(json.dumps(
+            event_triger(
                 {
                     "message":  {
                         "id": notify_obj.id,
@@ -299,9 +299,9 @@ def message_notification(sender, instance, **kwargs):
                         },
                         "files": files
                     }
-                 }))
+                 })
             print("Sent")
-        ws.close()
+        #ws.close()
 
     except Exception as e:
         print(e)

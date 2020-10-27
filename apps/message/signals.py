@@ -249,8 +249,8 @@ def message_notification(sender, instance, **kwargs):
             print("ws://35.176.179.55:8000")
             ws = create_connection("ws://35.176.179.55:8000/ws/chat/chat_channel/")
         except:
-            print("wss://35.176.179.55:8000")
-            ws = create_connection("wss://back.edilcloud.ml/ws/chat/chat_channel/")
+            print("wss://0.0.0.0:8000")
+            ws = create_connection("wss://0.0.0.0:8000/ws/chat/chat_channel/")
         print("Sending 'Hello, World'...")
         profiles_to_send = instance.messageprofileassignment_set.all()
         for profile in profiles_to_send:

@@ -162,14 +162,9 @@ class CustomLoginJWTSerializer(
                         raise serializers.ValidationError(msg)
 
                     payload = jwt_payload_handler(user)
-                    profiles = user.profiles.filter(company__isnull=True)
                     return {
                         'token': jwt_encode_handler(payload),
-                        'user': user,
-                        'profile': {
-                            'first_name': profiles[0].first_name,
-                            'last_name': profiles[0].last_name,
-                        },
+                        'user': user
                     }
                 else:
                     msg = _('Unable to log in with provided credentials.')

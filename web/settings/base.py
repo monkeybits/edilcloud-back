@@ -77,6 +77,7 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts": [('redis', 6379)],
         },
+        "ROUTING": "web.routing.channel_routing"
     },
 }
 

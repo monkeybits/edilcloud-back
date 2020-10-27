@@ -3657,7 +3657,7 @@ class OwnerProfile(Profile):
 
     def create_message(self, message_dict):
         talk_dict = message_dict.pop('talk')
-        talk = self.get_or_create_talk(talk_dict)
+        talk = self.get_or_create_talk(talk_dict[0])
 
         message = Message(
             creator=self.user,

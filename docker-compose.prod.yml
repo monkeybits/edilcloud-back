@@ -31,6 +31,9 @@ services:
 
   redis:
     image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
     networks:
       - streams
     ports:
@@ -54,7 +57,7 @@ services:
       - streams
 volumes:
   postgres_data:
-
+  redis-data:
 networks:
   streams:
     external: true

@@ -39,8 +39,8 @@ tracker_urlpatterns = [
         tracker_views.TrackerTalkDetailView.as_view(),
         name='tracker_talk_detail'
     ),
-url(
-        r'^talk/(?P<pk>\d+)/read_all$',
+    url(
+        r'^talk/(?P<pk>\d+)/read_all/$',
         tracker_views.TrackerTalkReadAllView.as_view(),
         name='tracker_talk_read_all'
     ),

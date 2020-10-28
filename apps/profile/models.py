@@ -179,7 +179,7 @@ def send_account_verification_email(self, to_email=None, language_code=None):
         "first_name": self.username,
         "endpoint": os.path.join(
             settings.PROTOCOL+"://", settings.BASE_URL,
-            'user-account-activation', urlsafe_base64_encode(force_bytes(self.id)).decode("utf-8"),
+            'user-account-activation', urlsafe_base64_encode(force_bytes(self.id)),
             account_activation_token.make_token(self)
         ) + os.sep,
         "protocol": settings.PROTOCOL,
@@ -589,6 +589,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         blank=True, null=True,
         related_name='profiles',
         verbose_name=_('company'),
+        on_delete=models.DO_NOTHING
     )
     last_name = models.CharField(
         max_length=255,
@@ -751,7 +752,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             new_obj = True
         else:
             new_obj = False
-        super(Profile, self).save(*args, **kwargs)
+        super(Profile, self).save(user=self.user,*args, **kwargs)
         if new_obj:
             self.create_preference()
 
@@ -765,7 +766,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         )
         if info_preference_json:
             preference.info = info_preference_json
-        preference.save()
+        preference.save(user=self.user)
 
     def get_preference(self):
         return self.preference
@@ -3656,7 +3657,7 @@ class OwnerProfile(Profile):
 
     def create_message(self, message_dict):
         talk_dict = message_dict.pop('talk')
-        talk = self.get_or_create_talk(talk_dict)
+        talk = self.get_or_create_talk(talk_dict[0])
 
         message = Message(
             creator=self.user,
@@ -3664,11 +3665,23 @@ class OwnerProfile(Profile):
             sender=self,
             talk=talk,
             status=0,
-            body=message_dict['body'],
-            unique_code=message_dict['unique_code']
+            body=message_dict['body'][0],
+            unique_code=message_dict['unique_code'][0]
         )
         message.save()
-        staffs = self.company.get_active_staff()
+        if talk.content_type.name == 'project':
+            staffs = []
+            project = Project.objects.get(id=talk.object_id)
+            teams = project.members.filter(
+                status=1,
+                project_invitation_date__isnull=False,
+                invitation_refuse_date__isnull=True,
+            )
+            for team in teams:
+                staffs.append(team.profile)
+        else:
+            staffs = self.company.get_active_staff()
+
         for staff in staffs:
             MessageProfileAssignment.objects.create(
                 message=message,

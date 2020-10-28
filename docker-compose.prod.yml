@@ -15,7 +15,7 @@ services:
       - POSTGRES_PASSWORD=postgres
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000 --settings=web.settings.production
+    command: daphne -b 0.0.0.0 -p 8000 web.asgi:application
     volumes:
       - .:/office2017.whistle.it
     ports:
@@ -31,7 +31,10 @@ services:
       - SOCKET_URL=https://ws.edilcloud.it
 
   redis:
-    image: "redis:alpine"
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
     networks:
       - streams
     ports:
@@ -55,7 +58,7 @@ services:
       - streams
 volumes:
   postgres_data:
-
+  redis-data:
 networks:
   streams:
     external: true

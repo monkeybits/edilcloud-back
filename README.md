@@ -171,3 +171,5 @@ dj r
 TYPOLOGY, CATEGORY, SUBCATEGORY, ECC
 - python manage.py shell < web/management/scripts/import_typology.py
 - python manage.py shell < web/management/scripts/import_category.py
+
+DEV ssh -i "Edilcloud-key.pem" ec2-user@35.176.179.55

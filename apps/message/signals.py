@@ -3,12 +3,16 @@
 import os
 import emoji
 import filetype
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from channels.testing import WebsocketCommunicator
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
+from web.routing import application
 from . import models as message_models
 from apps.profile import models as profile_models
 from apps.notify import models as notify_models
@@ -20,6 +24,15 @@ from websocket import create_connection
 from .models import MessageFileAssignment
 from ..project.models import Project
 
+def event_triger(msg):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        'chat_chat_channel',
+        {
+            'type': 'chat_message',
+            'message': msg
+        }
+    )
 
 def get_filetype(file):
     kind = filetype.guess(file)
@@ -206,81 +219,89 @@ def message_notification(sender, instance, **kwargs):
         print(req.status_code, req.reason)
 
         files = get_files(instance)
-        SOCKET_HOST = os.environ.get('SOCKET_HOST')
-        SOCKET_PORT = os.environ.get('SOCKET_PORT')
-        SOCKET_URL = os.environ.get('SOCKET_URL')
-        if SOCKET_URL:
-            socketIO = SocketIO(SOCKET_URL)
-        else:
-            socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
-        socketIO.emit('join', {'room': str(instance.talk.code), 'name': 'django-admin'})
-        socketIO.emit("chat_channel", {
-            "message": {
-                "id": notify_obj.id,
-                "body": instance.body,
-                "unique_code": instance.unique_code,
-                "read": False,
-                "talk": {
-                    "id": instance.talk.id,
-                    "code": instance.talk.code,
-                    "content_type_name": instance.talk.content_type.name,
-                    "object_id": instance.talk.object_id
-                },
-                "sender": {
-                    "id": notify_obj.sender.id,
-                    "first_name": notify_obj.sender.first_name,
-                    "last_name": notify_obj.sender.last_name,
-                    "photo": None,
-                    "role": notify_obj.sender.role,
-                    "company": {
-                        "id": notify_obj.sender.company.id,
-                        "name": notify_obj.sender.company.name,
-                        "category": {}
-                    }
-                },
-                "files": files
-            }
-        })
-        socketIO.emit('leave', {'room': str(instance.talk.code), 'name': 'django-admin'})
-        socketIO.disconnect()
+        # SOCKET_HOST = os.environ.get('SOCKET_HOST')
+        # SOCKET_PORT = os.environ.get('SOCKET_PORT')
+        # SOCKET_URL = os.environ.get('SOCKET_URL')
+        # if SOCKET_URL:
+        #     socketIO = SocketIO(SOCKET_URL)
+        # else:
+        #     socketIO = SocketIO(SOCKET_HOST, SOCKET_PORT)
+        # socketIO.emit('join', {'room': str(instance.talk.code), 'name': 'django-admin'})
+        # socketIO.emit("chat_channel", {
+        #     "message": {
+        #         "id": notify_obj.id,
+        #         "body": instance.body,
+        #         "unique_code": instance.unique_code,
+        #         "read": False,
+        #         "talk": {
+        #             "id": instance.talk.id,
+        #             "code": instance.talk.code,
+        #             "content_type_name": instance.talk.content_type.name,
+        #             "object_id": instance.talk.object_id
+        #         },
+        #         "sender": {
+        #             "id": notify_obj.sender.id,
+        #             "first_name": notify_obj.sender.first_name,
+        #             "last_name": notify_obj.sender.last_name,
+        #             "photo": None,
+        #             "role": notify_obj.sender.role,
+        #             "company": {
+        #                 "id": notify_obj.sender.company.id,
+        #                 "name": notify_obj.sender.company.name,
+        #                 "category": {}
+        #             }
+        #         },
+        #         "files": files
+        #     }
+        # })
+        # socketIO.emit('leave', {'room': str(instance.talk.code), 'name': 'django-admin'})
+        # socketIO.disconnect()
 
         # from websocket import create_connection
-        # ws = create_connection("ws://35.176.179.55:8000/ws/chat/chat_channel/")
-        # print("Sending 'Hello, World'...")
-        # profiles_to_send = instance.messageprofileassignment_set.all()
-        # for profile in profiles_to_send:
-        #     ws.send(json.dumps(
-        #         {
-        #             "message":  {
-        #                 "id": notify_obj.id,
-        #                 "body": instance.body,
-        #                 "read": profile.read,
-        #                 "talk": {
-        #                     "id": instance.talk.id,
-        #                     "code": instance.talk.code,
-        #                     "content_type_name": instance.talk.content_type.name,
-        #                     "object_id": instance.talk.object_id
-        #                 },
-        #                 "sender": {
-        #                     "id": notify_obj.sender.id,
-        #                     "first_name": notify_obj.sender.first_name,
-        #                     "last_name": notify_obj.sender.last_name,
-        #                     "photo": None,
-        #                     "role": notify_obj.sender.role,
-        #                     "company": {
-        #                         "id": notify_obj.sender.company.id,
-        #                         "name": notify_obj.sender.company.name,
-        #                         "category": {}
-        #                     }
-        #                 },
-        #                 "dest": {
-        #                     "id": profile.profile.pk
-        #                 },
-        #                 "files": files
-        #             }
-        #          }))
-        #     print("Sent")
-        ws.close()
+        # try:
+        #     print("ws://35.176.179.55:8000")
+        #     ws = create_connection("ws://35.176.179.55:8000/ws/chat/chat_channel/")
+        # except:
+        #     communicator = WebsocketCommunicator(application, "/ws/chat/chat_channel/")
+        #     communicator.send_json_to({'message': 'ciao'})
+
+        print("Sending 'Hello, World'...")
+
+        profiles_to_send = instance.messageprofileassignment_set.all()
+        for profile in profiles_to_send:
+            event_triger(
+                {
+                    "message":  {
+                        "id": notify_obj.id,
+                        "body": instance.body,
+                        "read": profile.read,
+                        "unique_code": instance.unique_code,
+                        "talk": {
+                            "id": instance.talk.id,
+                            "code": instance.talk.code,
+                            "content_type_name": instance.talk.content_type.name,
+                            "object_id": instance.talk.object_id
+                        },
+                        "sender": {
+                            "id": notify_obj.sender.id,
+                            "first_name": notify_obj.sender.first_name,
+                            "last_name": notify_obj.sender.last_name,
+                            "photo": None,
+                            "role": notify_obj.sender.role,
+                            "company": {
+                                "id": notify_obj.sender.company.id,
+                                "name": notify_obj.sender.company.name,
+                                "category": {}
+                            }
+                        },
+                        "dest": {
+                            "id": profile.profile.pk
+                        },
+                        "files": files
+                    }
+                 })
+            print("Sent")
+        #ws.close()
 
     except Exception as e:
         print(e)

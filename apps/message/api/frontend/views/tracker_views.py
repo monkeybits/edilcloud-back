@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import generics, status
+from rest_framework.response import Response
 
 from web.api.permissions import RoleAccessPermission
 from web.api.views import QuerysetMixin, JWTPayloadMixin, WhistleGenericViewMixin
@@ -230,7 +231,7 @@ class TrackerTalkReadAllView(
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         talk = self.get_object()
         talk.read_all(profile)
-        return "ok"
+        return Response(status=status.HTTP_200_OK, data="Successfully read")
 
 class TrackerTalkDeleteView(
         TrackerTalkMixin,

@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.admindocs',
     'django_extensions',
     'debug_toolbar',
-    'mptt',
+    #'mptt',
 
     'rest_framework_docs',
 
@@ -73,10 +73,10 @@ INSTALLED_APPS = [
 ASGI_APPLICATION = "web.routing.application"
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
         'CONFIG': {
             "hosts": [('redis', 6379)],
-        },
+        }
     },
 }
 
@@ -404,7 +404,10 @@ ACCOUNT_EMAIL_CONFIRMATION_HMAC = False
 # CROSS ORIGIN RESOURCE SHARING
 CORS_ORIGIN_WHITELIST = (
     # List of Domain we want to allow
-    'http://ec2-3-9-170-59.eu-west-2.compute.amazonaws.com:8000'
+    'http://ec2-3-9-170-59.eu-west-2.compute.amazonaws.com:8000',
+    'http://localhost:3000',
+    'https://www.edilcloud.ml',
+    'https://www.back.edilcloud.ml'
 )
 CORS_ORIGIN_ALLOW_ALL = True  # For now Allow ALL
 CORS_ALLOW_METHODS = (

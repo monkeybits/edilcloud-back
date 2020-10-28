@@ -10,6 +10,8 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers, status
 
+import apps.message.api.frontend.serializers
+from apps.message.models import MessageProfileAssignment
 from ... import models
 from web.drf import exceptions as django_api_exception
 from web import exceptions as django_exception
@@ -59,6 +61,43 @@ class PreferenceEditSerializer(
         preference = self.profile.edit_preference(validated_data)
         return preference
 
+class TalkSerializer(
+        DynamicFieldsModelSerializer):
+    content_type_name = serializers.ReadOnlyField(source="get_content_type_model")
+    unread_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Talk
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.talk_response_include_fields
+        return super(TalkSerializer, self).get_field_names(*args, **kwargs)
+
+    def get_unread_count(self, obj):
+        view = self.get_view
+        if view:
+            self.request = view.request
+            payload = view.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            # if obj.content_type.name == 'project':
+            #     project_id = obj.object_id
+            # else:
+            #     company_id = obj.object_id
+            counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False, message__talk=obj).count()
+            return counter
+        return 0
 
 class CompanySerializer(
         JWTPayloadMixin,
@@ -75,6 +114,8 @@ class CompanySerializer(
     can_access_files = serializers.SerializerMethodField(read_only=True)
     can_access_chat = serializers.SerializerMethodField(read_only=True)
     color_project = serializers.SerializerMethodField()
+    talks = TalkSerializer(many=True)
+    last_message_created = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Company
@@ -91,6 +132,15 @@ class CompanySerializer(
         if view:
             return view.company_response_include_fields
         return super(CompanySerializer, self).get_field_names(*args, **kwargs)
+
+    def get_last_message_created(self, obj):
+        talk = obj.talks.last()
+        try:
+            if talk:
+                return talk.messages.all().last().date_create
+        except Exception:
+            pass
+        return None
 
     def get_color_project(self, obj):
         obj_color = obj.projectcompanycolorassignment_set.all().filter(project=self.context['view'].kwargs['pk'])

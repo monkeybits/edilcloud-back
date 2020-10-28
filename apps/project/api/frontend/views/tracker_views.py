@@ -850,7 +850,7 @@ class TrackerProjectMessageListView(
         self.message_response_include_fields = [
             'id', 'body', 'sender', 'date_create', 'unique_code'
         ]
-        self.talk_response_include_fields = ['id', 'code', 'content_type_name']
+        self.talk_response_include_fields = ['id', 'code', 'content_type_name', 'unread_count']
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'role', 'company'
         ]

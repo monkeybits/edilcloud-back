@@ -689,7 +689,10 @@ class TrackerCompanyDetailView(
             'url', 'fax', 'phone2', 'projects_count',
             'messages_count', 'tags_count', 'followers_count',
             'staff_count', 'partnerships_count', 'category', 'is_sponsor',
-            'can_access_files', 'can_access_chat'
+            'can_access_files', 'can_access_chat', 'talks', 'last_message_created'
+        ]
+        self.talk_response_include_fields = [
+            'id', 'code', 'unread_count'
         ]
         super(TrackerCompanyDetailView, self).__init__(*args, **kwargs)
 
@@ -964,7 +967,7 @@ class TrackerCompanyMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create', 'files', 'unique_code'
+            'id', 'body', 'sender', 'date_create', 'files', 'unique_code', 'read'
         ]
         self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         self.profile_response_include_fields = [

@@ -16,7 +16,7 @@ pipeline {
         stage('Building our image') {
             steps {
                 script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    dockerImage = docker.build registry + ":latest"
                 }
             }
         }
@@ -31,7 +31,7 @@ pipeline {
         }
         stage('Update services with new image') {
              steps {
-                 sh 'docker service update --force --image tbellini01/edilcloud-back:latest edilcloud_web'
+                 sh 'docker service update --force --image tbellini01/edilcloud-back:latest edilcloud2_web'
              }
         }
         stage('Cleaning up') {

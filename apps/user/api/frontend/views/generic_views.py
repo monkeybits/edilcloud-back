@@ -30,9 +30,18 @@ class RegistrationAPIView(
     serializer_class = RegisterSerializer
 
     def create(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+        first_name = request.data.pop('first_name')
+        last_name = request.data.pop('last_name')
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        user.create_main_profile({
+            'first_name': first_name,
+            'last_name': last_name,
+            'language': 'it'
+        })
         headers = self.get_success_headers(serializer.data)
         user.send_account_verification_email()
         return Response(

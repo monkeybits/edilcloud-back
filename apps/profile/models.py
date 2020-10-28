@@ -752,7 +752,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             new_obj = True
         else:
             new_obj = False
-        super(Profile, self).save(*args, **kwargs)
+        super(Profile, self).save(user=self.user,*args, **kwargs)
         if new_obj:
             self.create_preference()
 
@@ -766,7 +766,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         )
         if info_preference_json:
             preference.info = info_preference_json
-        preference.save()
+        preference.save(user=self.user)
 
     def get_preference(self):
         return self.preference

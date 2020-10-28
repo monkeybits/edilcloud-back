@@ -689,7 +689,7 @@ class TrackerCompanyDetailView(
             'url', 'fax', 'phone2', 'projects_count',
             'messages_count', 'tags_count', 'followers_count',
             'staff_count', 'partnerships_count', 'category', 'is_sponsor',
-            'can_access_files', 'can_access_chat', 'talks'
+            'can_access_files', 'can_access_chat', 'talks', 'last_message_created'
         ]
         self.talk_response_include_fields = [
             'id', 'code', 'unread_count'

@@ -3665,8 +3665,8 @@ class OwnerProfile(Profile):
             sender=self,
             talk=talk,
             status=0,
-            body=message_dict['body'],
-            unique_code=message_dict['unique_code']
+            body=message_dict['body'][0],
+            unique_code=message_dict['unique_code'][0]
         )
         message.save()
         if talk.content_type.name == 'project':

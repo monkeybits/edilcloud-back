@@ -689,7 +689,10 @@ class TrackerCompanyDetailView(
             'url', 'fax', 'phone2', 'projects_count',
             'messages_count', 'tags_count', 'followers_count',
             'staff_count', 'partnerships_count', 'category', 'is_sponsor',
-            'can_access_files', 'can_access_chat'
+            'can_access_files', 'can_access_chat', 'talks'
+        ]
+        self.talk_response_include_fields = [
+            'id', 'code', 'unread_count'
         ]
         super(TrackerCompanyDetailView, self).__init__(*args, **kwargs)
 

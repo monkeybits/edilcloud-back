@@ -651,7 +651,7 @@ class ProfileEditSerializer(
             try:
                 generic_profile = self.request.user.get_profile_by_id(instance.id)
             except:
-                generic_profile = self.profile
+                generic_profile = instance
 
             validated_data['id'] = instance.id
             profile = generic_profile.edit_profile(validated_data)

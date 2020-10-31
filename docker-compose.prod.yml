@@ -15,7 +15,7 @@ services:
       - POSTGRES_PASSWORD=postgres
   web:
     build: .
-    command: daphne -b 0.0.0.0 -p 8000 web.asgi:application --settings=web.settings.production
+    command: daphne -b 0.0.0.0 -p 8000 web.asgi:application
     volumes:
       - .:/office2017.whistle.it
     ports:

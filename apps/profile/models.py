@@ -159,7 +159,7 @@ def get_user_by_id(self, user_id):
 
 
 def send_account_verification_email(self, to_email=None, language_code=None):
-    from_mail = settings.PROFILE_PROFILE_NO_REPLY_EMAIL
+    from_mail = settings.REGISTRATION_FROM_EMAIL
     if not to_email:
         to_email = self.email or self.user.email
     if not language_code:
@@ -198,6 +198,8 @@ def send_account_verification_email(self, to_email=None, language_code=None):
         html_message=html_message,
         recipient_list=[to_email],
         from_email=from_mail,
+        auth_user=from_mail,
+        auth_password=settings.REGISTRATION_EMAIL_HOST_PASSWORD
     )
 
 

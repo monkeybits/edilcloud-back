@@ -373,7 +373,7 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [
 #     }
 # }
 
-BASE_URL = 'localhost:3000'
+BASE_URL = 'www.edilcloud.it'
 
 JWT_AUTH = {
     'JWT_PAYLOAD_HANDLER': 'apps.user.views.custom_jwt_payload_handler',
@@ -424,7 +424,7 @@ FAKER_PROVIDERS = None
 
 UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media')
 
-PROTOCOL = 'http'
+PROTOCOL = 'https'
 DEFAULT_FROM_EMAIL = 'edilcloud.activation@gmail.com'
 SERVER_EMAIL = 'edilcloud.activation@gmail.com'
 EMAIL_USE_TLS = True

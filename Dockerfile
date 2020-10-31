@@ -13,5 +13,5 @@ ADD entrypoint.sh /entrypoint.sh
 ADD entrypoint_redis.sh /entrypoint_redis.sh
 RUN chmod a+x /entrypoint.sh
 RUN chmod a+x /entrypoint_redis.sh
-#ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 RUN cd /var/log/ && mkdir django && touch whistle-api_exceptions.log

@@ -685,7 +685,7 @@ class ProfileEditView(
     Update a main profile
     PS: This is only for main profile
     """
-    permission_classes = (IsAuthenticatedAndOwnerPermission,)
+    permission_classes = ()
     queryset = models.Profile.objects.all()
     serializer_class = serializers.ProfileEditSerializer
 

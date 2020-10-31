@@ -15,6 +15,10 @@ DATABASES = {
 }
 PROTOCOL = 'https'
 DEFAULT_FROM_EMAIL = 'edilcloud.activation@gmail.com'
+
+REGISTRATION_FROM_EMAIL = 'registration@edilcloud.io'
+REGISTRATION_EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
+
 SERVER_EMAIL = 'edilcloud.activation@gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'

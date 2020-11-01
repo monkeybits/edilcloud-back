@@ -8,3 +8,5 @@ __copyright__ = 'Copyright 2017 THUX Team'
 
 # Version synonym
 VERSION = __version__
+from .celery import app as celery_app
+__all__ = ['celery_app']

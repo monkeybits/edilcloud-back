@@ -8,6 +8,7 @@ certifi==2017.4.17
 cffi==1.14.3
 channels
 chardet==3.0.4
+celery==4.4.7
 constantly==15.1.0
 coreapi==2.3.1
 coreschema==0.0.4
@@ -101,3 +102,4 @@ xlrd==1.1.0
 zope.interface==5.1.2
 daphne
 channels_redis
+redis==3.5.3

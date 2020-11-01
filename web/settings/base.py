@@ -28,6 +28,9 @@ INTERNAL_IPS = ['127.0.0.1']
 
 ADMIN_LANGUAGE_CODE = 'it'
 
+DEVELOPERS = [
+    'tbellini@edilcloud.io'
+]
 # Application definition
 
 INSTALLED_APPS = [

@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'^api/frontend/message/', include('apps.message.api.frontend.urls')),
     url(r'^api/frontend/notify/', include('apps.notify.api.frontend.urls')),
     url(r'^api/frontend/product/', include('apps.product.api.frontend.urls')),
-    url(r'^api/frontend/profile/', include('apps.profile.api.frontend.urls')),
+    url(r'^api/frontend/profile/', include('apps.profile.api.frontend.urls', namespace="api_frontend_profile")),
     url(r'^api/frontend/project/', include('apps.project.api.frontend.urls')),
     url(r'^api/frontend/quotation/', include('apps.quotation.api.frontend.urls')),
     url('ws/', include('apps.ws.urls')),

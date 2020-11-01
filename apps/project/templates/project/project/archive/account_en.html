@@ -1,0 +1,15 @@
+{% extends 'email/base_email_en.html' %}
+
+{% block content %}
+<p>
+    Dear {{first_name}}, <br/>
+    <br/>
+</p>
+<p>
+    This is a reminder for the project archived: <b>{{project_name}}</b>.
+</p>
+<p>
+    You have <b>{{remaining_days}}</b> days for saving data, then it will be removed definitely from system.
+</p>
+
+{% endblock %}

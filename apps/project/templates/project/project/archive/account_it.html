@@ -1,0 +1,15 @@
+{% extends 'email/base_email_it.html' %}
+
+{% block content %}
+<p>
+    Gentile {{first_name}}, <br/>
+    <br/>
+</p>
+<p>
+    Questo è un reminder per quanto riguarda il progetto archiviato: <b>{{project_name}}</b>.
+</p>
+<p>
+    Hai tempo <b>{{remaining_days}}</b> giorni per salvare il progetto, poi verrà definitivamente rimosso dal sistema.
+</p>
+
+{% endblock %}

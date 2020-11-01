@@ -80,6 +80,15 @@ CHANNEL_LAYERS = {
     },
 }
 
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_IMPORTS = ['web.tasks',]
+CELERY_BEAT_SCHEDULE = {
+    'printHello': {
+        'task': 'web.tasks.archived_projects_reminder',
+        'schedule': 86400.0,
+    },
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

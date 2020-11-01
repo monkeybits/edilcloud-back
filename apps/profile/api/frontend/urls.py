@@ -7,8 +7,8 @@ from apps.profile.api.frontend.views import (
     tracker_views,
     user_views,
 )
-
 # Todo: some URLS are not listed here. We will add it soon.
+app_name = 'profile'
 
 user_urlpatterns = [
     url(

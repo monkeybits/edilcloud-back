@@ -425,13 +425,16 @@ FAKER_PROVIDERS = None
 UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media')
 
 PROTOCOL = 'http'
-DEFAULT_FROM_EMAIL = 'edilcloud.activation@gmail.com'
-SERVER_EMAIL = 'edilcloud.activation@gmail.com'
+DEFAULT_FROM_EMAIL = 'notification@edilcloud.io'
+REGISTRATION_FROM_EMAIL = 'registration@edilcloud.io'
+REGISTRATION_EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
+SERVER_EMAIL = 'mail.edilcloud.io'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'mail.edilcloud.io'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'edilcloud.activation@gmail.com'
-EMAIL_HOST_PASSWORD = 'edilcloud-activation$'
+EMAIL_HOST_USER = 'notification@edilcloud.io'
+EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 NEW_SPONSOR_REQUEST_RECIPIENT = 'edilcloud.activation@gmail.com'

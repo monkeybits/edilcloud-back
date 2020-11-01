@@ -174,7 +174,7 @@ def send_account_verification_email(self, to_email=None, language_code=None):
         'logo_url': os.path.join(
             settings.PROTOCOL + '://',
             settings.BASE_URL,
-            'assets/images/patterns/logowhistle.png'
+            'assets/images/logos/fuse.svg'
         ),
         "first_name": self.username,
         "endpoint": os.path.join(
@@ -968,7 +968,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             'logo_url': os.path.join(
                 settings.PROTOCOL + '://',
                 settings.BASE_URL,
-                'assets/images/patterns/logowhistle.png'
+                'assets/images/logos/fuse.svg'
             ),
             "first_name": self.first_name,
             "last_name": self.last_name,

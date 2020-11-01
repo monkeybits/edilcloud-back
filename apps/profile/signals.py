@@ -48,7 +48,7 @@ def profile_notification(sender, instance, **kwargs):
                     'logo_url': os.path.join(
                         settings.PROTOCOL + '://',
                         settings.BASE_URL,
-                        'assets/images/patterns/logowhistle.png'
+                        'assets/images/logos/fuse.svg'
                     ),
                     'recipient_first_name': instance.first_name,
                     'recipient_last_name': instance.last_name,
@@ -333,7 +333,7 @@ def sponsor_request_notification(sender, instance, **kwargs):
                 'logo_url': os.path.join(
                     settings.PROTOCOL + '://',
                     settings.BASE_URL,
-                    'assets/images/patterns/logowhistle.png'
+                    'assets/images/logos/fuse.svg'
                 ),
                 'recipient_first_name': recipient.first_name,
                 'recipient_last_name': recipient.last_name,
@@ -369,7 +369,7 @@ def sponsor_request_notification(sender, instance, **kwargs):
             'logo_url': os.path.join(
                 settings.PROTOCOL + '://',
                 settings.BASE_URL,
-                'assets/images/patterns/logowhistle.png'
+                'assets/images/logos/fuse.svg'
             ),
             'owner_name': '{} {}'.format(profile.first_name, profile.last_name),
             'recipient_first_name': profile.first_name,

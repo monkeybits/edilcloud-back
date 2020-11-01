@@ -33,3 +33,5 @@ def archived_projects_reminder():
             project.send_reminder_email(remaining_days=1)
         if delta.days == 30:
             project.send_reminder_email(remaining_days=0)
+        if delta.days > 30:
+            project.delete()

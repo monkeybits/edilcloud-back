@@ -39,7 +39,8 @@ class TrackerProjectsListView(
                     'progress': task.progress,
                     'alert': task.alert,
                     'note': task.note,
-                    'type': 'task'
+                    'type': 'task',
+                    'status': task.status,
                 })
                 for activity in task.activities.all():
                     activities_list.append({

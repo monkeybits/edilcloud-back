@@ -1939,6 +1939,15 @@ class OwnerProfile(Profile):
         #return project.tasks.filter(Q(assigned_company=self.company) | Q(project__company_id=self.company.id))
         return project.tasks.all()
 
+    def list_projects_tasks(self, projects):
+        """
+        Get all company tasks of a company project
+        """
+        projects_list = []
+        for project in projects:
+            projects_list.append(project.id)
+        return Task.objects.filter(project__id__in=projects_list)
+
     def list_tasks_and_parent_tasks(self, project):
         my_tasks = self.list_tasks(project)
         if project.shared_project:

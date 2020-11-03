@@ -322,26 +322,6 @@ def get_filetype(file):
         return
     return kind.mime
 
-class ProjectGenericSerializer(
-    DynamicFieldsModelSerializer):
-    typology = serializers.ReadOnlyField(source='get_typology')
-    completed = serializers.ReadOnlyField(source='get_completed_perc')
-    shared_companies = serializers.ReadOnlyField(source='get_shared_companies')
-    task_companies = profile_serializers.CompanySerializer(source='get_shared_companies_qs', many=True)
-    messages_count = serializers.ReadOnlyField(source='get_messages_count')
-    company = profile_serializers.CompanySerializer()
-
-    class Meta:
-        model = models.Project
-        fields = '__all__'
-
-    def get_field_names(self, *args, **kwargs):
-        view = self.get_view
-        if view:
-            return view.project_response_include_fields
-        return super(ProjectGenericSerializer, self).get_field_names(*args, **kwargs)
-
-
 class ProjectSerializer(
     DynamicFieldsModelSerializer):
     typology = serializers.ReadOnlyField(source='get_typology')
@@ -1725,3 +1705,25 @@ class SharePostToTaskSerializer(
 #     class Meta:
 #         models = models.Post
 #         fields = '__all__'
+
+class TaskWithActivitiesSerializer(
+    DynamicFieldsModelSerializer,
+    serializers.ModelSerializer):
+    activities = ActivitySerializer(many=True)
+
+    class Meta:
+        model = models.Task
+        fields = ['name', 'date_start', 'date_end', 'date_completed', 'progress',
+                  'alert', 'note', 'activities']
+
+
+class ProjectGenericSerializer(
+    DynamicFieldsModelSerializer,
+    serializers.ModelSerializer):
+    completed = serializers.ReadOnlyField(source='get_completed_perc')
+    tasks = TaskWithActivitiesSerializer(many=True)
+    company = profile_serializers.CompanySerializer()
+
+    class Meta:
+        model = models.Project
+        fields = '__all__'

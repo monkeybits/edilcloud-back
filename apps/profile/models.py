@@ -2256,7 +2256,7 @@ class OwnerProfile(Profile):
         workers = activity_dict.pop('workers')
         activity.__dict__.update(**activity_dict)
         for worker in workers:
-            task.project.members.all().get(profile__id=worker.id)
+            activity.task.project.members.all().get(profile__id=worker.id)
             activity.save()
             activity.workers.add(worker)
         activity.save()

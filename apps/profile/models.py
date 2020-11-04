@@ -2253,7 +2253,12 @@ class OwnerProfile(Profile):
         """
         # Todo: Don't update Task, profile
         activity = self.get_task_activity(activity_dict['id'])
+        workers = activity_dict.pop('workers')
         activity.__dict__.update(**activity_dict)
+        for worker in workers:
+            task.project.members.all().get(profile__id=worker.id)
+            activity.save()
+            activity.workers.add(worker)
         activity.save()
         return activity
 

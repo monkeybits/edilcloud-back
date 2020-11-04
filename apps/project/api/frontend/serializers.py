@@ -1383,7 +1383,7 @@ class TaskActivitySerializer(
                     'id': worker.id,
                     'first_name': worker.profile.first_name,
                     'last_name': worker.profile.last_name,
-                    'photo': worker.profile.photo,
+                    'photo': worker.profile.photo.url if worker.profile.photo != '' else None,
                     'company': worker.profile.company.name,
                     'is_exists': is_exists
                 }

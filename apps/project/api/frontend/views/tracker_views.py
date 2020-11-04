@@ -1436,6 +1436,52 @@ class TrackerProjectTaskListView(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
+class TrackerProjectsTasksActivitiesListView(
+        JWTPayloadMixin,
+        QuerysetMixin,
+        generics.ListAPIView):
+    """
+    Get all tasks w.r.t. project
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.TaskSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.task_response_include_fields = [
+            'id', 'project', 'name', 'assigned_company', 'date_start',
+            'date_end', 'date_completed', 'progress', 'status',
+            'share_status', 'shared_task', 'only_read',
+            'alert', 'starred', 'note', 'activities', 'media_set'
+        ]
+        self.activity_response_include_fields = [
+            'id', 'task', 'workers', 'title', 'description', 'status',
+            'datetime_start', 'datetime_end', 'media_set', 'team_workers'
+        ]
+        self.project_response_include_fields = [
+            'id', 'name', 'description', 'date_start',
+            'date_end', 'shared_project'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+        ]
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'photo'
+        ]
+        super(TrackerProjectsTasksActivitiesListView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            projects = profile.list_projects()
+            self.queryset = profile.list_projects_tasks(projects)
+            return super(TrackerProjectsTasksActivitiesListView, self).get_queryset()
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.ProfileAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
 class TrackerGanttProjectTaskListView(
         JWTPayloadMixin,
         QuerysetMixin,

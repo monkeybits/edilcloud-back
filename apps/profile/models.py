@@ -159,7 +159,7 @@ def get_user_by_id(self, user_id):
 
 
 def send_account_verification_email(self, to_email=None, language_code=None):
-    from_mail = settings.PROFILE_PROFILE_NO_REPLY_EMAIL
+    from_mail = settings.REGISTRATION_FROM_EMAIL
     if not to_email:
         to_email = self.email or self.user.email
     if not language_code:
@@ -174,7 +174,7 @@ def send_account_verification_email(self, to_email=None, language_code=None):
         'logo_url': os.path.join(
             settings.PROTOCOL + '://',
             settings.BASE_URL,
-            'assets/images/patterns/logowhistle.png'
+            'assets/images/logos/fuse.svg'
         ),
         "first_name": self.username,
         "endpoint": os.path.join(
@@ -198,6 +198,8 @@ def send_account_verification_email(self, to_email=None, language_code=None):
         html_message=html_message,
         recipient_list=[to_email],
         from_email=from_mail,
+        auth_user=from_mail,
+        auth_password=settings.REGISTRATION_EMAIL_HOST_PASSWORD
     )
 
 
@@ -966,7 +968,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             'logo_url': os.path.join(
                 settings.PROTOCOL + '://',
                 settings.BASE_URL,
-                'assets/images/patterns/logowhistle.png'
+                'assets/images/logos/fuse.svg'
             ),
             "first_name": self.first_name,
             "last_name": self.last_name,
@@ -1936,6 +1938,15 @@ class OwnerProfile(Profile):
         project = self.list_projects().get(id=project.id)
         #return project.tasks.filter(Q(assigned_company=self.company) | Q(project__company_id=self.company.id))
         return project.tasks.all()
+
+    def list_projects_tasks(self, projects):
+        """
+        Get all company tasks of a company project
+        """
+        projects_list = []
+        for project in projects:
+            projects_list.append(project.id)
+        return Task.objects.filter(project__id__in=projects_list)
 
     def list_tasks_and_parent_tasks(self, project):
         my_tasks = self.list_tasks(project)

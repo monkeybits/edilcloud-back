@@ -8,9 +8,11 @@ import pathlib
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
+from django.core.mail import send_mail
 from django.db import transaction
 from django.db import models
 from django.conf import settings
+from django.template.loader import render_to_string
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
@@ -203,6 +205,10 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
 
     get_tasks.fget.short_description = _('Tasks')
 
+    def get_members(self):
+        print(self.members)
+        return self.members.all()
+
     @property
     def get_members_count(self):
         return self.members.count()
@@ -263,6 +269,52 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
         if self.shared_project:
             return self.shared_project.company
         return self.company
+
+    def send_reminder_email(self, to_email=None, language_code=None, remaining_days=30):
+        from_mail = settings.DEFAULT_FROM_EMAIL
+        recipient_list = []
+        if not to_email:
+            members = self.get_members()
+            print(members)
+            for member in members:
+                print(member)
+                print(member.role)
+                if member.role == 'o' or member.role == 'd':
+                    print(member.profile.email)
+
+                    if not language_code:
+                        language_code = 'en'
+
+                    subject = "Edilcloud Projects Reminder"
+                    if language_code == 'it':
+                        subject = 'Reminder progetti Edilcloud'
+
+                    context = {
+                        'logo_url': os.path.join(
+                            settings.PROTOCOL + '://',
+                            settings.BASE_URL,
+                            'assets/images/logos/fuse.svg'
+                        ),
+                        "first_name": member.profile.first_name,
+                        "remaining_days": remaining_days,
+                        "project_name": self.name,
+                        "protocol": settings.PROTOCOL,
+                        "base_url": settings.BASE_URL
+                    }
+                    subject = "Edilcloud Projects Reminder"
+
+                    # Text message
+                    text_message = render_to_string('project/project/archive/account_{}.txt'.format(language_code), context)
+
+                    # Html message
+                    html_message = render_to_string('project/project/archive/account_{}.html'.format(language_code), context)
+                    send_mail(
+                        subject=subject,
+                        message=text_message,
+                        html_message=html_message,
+                        recipient_list=[member.profile.email],
+                        from_email=from_mail
+                    )
 
 
 

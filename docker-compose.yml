@@ -34,7 +34,16 @@ services:
       - streams
     ports:
       - "6379:6379"
-
+  celery:
+    build: .
+    command: celery -A web worker -B
+    networks:
+      - streams
+    volumes:
+      - .:/code
+    links:
+      - db
+      - redis
 #  pushpin:
 #    image: fanout/pushpin
 #    networks:

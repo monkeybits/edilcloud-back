@@ -1410,7 +1410,7 @@ class TrackerProjectTaskListView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end', 'media_set', 'team_workers'
+            'datetime_start', 'datetime_end', 'media_set', 'team_workers', 'workers_in_activity'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1456,7 +1456,7 @@ class TrackerProjectsTasksActivitiesListView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end', 'media_set', 'team_workers'
+            'datetime_start', 'datetime_end', 'media_set', 'team_workers', 'workers_in_activity'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -2066,7 +2066,7 @@ class TrackerTaskActivityAddView(
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
-            'starred', 'note',
+            'starred', 'note', 'workers_in_activity'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -2143,7 +2143,7 @@ class TrackerTaskActivityListView(
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
-            'starred', 'note', 'team_workers'
+            'starred', 'note', 'team_workers', 'workers_in_activity'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -2249,7 +2249,7 @@ class TrackerActivityEditView(
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
-            'starred', 'note'
+            'starred', 'note', 'workers_in_activity'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',

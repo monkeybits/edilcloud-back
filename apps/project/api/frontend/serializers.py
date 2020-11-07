@@ -1331,6 +1331,7 @@ class TaskActivitySerializer(
     days_for_gantt = serializers.SerializerMethodField(source='get_days_for_gantt')
     workers = ProfileSerializer(many=True)
     team_workers = serializers.SerializerMethodField()
+    workers_in_activity = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Activity
@@ -1343,6 +1344,14 @@ class TaskActivitySerializer(
             if 'year' in view.kwargs: self.year = view.kwargs['year']
             return view.activity_response_include_fields
         return super(TaskActivitySerializer, self).get_field_names(*args, **kwargs)
+
+    def get_workers_in_activity(self, obj):
+        team_list = []
+        workers = obj.workers.all()
+        for worker in workers:
+            team_member = obj.task.project.members.all().get(profile__id=worker.id)
+            team_list.append(TeamAddSerializer(team_member).data)
+        return team_list
 
     def get_team_workers(self, obj):
         request = self.context['request']
@@ -1493,6 +1502,14 @@ class TaskActivityEditSerializer(
             if attrs['datetime_start'] > attrs['datetime_end']:
                 raise serializers.ValidationError('EndDateTime should be greater than StartDateTime')
         return attrs
+
+    def get_workers_in_activity(self, obj):
+        team_list = []
+        workers = obj.workers
+        for worker in workers:
+            team_member = obj.task.project.members.all().get(profile__id=worker.id)
+            team_list.append(TeamSerializer(team_member))
+        return team_list
 
     def update(self, instance, validated_data):
         try:

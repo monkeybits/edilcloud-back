@@ -1766,7 +1766,12 @@ class OwnerProfile(Profile):
                 role=settings.OWNER
             )
             team.save()
-
+            content_type = ContentType.objects.get(model='project')
+            self.get_or_create_talk({
+                'content_type': content_type,
+                'content_type_id': content_type.id,
+                'object_id': project.id
+            })
         return project
 
     def clone_project(self, project):

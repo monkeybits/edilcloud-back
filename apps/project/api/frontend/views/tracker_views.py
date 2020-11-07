@@ -212,11 +212,12 @@ class TrackerProjectDetailView(
             'company', 'referent', 'tags', 'profiles',
             'status', 'completed', 'messages_count', 'creator',
             'date_create', 'date_last_modify', 'typology',
-            'shared_project', 'date_create', 'note', 'logo'
+            'shared_project', 'date_create', 'note', 'logo', 'talks'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'ssn', 'logo'
         ]
+        self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'position',
             'role', 'email', 'fax', 'phone'

@@ -109,8 +109,9 @@ def message_notification(sender, instance, **kwargs):
             company_staff = instance.talk.content_object.profiles.all()
             title = instance.talk.content_type.name
             source = instance.talk.content_object.name
+            endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL, 'apps/chat')
         elif instance.talk.content_type.name == 'project':
-            endpoint = os.path.join(settings.PROTOCOL+'://', settings.BASE_URL, 'project')
+            endpoint = os.path.join(settings.PROTOCOL+'://', settings.BASE_URL, 'apps/projects/{}'.format(str(instance.talk.object_id)))
             title = instance.talk.content_type.name
             company_staff = instance.talk.content_object.profiles.all().union(
                 instance.talk.content_object.company.get_owners_and_delegates(),
@@ -125,8 +126,6 @@ def message_notification(sender, instance, **kwargs):
             title = 'staff'
             source = instance.sender.last_name
 
-        content = "Mr <strong>%s %s</strong> have created this event. " % (profile.first_name, profile.last_name)
-
         if 'created' in kwargs:
             if kwargs['created']:
                 subject = _('New Message from %s (%s)' % (title, source))
@@ -135,17 +134,18 @@ def message_notification(sender, instance, **kwargs):
         else:
             subject = _('Message deleted by %s (%s)' % (title, source))
 
-        final_content = "For simplicity, the following button will redirect to the target page."
-        body = get_html_message(content, final_content, endpoint)
+        body = json.dumps({
+            'content': "New message in {} chat".format(instance.talk.content_type.name.lower()),
+            'url': endpoint
+        })
         type = ContentType.objects.get(model=instance.talk.content_type.name.lower())
 
-        notify_obj = notify_models.Notify.objects.create(
+        notify_obj = notify_models.Notify(
             sender=profile, subject=subject, body=body,
             content_type=type, object_id=instance.talk.object_id,
             creator=profile.user, last_modifier=profile.user
         )
-
-        recipient_objs = []
+        notify_obj.save()
 
         for staff in company_staff:
             bell_status = get_bell_notification_status(
@@ -156,17 +156,11 @@ def message_notification(sender, instance, **kwargs):
             )
 
             if bell_status or email_status:
-                recipient_objs.append(notify_models.NotificationRecipient(
+                notify_recipient = notify_models.NotificationRecipient(
                     notification=notify_obj, is_email=email_status,
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
-                )
-
-        notify_models.NotificationRecipient.objects.bulk_create(
-            recipient_objs,
-            batch_size=100
-        )
-        # send push notification
+                notify_recipient.save()
 
         header = {
             "Content-Type": "application/json; charset=utf-8",

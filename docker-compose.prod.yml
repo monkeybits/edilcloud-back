@@ -56,6 +56,18 @@ services:
       - db
     networks:
       - streams
+
+  celery:
+    build: .
+    command: celery -A web worker -B
+    networks:
+      - streams
+    volumes:
+      - .:/code
+    links:
+      - db
+      - redis
+
 volumes:
   postgres_data:
   redis-data:

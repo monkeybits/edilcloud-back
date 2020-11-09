@@ -18,6 +18,8 @@ NOTIFY_CONTENT_TYPE_LIMIT_CHOICES_TO = [
     {'app_label': 'project', 'model': 'team'},
     {'app_label': 'project', 'model': 'task'},
     {'app_label': 'project', 'model': 'activity'},
+    {'app_label': 'project', 'model': 'post'},
+    {'app_label': 'project', 'model': 'comment'},
     {'app_label': 'quotation', 'model': 'offer'},
     {'app_label': 'quotation', 'model': 'bom'},
 ]

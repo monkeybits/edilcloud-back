@@ -2079,13 +2079,13 @@ class OwnerProfile(Profile):
                 post.task.save()
         else:
             try:
-                posts = post.sub_task.post_set.all()
+                posts = post.sub_task.post_set.exclude(id=post.id)
                 find_alerts = posts.filter(alert=True).count()
                 if find_alerts == 0:
                     post.sub_task.alert = False
                     post.sub_task.save()
             except:
-                posts = post.task.post_set.all()
+                posts = post.task.post_set.exclude(id=post.id)
                 find_alerts = posts.filter(alert=True).count()
                 if find_alerts == 0:
                     post.task.alert = False

@@ -609,7 +609,7 @@ class TrackerProjectInternalActivityListView(
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end',
+            'datetime_start', 'datetime_end', 'alert'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -644,7 +644,7 @@ class TrackerProjectParentActivityListView(
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end',
+            'datetime_start', 'datetime_end', 'alert'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -679,7 +679,7 @@ class TrackerProjectActivityListView(
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end',
+            'datetime_start', 'datetime_end', 'alert'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -1411,7 +1411,7 @@ class TrackerProjectTaskListView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end', 'media_set', 'team_workers', 'workers_in_activity'
+            'datetime_start', 'datetime_end', 'media_set', 'team_workers', 'workers_in_activity', 'alert'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1457,7 +1457,7 @@ class TrackerProjectsTasksActivitiesListView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end', 'media_set', 'team_workers', 'workers_in_activity'
+            'datetime_start', 'datetime_end', 'media_set', 'team_workers', 'workers_in_activity', 'alert'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1503,7 +1503,7 @@ class TrackerGanttProjectTaskListView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end', 'media_set', 'team_workers'
+            'datetime_start', 'datetime_end', 'media_set', 'team_workers', 'alert'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -2180,7 +2180,7 @@ class TrackerActivityDetailView(
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end',
+            'datetime_start', 'datetime_end', 'alert'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -2213,7 +2213,7 @@ class TrackerActivityEditStatusView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end',
+            'datetime_start', 'datetime_end', 'alert'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -2281,7 +2281,7 @@ class TrackerActivityDeleteView(
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
             'id', 'task', 'profile', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end',
+            'datetime_start', 'datetime_end', 'alert'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -2319,7 +2319,7 @@ class TrackerActivityPostAddView(
         ]
         self.activity_response_include_fields = [
             'id', 'author', 'text', 'sub_task',
-            'published_date', 'created_date', 'unique_code'
+            'published_date', 'created_date', 'unique_code', 'alert'
         ]
         self.user_response_include_fields = [
             'id', 'username',
@@ -2358,7 +2358,7 @@ class TrackerTaskPostAddView(
         ]
         self.activity_response_include_fields = [
             'id', 'author', 'text', 'task', 'sub_task',
-            'published_date', 'created_date', 'unique_code'
+            'published_date', 'created_date', 'unique_code', 'alert'
         ]
         self.user_response_include_fields = [
             'id', 'username',
@@ -2580,7 +2580,7 @@ class TrackerPostCommentAddView(
         ]
         self.activity_response_include_fields = [
             'id', 'author', 'post', 'parent', 'text',
-            'created_date', 'media_set', 'unique_code'
+            'created_date', 'media_set', 'unique_code', 'alert'
         ]
         self.user_response_include_fields = [
             'id', 'username',

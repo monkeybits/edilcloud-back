@@ -2491,7 +2491,7 @@ class TrackerProfileActivityIntervalDetailView(
 
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
-            'task', 'days_for_gantt', 'title'
+            'task', 'days_for_gantt', 'title', 'alert'
         ]
         self.task_response_include_fields = [
             'project'

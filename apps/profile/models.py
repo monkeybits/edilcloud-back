@@ -2070,6 +2070,26 @@ class OwnerProfile(Profile):
         """
         post = self.get_post(post_dict['id'])
         post.__dict__.update(**post_dict)
+        if post_dict['alert'] is True:
+            try:
+                post.sub_task.alert = True
+                post.sub_task.save()
+            except:
+                post.task.alert = True
+                post.task.save()
+        else:
+            try:
+                posts = post.sub_task.post_set.exclude(id=post.id)
+                find_alerts = posts.filter(alert=True).count()
+                if find_alerts == 0:
+                    post.sub_task.alert = False
+                    post.sub_task.save()
+            except:
+                posts = post.task.post_set.exclude(id=post.id)
+                find_alerts = posts.filter(alert=True).count()
+                if find_alerts == 0:
+                    post.task.alert = False
+                    post.task.save()
         post.save()
         return post
 

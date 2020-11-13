@@ -619,7 +619,7 @@ class ProfileAddSerializer(
             return profile
         except Exception as err:
             raise django_api_exception.ProfileAPIAlreadyExists(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                str(status.HTTP_500_INTERNAL_SERVER_ERROR), self.request,
                 _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 

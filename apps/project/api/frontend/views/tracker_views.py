@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 
 import operator
+import zipfile
 from functools import reduce
+from io import BytesIO
 
 from django.db.models import Q
 from django.conf import settings
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import generics, status, views
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from apps.document.api.frontend.views.tracker_views import TrackerDocumentMixin
@@ -2765,3 +2770,75 @@ class TrackerProjectVideoDownloadView(
     permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2, )
     file_field_name = 'video'
+
+# exports apis
+class TrackerProjectExport(
+        TrackerProjectMixin,
+        QuerysetMixin,
+        generics.RetrieveAPIView, generics.CreateAPIView):
+    """
+    Export project data
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.ProjectExportSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.project_response_include_fields = [
+            'id', 'name', 'description', 'date_start', 'date_end',
+            'company', 'referent', 'tags', 'profiles',
+            'status', 'completed', 'messages_count', 'creator',
+            'date_create', 'date_last_modify', 'typology',
+            'shared_project', 'date_create', 'note', 'logo', 'talks', 'tasks'
+        ]
+        self.task_response_include_fields = [
+            'id', 'name', 'assigned_company', 'date_start',
+            'date_end', 'date_completed', 'progress', 'activities', 'post_set'
+        ]
+        self.activity_response_include_fields = [
+            'id', 'title', 'description', 'status',
+            'datetime_start', 'datetime_end', 'alert', 'workers_in_activity', 'post_set'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+        ]
+        self.talk_response_include_fields = ['id', 'code', 'content_type_name']
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'photo', 'position',
+            'role', 'email', 'fax', 'phone'
+        ]
+        self.user_response_include_fields = [
+            'id', 'first_name', 'last_name'
+        ]
+        super(TrackerProjectExport, self).__init__(*args, **kwargs)
+
+    def zip(self, data):
+        return Response(data, content_type='application/zip')
+
+    def retrieve(self, request, *args, **kwargs):
+        params = request.query_params
+        response = super().retrieve(request, *args, **kwargs)
+        if 'type' in params and params.get('type') == 'zip':
+            response = self.zip(response.data)
+            my_zipfile = zipfile.ZipFile("NewZipfile.zip", mode='w', compression=zipfile.ZIP_DEFLATED)
+            print(my_zipfile)
+            # Write to zip file
+            my_zipfile.write("F:/doc.txt")
+            my_zipfile.write("F:/code.txt")
+            my_zipfile.close()
+            #mem_file = BytesIO()
+            # with zipfile.ZipFile(mem_file, "w") as zip_file:
+            #     zip_file.writestr('test_zip', "content")
+            #
+            # response = HttpResponse(zip_file, content_type='application/zip')
+        return response
+
+    def post(self, request, *args, **kwargs):
+        params = request.query_params
+        if 'type' in params and params.get('type') == 'zip':
+            res = self.zip()
+        response = super().retrieve(request, *args, **kwargs)
+        response['Content-Disposition'] = "attachment; filename=exported_data.zip"
+        response.accepted_media_type = None
+        response.renderer_context = None
+        return response

@@ -76,10 +76,10 @@ def get_files(obj):
 
 def addRedirectUrl(talk):
     if talk.content_type.name == 'company':
-        return "https://www.edilcloud.it/apps/chat"
+        return "https://test.edilcloud.io/apps/chat"
     if talk.content_type.name == 'project':
-        return "https://www.edilcloud.it/apps/projects/{}".format(str(talk.object_id))
-    return "https://www.edilcloud.it"
+        return "https://test.edilcloud.io/apps/projects/{}".format(str(talk.object_id))
+    return "https://test.edilcloud.io"
 
 def addHeading(talk, notify_obj):
     if talk.content_type.name == 'company':

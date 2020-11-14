@@ -1817,7 +1817,7 @@ class TrackerCompanyStaffListAndExternalView(
                 is_creator = True
             else:
                 is_creator = False
-        self.queryset = getattr(profile, generic)(is_creator)
+        self.queryset = getattr(profile, generic)(is_creator, profile)
         return super(TrackerCompanyStaffListAndExternalView, self).get_queryset().filter(status=1)
 
 

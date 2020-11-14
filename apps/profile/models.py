@@ -3214,11 +3214,12 @@ class OwnerProfile(Profile):
         """
         Get all project documents linked to the company/project
         """
-        query = {'projects__company': self.company}
+        query1 = {'projects__company': self.company}
+        query2 = {'projects__profiles_id': self.id}
         if project:
-            query.update({'projects__id': project.id})
+            query1.update({'projects__id': project.id})
 
-        return Document.objects.filter(**query)
+        return Document.objects.filter(Q(**query1) | Q(**query2))
 
     def list_project_parent_documents(self, project_id):
         """
@@ -3359,11 +3360,12 @@ class OwnerProfile(Profile):
         """
         Get all project photos of the company/project
         """
-        query = {'projects__company': self.company}
+        query1 = {'projects__company': self.company}
+        query2 = {'projects__profiles__id': self.id}
         if project:
-            query.update({'projects__id': project.id})
+            query1.update({'projects__id': project.id})
 
-        return Photo.objects.filter(**query)
+        return Photo.objects.filter(Q(**query1) | Q(**query2))
 
     def list_bom_photos(self):
         """
@@ -3490,11 +3492,12 @@ class OwnerProfile(Profile):
         """
         Get all project videos of the company
         """
-        query = {'projects__company': self.company}
+        query1 = {'projects__company': self.company}
+        query2 = {'projects__profiles__id': self.id}
         if project:
-            query.update({'projects__id': project.id})
+            query1.update({'projects__id': project.id})
 
-        return Video.objects.filter(**query)
+        return Video.objects.filter(Q(**query1) | Q(**query2))
 
     def list_bom_videos(self):
         """

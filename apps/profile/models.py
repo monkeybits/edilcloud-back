@@ -1526,12 +1526,12 @@ class OwnerProfile(Profile):
         """
         return self.company.profiles.company_invitation_approve()
 
-    def list_approve_profiles_and_external(self, is_creator):
+    def list_approve_profiles_and_external(self, is_creator, profile):
         """
         Get all company profiles linked to the company and external owners
         """
         print(is_creator)
-        if is_creator:
+        if is_creator or profile.role == 'o' or profile.role == 'd':
             return Profile.objects.filter(
                 Q(company__profiles__in=self.company.profiles.company_invitation_approve()) | \
                 Q(role='o') | \

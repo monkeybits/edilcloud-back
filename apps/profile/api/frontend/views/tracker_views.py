@@ -454,7 +454,7 @@ class TrackerCompanyProfileEditView(
         self.profile_request_include_fields = [
             'first_name', 'last_name', 'email',
             'language', 'position', 'user', 'phone',
-            'fax', 'mobile', 'note', 'role', 'photo',             'can_access_files', 'can_access_chat'
+            'fax', 'mobile', 'note', 'role', 'photo', 'can_access_files', 'can_access_chat'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email', 'phone',

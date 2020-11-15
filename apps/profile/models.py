@@ -1518,13 +1518,20 @@ class OwnerProfile(Profile):
         """
         Get all company profiles linked to the company
         """
-        return self.company.profiles.company_invitation_waiting()
+        complete_staff = []
+        waiting_staff = self.company.profiles.company_invitation_waiting().filter(status=1)
+        for staff in waiting_staff:
+            complete_staff.append(staff)
+        requested_staff = self.company.profiles.company_invitation_request().filter(status=1)
+        for staff in requested_staff:
+            complete_staff.append(staff)
+        return complete_staff
 
     def list_approve_profiles(self):
         """
         Get all company profiles linked to the company
         """
-        return self.company.profiles.company_invitation_approve()
+        return self.company.profiles.company_invitation_approve().filter(status=1)
 
     def list_approve_profiles_and_external(self, is_creator, profile):
         """

@@ -1720,7 +1720,7 @@ class TrackerCompanyStaffListView(
         if 'exclude__role__in' in self.request.query_params:
             params = self.request.query_params.get('exclude__role__in')
             self.queryset = self.queryset.exclude(role__in=params.split(','))
-        return super(TrackerCompanyStaffListView, self).get_queryset().filter(status=1)
+        return super(TrackerCompanyStaffListView, self).get_queryset()
 
 class TrackerProjectStaffListView(
         JWTPayloadMixin,

@@ -1874,7 +1874,7 @@ class TrackerTeamInviationListView(
         try:
             payload = self.get_payload()
             profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-            self.queryset = Team.objects.filter(profile=profile.id, status=0)
+            self.queryset = Team.objects.filter(profile=profile.id, status=0, invitation_refuse_date__isnull=True)
             return super(TrackerTeamInviationListView, self).get_queryset()
         except ObjectDoesNotExist as err:
             raise django_api_exception.ProjectAPIDoesNotExist(

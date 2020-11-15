@@ -44,23 +44,6 @@ services:
     links:
       - db
       - redis
-#  pushpin:
-#    image: fanout/pushpin
-#    networks:
-#      - streams
-#    environment:
-#      - "target=web:8000"
-#      - "LOGNAME=nobody"
-#    volumes:
-#      - "./pushpin_routes:/etc/pushpin/routes"
-#    depends_on:
-#      - web
-#    ports:
-#      - "5561:5561"
-#      - "5562:5562"
-#      - "5563:5563"
-#      - "7999:7999"
-
 volumes:
   postgres_data:
 

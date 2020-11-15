@@ -94,7 +94,7 @@ class ProfileQuerySet(models.QuerySet):
         return self.filter(
             status=1,
             user__isnull=True,
-            company_invitation_date__isnull=True,
+            company_invitation_date__isnull=False,
             profile_invitation_date__isnull=False,
             invitation_refuse_date__isnull=True,
         )
@@ -102,9 +102,9 @@ class ProfileQuerySet(models.QuerySet):
     def company_invitation_waiting(self):
         return self.filter(
             status=1,
-            user__isnull=True,
+            user__isnull=False,
             company_invitation_date__isnull=False,
-            profile_invitation_date__isnull=False,
+            profile_invitation_date__isnull=True,
             invitation_refuse_date__isnull=True,
         )
 

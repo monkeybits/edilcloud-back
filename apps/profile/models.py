@@ -963,7 +963,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         accept_url = self.get_accept_url()
         refuse_url = self.get_refuse_url()
 
-        endpoint = os.path.join(settings.PROTOCOL + ':/', settings.BASE_URL, 'profile')
+        endpoint = os.path.join(settings.PROTOCOL + ':/', settings.BASE_URL, 'apps/companies')
         context = {
             'logo_url': os.path.join(
                 settings.PROTOCOL + '://',
@@ -2396,7 +2396,7 @@ class OwnerProfile(Profile):
         """
         Disable a company project member, if it is enabled
         """
-        member = self.list_waiting_members(member.project.id).get(id=member.id)
+        #member = self.list_waiting_members(member.project.id).get(id=member.id)
         if member.status == 1:
             member.status = 0
             member.save()

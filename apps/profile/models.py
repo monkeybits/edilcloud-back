@@ -883,6 +883,19 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             return preference
         raise django_exception.OwnerProfilePermissionDenied(_('You can\'t edit others preference'))
 
+    def edit_profile(self, profile_dict):
+        """
+        Updates main profile
+        :return: profile obj
+        """
+        # PS: We could add object level permission in two different ways.
+        # 1. If condition (Doesn't return any exception) i.e. if MyModel(id=1) == MyModel(id=1):
+        # 2. The below codebase
+        profile = Profile.objects.filter(id=self.id).get(id=profile_dict['id'])
+        profile.__dict__.update(**profile_dict)
+        profile.save()
+        return profile
+
     # ------ PROFILE CLONE ------
 
     def clone(self):

@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+import os
 
+from io import BytesIO
 import operator
 import zipfile
 from functools import reduce
 from io import BytesIO
+from wsgiref.util import FileWrapper
 
+import magic
 from django.db.models import Q
 from django.conf import settings
 from django.http import FileResponse, HttpResponse
@@ -29,6 +33,8 @@ from apps.message.api.frontend import serializers as message_serializers
 from apps.quotation.api.frontend import serializers as quotation_serializers
 from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
+from web.settings import MEDIA_ROOT
+
 
 class TrackerProjectMixin(
         JWTPayloadMixin):
@@ -2819,18 +2825,33 @@ class TrackerProjectExport(
         params = request.query_params
         response = super().retrieve(request, *args, **kwargs)
         if 'type' in params and params.get('type') == 'zip':
-            response = self.zip(response.data)
-            my_zipfile = zipfile.ZipFile("NewZipfile.zip", mode='w', compression=zipfile.ZIP_DEFLATED)
-            print(my_zipfile)
-            # Write to zip file
-            my_zipfile.write("F:/doc.txt")
-            my_zipfile.write("F:/code.txt")
-            my_zipfile.close()
-            #mem_file = BytesIO()
-            # with zipfile.ZipFile(mem_file, "w") as zip_file:
-            #     zip_file.writestr('test_zip', "content")
-            #
-            # response = HttpResponse(zip_file, content_type='application/zip')
+            pass
+        #     response = self.zip(response.data)
+        #     filenames = [MEDIA_ROOT + "/doc.txt", MEDIA_ROOT + "/code.txt"]
+        #
+        #     # Folder name in ZIP archive which contains the above files
+        #     # E.g [thearchive.zip]/somefiles/file2.txt
+        #     # FIXME: Set this to something better
+        #     zip_subdir = "somefiles"
+        #     zip_filename = "%s.zip" % zip_subdir
+        #
+        #     # Open StringIO to grab in-memory ZIP contents
+        #     s = BytesIO()
+        #     zf = zipfile.ZipFile(s, "w")
+        #     for fpath in filenames:
+        #         fdir, fname = os.path.split(fpath)
+        #         zip_path = os.path.join(zip_subdir, fname)
+        #         # Add file, at correct path
+        #         zf.write(fpath, zip_path)
+        #     zf.close()
+        #     # response = HttpResponse(zip_file, content_type='application/zip')
+        # resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
+        # resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+
+        with open(MEDIA_ROOT + "/doc.txt", 'rb') as file:
+            content_type = magic.from_file(MEDIA_ROOT + "/12121212121212121212121212121212.pdf", mime=True)
+            response = HttpResponse(FileWrapper(file), content_type=content_type)
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(file.name))
         return response
 
     def post(self, request, *args, **kwargs):

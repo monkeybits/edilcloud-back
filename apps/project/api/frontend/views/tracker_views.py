@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+from datetime import datetime
 
 from io import BytesIO
 import operator
@@ -2826,33 +2827,33 @@ class TrackerProjectExport(
         response = super().retrieve(request, *args, **kwargs)
         if 'type' in params and params.get('type') == 'zip':
             pass
-        #     response = self.zip(response.data)
-        #     filenames = [MEDIA_ROOT + "/doc.txt", MEDIA_ROOT + "/code.txt"]
-        #
-        #     # Folder name in ZIP archive which contains the above files
-        #     # E.g [thearchive.zip]/somefiles/file2.txt
-        #     # FIXME: Set this to something better
-        #     zip_subdir = "somefiles"
-        #     zip_filename = "%s.zip" % zip_subdir
-        #
-        #     # Open StringIO to grab in-memory ZIP contents
-        #     s = BytesIO()
-        #     zf = zipfile.ZipFile(s, "w")
-        #     for fpath in filenames:
-        #         fdir, fname = os.path.split(fpath)
-        #         zip_path = os.path.join(zip_subdir, fname)
-        #         # Add file, at correct path
-        #         zf.write(fpath, zip_path)
-        #     zf.close()
-        #     # response = HttpResponse(zip_file, content_type='application/zip')
-        # resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
-        # resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+            response = self.zip(response.data)
+            filenames = [MEDIA_ROOT + "/doc.txt", MEDIA_ROOT + "/code.txt"]
 
-        with open(MEDIA_ROOT + "/doc.txt", 'rb') as file:
-            content_type = magic.from_file(MEDIA_ROOT + "/12121212121212121212121212121212.pdf", mime=True)
-            response = HttpResponse(FileWrapper(file), content_type=content_type)
-            response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(file.name))
+            # Folder name in ZIP archive which contains the above files
+            # E.g [thearchive.zip]/somefiles/file2.txt
+            # FIXME: Set this to something better
+            zip_subdir = "report" + str(datetime.now())
+            zip_filename = "%s.zip" % zip_subdir
+
+            # Open StringIO to grab in-memory ZIP contents
+            s = BytesIO()
+            zf = zipfile.ZipFile(s, "w")
+            for fpath in filenames:
+                fdir, fname = os.path.split(fpath)
+                zip_path = os.path.join(zip_subdir, fname)
+                # Add file, at correct path
+                zf.write(fpath, zip_path)
+            zf.close()
+            # response = HttpResponse(zip_file, content_type='application/zip')
+            resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
+            resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+            return resp
         return response
+        # with open(MEDIA_ROOT + "/doc.txt", 'rb') as file:
+        #     content_type = magic.from_file(MEDIA_ROOT + "/12121212121212121212121212121212.pdf", mime=True)
+        #     response = HttpResponse(FileWrapper(file), content_type=content_type)
+        #     response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(file.name))
 
     def post(self, request, *args, **kwargs):
         params = request.query_params

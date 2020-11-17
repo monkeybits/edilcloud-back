@@ -405,6 +405,11 @@ tracker_urlpatterns = [
         tracker_views.TrackerProjectVideoDownloadView.as_view(),
         name='tracker_project_document_download'
     ),
+    url(
+        r'^project/(?P<pk>\d+)/export/$',
+        tracker_views.TrackerProjectExport.as_view(),
+        name='tracker_project_export'
+    ),
 ]
 
 urlpatterns = user_urlpatterns + generic_urlpatterns + tracker_urlpatterns

@@ -1,15 +1,25 @@
 # -*- coding: utf-8 -*-
+import os
+from datetime import datetime
 
+from io import BytesIO
 import operator
+import zipfile
 from functools import reduce
+from io import BytesIO
+from wsgiref.util import FileWrapper
 
+import magic
 from django.db.models import Q
 from django.conf import settings
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import generics, status, views
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from apps.document.api.frontend.views.tracker_views import TrackerDocumentMixin
@@ -24,6 +34,8 @@ from apps.message.api.frontend import serializers as message_serializers
 from apps.quotation.api.frontend import serializers as quotation_serializers
 from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
+from web.settings import MEDIA_ROOT
+
 
 class TrackerProjectMixin(
         JWTPayloadMixin):
@@ -2765,3 +2777,90 @@ class TrackerProjectVideoDownloadView(
     permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2, )
     file_field_name = 'video'
+
+# exports apis
+class TrackerProjectExport(
+        TrackerProjectMixin,
+        QuerysetMixin,
+        generics.RetrieveAPIView, generics.CreateAPIView):
+    """
+    Export project data
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.ProjectExportSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.project_response_include_fields = [
+            'id', 'name', 'description', 'date_start', 'date_end',
+            'company', 'referent', 'tags', 'profiles',
+            'status', 'completed', 'messages_count', 'creator',
+            'date_create', 'date_last_modify', 'typology',
+            'shared_project', 'date_create', 'note', 'logo', 'talks', 'tasks'
+        ]
+        self.task_response_include_fields = [
+            'id', 'name', 'assigned_company', 'date_start',
+            'date_end', 'date_completed', 'progress', 'activities', 'post_set'
+        ]
+        self.activity_response_include_fields = [
+            'id', 'title', 'description', 'status',
+            'datetime_start', 'datetime_end', 'alert', 'workers_in_activity', 'post_set'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+        ]
+        self.talk_response_include_fields = ['id', 'code', 'content_type_name']
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'photo', 'position',
+            'role', 'email', 'fax', 'phone'
+        ]
+        self.user_response_include_fields = [
+            'id', 'first_name', 'last_name'
+        ]
+        super(TrackerProjectExport, self).__init__(*args, **kwargs)
+
+    def zip(self, data):
+        return Response(data, content_type='application/zip')
+
+    def retrieve(self, request, *args, **kwargs):
+        params = request.query_params
+        response = super().retrieve(request, *args, **kwargs)
+        if 'type' in params and params.get('type') == 'zip':
+            pass
+            response = self.zip(response.data)
+            filenames = [MEDIA_ROOT + "/doc.txt", MEDIA_ROOT + "/code.txt"]
+
+            # Folder name in ZIP archive which contains the above files
+            # E.g [thearchive.zip]/somefiles/file2.txt
+            # FIXME: Set this to something better
+            zip_subdir = "report" + str(datetime.now())
+            zip_filename = "%s.zip" % zip_subdir
+
+            # Open StringIO to grab in-memory ZIP contents
+            s = BytesIO()
+            zf = zipfile.ZipFile(s, "w")
+            for fpath in filenames:
+                fdir, fname = os.path.split(fpath)
+                zip_path = os.path.join(zip_subdir, fname)
+                # Add file, at correct path
+                zf.write(fpath, zip_path)
+            zf.close()
+            # response = HttpResponse(zip_file, content_type='application/zip')
+            resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
+            resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+            return resp
+        return response
+        # with open(MEDIA_ROOT + "/doc.txt", 'rb') as file:
+        #     content_type = magic.from_file(MEDIA_ROOT + "/12121212121212121212121212121212.pdf", mime=True)
+        #     response = HttpResponse(FileWrapper(file), content_type=content_type)
+        #     response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(file.name))
+
+    def post(self, request, *args, **kwargs):
+        params = request.query_params
+        if 'type' in params and params.get('type') == 'zip':
+            res = self.zip()
+        response = super().retrieve(request, *args, **kwargs)
+        response['Content-Disposition'] = "attachment; filename=exported_data.zip"
+        response.accepted_media_type = None
+        response.renderer_context = None
+        return response

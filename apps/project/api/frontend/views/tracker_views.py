@@ -34,7 +34,7 @@ from apps.message.api.frontend import serializers as message_serializers
 from apps.quotation.api.frontend import serializers as quotation_serializers
 from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
-from web.settings import MEDIA_ROOT
+from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR
 
 
 class TrackerProjectMixin(
@@ -2819,48 +2819,85 @@ class TrackerProjectExport(
         ]
         super(TrackerProjectExport, self).__init__(*args, **kwargs)
 
-    def zip(self, data):
-        return Response(data, content_type='application/zip')
-
-    def retrieve(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         params = request.query_params
         response = super().retrieve(request, *args, **kwargs)
+        data = response.data
+        tasks = data['tasks']
+        zip_subdir = "Report_" + str(datetime.now())
+        zip_filename = "%s.zip" % zip_subdir
+        # Open StringIO to grab in-memory ZIP contents
+        s = BytesIO()
+        zf = zipfile.ZipFile(s, "w")
+
         if 'type' in params and params.get('type') == 'zip':
-            pass
-            response = self.zip(response.data)
-            filenames = [MEDIA_ROOT + "/doc.txt", MEDIA_ROOT + "/code.txt"]
+            for task in tasks:
+                filenames = []
 
-            # Folder name in ZIP archive which contains the above files
-            # E.g [thearchive.zip]/somefiles/file2.txt
-            # FIXME: Set this to something better
-            zip_subdir = "report" + str(datetime.now())
-            zip_filename = "%s.zip" % zip_subdir
+                # get task medias
+                task_mediass = MediaAssignment.objects.filter(task=task['id'])
+                for media in task_mediass:
+                    media_url = media.media.url
+                    filenames.append(BASE_DIR + media_url)
+                # get task posts medias
+                for post in task['post_set']:
+                    post_mediass = MediaAssignment.objects.filter(post=post['id'])
+                    for media in post_mediass:
+                        media_url = media.media.url
+                        filenames.append(BASE_DIR + media_url)
+                    # get task post comments medias
+                    for comment in post['comment_set']:
+                        comment_mediass = MediaAssignment.objects.filter(comment=comment['id'])
+                        for media in comment_mediass:
+                            media_url = media.media.url
+                            filenames.append(BASE_DIR + media_url)
+                        # get task post comment replies medias
+                        for reply in comment['replies_set']:
+                            reply_mediass = MediaAssignment.objects.filter(comment=reply['id'])
+                            for media in reply_mediass:
+                                media_url = media.media.url
+                                filenames.append(BASE_DIR + media_url)
+                # get activity medias
+                for activity in task['activities']:
+                    activity_mediass = MediaAssignment.objects.filter(activity=activity['id'])
+                    for media in activity_mediass:
+                        media_url = media.media.url
+                        filenames.append(BASE_DIR + media_url)
+                    # get activity posts medias
+                    for post in activity['post_set']:
+                        post_mediass = MediaAssignment.objects.filter(post=post['id'])
+                        for media in post_mediass:
+                            media_url = media.media.url
+                            filenames.append(BASE_DIR + media_url)
+                        # get activity post comments medias
+                        for comment in post['comment_set']:
+                            comment_mediass = MediaAssignment.objects.filter(comment=comment['id'])
+                            for media in comment_mediass:
+                                media_url = media.media.url
+                                filenames.append(BASE_DIR + media_url)
+                            # get activity post comment replies medias
+                            for reply in comment['replies_set']:
+                                reply_mediass = MediaAssignment.objects.filter(comment=reply['id'])
+                                for media in reply_mediass:
+                                    media_url = media.media.url
+                                    filenames.append(BASE_DIR + media_url)
 
-            # Open StringIO to grab in-memory ZIP contents
-            s = BytesIO()
-            zf = zipfile.ZipFile(s, "w")
-            for fpath in filenames:
-                fdir, fname = os.path.split(fpath)
+                for fpath in filenames:
+                    fdir, fname = os.path.split(fpath)
+                    zip_path = os.path.join(zip_subdir, "Task: " + task['name'], fname)
+                    # Add file, at correct path
+                    zf.write(fpath, zip_path)
+
+            summary_pdf = list(self.request.FILES.values())
+            if len(summary_pdf) > 0:
+                with open(BASE_DIR + '/media/reports/' + summary_pdf[0].name, 'wb') as f:
+                    f.write(summary_pdf[0].read())
+                fdir, fname = os.path.split(BASE_DIR + '/media/reports/' + summary_pdf[0].name)
                 zip_path = os.path.join(zip_subdir, fname)
                 # Add file, at correct path
                 zf.write(fpath, zip_path)
             zf.close()
-            # response = HttpResponse(zip_file, content_type='application/zip')
             resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
             resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
             return resp
-        return response
-        # with open(MEDIA_ROOT + "/doc.txt", 'rb') as file:
-        #     content_type = magic.from_file(MEDIA_ROOT + "/12121212121212121212121212121212.pdf", mime=True)
-        #     response = HttpResponse(FileWrapper(file), content_type=content_type)
-        #     response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(file.name))
-
-    def post(self, request, *args, **kwargs):
-        params = request.query_params
-        if 'type' in params and params.get('type') == 'zip':
-            res = self.zip()
-        response = super().retrieve(request, *args, **kwargs)
-        response['Content-Disposition'] = "attachment; filename=exported_data.zip"
-        response.accepted_media_type = None
-        response.renderer_context = None
         return response

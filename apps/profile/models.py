@@ -3235,7 +3235,7 @@ class OwnerProfile(Profile):
         Get all project documents linked to the company/project
         """
         query1 = {'projects__company': self.company}
-        query2 = {'projects__profiles_id': self.id}
+        query2 = {'projects__profiles__id': self.id}
         if project:
             query1.update({'projects__id': project.id})
 

@@ -25,6 +25,9 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from rest_framework import status
+
+from web.drf import exceptions as django_api_exception
 
 from . import managers
 # Todo: May be, use the following format: from apps.app import models as app_models
@@ -1890,8 +1893,11 @@ class OwnerProfile(Profile):
         Delete a company project
         """
         project = self.get_project(project.id)
-        project.delete()
-
+        if project.creator == self.user:
+            project.delete()
+        raise django_api_exception.ProfileAPIDoesNotMatch(
+            status.HTTP_403_FORBIDDEN, self.request, _('You are not the project owner!')
+        )
     # ------ PROJECT TASK ------
 
     def create_task(self, task_dict):

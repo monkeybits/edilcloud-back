@@ -1743,7 +1743,7 @@ class TaskWithActivitiesSerializer(
 
     class Meta:
         model = models.Task
-        fields = ['name', 'date_start', 'date_end', 'date_completed', 'progress',
+        fields = ['id', 'name', 'date_start', 'date_end', 'date_completed', 'progress',
                   'alert', 'note', 'activities', 'post_set']
 
 

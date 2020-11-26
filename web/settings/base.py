@@ -14,6 +14,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
 
 SETTINGS_PATH = os.path.abspath(os.path.dirname(__file__))
 
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 PROJECT_PATH = os.path.dirname(SETTINGS_PATH)
 
 BASE_SITE_DOMAIN = 'www.whistle.it'

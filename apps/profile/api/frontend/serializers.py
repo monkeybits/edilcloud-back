@@ -480,6 +480,11 @@ class ProfileSerializer(
         model = models.Profile
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:

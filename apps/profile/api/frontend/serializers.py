@@ -101,7 +101,7 @@ class TalkSerializer(
 
 class CompanySerializer(
         JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+        DynamicFieldsModelSerializer, serializers.ModelSerializer):
     projects_count = serializers.ReadOnlyField(source='get_projects_count')
     messages_count = serializers.ReadOnlyField(source='get_messages_count')
     tags_count = serializers.ReadOnlyField(source='get_tags_count')

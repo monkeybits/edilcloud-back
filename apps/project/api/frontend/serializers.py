@@ -1162,7 +1162,7 @@ class TeamSerializer(
     DynamicFieldsModelSerializer):
     role = serializers.ReadOnlyField(source="get_role")
     project = ProjectSerializer()
-    profile = profile_serializers.ProfileSerializer(many=True)
+    profile = profile_serializers.ProfileSerializer()
 
     class Meta:
         model = models.Team
@@ -1206,7 +1206,7 @@ class TeamAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
-    profile = profile_serializers.ProfileSerializer(many=True)
+    profile = profile_serializers.ProfileSerializer()
     class Meta:
         model = models.Team
         fields = '__all__'

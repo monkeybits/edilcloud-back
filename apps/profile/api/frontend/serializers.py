@@ -101,7 +101,7 @@ class TalkSerializer(
 
 class CompanySerializer(
         JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+        DynamicFieldsModelSerializer, serializers.ModelSerializer):
     projects_count = serializers.ReadOnlyField(source='get_projects_count')
     messages_count = serializers.ReadOnlyField(source='get_messages_count')
     tags_count = serializers.ReadOnlyField(source='get_tags_count')
@@ -480,6 +480,11 @@ class ProfileSerializer(
         model = models.Profile
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:

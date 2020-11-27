@@ -104,7 +104,7 @@ class TrackerProjectListView(
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'status', 'completed',
-            'shared_companies', 'logo'
+            'shared_companies', 'logo', 'address'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'ssn', 'logo'
@@ -254,12 +254,12 @@ class TrackerProjectAddView(
     def __init__(self, *args, **kwargs):
         self.project_request_include_fields = [
             'name', 'description', 'date_start', 'date_end',
-            'referent', 'tags', 'status', 'note', 'logo'
+            'referent', 'tags', 'status', 'note', 'logo', 'address'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'status', 'completed',
-            'profiles', 'shared_companies', 'typology', 'logo'
+            'profiles', 'shared_companies', 'typology', 'logo', 'address'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'ssn', 'logo'
@@ -284,12 +284,12 @@ class TrackerProjectEditView(
     def __init__(self, *args, **kwargs):
         self.project_request_include_fields = [
             'name', 'description', 'date_start', 'date_end',
-            'referent', 'tags', 'note', 'logo'
+            'referent', 'tags', 'note', 'logo', 'address'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'status', 'completed',
-            'profiles', 'shared_companies', 'typology', 'logo'
+            'profiles', 'shared_companies', 'typology', 'logo', 'address'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'ssn', 'logo'

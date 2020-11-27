@@ -119,6 +119,11 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
         verbose_name=_("name"),
     )
     description = models.TextField(
+        blank=True,
+        verbose_name=_('description'),
+    )
+    address = models.TextField(
+        blank=True,
         verbose_name=_('description'),
     )
     date_start = models.DateField(

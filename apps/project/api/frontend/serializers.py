@@ -707,6 +707,8 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
     author = ProfileSerializer()
     media_set = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
+    task = serializers.SerializerMethodField()
+    sub_task = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Post
@@ -777,6 +779,12 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             project = obj.sub_task.task.project
 
         return ProjectEditSerializer(project).data
+
+    def get_task(self, obj):
+        return TaskEditSerializer(obj.task).data
+
+    def get_sub_task(self, obj):
+        return TaskActivityEditSerializer(obj.sub_task).data
 
 class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
     media_set = serializers.SerializerMethodField()

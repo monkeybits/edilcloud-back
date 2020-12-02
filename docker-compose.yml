@@ -44,8 +44,6 @@ services:
     links:
       - db
       - redis
-
-
 volumes:
   postgres_data:
 

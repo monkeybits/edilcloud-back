@@ -706,6 +706,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
     comment_set = CommentSerializer(many=True)
     author = ProfileSerializer()
     media_set = serializers.SerializerMethodField()
+    project = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Post
@@ -715,6 +716,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'published_date',
             'sub_task',
             'task',
+            'project',
             'media_set',
             'text',
             'comment_set',
@@ -767,6 +769,14 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             if serializer.is_valid():
                 comments_list.append(serializer.data)
         return comments_list
+
+    def get_project(self, obj):
+        if obj.task:
+            project = obj.task.project
+        else:
+            project = obj.sub_task.task.project
+
+        return ProjectEditSerializer(project).data
 
 class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
     media_set = serializers.SerializerMethodField()
@@ -1378,7 +1388,7 @@ class TaskActivitySerializer(
         for worker in workers:
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
             team_data = TeamAddSerializer(team_member).data
-            profile = Profile.objects.get(id=team_data['profile'])
+            profile = Profile.objects.get(id=team_data['profile']['id'])
             team_data['profile'] = {
                 'id': profile.id,
                 'company': {

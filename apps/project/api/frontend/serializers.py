@@ -838,28 +838,8 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         list_workers = []
         workers = team.filter(role='w')
         for worker in workers:
-            is_exists = obj.workers.filter(id=worker.profile.id).exists()
-            try:
-                photo_url = worker.profile.photo.url
-                protocol = self.context['request'].is_secure()
-                if protocol:
-                    protocol = 'https://'
-                else:
-                    protocol = 'http://'
-                host = self.context['request'].get_host()
-                media_url = protocol + host + photo_url
-            except:
-                media_url = None
-            list_workers.append(
-                {
-                    'id': worker.id,
-                    'first_name': worker.profile.first_name,
-                    'last_name': worker.profile.last_name,
-                    'photo': media_url,
-                    'company': worker.profile.company.name,
-                    'is_exists': is_exists
-                }
-            )
+            member = TeamSerializer(worker).data
+            list_workers.append(member)
         return list_workers
 
     def get_media_set(self, obj):
@@ -1396,7 +1376,7 @@ class TaskActivitySerializer(
         for worker in workers:
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
             team_data = TeamAddSerializer(team_member).data
-            profile = Profile.objects.get(id=team_data['profile']['id'])
+            profile = Profile.objects.get(id=team_data['profile'])
             team_data['profile'] = {
                 'id': profile.id,
                 'company': {

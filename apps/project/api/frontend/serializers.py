@@ -1238,7 +1238,7 @@ class TeamAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
-    profile = profile_serializers.ProfileEditSerializer()
+    #profile = profile_serializers.ProfileEditSerializer()
 
     class Meta:
         model = models.Team

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 from rest_framework import serializers
 
@@ -11,6 +12,7 @@ from ... import models
 class NotifySerializer(
         DynamicFieldsModelSerializer):
     sender = profile_serializers.ProfileSerializer()
+    body = serializers.SerializerMethodField()
     content_type = serializers.SerializerMethodField(source='get_content_type')
 
     class Meta:
@@ -26,6 +28,8 @@ class NotifySerializer(
     def get_content_type(self, obj):
         return obj.content_type.name
 
+    def get_body(self, obj):
+        return json.loads(obj.body)
 
 class NotificationRecipientSerializer(
         DynamicFieldsModelSerializer):

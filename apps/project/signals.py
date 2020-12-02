@@ -91,7 +91,7 @@ def team_notification(sender, instance, **kwargs):
             subject = _('Staff (%s) deleted in project (%s)'% (instance.profile.last_name, instance.project.name))
 
         endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL,
-                                'apps/projects/{}'.format(str(instance.project.id)))
+                                'apps/projects/{}/team'.format(str(instance.project.id)))
         body = json.dumps({
             'content': subject.__str__(),
             'url': endpoint
@@ -156,7 +156,7 @@ def task_notification(sender, instance, **kwargs):
             subject = _('Task (%s) deleted in project (%s)'% (instance.name, instance.project.name))
 
         endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL,
-                                'apps/projects/{}'.format(str(instance.project.id)))
+                                'apps/projects/{}/task/{}'.format(str(instance.project.id), str(instance.id)))
         body = json.dumps({
             'content': subject.__str__(),
             'url': endpoint
@@ -212,7 +212,7 @@ def activity_notification(sender, instance, **kwargs):
             subject = _('Activity (%s) deleted in project (%s)'% (instance.title, instance.task.project.name))
 
         endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL,
-                                'apps/projects/{}'.format(str(instance.task.project.id)))
+                                'apps/projects/{}/activity/{}'.format(str(instance.task.project.id), str(instance.id)))
         body = json.dumps({
             'content': subject.__str__(),
             'url': endpoint
@@ -284,10 +284,10 @@ def post_notification(sender, instance, **kwargs):
             else:
                 subject = _('Post deleted in task (%s)' % (instance.task.name))
         try:
-            endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL, 'apps/projects/{}'.format(str(instance.task.project.id)))
+            endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL, 'apps/projects/{}/task/{}/post/{}'.format(str(instance.task.project.id), str(instance.task.id), str(instance.id)))
         except:
             endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL,
-                                    'apps/projects/{}'.format(str(instance.activity.task.project.id)))
+                                    'apps/projects/{}/task/{}/activity/{}/post/{}'.format(str(instance.activity.task.project.id), str(instance.activity.task.id), str(instance.activity.id), str(instance.id)))
         body = json.dumps({
             'content': subject.__str__(),
             'url': endpoint
@@ -359,10 +359,10 @@ def comment_notification(sender, instance, **kwargs):
             else:
                 subject = _('Comment deleted in post task (%s)' % (instance.post.task.name))
         try:
-            endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL, 'apps/projects/{}'.format(str(instance.post.task.project.id)))
+            endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL, 'apps/projects/{}/task/{}/post/{}/comment/{}'.format(str(instance.post.task.project.id), str(instance.post.task.id), str(instance.post.id), str(instance.id)))
         except:
             endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL,
-                                    'apps/projects/{}'.format(str(instance.post.activity.task.project.id)))
+                                    'apps/projects/{}/task/{}/activity/{}/post/{}/comment/{}'.format(str(instance.post.activity.task.project.id), str(instance.post.activity.task.id), str(instance.post.activity.id), str(instance.post.id), str(instance.id)))
         body = json.dumps({
             'content': subject.__str__(),
             'url': endpoint

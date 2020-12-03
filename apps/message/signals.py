@@ -196,6 +196,7 @@ def message_notification(sender, instance, **kwargs):
             "contents": {
                 "en": "{} {}: {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name, instance.body if instance.body != '' else emoji.emojize(':camera:'))
             },
+            "content-available": 1,
             "headings": {
                 "en": addHeading(instance.talk, notify_obj)
             },

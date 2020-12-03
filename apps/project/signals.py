@@ -217,7 +217,8 @@ def activity_notification(sender, instance, **kwargs):
         endpoint = '/apps/projects/{}/task'.format(str(instance.task.project.id))
         body = json.dumps({
             'content': subject.__str__(),
-            'url': endpoint
+            'url': endpoint,
+            'task_id': instance.task.id
         })
         type = ContentType.objects.get(model=sender.__name__.lower())
 

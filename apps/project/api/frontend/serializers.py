@@ -706,6 +706,9 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
     comment_set = CommentSerializer(many=True)
     author = ProfileSerializer()
     media_set = serializers.SerializerMethodField()
+    project = serializers.SerializerMethodField()
+    task = serializers.SerializerMethodField()
+    sub_task = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Post
@@ -715,6 +718,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'published_date',
             'sub_task',
             'task',
+            'project',
             'media_set',
             'text',
             'comment_set',
@@ -768,10 +772,25 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
                 comments_list.append(serializer.data)
         return comments_list
 
+    def get_project(self, obj):
+        if obj.task:
+            project = obj.task.project
+        else:
+            project = obj.sub_task.task.project
+
+        return ProjectEditSerializer(project).data
+
+    def get_task(self, obj):
+        return TaskEditSerializer(obj.task).data
+
+    def get_sub_task(self, obj):
+        return TaskActivityEditSerializer(obj.sub_task).data
+
 class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
     media_set = serializers.SerializerMethodField()
     workers = ProfileSerializer(many=True, read_only=True)
     team_workers = serializers.SerializerMethodField()
+    team_not_workers = serializers.SerializerMethodField()
     workers_in_activity = serializers.SerializerMethodField()
     post_set = PostSerializer(many=True)
 
@@ -808,10 +827,6 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         return team_list
 
     def get_team_workers(self, obj):
-        request = self.context['request']
-        token = request.META['HTTP_AUTHORIZATION'].split()[1]
-        payload = jwt_decode_handler(token)
-        profile = request.user.get_profile_by_id(payload['extra']['profile']['id'])
         team = obj.task.project.members.filter(
             status=1,
             project_invitation_date__isnull=False,
@@ -820,28 +835,21 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         list_workers = []
         workers = team.filter(role='w')
         for worker in workers:
-            is_exists = obj.workers.filter(id=worker.profile.id).exists()
-            try:
-                photo_url = worker.profile.photo.url
-                protocol = self.context['request'].is_secure()
-                if protocol:
-                    protocol = 'https://'
-                else:
-                    protocol = 'http://'
-                host = self.context['request'].get_host()
-                media_url = protocol + host + photo_url
-            except:
-                media_url = None
-            list_workers.append(
-                {
-                    'id': worker.id,
-                    'first_name': worker.profile.first_name,
-                    'last_name': worker.profile.last_name,
-                    'photo': media_url,
-                    'company': worker.profile.company.name,
-                    'is_exists': is_exists
-                }
-            )
+            member = TeamBasicSerializer(worker).data
+            list_workers.append(member)
+        return list_workers
+
+    def get_team_not_workers(self, obj):
+        team = obj.task.project.members.filter(
+            status=1,
+            project_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=True,
+        )
+        list_workers = []
+        workers = team.exclude(role='w')
+        for worker in workers:
+            member = TeamBasicSerializer(worker).data
+            list_workers.append(member)
         return list_workers
 
     def get_media_set(self, obj):
@@ -1171,6 +1179,19 @@ class TaskDisableSerializer(
         task = self.profile.disable_task(instance)
         return task
 
+class TeamBasicSerializer(
+    DynamicFieldsModelSerializer):
+    role = serializers.ReadOnlyField(source="get_role")
+
+    class Meta:
+        model = models.Team
+        fields = '__all__'
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.team_response_include_fields
+        return super(TeamBasicSerializer, self).get_field_names(*args, **kwargs)
 
 class TeamSerializer(
     DynamicFieldsModelSerializer):
@@ -1220,7 +1241,7 @@ class TeamAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
-    profile = profile_serializers.ProfileEditSerializer()
+    #profile = profile_serializers.ProfileEditSerializer()
 
     class Meta:
         model = models.Team
@@ -1358,6 +1379,7 @@ class TaskActivitySerializer(
     days_for_gantt = serializers.SerializerMethodField(source='get_days_for_gantt')
     workers = ProfileSerializer(many=True)
     team_workers = serializers.SerializerMethodField()
+    team_not_workers = serializers.SerializerMethodField()
     workers_in_activity = serializers.SerializerMethodField()
 
     class Meta:
@@ -1395,10 +1417,6 @@ class TaskActivitySerializer(
         return team_list
 
     def get_team_workers(self, obj):
-        request = self.context['request']
-        token = request.META['HTTP_AUTHORIZATION'].split()[1]
-        payload = jwt_decode_handler(token)
-        profile = request.user.get_profile_by_id(payload['extra']['profile']['id'])
         team = obj.task.project.members.filter(
             status=1,
             project_invitation_date__isnull=False,
@@ -1407,17 +1425,21 @@ class TaskActivitySerializer(
         list_workers = []
         workers = team.filter(role='w')
         for worker in workers:
-            is_exists = obj.workers.filter(id=worker.profile.id).exists()
-            list_workers.append(
-                {
-                    'id': worker.id,
-                    'first_name': worker.profile.first_name,
-                    'last_name': worker.profile.last_name,
-                    'photo': worker.profile.photo.url if worker.profile.photo != '' else None,
-                    'company': worker.profile.company.name,
-                    'is_exists': is_exists
-                }
-            )
+            member = TeamBasicSerializer(worker).data
+            list_workers.append(member)
+        return list_workers
+
+    def get_team_not_workers(self, obj):
+        team = obj.task.project.members.filter(
+            status=1,
+            project_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=True,
+        )
+        list_workers = []
+        workers = team.exclude(role='w')
+        for worker in workers:
+            member = TeamBasicSerializer(worker).data
+            list_workers.append(member)
         return list_workers
 
     def get_days_for_gantt(self, obj):

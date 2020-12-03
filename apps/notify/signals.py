@@ -42,7 +42,7 @@ def addHeading(talk, notify_obj):
 def send_push_notification(notify_obj, recipient, body):
     body = json.loads(body)
     print(body['content'])
-    print("recipient" + recipient.id)
+    print("recipient" + str(recipient.id))
     header = {
         "Content-Type": "application/json; charset=utf-8",
         "Authorization": "Basic ZWI0NmI5NGItMTJjZC00YWJhLWI5YTUtNjA3MTQ1ZDgzM2Vl"

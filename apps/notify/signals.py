@@ -57,7 +57,7 @@ def send_push_notification(notify_obj, recipient, body):
     for req_player in req_players.json()['players']:
         print('player external user id')
         print(str(req_player['external_user_id']))
-        if str(req_player['external_user_id']) == recipient.id:
+        if str(req_player['external_user_id']) == str(recipient.id):
             list_players_recipients.append(req_player['id'])
 
     print('list ids')

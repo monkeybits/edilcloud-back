@@ -17,6 +17,9 @@ from web.core.utils import get_html_message, get_bell_notification_status, get_e
 # @receiver([post_save, post_delete], sender=project_models.SharedProject)
 # @receiver([post_save, post_delete], sender=project_models.InternalSharedProject)
 # @receiver([post_save, post_delete], sender=project_models.GenericProject)
+from ..notify.signals import send_push_notification
+
+
 @receiver([post_save, post_delete], sender=project_models.Project)
 def project_notification(sender, instance, **kwargs):
     company_staff = instance.profiles.all().union(
@@ -64,6 +67,7 @@ def project_notification(sender, instance, **kwargs):
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
+                send_push_notification(notify_obj, staff, body)
 
     except Exception as e:
         print(e)

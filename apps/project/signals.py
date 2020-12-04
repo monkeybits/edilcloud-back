@@ -374,10 +374,18 @@ def comment_notification(sender, instance, **kwargs):
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.task.project.id))
         except:
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.activity.task.project.id))
-        body = json.dumps({
-            'content': subject.__str__(),
-            'url': endpoint
-        })
+
+        if instance.parent:
+            body = json.dumps({
+                'content': subject.__str__(),
+                'url': endpoint,
+                'comment_id': instance.parent.id
+            })
+        else:
+            body = json.dumps({
+                'content': subject.__str__(),
+                'url': endpoint
+            })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
         notify_obj = notify_models.Notify.objects.create(

@@ -217,7 +217,8 @@ def activity_notification(sender, instance, **kwargs):
         endpoint = '/apps/projects/{}/task'.format(str(instance.task.project.id))
         body = json.dumps({
             'content': subject.__str__(),
-            'url': endpoint
+            'url': endpoint,
+            'task_id': instance.task.id
         })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
@@ -290,10 +291,18 @@ def post_notification(sender, instance, **kwargs):
             endpoint = '/apps/projects/{}/task'.format(str(instance.task.project.id))
         except:
             endpoint = '/apps/projects/{}/task'.format(str(instance.activity.task.project.id))
-        body = json.dumps({
-            'content': subject.__str__(),
-            'url': endpoint
-        })
+        if instance.sub_task is not None:
+            body = json.dumps({
+                'content': subject.__str__(),
+                'url': endpoint,
+                'activity_id': instance.sub_task.id
+            })
+        else:
+            body = json.dumps({
+                'content': subject.__str__(),
+                'url': endpoint,
+                'task_id': instance.task.id
+            })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
         notify_obj = notify_models.Notify.objects.create(
@@ -365,10 +374,18 @@ def comment_notification(sender, instance, **kwargs):
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.task.project.id))
         except:
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.activity.task.project.id))
-        body = json.dumps({
-            'content': subject.__str__(),
-            'url': endpoint
-        })
+
+        if instance.parent:
+            body = json.dumps({
+                'content': subject.__str__(),
+                'url': endpoint,
+                'comment_id': instance.parent.id
+            })
+        else:
+            body = json.dumps({
+                'content': subject.__str__(),
+                'url': endpoint
+            })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
         notify_obj = notify_models.Notify.objects.create(

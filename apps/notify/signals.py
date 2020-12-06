@@ -68,6 +68,7 @@ def send_push_notification(notify_obj, recipient, body):
     payload = {
         "app_id": "0fbdf0cf-d9f5-4363-809f-4735b1bba268",
         "include_player_ids": list_players_recipients,
+        "android_group": "project" + notify_obj.content_type.__str__() + str(notify_obj.object_id),
         "contents": {
             "en": "made by: {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
         },

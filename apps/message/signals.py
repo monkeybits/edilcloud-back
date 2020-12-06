@@ -193,7 +193,7 @@ def message_notification(sender, instance, **kwargs):
         payload = {
             "app_id": "0fbdf0cf-d9f5-4363-809f-4735b1bba268",
             "include_player_ids": list_players_recipients,
-            "android_group": "chat" + instance.talk.id,
+            "android_group": "chat" + str(instance.talk.id),
             "contents": {
                 "en": "{} {}: {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name, instance.body if instance.body != '' else emoji.emojize(':camera:'))
             },

@@ -168,7 +168,7 @@ def message_notification(sender, instance, **kwargs):
         }
 
         req_players = requests.get(
-            "https://onesignal.com/api/v1/players?app_id=8fc7c8ff-a4c8-4642-823d-4675b809a3c9&limit=300&offset=0",
+            "https://onesignal.com/api/v1/players?app_id=0fbdf0cf-d9f5-4363-809f-4735b1bba268&limit=300&offset=0",
             headers=header)
         print(req_players)
         company_profiles = notify_obj.sender.company.profiles

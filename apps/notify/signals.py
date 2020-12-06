@@ -64,6 +64,8 @@ def send_push_notification(notify_obj, recipient, body):
     print(list_profiles_id)
     print('list players to sent')
     print(list_players_recipients)
+    print(notify_obj.content_type.__str__())
+    print(str(notify_obj.object_id))
 
     payload = {
         "app_id": "0fbdf0cf-d9f5-4363-809f-4735b1bba268",

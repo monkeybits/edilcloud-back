@@ -191,7 +191,7 @@ def message_notification(sender, instance, **kwargs):
         print(list_players_recipients)
 
         payload = {
-            "app_id": "8fc7c8ff-a4c8-4642-823d-4675b809a3c9",
+            "app_id": "0fbdf0cf-d9f5-4363-809f-4735b1bba268",
             "include_player_ids": list_players_recipients,
             "contents": {
                 "en": "{} {}: {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name, instance.body if instance.body != '' else emoji.emojize(':camera:'))

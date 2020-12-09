@@ -377,6 +377,8 @@ def comment_notification(sender, instance, **kwargs):
             print('endpoint comment for subtask')
             print(instance.post.sub_task.task)
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.sub_task.task.project.id))
+            print('---------------------------------')
+
 
         if instance.parent:
             body = {

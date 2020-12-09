@@ -346,8 +346,8 @@ def comment_notification(sender, instance, **kwargs):
             )
             post_for_model = 'task'
 
-    except:
-        return
+    except Exception as e:
+        logging.error(e.__str__())
     profile = get_current_profile()
     # If there is no JWT token in the request,
     # then we don't create notifications (Useful at admin & shell for debugging)

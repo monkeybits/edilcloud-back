@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import logging
 import os
 
 from django.utils.translation import ugettext_lazy as _
@@ -423,4 +424,4 @@ def comment_notification(sender, instance, **kwargs):
                 send_push_notification(notify_obj, staff, body)
 
     except Exception as e:
-        print(e)
+        logging.error(e.__str__())

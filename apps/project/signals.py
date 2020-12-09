@@ -373,7 +373,7 @@ def comment_notification(sender, instance, **kwargs):
         try:
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.task.project.id))
         except:
-            endpoint = '/apps/projects/{}/task'.format(str(instance.post.activity.task.project.id))
+            endpoint = '/apps/projects/{}/task'.format(str(instance.post.sub_task.task.project.id))
 
         if instance.parent:
             body = {

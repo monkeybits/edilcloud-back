@@ -290,7 +290,7 @@ def post_notification(sender, instance, **kwargs):
         try:
             endpoint = '/apps/projects/{}/task'.format(str(instance.task.project.id))
         except:
-            endpoint = '/apps/projects/{}/task'.format(str(instance.activity.task.project.id))
+            endpoint = '/apps/projects/{}/task'.format(str(instance.sub_task.task.project.id))
         if instance.sub_task is not None:
             body = json.dumps({
                 'content': subject.__str__(),
@@ -371,8 +371,11 @@ def comment_notification(sender, instance, **kwargs):
             else:
                 subject = _('Comment deleted in post task (%s)' % (instance.post.task.name))
         try:
+            print('endpoint comment for task')
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.task.project.id))
         except:
+            print('endpoint comment for subtask')
+            print(instance.post.sub_task.task)
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.sub_task.task.project.id))
 
         if instance.parent:

@@ -44,6 +44,14 @@ PROFILE_PREFERENCE_NOTIFICATION_DEFAULT = {
                 "status": False
             },
             {
+                "name": "post",
+                "status": False
+            },
+            {
+                "name": "comment",
+                "status": False
+            },
+            {
                 "name": "team",
                 "status": False
             },

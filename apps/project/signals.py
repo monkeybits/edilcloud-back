@@ -274,11 +274,11 @@ def post_notification(sender, instance, **kwargs):
         if post_for_model == 'activity':
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = _('New Post added in activity (%s)'% (instance.sub_task.name))
+                    subject = _('New Post added in activity (%s)'% (instance.sub_task.title))
                 else:
-                    subject = _('Post updated in activity (%s)'% (instance.sub_task.name))
+                    subject = _('Post updated in activity (%s)'% (instance.sub_task.title))
             else:
-                subject = _('Post deleted in activity (%s)'% (instance.sub_task.name))
+                subject = _('Post deleted in activity (%s)'% (instance.sub_task.title))
         else:
             if 'created' in kwargs:
                 if kwargs['created']:
@@ -357,11 +357,11 @@ def comment_notification(sender, instance, **kwargs):
         if post_for_model == 'activity':
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = _('New Comment added in post activity (%s)'% (instance.post.sub_task.name))
+                    subject = _('New Comment added in post activity (%s)'% (instance.post.sub_task.title))
                 else:
-                    subject = _('Comment updated in post activity (%s)'% (instance.post.sub_task.name))
+                    subject = _('Comment updated in post activity (%s)'% (instance.post.sub_task.title))
             else:
-                subject = _('Comment deleted in post activity (%s)'% (instance.post.sub_task.name))
+                subject = _('Comment deleted in post activity (%s)'% (instance.post.sub_task.title))
         else:
             if 'created' in kwargs:
                 if kwargs['created']:
@@ -376,16 +376,23 @@ def comment_notification(sender, instance, **kwargs):
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.activity.task.project.id))
 
         if instance.parent:
-            body = json.dumps({
+            body = {
                 'content': subject.__str__(),
                 'url': endpoint,
                 'comment_id': instance.parent.id
-            })
+            }
         else:
-            body = json.dumps({
+            body = {
                 'content': subject.__str__(),
                 'url': endpoint
-            })
+            }
+        if instance.post.task:
+            body['task_id'] = instance.post.task.id
+        else:
+            body['task_id'] = instance.post.sub_task.task.id
+
+        body = json.dumps(body)
+
         type = ContentType.objects.get(model=sender.__name__.lower())
 
         notify_obj = notify_models.Notify.objects.create(

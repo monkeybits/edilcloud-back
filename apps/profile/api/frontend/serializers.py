@@ -472,6 +472,7 @@ class ProfileSerializer(
     role = serializers.ReadOnlyField(source="get_role")
     company = CompanySerializer()
     user = UserSerializer()
+    preference = PreferenceSerializer()
     is_main = serializers.SerializerMethodField()
     talk_count = serializers.SerializerMethodField()
     is_external = serializers.SerializerMethodField()

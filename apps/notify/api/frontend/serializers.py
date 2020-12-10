@@ -29,7 +29,12 @@ class NotifySerializer(
         return obj.content_type.name
 
     def get_body(self, obj):
-        return json.loads(obj.body)
+        print('------------------------------------')
+        print(obj.body)
+        try:
+            return json.loads(obj.body)
+        except:
+            return {}
 
 class NotificationRecipientSerializer(
         DynamicFieldsModelSerializer):

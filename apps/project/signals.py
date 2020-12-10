@@ -296,7 +296,8 @@ def post_notification(sender, instance, **kwargs):
             body = json.dumps({
                 'content': subject.__str__(),
                 'url': endpoint,
-                'activity_id': instance.sub_task.id
+                'activity_id': instance.sub_task.id,
+                'task_id': instance.sub_task.task.id,
             })
         else:
             body = json.dumps({
@@ -396,8 +397,8 @@ def comment_notification(sender, instance, **kwargs):
             body['task_id'] = instance.post.task.id
         else:
             body['task_id'] = instance.post.sub_task.task.id
-
-        body = json.dumps(body)
+            body['activity_id'] = instance.post.sub_task.id
+            body = json.dumps(body)
 
         type = ContentType.objects.get(model=sender.__name__.lower())
 

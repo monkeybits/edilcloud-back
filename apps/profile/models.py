@@ -260,7 +260,7 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         db_index=True,
         verbose_name=_("vat number"),
     )
-    url = models.URLField(
+    url = models.CharField(
         max_length=255,
         blank=True,
         verbose_name=_("url"),

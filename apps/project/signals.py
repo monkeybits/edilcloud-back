@@ -318,7 +318,7 @@ def alert_notification(sender, instance, **kwargs):
         print(e)
 
 
-@receiver([pre_save, post_save, post_delete], sender=project_models.Post)
+#@receiver([post_save, post_delete], sender=project_models.Post)
 def post_notification(sender, instance, **kwargs):
     try:
         if instance.sub_task is not None:
@@ -347,7 +347,6 @@ def post_notification(sender, instance, **kwargs):
                     subject = _('New Post added in activity (%s)'% (instance.sub_task.title))
                 else:
                     subject = _('Post updated in activity (%s)'% (instance.sub_task.title))
-                    return alert_notification(sender, instance, **kwargs)
             else:
                 subject = _('Post deleted in activity (%s)'% (instance.sub_task.title))
         else:

@@ -779,6 +779,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         return sum(len(value['closed']) for key, value in self.preference.info['results'].items())
 
     def create_task_post(self, post_dict):
+        from ..project.signals import post_notification
         task = Task.objects.get(id=post_dict['task'])
         post_dict.pop('task')
         post_worker = Post(
@@ -786,9 +787,12 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             **post_dict
         )
         post_worker.save()
+        post_notification(post_worker._meta.model, post_worker)
         return post_worker
 
     def create_activity_post(self, post_dict):
+        from ..project.signals import post_notification
+
         activity = Activity.objects.get(id=post_dict['activity'])
         post_dict.pop('activity')
         post_worker = Post(
@@ -796,6 +800,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             **post_dict
         )
         post_worker.save()
+        post_notification(post_worker._meta.model, post_worker)
         return post_worker
 
     def create_post_comment(self, comment_dict):
@@ -2093,7 +2098,12 @@ class OwnerProfile(Profile):
         """
         Update a company project
         """
+        from ..project.signals import post_notification, alert_notification
         post = self.get_post(post_dict['id'])
+        if post.alert != post_dict['alert']:
+            only_alert = True
+        else:
+            only_alert = False
         post.__dict__.update(**post_dict)
         if post_dict['alert'] is True:
             try:
@@ -2116,6 +2126,10 @@ class OwnerProfile(Profile):
                     post.task.alert = False
                     post.task.save()
         post.save()
+        if only_alert:
+            alert_notification(post._meta.model, post)
+        else:
+            post_notification(post._meta.model, post)
         return post
 
     def get_attachment(self, attachment_id):

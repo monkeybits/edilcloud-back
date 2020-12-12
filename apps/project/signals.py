@@ -1,77 +1,67 @@
-# -*- coding: utf-8 -*-
 import json
 import logging
-import os
-
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
-from django.conf import settings
-
 from . import models as project_models
 from apps.notify import models as notify_models
 from web.core.middleware.thread_local import get_current_profile
-from web.core.utils import get_html_message, get_bell_notification_status, get_email_notification_status
-
-
-# @receiver([post_save, post_delete], sender=project_models.SharedProject)
-# @receiver([post_save, post_delete], sender=project_models.InternalSharedProject)
-# @receiver([post_save, post_delete], sender=project_models.GenericProject)
+from web.core.utils import get_bell_notification_status, get_email_notification_status
 from ..notify.signals import send_push_notification
 
 
-@receiver([post_save, post_delete], sender=project_models.Project)
-def project_notification(sender, instance, **kwargs):
-    company_staff = instance.profiles.all().union(
-        instance.company.get_owners_and_delegates()
-    )
-    profile = get_current_profile()
-    # If there is no JWT token in the request,
-    # then we don't create notifications (Useful at admin & shell for debugging)
-    if not profile:
-        return
-
-    try:
-        endpoint = '/apps/projects/{}'.format(str(instance.id))
-        if 'created' in kwargs:
-            if kwargs['created']:
-                subject = _('New Project (%s) created in company (%s)'% (instance.name, instance.company.name))
-            else:
-                subject = _('Project (%s) updated in company (%s)'% (instance.name, instance.company.name))
-        else:
-            subject = _('Project (%s) deleted in company (%s)'% (instance.name, instance.company.name))
-
-        body = json.dumps({
-            'content': subject.__str__(),
-            'url': endpoint
-        })
-        type = ContentType.objects.get(model=sender.__name__.lower())
-
-        notify_obj = notify_models.Notify.objects.create(
-            sender=profile, subject=subject, body=body,
-            content_type=type, object_id=instance.id,
-            creator=profile.user, last_modifier=profile.user
-        )
-
-        for staff in company_staff:
-            bell_status = get_bell_notification_status(
-                staff, sender.__base__.__name__.lower()
-            )
-            email_status = get_email_notification_status(
-                staff, sender.__base__.__name__.lower()
-            )
-
-            if bell_status or email_status:
-                notify_recipient = notify_models.NotificationRecipient(
-                    notification=notify_obj, is_email=email_status,
-                    is_notify=bell_status, recipient=staff,
-                    creator=profile.user, last_modifier=profile.user)
-                notify_recipient.save()
-                send_push_notification(notify_obj, staff, body)
-
-    except Exception as e:
-        print(e)
+# @receiver([post_save, post_delete], sender=project_models.Project)
+# def project_notification(sender, instance, **kwargs):
+#     company_staff = instance.profiles.all().union(
+#         instance.company.get_owners_and_delegates()
+#     )
+#     profile = get_current_profile()
+#     # If there is no JWT token in the request,
+#     # then we don't create notifications (Useful at admin & shell for debugging)
+#     if not profile:
+#         return
+#
+#     try:
+#         endpoint = '/apps/projects/{}'.format(str(instance.id))
+#         if 'created' in kwargs:
+#             if kwargs['created']:
+#                 subject = _('New Project (%s) created in company (%s)'% (instance.name, instance.company.name))
+#             else:
+#                 subject = _('Project (%s) updated in company (%s)'% (instance.name, instance.company.name))
+#         else:
+#             subject = _('Project (%s) deleted in company (%s)'% (instance.name, instance.company.name))
+#
+#         body = json.dumps({
+#             'content': subject.__str__(),
+#             'url': endpoint
+#         })
+#         type = ContentType.objects.get(model=sender.__name__.lower())
+#
+#         notify_obj = notify_models.Notify.objects.create(
+#             sender=profile, subject=subject, body=body,
+#             content_type=type, object_id=instance.id,
+#             creator=profile.user, last_modifier=profile.user
+#         )
+#
+#         for staff in company_staff:
+#             bell_status = get_bell_notification_status(
+#                 staff, sender.__base__.__name__.lower()
+#             )
+#             email_status = get_email_notification_status(
+#                 staff, sender.__base__.__name__.lower()
+#             )
+#
+#             if bell_status or email_status:
+#                 notify_recipient = notify_models.NotificationRecipient(
+#                     notification=notify_obj, is_email=email_status,
+#                     is_notify=bell_status, recipient=staff,
+#                     creator=profile.user, last_modifier=profile.user)
+#                 notify_recipient.save()
+#                 send_push_notification(notify_obj, staff, body)
+#
+#     except Exception as e:
+#         print(e)
 
 
 @receiver([post_save, post_delete], sender=project_models.Team)
@@ -248,8 +238,87 @@ def activity_notification(sender, instance, **kwargs):
     except Exception as e:
         print(e)
 
+def alert_notification(sender, instance, **kwargs):
+    try:
+        if instance.sub_task is not None:
+            company_staff = instance.sub_task.workers.all().union(
+                instance.sub_task.task.project.company.get_owners_and_delegates()
+            )
+            post_for_model = 'activity'
+        else:
+            company_staff = instance.task.project.profiles.all().union(
+                instance.task.project.company.get_owners_and_delegates()
+            )
+            post_for_model = 'task'
 
-@receiver([post_save, post_delete], sender=project_models.Post)
+    except:
+        return
+    profile = get_current_profile()
+    # If there is no JWT token in the request,
+    # then we don't create notifications (Useful at admin & shell for debugging)
+    if not profile:
+        return
+
+    try:
+        if post_for_model == 'activity':
+            if instance.alert:
+                subject = _("C'è un problema nell'attività %s della fase %s del progetto %s" % (instance.sub_task.title, instance.sub_task.task.name, instance.sub_task.task.project.name))
+            else:
+                subject = _("Problema risolto nell'attività %s della fase %s del progetto %s" % (instance.sub_task.title, instance.sub_task.task.name, instance.sub_task.task.project.name))
+        else:
+            if instance.alert:
+                subject = _("C'è un problema nella fase %s del progetto %s" % (
+                instance.task.name, instance.task.project.name))
+            else:
+                subject = _("Problema risolto nella fase %s del progetto %s" % (
+                instance.task.name, instance.task.project.name))
+
+        try:
+            endpoint = '/apps/projects/{}/task'.format(str(instance.task.project.id))
+        except:
+            endpoint = '/apps/projects/{}/task'.format(str(instance.sub_task.task.project.id))
+        if instance.sub_task is not None:
+            body = json.dumps({
+                'content': subject.__str__(),
+                'url': endpoint,
+                'activity_id': instance.sub_task.id,
+                'task_id': instance.sub_task.task.id,
+            })
+        else:
+            body = json.dumps({
+                'content': subject.__str__(),
+                'url': endpoint,
+                'task_id': instance.task.id
+            })
+        type = ContentType.objects.get(model=sender.__name__.lower())
+
+        notify_obj = notify_models.Notify.objects.create(
+            sender=profile, subject=subject, body=body,
+            content_type=type, object_id=instance.id,
+            creator=profile.user, last_modifier=profile.user
+        )
+
+        for staff in company_staff:
+            bell_status = get_bell_notification_status(
+                staff, sender.__name__.lower()
+            )
+            email_status = get_email_notification_status(
+                staff, sender.__name__.lower()
+            )
+
+            if bell_status or email_status:
+                notify_recipient = notify_models.NotificationRecipient(
+                    notification=notify_obj, is_email=email_status,
+                    is_notify=bell_status, recipient=staff,
+                    creator=profile.user, last_modifier=profile.user)
+                notify_recipient.save()
+                send_push_notification(notify_obj, staff, body)
+
+    except Exception as e:
+        print(e)
+
+
+@receiver([pre_save, post_save, post_delete], sender=project_models.Post)
 def post_notification(sender, instance, **kwargs):
     try:
         if instance.sub_task is not None:

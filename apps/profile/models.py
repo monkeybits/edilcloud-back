@@ -45,7 +45,6 @@ from web.functions import zerofill
 from web.token import TokenGenerator
 from web.api.views import get_first_last_dates_of_month_and_year
 
-
 User = get_user_model()
 
 
@@ -2094,6 +2093,8 @@ class OwnerProfile(Profile):
         """
         Update a company project
         """
+        from apps.project.signals import alert_notification
+
         post = self.get_post(post_dict['id'])
         post.__dict__.update(**post_dict)
         if post_dict['alert'] is True:
@@ -2103,6 +2104,7 @@ class OwnerProfile(Profile):
             except:
                 post.task.alert = True
                 post.task.save()
+            alert_notification(post._meta.model, post)
         else:
             try:
                 posts = post.sub_task.post_set.exclude(id=post.id)

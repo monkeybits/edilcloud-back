@@ -1262,6 +1262,7 @@ class TeamAddSerializer(
         return super(TeamAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
+        from apps.project.signals import team_invite_notification
         try:
             is_external = self.context['request'].query_params.get('is_external')
             if is_external.lower() == 'true':
@@ -1269,6 +1270,7 @@ class TeamAddSerializer(
                 validated_data['project_invitation_date'] = datetime.datetime.now()
                 validated_data['status'] = 0
                 member = self.profile.create_member(validated_data)
+                team_invite_notification(member._meta.model, member)
                 if not ProjectCompanyColorAssignment.objects.filter(project=member.project, company=member.profile.company).exists():
                     ProjectCompanyColorAssignment.objects.create(
                         project=member.project, company=member.profile.company, color=choose_random_color(member.profile.company, member.project)
@@ -1279,6 +1281,7 @@ class TeamAddSerializer(
                 validated_data['project_invitation_date'] = datetime.datetime.now()
                 validated_data['status'] = 1
                 member = self.profile.create_member(validated_data)
+                team_invite_notification(member._meta.model, member)
                 if not ProjectCompanyColorAssignment.objects.filter(project=member.project, company=member.profile.company).exists():
                     ProjectCompanyColorAssignment.objects.create(
                         project=member.project, company=member.profile.company, color=choose_random_color(member.profile.company, member.project)

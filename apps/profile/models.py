@@ -787,7 +787,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             **post_dict
         )
         post_worker.save()
-        post_notification(post_worker._meta.model, post_worker)
+        post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
         return post_worker
 
     def create_activity_post(self, post_dict):
@@ -800,7 +800,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             **post_dict
         )
         post_worker.save()
-        post_notification(post_worker._meta.model, post_worker)
+        post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
         return post_worker
 
     def create_post_comment(self, comment_dict):
@@ -2129,7 +2129,7 @@ class OwnerProfile(Profile):
         if only_alert:
             alert_notification(post._meta.model, post)
         else:
-            post_notification(post._meta.model, post)
+            post_notification(post._meta.model, post, {'created': None})
         return post
 
     def get_attachment(self, attachment_id):

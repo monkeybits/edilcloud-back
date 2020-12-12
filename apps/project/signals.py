@@ -76,7 +76,7 @@ def team_invite_notification(sender, instance, **kwargs):
         return
 
     try:
-        subject = _('%s Hai un nuovo invito nel progetto %s'% (emoji.emojize(':two_men_holding_hands:'), instance.project.name))
+        subject = _('%s Hai un nuovo invito nel progetto %s'% (emoji.emojize(':busts_in_silhouette:'), instance.project.name))
         endpoint = '/apps/projects/{}/team'.format(str(instance.project.id))
         body = json.dumps({
             'content': subject.__str__(),
@@ -393,19 +393,19 @@ def post_notification(sender, instance, kwargs=None):
         if post_for_model == 'activity':
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = _('New Post added in activity (%s)'% (instance.sub_task.title))
+                    subject = _('%s New Post added in activity (%s)'% (emoji.emojize(':pencil:'), instance.sub_task.title))
                 else:
-                    subject = _('Post updated in activity (%s)'% (instance.sub_task.title))
+                    subject = _('%s Post updated in activity (%s)'% (emoji.emojize(':pencil:'), instance.sub_task.title))
             else:
-                subject = _('Post deleted in activity (%s)'% (instance.sub_task.title))
+                subject = _('%s Post deleted in activity (%s)'% (emoji.emojize(':pencil:'), instance.sub_task.title))
         else:
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = _('New Post added in task (%s)' % (instance.task.name))
+                    subject = _('%s New Post added in task (%s)' % (emoji.emojize(':pencil:'), instance.task.name))
                 else:
-                    subject = _('Post updated in task (%s)' % (instance.task.name))
+                    subject = _('%s Post updated in task (%s)' % (emoji.emojize(':pencil:'), instance.task.name))
             else:
-                subject = _('Post deleted in task (%s)' % (instance.task.name))
+                subject = _('%s Post deleted in task (%s)' % (emoji.emojize(':pencil:'), instance.task.name))
         try:
             endpoint = '/apps/projects/{}/task'.format(str(instance.task.project.id))
         except:
@@ -479,19 +479,19 @@ def comment_notification(sender, instance, **kwargs):
         if post_for_model == 'activity':
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = _('New Comment added in post activity (%s)'% (instance.post.sub_task.title))
+                    subject = _('%s New Comment added in post activity (%s)'% (emoji.emojize(':speech_balloon:'), instance.post.sub_task.title))
                 else:
-                    subject = _('Comment updated in post activity (%s)'% (instance.post.sub_task.title))
+                    subject = _('%s Comment updated in post activity (%s)'% (emoji.emojize(':speech_balloon:'), instance.post.sub_task.title))
             else:
-                subject = _('Comment deleted in post activity (%s)'% (instance.post.sub_task.title))
+                subject = _('%s Comment deleted in post activity (%s)'% (emoji.emojize(':speech_balloon:'), instance.post.sub_task.title))
         else:
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = _('New Comment added in post task (%s)' % (instance.post.task.name))
+                    subject = _('%s New Comment added in post task (%s)' % (emoji.emojize(':speech_balloon:'), instance.post.task.name))
                 else:
-                    subject = _('Comment updated in post task (%s)' % (instance.post.task.name))
+                    subject = _('%s Comment updated in post task (%s)' % (emoji.emojize(':speech_balloon:'), instance.post.task.name))
             else:
-                subject = _('Comment deleted in post task (%s)' % (instance.post.task.name))
+                subject = _('%s Comment deleted in post task (%s)' % (emoji.emojize(':speech_balloon:'), instance.post.task.name))
         try:
             print('endpoint comment for task')
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.task.project.id))

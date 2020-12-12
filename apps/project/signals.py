@@ -63,6 +63,47 @@ from ..notify.signals import send_push_notification
 #     except Exception as e:
 #         print(e)
 
+def team_invite_notification(sender, instance, **kwargs):
+    company_staff = instance.project.profiles.all().union(
+        instance.project.company.get_owners_and_delegates()
+    )
+    profile = get_current_profile()
+    # If there is no JWT token in the request,
+    # then we don't create notifications (Useful at admin & shell for debugging)
+    if not profile:
+        return
+
+    try:
+        subject = _('Hai un nuovo invito nel progetto %s'% (instance.project.name))
+        endpoint = '/apps/projects/{}/team'.format(str(instance.project.id))
+        body = json.dumps({
+            'content': subject.__str__(),
+            'url': endpoint
+        })
+        type = ContentType.objects.get(model=sender.__name__.lower())
+
+        notify_obj = notify_models.Notify.objects.create(
+            sender=profile, subject=subject, body=body,
+            content_type=type, object_id=instance.id,
+            creator=profile.user, last_modifier=profile.user
+        )
+
+        bell_status = get_bell_notification_status(
+            instance.profile, sender.__name__.lower()
+        )
+        email_status = get_email_notification_status(
+            instance.profile, sender.__name__.lower()
+        )
+
+        if bell_status or email_status:
+            notify_recipient = notify_models.NotificationRecipient(
+                notification=notify_obj, is_email=email_status,
+                is_notify=bell_status, recipient=instance.profile,
+                creator=profile.user, last_modifier=profile.user)
+            notify_recipient.save()
+            send_push_notification(notify_obj, instance.profile, body)
+    except Exception as e:
+        print(e)
 
 @receiver([post_save, post_delete], sender=project_models.Team)
 def team_notification(sender, instance, **kwargs):
@@ -321,7 +362,7 @@ def alert_notification(sender, instance, **kwargs):
 
 
 #@receiver([post_save, post_delete], sender=project_models.Post)
-def post_notification(sender, instance, **kwargs):
+def post_notification(sender, instance, kwargs=None):
     try:
         if instance.sub_task is not None:
             company_staff = instance.sub_task.workers.all().union(

@@ -314,10 +314,10 @@ def alert_notification(sender, instance, **kwargs):
                 subject = _("%s Problema risolto nell'attività %s della fase %s del progetto %s" % (emoji.emojize(':warning:'), instance.sub_task.title, instance.sub_task.task.name, instance.sub_task.task.project.name))
         else:
             if instance.alert:
-                subject = _("C'è un problema nella fase %s del progetto %s" % (
+                subject = _("%s C'è un problema nella fase %s del progetto %s" % (emoji.emojize(':warning:'),
                 instance.task.name, instance.task.project.name))
             else:
-                subject = _("Problema risolto nella fase %s del progetto %s" % (
+                subject = _("%s Problema risolto nella fase %s del progetto %s" % (emoji.emojize(':warning:'),
                 instance.task.name, instance.task.project.name))
 
         try:

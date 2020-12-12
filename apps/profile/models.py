@@ -2104,7 +2104,6 @@ class OwnerProfile(Profile):
             except:
                 post.task.alert = True
                 post.task.save()
-            alert_notification(post._meta.model, post)
         else:
             try:
                 posts = post.sub_task.post_set.exclude(id=post.id)
@@ -2118,6 +2117,7 @@ class OwnerProfile(Profile):
                 if find_alerts == 0:
                     post.task.alert = False
                     post.task.save()
+        alert_notification(post._meta.model, post)
         post.save()
         return post
 

@@ -72,7 +72,7 @@ def send_push_notification(notify_obj, recipient, body, project_id):
         "include_player_ids": list_players_recipients,
         "android_group": "project_" + str(project_id),
         "contents": {
-            "en": "made by: {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
+            "en": "da: {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
         },
         "content-available": 1,
         "headings": {

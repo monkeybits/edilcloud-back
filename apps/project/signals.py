@@ -312,8 +312,10 @@ def alert_notification(sender, instance, **kwargs):
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
-                send_push_notification(notify_obj, staff, body)
-
+                if post_for_model == 'task':
+                    send_push_notification(notify_obj, staff, body, instance.task.project.id)
+                else:
+                    send_push_notification(notify_obj, staff, body, instance.sub_task.task.project.id)
     except Exception as e:
         print(e)
 
@@ -396,8 +398,10 @@ def post_notification(sender, instance, **kwargs):
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
-                send_push_notification(notify_obj, staff, body)
-
+                if post_for_model == 'task':
+                    send_push_notification(notify_obj, staff, body, instance.task.project.id)
+                else:
+                    send_push_notification(notify_obj, staff, body, instance.sub_task.task.project.id)
     except Exception as e:
         print(e)
 
@@ -491,7 +495,9 @@ def comment_notification(sender, instance, **kwargs):
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
-                send_push_notification(notify_obj, staff, body)
-
+                if post_for_model == 'task':
+                    send_push_notification(notify_obj, staff, body, instance.post.task.project.id)
+                else:
+                    send_push_notification(notify_obj, staff, body, instance.post.sub_task.task.project.id)
     except Exception as e:
         logging.error(e.__str__())

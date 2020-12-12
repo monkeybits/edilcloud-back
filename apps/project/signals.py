@@ -111,7 +111,7 @@ def team_notification(sender, instance, **kwargs):
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
-                send_push_notification(notify_obj, staff, body)
+                send_push_notification(notify_obj, staff, body, instance.project.id)
     except Exception as e:
         print(e)
 
@@ -176,7 +176,7 @@ def task_notification(sender, instance, **kwargs):
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
-                send_push_notification(notify_obj, staff, body)
+                send_push_notification(notify_obj, staff, body, instance.project.id)
 
     except Exception as e:
         print(e)
@@ -233,7 +233,7 @@ def activity_notification(sender, instance, **kwargs):
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
-                send_push_notification(notify_obj, staff, body)
+                send_push_notification(notify_obj, staff, body, instance.task.project.id)
 
     except Exception as e:
         print(e)
@@ -312,7 +312,7 @@ def alert_notification(sender, instance, **kwargs):
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
-                send_push_notification(notify_obj, staff, body)
+                send_push_notification(notify_obj, staff, body, instance.task.project.id)
 
     except Exception as e:
         print(e)
@@ -396,7 +396,7 @@ def post_notification(sender, instance, **kwargs):
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
-                send_push_notification(notify_obj, staff, body)
+                send_push_notification(notify_obj, staff, body, instance.task.project.id)
 
     except Exception as e:
         print(e)
@@ -491,7 +491,7 @@ def comment_notification(sender, instance, **kwargs):
                     is_notify=bell_status, recipient=staff,
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
-                send_push_notification(notify_obj, staff, body)
+                send_push_notification(notify_obj, staff, body, instance.post.task.project.id)
 
     except Exception as e:
         logging.error(e.__str__())

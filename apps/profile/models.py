@@ -2093,8 +2093,6 @@ class OwnerProfile(Profile):
         """
         Update a company project
         """
-        from apps.project.signals import alert_notification
-
         post = self.get_post(post_dict['id'])
         post.__dict__.update(**post_dict)
         if post_dict['alert'] is True:
@@ -2117,7 +2115,6 @@ class OwnerProfile(Profile):
                 if find_alerts == 0:
                     post.task.alert = False
                     post.task.save()
-        alert_notification(post._meta.model, post)
         post.save()
         return post
 

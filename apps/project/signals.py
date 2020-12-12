@@ -1,5 +1,7 @@
 import json
 import logging
+
+import emoji
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
@@ -74,7 +76,7 @@ def team_invite_notification(sender, instance, **kwargs):
         return
 
     try:
-        subject = _('Hai un nuovo invito nel progetto %s'% (instance.project.name))
+        subject = _('%s Hai un nuovo invito nel progetto %s'% (emoji.emojize(':two_men_holding_hands:'), instance.project.name))
         endpoint = '/apps/projects/{}/team'.format(str(instance.project.id))
         body = json.dumps({
             'content': subject.__str__(),
@@ -307,9 +309,9 @@ def alert_notification(sender, instance, **kwargs):
     try:
         if post_for_model == 'activity':
             if instance.alert:
-                subject = _("C'è un problema nell'attività %s della fase %s del progetto %s" % (instance.sub_task.title, instance.sub_task.task.name, instance.sub_task.task.project.name))
+                subject = _("%s C'è un problema nell'attività %s della fase %s del progetto %s" % (emoji.emojize(':warning:'), instance.sub_task.title, instance.sub_task.task.name, instance.sub_task.task.project.name))
             else:
-                subject = _("Problema risolto nell'attività %s della fase %s del progetto %s" % (instance.sub_task.title, instance.sub_task.task.name, instance.sub_task.task.project.name))
+                subject = _("%s Problema risolto nell'attività %s della fase %s del progetto %s" % (emoji.emojize(':warning:'), instance.sub_task.title, instance.sub_task.task.name, instance.sub_task.task.project.name))
         else:
             if instance.alert:
                 subject = _("C'è un problema nella fase %s del progetto %s" % (

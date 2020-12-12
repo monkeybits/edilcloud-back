@@ -69,7 +69,7 @@ def send_push_notification(notify_obj, recipient, body):
         "app_id": "8fc7c8ff-a4c8-4642-823d-4675b809a3c9",
         "include_player_ids": list_players_recipients,
         "contents": {
-            "en": "made by: {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
+            "en": "da: {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
         },
         "content-available": 1,
         "headings": {

@@ -98,8 +98,10 @@ def notify_notification(sender, instance, **kwargs):
     recipient = instance
     event_triger({
         "message": {
-            "id": notify_obj.id,
+            "id": instance.id,
+            "notification_id": notify_obj.id,
             "content_type": notify_obj.content_type.name,
+            "object_id": notify_obj.object_id,
             "body": json.loads(notify_obj.body),
             "dest": {
                 "id": recipient.recipient.pk

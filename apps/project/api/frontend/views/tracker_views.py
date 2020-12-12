@@ -2192,7 +2192,7 @@ class TrackerActivityDetailView(
 
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
-            'id', 'task', 'profile', 'title', 'description', 'status',
+            'id', 'task', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert'
         ]
         self.task_response_include_fields = [

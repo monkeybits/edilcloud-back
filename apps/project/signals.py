@@ -101,7 +101,7 @@ def team_invite_notification(sender, instance, **kwargs):
                 is_notify=bell_status, recipient=instance.profile,
                 creator=profile.user, last_modifier=profile.user)
             notify_recipient.save()
-            send_push_notification(notify_obj, instance.profile, body)
+            send_push_notification(notify_obj, instance.profile, body, instance.project.id)
     except Exception as e:
         print(e)
 

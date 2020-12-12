@@ -139,6 +139,10 @@ def team_notification(sender, instance, **kwargs):
         )
 
         for staff in company_staff:
+            if 'created' in kwargs:
+                if kwargs['created']:
+                    if instance.profile.id == staff.id:
+                        continue
             bell_status = get_bell_notification_status(
                 staff, sender.__name__.lower()
             )

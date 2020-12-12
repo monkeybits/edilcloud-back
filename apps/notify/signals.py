@@ -96,28 +96,29 @@ def send_push_notification(notify_obj, recipient, body, project_id):
 def notify_notification(sender, instance, **kwargs):
     notify_obj = instance.notification
     recipient = instance
-    event_triger({
-        "message": {
-            "id": instance.id,
-            "notification_id": notify_obj.id,
-            "content_type": notify_obj.content_type.name,
-            "object_id": notify_obj.object_id,
-            "body": json.loads(notify_obj.body),
-            "dest": {
-                "id": recipient.recipient.pk
-            },
-            "sender": {
-                "id": notify_obj.sender.id,
-                "first_name": notify_obj.sender.first_name,
-                "last_name": notify_obj.sender.last_name,
-                "photo": None,
-                "role": notify_obj.sender.role,
-                "company": {
-                    "id": notify_obj.sender.company.id,
-                    "name": notify_obj.sender.company.name,
-                    "category": {}
-                }
-            },
-            "subject": notify_obj.subject
-        }
-    })
+    if recipient.reading_date is None:
+        event_triger({
+            "message": {
+                "id": instance.id,
+                "notification_id": notify_obj.id,
+                "content_type": notify_obj.content_type.name,
+                "object_id": notify_obj.object_id,
+                "body": json.loads(notify_obj.body),
+                "dest": {
+                    "id": recipient.recipient.pk
+                },
+                "sender": {
+                    "id": notify_obj.sender.id,
+                    "first_name": notify_obj.sender.first_name,
+                    "last_name": notify_obj.sender.last_name,
+                    "photo": None,
+                    "role": notify_obj.sender.role,
+                    "company": {
+                        "id": notify_obj.sender.company.id,
+                        "name": notify_obj.sender.company.name,
+                        "category": {}
+                    }
+                },
+                "subject": notify_obj.subject
+            }
+        })

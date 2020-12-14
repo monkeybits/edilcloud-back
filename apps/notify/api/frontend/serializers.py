@@ -77,3 +77,31 @@ class NotificationRecipientReadSerializer(
     def update(self, instance, validated_data):
         notification_recipient = self.profile.edit_notification_receipient(instance)
         return notification_recipient
+
+class NotificationRecipientReadAllSerializer(
+        DynamicFieldsModelSerializer,
+        JWTPayloadMixin):
+    class Meta:
+        model = models.NotificationRecipient
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            request = kwargs['context']['request']
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.notification_recipient_request_include_fields
+        return super(NotificationRecipientReadAllSerializer, self).get_field_names(*args, **kwargs)
+
+    def post(self, validated_data):
+        notification_recipients = self.profile.list_notification_receipient_new()
+        for instance in notification_recipients:
+            notification_recipient = self.profile.edit_notification_receipient(instance)
+        return {}

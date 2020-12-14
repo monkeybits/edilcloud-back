@@ -77,7 +77,7 @@ def team_invite_notification(sender, instance, **kwargs):
 
     try:
         subject = _('%s Hai un nuovo invito nel progetto %s'% (emoji.emojize(':busts_in_silhouette:'), instance.project.name))
-        endpoint = '/apps/projects/{}/team'.format(str(instance.project.id))
+        endpoint = '/apps/projects'.format(str(instance.project.id))
         body = json.dumps({
             'content': subject.__str__(),
             'url': endpoint

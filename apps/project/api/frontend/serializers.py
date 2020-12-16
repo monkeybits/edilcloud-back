@@ -789,8 +789,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
 class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
     media_set = serializers.SerializerMethodField()
     workers = ProfileSerializer(many=True, read_only=True)
-    team_workers = serializers.SerializerMethodField()
-    team_not_workers = serializers.SerializerMethodField()
+    can_assign_in_activity = serializers.SerializerMethodField()
     workers_in_activity = serializers.SerializerMethodField()
     post_set = PostSerializer(many=True)
 
@@ -809,48 +808,22 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         workers = obj.workers.all()
         for worker in workers:
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
-            team_data = TeamAddSerializer(team_member).data
-            # profile = Profile.objects.get(id=team_data['profile'])
-            # team_data['profile'] = {
-            #     'id': profile.id,
-            #     'company': {
-            #         'id': profile.company.id,
-            #         'name': profile.company.name,
-            #         'email': profile.company.email,
-            #     },
-            #     'first_name': profile.first_name,
-            #     'last_name': profile.last_name,
-            #     'email': profile.email,
-            #     'role': profile.role,
-            # }
-            team_list.append(team_data)
+            member = TeamBasicSerializer(team_member).data
+            team_list.append(member)
         return team_list
 
-    def get_team_workers(self, obj):
-        team = obj.task.project.members.filter(
-            status=1,
-            project_invitation_date__isnull=False,
-            invitation_refuse_date__isnull=True,
-        )
+    def get_can_assign_in_activity(self, obj):
         list_workers = []
-        workers = team.filter(role='w')
+        already_assigned_ids = []
+        already_assigned_workers = obj.workers.all()
+        for already_assigned_worker in already_assigned_workers:
+            already_assigned_ids.append(already_assigned_worker.id)
+        workers = obj.task.project.members.exclude(profile_id__in=already_assigned_ids)
         for worker in workers:
             member = TeamBasicSerializer(worker).data
             list_workers.append(member)
         return list_workers
 
-    def get_team_not_workers(self, obj):
-        team = obj.task.project.members.filter(
-            status=1,
-            project_invitation_date__isnull=False,
-            invitation_refuse_date__isnull=True,
-        )
-        list_workers = []
-        workers = team.exclude(role='w')
-        for worker in workers:
-            member = TeamBasicSerializer(worker).data
-            list_workers.append(member)
-        return list_workers
 
     def get_media_set(self, obj):
         media_list = []
@@ -1182,6 +1155,7 @@ class TaskDisableSerializer(
 class TeamBasicSerializer(
     DynamicFieldsModelSerializer):
     role = serializers.ReadOnlyField(source="get_role")
+    profile = profile_serializers.ProfileEditSerializer()
 
     class Meta:
         model = models.Team
@@ -1381,8 +1355,7 @@ class TaskActivitySerializer(
     workers = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), many=True, write_only=True)
     days_for_gantt = serializers.SerializerMethodField(source='get_days_for_gantt')
     workers = ProfileSerializer(many=True)
-    team_workers = serializers.SerializerMethodField()
-    team_not_workers = serializers.SerializerMethodField()
+    can_assign_in_activity = serializers.SerializerMethodField()
     workers_in_activity = serializers.SerializerMethodField()
 
     class Meta:
@@ -1402,44 +1375,17 @@ class TaskActivitySerializer(
         workers = obj.workers.all()
         for worker in workers:
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
-            team_data = TeamAddSerializer(team_member).data
-            profile = Profile.objects.get(id=team_data['profile'])
-            team_data['profile'] = {
-                'id': profile.id,
-                'company': {
-                    'id': profile.company.id,
-                    'name': profile.company.name,
-                    'email': profile.company.email,
-                },
-                'first_name': profile.first_name,
-                'last_name': profile.last_name,
-                'email': profile.email,
-                'role': profile.role,
-            }
-            team_list.append(team_data)
+            member = TeamBasicSerializer(team_member).data
+            team_list.append(member)
         return team_list
 
-    def get_team_workers(self, obj):
-        team = obj.task.project.members.filter(
-            status=1,
-            project_invitation_date__isnull=False,
-            invitation_refuse_date__isnull=True,
-        )
+    def get_can_assign_in_activity(self, obj):
         list_workers = []
-        workers = team.filter(role='w')
-        for worker in workers:
-            member = TeamBasicSerializer(worker).data
-            list_workers.append(member)
-        return list_workers
-
-    def get_team_not_workers(self, obj):
-        team = obj.task.project.members.filter(
-            status=1,
-            project_invitation_date__isnull=False,
-            invitation_refuse_date__isnull=True,
-        )
-        list_workers = []
-        workers = team.exclude(role='w')
+        already_assigned_ids = []
+        already_assigned_workers = obj.workers.all()
+        for already_assigned_worker in already_assigned_workers:
+            already_assigned_ids.append(already_assigned_worker.id)
+        workers = obj.task.project.members.exclude(profile_id__in=already_assigned_ids)
         for worker in workers:
             member = TeamBasicSerializer(worker).data
             list_workers.append(member)
@@ -1469,7 +1415,7 @@ class TaskActivityAddSerializer(
     media_set = serializers.SerializerMethodField(read_only=True)
     note = serializers.CharField(max_length=150, allow_blank=True, required=False)
     description = serializers.CharField(max_length=150, allow_blank=True, required=False)
-    workers = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), many=True)
+    workers = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), many=True, required=False)
 
     class Meta:
         model = models.Activity
@@ -1577,6 +1523,7 @@ class TaskActivityEditSerializer(
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
             team_list.append(TeamSerializer(team_member))
         return team_list
+
 
     def update(self, instance, validated_data):
         try:

@@ -854,7 +854,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
             )
         return media_list
 
-class TaskSerializer(
+class  TaskSerializer(
     DynamicFieldsModelSerializer):
     project = ProjectSerializer()
     assigned_company = profile_serializers.CompanySerializer()

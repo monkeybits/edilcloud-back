@@ -33,7 +33,12 @@ tracker_urlpatterns = [
         r'^notification/delete/(?P<pk>\d+)/$',
         tracker_views.TrackerNotificationDeleteView.as_view(),
         name='tracker_notification_delete'
-    )
+    ),
+    url(
+        r'^notification/read/all/$',
+        tracker_views.TrackerNotificationRecipientReadAllView.as_view(),
+        name='tracker_notification_recipient_read'
+    ),
 ]
 
 urlpatterns = user_urlpatterns + generic_urlpatterns + tracker_urlpatterns

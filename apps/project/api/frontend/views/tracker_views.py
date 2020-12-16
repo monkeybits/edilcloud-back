@@ -776,7 +776,7 @@ class TrackerProjectTeamListView(
                 query = []
                 for key, value in enumerate(filters):
                     query.append(tuple((value, filters[value])))
-                return reduce(operator.or_, [Q(x) for x in query])
+                return reduce(operator.and_, [Q(x) for x in query])
         return filters
 
     def get_queryset(self):
@@ -1423,7 +1423,7 @@ class TrackerProjectTaskListView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end', 'media_set', 'team_workers', 'team_not_workers', 'workers_in_activity',
+            'datetime_start', 'datetime_end', 'media_set', 'can_assign_in_activity', 'workers_in_activity',
             'alert'
         ]
         self.project_response_include_fields = [
@@ -1470,7 +1470,7 @@ class TrackerProjectsTasksActivitiesListView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end', 'media_set', 'team_workers', 'team_not_workers', 'workers_in_activity', 'alert'
+            'datetime_start', 'datetime_end', 'media_set', 'can_assign_in_activity', 'workers_in_activity', 'alert'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1516,7 +1516,7 @@ class TrackerGanttProjectTaskListView(
         ]
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end', 'media_set', 'team_workers', 'alert'
+            'datetime_start', 'datetime_end', 'media_set', 'alert'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -2080,7 +2080,7 @@ class TrackerTaskActivityAddView(
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
-            'starred', 'note', 'team_workers', 'team_not_workers', 'workers_in_activity'
+            'starred', 'note', 'can_assign_in_activity', 'workers_in_activity'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -2157,7 +2157,7 @@ class TrackerTaskActivityListView(
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
-            'starred', 'note', 'team_workers', 'team_not_workers', 'workers_in_activity'
+            'starred', 'note', 'can_assign_in_activity', 'workers_in_activity'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -2263,7 +2263,7 @@ class TrackerActivityEditView(
         self.activity_response_include_fields = [
             'id', 'task', 'workers', 'title', 'description', 'status',
             'datetime_start', 'datetime_end', 'alert',
-            'starred', 'note', 'team_workers', 'team_not_workers', 'workers_in_activity'
+            'starred', 'note', 'can_assign_in_activity', 'workers_in_activity'
         ]
         self.task_response_include_fields = [
             'id', 'project', 'name', 'date_start',
@@ -2805,7 +2805,7 @@ class TrackerProjectExport(
         ]
         self.activity_response_include_fields = [
             'id', 'title', 'description', 'status',
-            'datetime_start', 'datetime_end', 'alert', 'team_workers', 'team_not_workers', 'workers_in_activity', 'post_set'
+            'datetime_start', 'datetime_end', 'alert', 'can_assign_in_activity', 'workers_in_activity', 'post_set'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'ssn', 'logo'

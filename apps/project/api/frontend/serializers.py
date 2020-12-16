@@ -808,8 +808,8 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         workers = obj.workers.all()
         for worker in workers:
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
-            team_data = TeamAddSerializer(team_member).data
-            team_list.append(team_data)
+            member = TeamBasicSerializer(team_member).data
+            team_list.append(member)
         return team_list
 
     def get_can_assign_in_activity(self, obj):
@@ -1155,6 +1155,7 @@ class TaskDisableSerializer(
 class TeamBasicSerializer(
     DynamicFieldsModelSerializer):
     role = serializers.ReadOnlyField(source="get_role")
+    profile = profile_serializers.ProfileEditSerializer()
 
     class Meta:
         model = models.Team
@@ -1374,21 +1375,8 @@ class TaskActivitySerializer(
         workers = obj.workers.all()
         for worker in workers:
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
-            team_data = TeamAddSerializer(team_member).data
-            profile = Profile.objects.get(id=team_data['profile'])
-            team_data['profile'] = {
-                'id': profile.id,
-                'company': {
-                    'id': profile.company.id,
-                    'name': profile.company.name,
-                    'email': profile.company.email,
-                },
-                'first_name': profile.first_name,
-                'last_name': profile.last_name,
-                'email': profile.email,
-                'role': profile.role,
-            }
-            team_list.append(team_data)
+            member = TeamBasicSerializer(team_member).data
+            team_list.append(member)
         return team_list
 
     def get_can_assign_in_activity(self, obj):

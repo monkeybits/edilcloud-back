@@ -17,6 +17,7 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
+import pdfkit
 
 from rest_framework import generics, status, views
 from rest_framework.decorators import action
@@ -2889,6 +2890,9 @@ class TrackerProjectExport(
                     # Add file, at correct path
                     zf.write(fpath, zip_path)
 
+            # ADD DATA INTO HTML
+            html_message = render_to_string('project/project/export/ProjectReport.html', data)
+            pdfkit.from_string(html_message, 'Project_report_1.pdf')
             summary_pdf = list(self.request.FILES.values())
             if len(summary_pdf) > 0:
                 with open(BASE_DIR + '/media/reports/' + summary_pdf[0].name, 'wb') as f:

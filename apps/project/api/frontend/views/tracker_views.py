@@ -17,8 +17,6 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
-import pdfkit
-
 from rest_framework import generics, status, views
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -36,6 +34,7 @@ from apps.quotation.api.frontend import serializers as quotation_serializers
 from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT
+from weasyprint import HTML, CSS
 
 
 class TrackerProjectMixin(
@@ -2890,20 +2889,27 @@ class TrackerProjectExport(
                     # Add file, at correct path
                     zf.write(fpath, zip_path)
 
-            def download_image(url):
-                import base64
-                with open(url, "rb") as image_file:
-                    encoded_string = base64.b64encode(image_file.read())
-                    return encoded_string.decode('utf-8')
-            data['company']['logo'] = download_image(MEDIA_ROOT + '/company/logo/ma/Mango.png')
+            # def download_image(url):
+            #     import base64
+            #     with open(url, "rb") as image_file:
+            #         encoded_string = base64.b64encode(image_file.read())
+            #         return encoded_string.decode('utf-8')
+            # data['company']['logo'] = download_image(MEDIA_ROOT + '/company/logo/ma/Mango.png')
             # ADD DATA INTO HTML
+            # pdfkit.from_string(html_message, 'Project_report_1.pdf', css=[
+            #     STATIC_ROOT + '/css/typography.css',
+            #     STATIC_ROOT + '/css/bootstrap.min.css',
+            #     STATIC_ROOT + '/css/style.css',
+            #     STATIC_ROOT + '/css/responsive.css',
+            # ])
             html_message = render_to_string('project/project/export/ProjectReport.html', data)
-
-            pdfkit.from_string(html_message, 'Project_report_1.pdf', css=[
-                STATIC_ROOT + '/css/typography.css',
-                STATIC_ROOT + '/css/bootstrap.min.css',
-                STATIC_ROOT + '/css/style.css',
-                STATIC_ROOT + '/css/responsive.css',
+            html = HTML(string=html_message)
+            html.write_pdf(
+                'Project_report_1.pdf', stylesheets=[
+                CSS(STATIC_ROOT + '/css/typography.css'),
+                CSS(STATIC_ROOT + '/css/bootstrap.min.css'),
+                CSS(STATIC_ROOT + '/css/style.css'),
+                CSS(STATIC_ROOT + '/css/responsive.css'),
             ])
             summary_pdf = list(self.request.FILES.values())
             if len(summary_pdf) > 0:

@@ -1,4 +1,5 @@
 {% load static %}
+{% load staticfiles %}
 
 <!doctype html>
 <html lang="en">
@@ -10,6 +11,7 @@
     <title>Report </title>
     <!-- Favicon -->
     <link rel="shortcut icon" href="url_for('static', filename='images/favicon.ico')"/>
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700,700i,900" rel="stylesheet" />
 </head>
 
 <body class="sidebar-main-active right-column-fixed">
@@ -22,7 +24,7 @@
                     <div style="padding: 30px;" class="row">
                         <div class="col-lg-6">
                             <img style="height: 25px; "
-                                 src="https://www.edilcloud.io/wp-content/uploads/2020/12/logo-edilcloud.png"
+                                 src="{% static "images/logo-edilcloud.png" %}"
                                  class="img-fluid " alt="">
 
                         </div>
@@ -55,7 +57,7 @@
                         <div class="col-sm-12">
                             <div style="height: 50px; " class="col-lg-6">
                                 <img style="height: 20px;margin-top: 15px;margin-left:15px; "
-                                     src="https://www.edilcloud.io/wp-content/uploads/2020/12/logo-edilcloud.png"
+                                     src="{% static "images/logo-edilcloud.png" %}"
                                      class="img-fluid " alt="">
                             </div>
                             {% for task in tasks %}
@@ -73,7 +75,7 @@
                                                         <p class="mb-0">{{ task.date_end }}</p>
                                                     </div>
                                                     <div class="d-flex align-items-center">
-                                                        <a href="javascript:void();"
+                                                        <a href=""
                                                            class="mr-3 iq-notify iq-bg-primary rounded"><i
                                                                 class="ri-award-line"></i></a>
                                                         <div class="iq-card-header-toolbar d-flex align-items-center">
@@ -127,16 +129,16 @@
                                                 <!-- <div class="user-post">
                                                    <div class="d-flex">
                                                       <div class="col-md-6">
-                                                         <a href="javascript:void();"><img src="images/page-img/p2.jpg"
+                                                         <a href=""><img src="images/page-img/p2.jpg"
                                                                alt="post-image" class="img-fluid rounded w-100"></a>
                                                       </div>
                                                       <div class="col-md-6 row m-0 p-0">
                                                          <div class="col-sm-12">
-                                                            <a href="javascript:void();"><img src="images/page-img/p1.jpg"
+                                                            <a href=""><img src="images/page-img/p1.jpg"
                                                                   alt="post-image" class="img-fluid rounded w-100"></a>
                                                          </div>
                                                          <div class="col-sm-12 mt-3">
-                                                            <a href="javascript:void();"><img src="images/page-img/p3.jpg"
+                                                            <a href=""><img src="images/page-img/p3.jpg"
                                                                   alt="post-image" class="img-fluid rounded w-100"></a>
                                                          </div>
                                                       </div>
@@ -233,9 +235,9 @@
                                                                         <h6>{{ comment.author.first_name }} {{ comment.author.last_name }}</h6>
                                                                         <p class="mb-0">{{ comment.text }}</p>
                                                                         <div class="d-flex flex-wrap align-items-center comment-activity">
-                                                                            <a href="javascript:void();">like</a>
-                                                                            <a href="javascript:void();">reply</a>
-                                                                            <a href="javascript:void();">translate</a>
+                                                                            <a href="">like</a>
+                                                                            <a href="">reply</a>
+                                                                            <a href="">translate</a>
                                                                             <span> 5 min </span>
                                                                         </div>
                                                                     </div>
@@ -252,9 +254,9 @@
                                                                         <h6>Paul Molive</h6>
                                                                         <p class="mb-0">Lorem ipsum dolor sit amet</p>
                                                                         <div class="d-flex flex-wrap align-items-center comment-activity">
-                                                                           <a href="javascript:void();">like</a>
-                                                                           <a href="javascript:void();">reply</a>
-                                                                           <a href="javascript:void();">translate</a>
+                                                                           <a href="">like</a>
+                                                                           <a href="">reply</a>
+                                                                           <a href="">translate</a>
                                                                            <span> 5 min </span>
                                                                         </div>
                                                                      </div>
@@ -278,5 +280,27 @@
     </div>
 </div>
 </body>
-
 </html>
+<style>
+@page {
+    size: "A4";
+    margin: 2.5cm 1.5cm 3.5cm 1.5cm;
+    @bottom-center {
+        background: url({% static 'images/logo-edilcloud.png' %}) no-repeat center top;
+        background-size: auto 1.5cm;
+        padding-top: 1.8cm;
+        content: "Report generated by Edilcloud.io";
+        font: 10pt "Playfair Display";
+        text-align: center;
+        vertical-align: top;
+    }
+    @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font: 10pt "Playfair Display";
+    }
+    @top-right {
+        content: "Report State of Work";
+        font: 15pt "Playfair Display";
+    }
+}
+</style>

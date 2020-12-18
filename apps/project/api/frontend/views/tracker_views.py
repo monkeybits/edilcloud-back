@@ -34,8 +34,7 @@ from apps.quotation.api.frontend import serializers as quotation_serializers
 from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT
-from weasyprint import HTML, CSS
-
+from web.tasks import generate_pdf_report
 
 class TrackerProjectMixin(
         JWTPayloadMixin):
@@ -2903,14 +2902,7 @@ class TrackerProjectExport(
             #     STATIC_ROOT + '/css/responsive.css',
             # ])
             html_message = render_to_string('project/project/export/ProjectReport.html', data)
-            html = HTML(string=html_message)
-            html.write_pdf(
-                'Project_report_1.pdf', stylesheets=[
-                CSS(STATIC_ROOT + '/css/typography.css'),
-                CSS(STATIC_ROOT + '/css/bootstrap.min.css'),
-                CSS(STATIC_ROOT + '/css/style.css'),
-                CSS(STATIC_ROOT + '/css/responsive.css'),
-            ])
+            generate_pdf_report.delay(html_message, 'Project_report_1.pdf', request.build_absolute_uri())
             summary_pdf = list(self.request.FILES.values())
             if len(summary_pdf) > 0:
                 with open(BASE_DIR + '/media/reports/' + summary_pdf[0].name, 'wb') as f:

@@ -2797,7 +2797,7 @@ class TrackerProjectExport(
             'company', 'referent', 'tags', 'profiles',
             'status', 'completed', 'messages_count', 'creator',
             'date_create', 'date_last_modify', 'typology',
-            'shared_project', 'date_create', 'note', 'logo', 'talks', 'tasks'
+            'shared_project', 'date_create', 'note', 'logo', 'talks', 'tasks', 'address'
         ]
         self.task_response_include_fields = [
             'id', 'name', 'assigned_company', 'date_start',

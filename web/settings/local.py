@@ -27,7 +27,3 @@ EMAIL_HOST_USER = 'notification@edilcloud.io'
 EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-STRIPE_PUBLISHABLE_KEY = 'pk_test_AOBhwfzJx6EOTBT0scVwlcb400lWldUBoz'
-STRIPE_SECRET_KEY = 'sk_test_2sbH1hzuUeMhpuGKFbL8dwUS00rtkjaDln'
-STRIPE_CONNECT_CLIENT_ID = ''

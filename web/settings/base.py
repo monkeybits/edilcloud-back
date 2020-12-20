@@ -451,6 +451,14 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 NEW_SPONSOR_REQUEST_RECIPIENT = 'edilcloud.activation@gmail.com'
 
+# stripe settings
+STRIPE_TEST_PUBLIC_KEY ='pk_test_AOBhwfzJx6EOTBT0scVwlcb400lWldUBoz'
+STRIPE_TEST_SECRET_KEY = 'sk_test_2sbH1hzuUeMhpuGKFbL8dwUS00rtkjaDln'
+STRIPE_LIVE_MODE = False  # Change to True in production
+DJSTRIPE_WEBHOOK_SECRET = "whsec_xxx"
+
+
+
 # override filetype package adding new types
 class Dwg(EdilType):
     """

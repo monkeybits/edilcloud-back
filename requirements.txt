@@ -43,6 +43,7 @@ ecdsa==0.13
 emoji==0.6.0
 fake-factory==9999.9.9
 Faker==0.7.18
+fpdf
 filetype==1.0.7
 future==0.16.0
 gripcontrol==4.0.0

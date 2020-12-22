@@ -15,22 +15,23 @@ def home(request):
     has_payment_method = False
     customer_id = request.GET.get('customer_id')
     prod_list = []
-    products = Product.objects.filter(name__in=['Trial', 'Standard', 'Premium'])
-    for product in products:
-        if product.name == 'Trial':
-            prod_list.append(product)
-    for product in products:
-        if product.name == 'Standard':
-            prod_list.append(product)
-    for product in products:
-        if product.name == 'Premium':
-            prod_list.append(product)
     stripe.api_key = djstripe.settings.STRIPE_SECRET_KEY
+    products = Product.objects.all()
+    # products = Product.objects.filter(name__in=['Trial', 'Standard', 'Premium'])
+    # for product in products:
+    #     if product.name == 'Trial':
+    #         prod_list.append(product)
+    # for product in products:
+    #     if product.name == 'Standard':
+    #         prod_list.append(product)
+    # for product in products:
+    #     if product.name == 'Premium':
+    #         prod_list.append(product)
     if customer_id:
         customer = stripe.Customer.retrieve(customer_id)
         if customer.invoice_settings.default_payment_method:
             has_payment_method = True
-    return render(request, 'payments/home.html', {"products": prod_list, "customer": customer_id, 'has_payment_method': has_payment_method})
+    return render(request, 'payments/home.html', {"products": products, "customer": customer_id, 'has_payment_method': has_payment_method})
 
 def complete(request):
     return render(request, "payments/complete.html")

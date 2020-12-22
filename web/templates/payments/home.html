@@ -373,7 +373,7 @@ fetch("/api/frontend/payments/config/")
 
         // new
         // Event handler
-        document.querySelector("#submitBtn").addEventListener("click", () => {
+        document.querySelector("#submitCheckout").addEventListener("click", () => {
             // Get Checkout Session ID
             fetch("/api/frontend/payments/create-checkout-session/?plan_id=" + selectedPlanId)
                 .then((result) => {

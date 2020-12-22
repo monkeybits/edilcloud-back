@@ -17,6 +17,8 @@ def home(request):
     prod_list = []
     stripe.api_key = djstripe.settings.STRIPE_SECRET_KEY
     products = Product.objects.all()
+    print('number of plans stripe: ')
+    print(len(products))
     # products = Product.objects.filter(name__in=['Trial', 'Standard', 'Premium'])
     # for product in products:
     #     if product.name == 'Trial':

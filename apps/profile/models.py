@@ -8,6 +8,8 @@ import pathlib
 import calendar
 from itertools import chain
 
+import djstripe
+import stripe
 from django.db import transaction
 from django.core.mail import send_mail
 from django.db import models
@@ -698,7 +700,20 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         default=True,
         verbose_name=_('can access files')
     )
-
+    customer = models.CharField(
+        default='',
+        max_length=255,
+        blank=True
+    )
+    subscription = models.CharField(
+        default='',
+        max_length=255,
+        blank=True
+    )
+    trial_used = models.BooleanField(
+        default=False,
+        verbose_name=_('has already used trial plan')
+    )
     __original_instance = None
 
     class Meta:
@@ -1224,8 +1239,20 @@ class MainProfile(Profile):
             profile.company_invitation_date = datetime.datetime.now()
             profile.profile_invitation_date = datetime.datetime.now()
             profile.invitation_refuse_date = None
+            # create stripe customer
+            stripe.api_key = djstripe.settings.STRIPE_SECRET_KEY
+            customer = stripe.Customer.create(
+                email=profile.email,
+                name="{} {} - ({})".format(profile.first_name, profile.last_name, profile.company.name),
+                phone=profile.phone
+            )
+            djstripe_customer = djstripe.models.Customer.sync_from_stripe_data(customer)
+            # TODO: ADD OTHER INFO LIKE VAT NUMBER ECC ECC
+            # djstripe_customer.tax_id_data.type = 'eu_vat'
+            # djstripe_customer.tax_id_data.value = profile.company.vat_number
+            # djstripe.models.Customer.sync_from_stripe_data(djstripe_customer)
+            profile.customer = djstripe_customer.id
             profile.save()
-
         return company, profile
 
     def list_companies(self):

@@ -15,7 +15,7 @@ def home(request):
     has_payment_method = False
     customer_id = request.GET.get('customer_id')
     prod_list = []
-    stripe.api_key = djstripe.settings.STRIPE_SECRET_KEY
+    stripe.api_key = STRIPE_SECRET_KEY
     products = Product.objects.all()
     print('number of plans stripe: ')
     print(len(products))
@@ -99,7 +99,7 @@ def create_sub(request):
         data = request.body.decode('utf8').replace("'", '"')
         data = json.loads(data)
         payment_method = data['payment_method']
-        stripe.api_key = djstripe.settings.STRIPE_SECRET_KEY
+        stripe.api_key = STRIPE_SECRET_KEY
 
 
         try:

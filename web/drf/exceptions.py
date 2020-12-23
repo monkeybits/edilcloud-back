@@ -72,7 +72,7 @@ class WhistleAPIException(APIException):
             self.logger.error(log_string)
             if status_code == 500:
                 send_mail(
-                    subject='Edilcloud Tracelogs Error: ' + status_code,
+                    subject='Edilcloud Tracelogs Error: ' + str(status_code),
                     message=log_string,
                     recipient_list=DEVELOPERS,
                     from_email=DEFAULT_FROM_EMAIL,

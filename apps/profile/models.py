@@ -1221,8 +1221,8 @@ class MainProfile(Profile):
     def create_company(self, company_dict):
         # todo: active
         # todo: authenticated
-        if self.get_company_count() >= settings.MAX_COMPANIES_PER_USER:
-            raise django_exception.OwnerProfilePermissionDenied(_('no permission to create other than 10 companies'))
+        # if self.get_company_count() >= settings.MAX_COMPANIES_PER_USER:
+        #     raise django_exception.OwnerProfilePermissionDenied(_('no permission to create other than 10 companies'))
 
         with transaction.atomic():
             company = Company(

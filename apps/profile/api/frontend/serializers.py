@@ -13,6 +13,7 @@ from rest_framework import serializers, status
 
 import apps.message.api.frontend.serializers
 from apps.message.models import MessageProfileAssignment
+from web.utils import check_limitation_plan, get_media_size, info_plan
 from ... import models
 from web.drf import exceptions as django_api_exception
 from web import exceptions as django_exception
@@ -37,10 +38,20 @@ class UserSerializer(
 
 class PreferenceSerializer(
         serializers.ModelSerializer):
+    total_size = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Preference
         fields = '__all__'
 
+    def get_total_size(self, obj):
+        plan_size = info_plan(obj.profile.customer).metadata.MAX_SIZE
+        used_size = get_media_size(obj.profile, {})
+        return {
+            'used': float(used_size),
+            'free': float(plan_size) - float(used_size),
+            'max_plan': float(plan_size)
+        }
 
 class PreferenceEditSerializer(
         JWTPayloadMixin,
@@ -607,6 +618,7 @@ class ProfileAddSerializer(
 
     def create(self, validated_data):
         try:
+            check_limitation_plan(self.profile.customer, 'profile', self.profile.list_active_profiles().count())
             generic_profile = self.profile
             if not 'user' in validated_data:
                 if not 'email' in validated_data:

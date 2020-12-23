@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, status
 from rest_framework.serializers import ValidationError
 
+from web.utils import check_limitation_plan, get_media_size
 from ... import models
 from apps.profile import models as profile_models
 from apps.project import models as project_models
@@ -107,6 +108,7 @@ class DocumentAddSerializer(
 
     def create(self, validated_data):
         try:
+            check_limitation_plan(self.profile.customer, 'size', get_media_size(self.profile, validated_data))
             if 'additional_path' in self.request.data:
                 validated_data['additional_path'] = self.request.data['additional_path']
             document = self.profile.create_document(validated_data)

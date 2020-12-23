@@ -230,7 +230,7 @@ function stripeElements() {
 function createPaymentMethod({card}) {
 
     // Set up payment method for recurring usage
-    let billingName = '{{user.username}}';
+    let billingName = '{{profile.first_name}} {{profile.last_name}} ({{ profile.company.name }})';
     stripe
         .createPaymentMethod({
             type: 'card',

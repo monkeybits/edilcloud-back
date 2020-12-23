@@ -1252,6 +1252,16 @@ class MainProfile(Profile):
             # djstripe_customer.tax_id_data.value = profile.company.vat_number
             # djstripe.models.Customer.sync_from_stripe_data(djstripe_customer)
             profile.customer = djstripe_customer.id
+            subscription = stripe.Subscription.create(
+                customer=customer.id,
+                items=[
+                    {
+                        "price": settings.TRIAL_PLAN
+                    }
+                ],
+                trial_period_days=settings.TRIAL_MAX_DAYS
+            )
+            profile.subscription = subscription.id
             profile.save()
         return company, profile
 

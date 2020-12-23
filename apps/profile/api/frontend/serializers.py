@@ -3,6 +3,7 @@
 import datetime
 import random
 
+import stripe
 from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -476,6 +477,7 @@ class ProfileSerializer(
     is_main = serializers.SerializerMethodField()
     talk_count = serializers.SerializerMethodField()
     is_external = serializers.SerializerMethodField()
+    subscription = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Profile
@@ -486,6 +488,20 @@ class ProfileSerializer(
         context = kwargs.get('context', None)
         if context:
             self.request = kwargs['context']['request']
+
+    def get_subscription(self, obj):
+        if obj.subscription != '':
+            sub = stripe.Subscription.retrieve(obj.subscription)
+            return {
+                'id': sub.id,
+                'plan_name': stripe.Product.retrieve(sub.plan.product).name,
+                'status': sub.status,
+                'trial_start': str(datetime.datetime.fromtimestamp(sub.trial_start)) if sub.status == 'trialing' else None,
+                'trial_end': str(datetime.datetime.fromtimestamp(sub.trial_end)) if sub.status == 'trialing' else None,
+                'days_left': (datetime.datetime.fromtimestamp(sub.trial_end) - datetime.datetime.now()).days if sub.status == 'trialing' else (datetime.datetime.fromtimestamp(sub.current_period_end) - datetime.datetime.now()).days
+            }
+        else:
+            return {}
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:

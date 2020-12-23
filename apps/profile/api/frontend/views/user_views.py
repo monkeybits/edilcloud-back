@@ -583,7 +583,8 @@ class ProfileListView(
             'email', 'company_invitation_date', 'profile_invitation_date',
             'invitation_refuse_date', 'phone', 'language',
             'position', 'role', 'status', 'photo', 'fax', 'mobile', 'note', 'is_main',
-            'uidb36', 'token', 'is_superuser', 'can_access_files', 'can_access_chat'
+            'uidb36', 'token', 'is_superuser', 'can_access_files', 'can_access_chat',
+            'subscription', 'trial_used', 'customer'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',

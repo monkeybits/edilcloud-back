@@ -4,6 +4,7 @@ import os
 import datetime
 
 import filetype
+import stripe
 from filetype.types import Type as EdilType
 
 gettext = lambda s: s
@@ -467,6 +468,11 @@ DJSTRIPE_WEBHOOK_SECRET = "whsec_DPmr9NI6XAaAveZIGqo0DDxHqkSnsyg8"
 STRIPE_TEST_SECRET_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
 STRIPE_TEST_PUBLIC_KEY = 'pk_test_51Hr7tlCPJO2Tjuq1PUy2FdjQAvuDkRPNxYWvN2YwdOWqykdtKBZArXrFRXjZ4R7IkcAwDmAbwnd57M5gPplJIjej00BrnpqbdI'
 TEST_API_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
+
+# PAYMENTS SETTINGS
+TRIAL_MAX_DAYS = 14
+TRIAL_PLAN = 'price_1I0OpZCPJO2Tjuq1xjOnYhVm' # standard plan
+stripe.api_key = STRIPE_SECRET_KEY
 
 # override filetype package adding new types
 class Dwg(EdilType):

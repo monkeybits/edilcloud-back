@@ -2,6 +2,7 @@ import json
 
 import djstripe
 import stripe
+from celery.utils.serialization import jsonify
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -15,7 +16,6 @@ def home(request):
     has_payment_method = False
     customer_id = request.GET.get('customer_id')
     prod_list = []
-    stripe.api_key = STRIPE_SECRET_KEY
     # products = Product.objects.all()
     # print('number of plans stripe: ')
     # print(len(products))
@@ -31,9 +31,10 @@ def home(request):
             prod_list.append(product)
     if customer_id:
         customer = stripe.Customer.retrieve(customer_id)
+        profile = Profile.objects.get(customer=customer_id)
         if customer.invoice_settings.default_payment_method:
             has_payment_method = True
-    return render(request, 'payments/home.html', {"products": prod_list, "customer": customer_id, 'has_payment_method': has_payment_method})
+    return render(request, 'payments/home.html', {"products": prod_list, "customer": customer_id, "profile": profile, 'has_payment_method': has_payment_method})
 
 def complete(request):
     return render(request, "payments/complete.html")
@@ -50,7 +51,6 @@ def stripe_config(request):
 def create_checkout_session(request):
     if request.method == 'GET':
         domain_url = 'http://localhost:8000/'
-        stripe.api_key = STRIPE_SECRET_KEY
         price_id = request.GET.get('plan_id')
         try:
             # Create new Checkout Session for the order
@@ -99,9 +99,6 @@ def create_sub(request):
         data = request.body.decode('utf8').replace("'", '"')
         data = json.loads(data)
         payment_method = data['payment_method']
-        stripe.api_key = STRIPE_SECRET_KEY
-
-
         try:
             customer = stripe.Customer.retrieve("cus_IbzMek57AM6ro8")
             djstripe_customer = djstripe.models.Customer.sync_from_stripe_data(customer)
@@ -130,3 +127,55 @@ def create_sub(request):
             return JsonResponse({'error': (e.args[0])}, status=403)
     else:
         return HttpResponse('requet method not allowed')
+
+
+
+# TESTING CUSTOM STRIPE PORTAL
+def customer_portal(request):
+  customer_id = request.GET.get('customer_id')
+    # Authenticate your user.
+  session = stripe.billing_portal.Session.create(
+    customer=customer_id,
+    return_url='https://dev.edilcloud.io/apps/dashboard',
+  )
+  return redirect(session.url)
+
+@csrf_exempt
+def my_webhook_view(request):
+    webhook_secret = 'whsec_c5UDu75y55yZ2JRry8BGOEvZ8u0PNu7R'
+    request_data = json.loads(request.data)
+
+    if webhook_secret:
+        # Retrieve the event by verifying the signature using the raw body and secret if webhook signing is configured.
+        signature = request.headers.get('stripe-signature')
+        try:
+            event = stripe.Webhook.construct_event(
+                payload=request.data, sig_header=signature, secret=webhook_secret)
+            data = event['data']
+        except Exception as e:
+            return e
+        # Get the type of webhook event sent - used to check the status of PaymentIntents.
+        event_type = event['type']
+    else:
+        data = request_data['data']
+        event_type = request_data['type']
+    data_object = data['object']
+
+    if event_type == 'checkout.session.completed':
+        # Payment is successful and the subscription is created.
+        # You should provision the subscription.
+        print(data)
+    elif event_type == 'invoice.paid':
+        # Continue to provision the subscription as payments continue to be made.
+        # Store the status in your database and check when a user accesses your service.
+        # This approach helps you avoid hitting rate limits.
+        print(data)
+    elif event_type == 'invoice.payment_failed':
+        # The payment failed or the customer does not have a valid payment method.
+        # The subscription becomes past_due. Notify your customer and send them to the
+        # customer portal to update their payment information.
+        print(data)
+    else:
+        print('Unhandled event type {}'.format(event.type))
+
+    return JsonResponse({'status': 'success'})

@@ -224,7 +224,7 @@ class TrackerProjectDetailView(
             'company', 'referent', 'tags', 'profiles',
             'status', 'completed', 'messages_count', 'creator',
             'date_create', 'date_last_modify', 'typology',
-            'shared_project', 'date_create', 'note', 'logo', 'talks'
+            'shared_project', 'date_create', 'note', 'logo', 'talks', 'address'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'ssn', 'logo'

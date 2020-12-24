@@ -142,7 +142,7 @@ def message_notification(sender, instance, **kwargs):
 
         notify_obj = notify_models.Notify(
             sender=profile, subject=subject, body=body,
-            content_type=type, object_id=instance.talk.object_id,
+            content_type=type, object_id=instance.id,
             creator=profile.user, last_modifier=profile.user
         )
         notify_obj.save()

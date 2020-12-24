@@ -268,7 +268,7 @@ def message_notification(sender, instance, **kwargs):
             event_triger(
                 {
                     "message":  {
-                        "id": notify_obj.id,
+                        "id": instance.id,
                         "body": instance.body,
                         "read": profile.read,
                         "unique_code": instance.unique_code,

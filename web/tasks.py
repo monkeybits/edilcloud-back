@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from apps.project.models import Project
 from web import settings
 from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT
-from weasyprint import HTML, CSS, default_url_fetcher
+#from weasyprint import HTML, CSS, default_url_fetcher
 
 @task()
 def archived_projects_reminder():
@@ -37,14 +37,14 @@ def archived_projects_reminder():
         if delta.days > 30:
             project.delete()
 
-@task()
-def generate_pdf_report(html_message, pdf_name, request_path):
-    print(pdf_name)
-    html = HTML(string=html_message, base_url=request_path)
-    html.write_pdf(
-        'Project_report_1.pdf', presentational_hints=True, stylesheets=[
-            CSS(STATIC_ROOT + '/css/typography.css'),
-            CSS(STATIC_ROOT + '/css/bootstrap.min.css'),
-            CSS(STATIC_ROOT + '/css/style.css'),
-            CSS(STATIC_ROOT + '/css/responsive.css'),
-        ])
+# @task()
+# def generate_pdf_report(html_message, pdf_name, request_path):
+#     print(pdf_name)
+#     html = HTML(string=html_message, base_url=request_path)
+#     html.write_pdf(
+#         'Project_report_1.pdf', presentational_hints=True, stylesheets=[
+#             CSS(STATIC_ROOT + '/css/typography.css'),
+#             CSS(STATIC_ROOT + '/css/bootstrap.min.css'),
+#             CSS(STATIC_ROOT + '/css/style.css'),
+#             CSS(STATIC_ROOT + '/css/responsive.css'),
+#         ])

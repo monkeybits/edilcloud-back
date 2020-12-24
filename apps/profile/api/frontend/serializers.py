@@ -46,13 +46,16 @@ class PreferenceSerializer(
         fields = '__all__'
 
     def get_total_size(self, obj):
-        plan_size = permissions_plan(obj.profile.customer)['max_size']
-        used_size = get_media_size(obj.profile, {})
-        return {
-            'used': float(used_size),
-            'free': float(plan_size) - float(used_size),
-            'max_plan': float(plan_size)
-        }
+        if obj.profile.customer != '':
+            plan_size = permissions_plan(obj.profile.customer)['max_size']
+            used_size = get_media_size(obj.profile, {})
+            return {
+                'used': float(used_size),
+                'free': float(plan_size) - float(used_size),
+                'max_plan': float(plan_size)
+            }
+        else:
+            return {}
 
     def get_plan_permissions(self, obj):
         return permissions_plan(obj.profile.customer)

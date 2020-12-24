@@ -41,6 +41,24 @@ def info_plan(customer):
     product = stripe.Product.retrieve(product_id)
     return product
 
+def permissions_plan(customer):
+    permissions = {}
+    plan = info_plan(customer)
+    enable_gantt = plan.metadata.ENABLE_GANTT
+    report_type = plan.metadata.REPORT_TYPE
+    max_profiles = plan.metadata.MAX_PROFILES
+    max_projects = plan.metadata.MAX_PROJECTS
+    max_size = plan.metadata.MAX_SIZE
+    permissions.update({'report_type': report_type})
+    permissions.update({'max_profiles': max_profiles})
+    permissions.update({'max_projects': max_projects})
+    permissions.update({'max_size': max_size})
+    if enable_gantt == 'True':
+        permissions.update({'enable_gantt': True})
+    else:
+        permissions.update({'enable_gantt': False})
+
+    return permissions
 
 def check_limitation_plan(customer, rule, total_count):
     detail_error = "Il limite massimo è stato raggiunto, fai upgrade del tuo piano."

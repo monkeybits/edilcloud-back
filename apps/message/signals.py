@@ -109,9 +109,9 @@ def message_notification(sender, instance, **kwargs):
             company_staff = instance.talk.content_object.profiles.all()
             title = instance.talk.content_type.name
             source = instance.talk.content_object.name
-            endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL, 'apps/chat')
+            endpoint = os.path.join('/apps/chat')
         elif instance.talk.content_type.name == 'project':
-            endpoint = os.path.join(settings.PROTOCOL+'://', settings.BASE_URL, 'apps/projects/{}'.format(str(instance.talk.object_id)))
+            endpoint = os.path.join('/apps/projects/{}/chat'.format(str(instance.talk.object_id)))
             title = instance.talk.content_type.name
             company_staff = instance.talk.content_object.profiles.all().union(
                 instance.talk.content_object.company.get_owners_and_delegates(),
@@ -142,7 +142,7 @@ def message_notification(sender, instance, **kwargs):
 
         notify_obj = notify_models.Notify(
             sender=profile, subject=subject, body=body,
-            content_type=type, object_id=instance.talk.object_id,
+            content_type=type, object_id=instance.id,
             creator=profile.user, last_modifier=profile.user
         )
         notify_obj.save()
@@ -269,7 +269,7 @@ def message_notification(sender, instance, **kwargs):
             event_triger(
                 {
                     "message":  {
-                        "id": notify_obj.id,
+                        "id": instance.id,
                         "body": instance.body,
                         "read": profile.read,
                         "unique_code": instance.unique_code,

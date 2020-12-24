@@ -13,7 +13,7 @@ from rest_framework import serializers, status
 
 import apps.message.api.frontend.serializers
 from apps.message.models import MessageProfileAssignment
-from web.utils import check_limitation_plan, get_media_size, info_plan
+from web.utils import check_limitation_plan, get_media_size, info_plan, permissions_plan
 from ... import models
 from web.drf import exceptions as django_api_exception
 from web import exceptions as django_exception
@@ -39,19 +39,27 @@ class UserSerializer(
 class PreferenceSerializer(
         serializers.ModelSerializer):
     total_size = serializers.SerializerMethodField()
+    plan_permissions = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Preference
         fields = '__all__'
 
     def get_total_size(self, obj):
-        plan_size = info_plan(obj.profile.customer).metadata.MAX_SIZE
-        used_size = get_media_size(obj.profile, {})
-        return {
-            'used': float(used_size),
-            'free': float(plan_size) - float(used_size),
-            'max_plan': float(plan_size)
-        }
+        if obj.profile.customer != '':
+            plan_size = permissions_plan(obj.profile.customer)['max_size']
+            used_size = get_media_size(obj.profile, {})
+            return {
+                'used': float(used_size),
+                'free': float(plan_size) - float(used_size),
+                'max_plan': float(plan_size)
+            }
+        else:
+            return {}
+
+    def get_plan_permissions(self, obj):
+        return permissions_plan(obj.profile.customer)
+
 
 class PreferenceEditSerializer(
         JWTPayloadMixin,

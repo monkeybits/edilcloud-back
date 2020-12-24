@@ -474,6 +474,14 @@ TRIAL_MAX_DAYS = 14
 TRIAL_PLAN = 'price_1I0OpZCPJO2Tjuq1xjOnYhVm' # standard plan
 stripe.api_key = STRIPE_SECRET_KEY
 
+STRIPE_PLANS_METADATA_KEYS = [
+    'MAX_PROJECTS',
+    'MAX_PROFILES',
+    'MAX_SIZE',
+    'ENABLE_GANTT',
+    'REPORT_TYPE',
+]
+
 # override filetype package adding new types
 class Dwg(EdilType):
     """

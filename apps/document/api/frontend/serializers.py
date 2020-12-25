@@ -108,7 +108,7 @@ class DocumentAddSerializer(
 
     def create(self, validated_data):
         try:
-            check_limitation_plan(self.profile.customer, 'size', get_media_size(self.profile, validated_data))
+            check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data))
             if 'additional_path' in self.request.data:
                 validated_data['additional_path'] = self.request.data['additional_path']
             document = self.profile.create_document(validated_data)

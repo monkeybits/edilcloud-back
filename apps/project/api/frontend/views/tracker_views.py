@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 from datetime import datetime
 
 from io import BytesIO
@@ -17,14 +18,12 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
-
 from rest_framework import generics, status, views
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
-from apps.document.api.frontend.views.tracker_views import TrackerDocumentMixin
+from weasyprint import HTML, CSS
 from apps.media.api.frontend.views.tracker_views import TrackerPhotoMixin, TrackerVideoMixin
-from apps.project.models import Team, MediaAssignment
+from apps.project.models import Team, MediaAssignment, Comment, Post
 from web.api.permissions import RoleAccessPermission
 from web.api.views import QuerysetMixin, JWTPayloadMixin, WhistleGenericViewMixin, DownloadViewMixin
 from apps.project.api.frontend import serializers
@@ -34,7 +33,8 @@ from apps.message.api.frontend import serializers as message_serializers
 from apps.quotation.api.frontend import serializers as quotation_serializers
 from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
-from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR
+from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT
+#from web.tasks import generate_pdf_report
 
 
 class TrackerProjectMixin(
@@ -2797,7 +2797,7 @@ class TrackerProjectExport(
             'company', 'referent', 'tags', 'profiles',
             'status', 'completed', 'messages_count', 'creator',
             'date_create', 'date_last_modify', 'typology',
-            'shared_project', 'date_create', 'note', 'logo', 'talks', 'tasks'
+            'shared_project', 'date_create', 'note', 'logo', 'talks', 'tasks', 'address'
         ]
         self.task_response_include_fields = [
             'id', 'name', 'assigned_company', 'date_start',
@@ -2843,12 +2843,16 @@ class TrackerProjectExport(
                 # get task posts medias
                 for post in task['post_set']:
                     post_mediass = MediaAssignment.objects.filter(post=post['id'])
+                    if post['author']['photo'] != None:
+                        post['author']['photo'] = '/office2017.whistle.it' + Post.objects.get(id=post['id']).get_media_path()
                     for media in post_mediass:
                         media_url = media.media.url
                         filenames.append(BASE_DIR + media_url)
                     # get task post comments medias
                     for comment in post['comment_set']:
                         comment_mediass = MediaAssignment.objects.filter(comment=comment['id'])
+                        if comment['author']['photo'] != None:
+                            comment['author']['photo'] = '/office2017.whistle.it' + Comment.objects.get(id=comment['id']).get_media_path()
                         for media in comment_mediass:
                             media_url = media.media.url
                             filenames.append(BASE_DIR + media_url)
@@ -2889,6 +2893,50 @@ class TrackerProjectExport(
                     # Add file, at correct path
                     zf.write(fpath, zip_path)
 
+            # def download_image(url):
+            #     import base64
+            #     with open(url, "rb") as image_file:
+            #         encoded_string = base64.b64encode(image_file.read())
+            #         return encoded_string.decode('utf-8')
+            # data['company']['logo'] = download_image(MEDIA_ROOT + '/company/logo/ma/Mango.png')
+            # ADD DATA INTO HTML
+            # pdfkit.from_string(html_message, 'Project_report_1.pdf', css=[
+            #     STATIC_ROOT + '/css/typography.css',
+            #     STATIC_ROOT + '/css/bootstrap.min.css',
+            #     STATIC_ROOT + '/css/style.css',
+            #     STATIC_ROOT + '/css/responsive.css',
+            # ])
+
+
+
+            # import pdfcrowd
+            # try:
+            #     # create the API client instance
+            #     client = pdfcrowd.HtmlToPdfClient('monkeybits', '35c346fccd2ca336c0f325a7fbd7468b')
+            #
+            #     # run the conversion and write the result to a file
+            #     html_message = render_to_string('project/project/export/ProjectReport.html', data)
+            #     client.convertStringToFile(html_message, 'MyLayout2.pdf')
+            #     #client.convertFileToFile(BASE_DIR + '/apps/project/templates/project/project/export/project_report_zip.zip', 'MyLayout2.pdf')
+            # except pdfcrowd.Error as why:
+            #     # report the error
+            #     sys.stderr.write('Pdfcrowd Error: {}\n'.format(why))
+            #
+            #     # rethrow or handle the exception
+            #     raise
+
+
+            #pdf = render_to_pdf('project/project/export/ProjectReport.html', data)
+            html_message = render_to_string('project/project/export/ProjectReport.html', data)
+            html = HTML(string=html_message, base_url='/office2017.whistle.it')
+            html.write_pdf(
+                'Project_report_1.pdf', presentational_hints=True, stylesheets=[
+                    CSS(STATIC_ROOT + '/css/typography.css'),
+                    CSS(STATIC_ROOT + '/css/bootstrap.min.css'),
+                    CSS(STATIC_ROOT + '/css/style.css'),
+                    CSS(STATIC_ROOT + '/css/responsive.css'),
+                ])
+            #generate_pdf_report.delay(html_message, 'Project_report_1.pdf', request.build_absolute_uri())
             summary_pdf = list(self.request.FILES.values())
             if len(summary_pdf) > 0:
                 with open(BASE_DIR + '/media/reports/' + summary_pdf[0].name, 'wb') as f:

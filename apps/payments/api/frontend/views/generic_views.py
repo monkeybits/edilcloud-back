@@ -29,7 +29,6 @@ from django.http import HttpRequest, JsonResponse
 
 class GenericCheckoutSessionView(APIView):
     def post(self, request, *args, **kwargs):
-        customer = request.user  # get customer model based off request.user
         data = request.data
         if 'price_id' in data and 'customer_id' in data:
             price_id = data['price_id']

@@ -632,6 +632,9 @@ class Post(OrderedModel):
         else:
             return "New post for subtask #" + str(self.sub_task.id) + "by " + self.author.user.get_full_name()
 
+    def get_media_path(self):
+        return self.author.photo.url
+
 @python_2_unicode_compatible
 class Comment(OrderedModel):
     parent = models.ForeignKey('self',
@@ -662,6 +665,10 @@ class Comment(OrderedModel):
 
     def __str__(self):
         return "Comment #" + str(self.id) + " of post #" + str(self.post.id)
+
+    def get_media_path(self):
+        return self.author.photo.url
+
 
 @python_2_unicode_compatible
 class TaskPostAssignment(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):

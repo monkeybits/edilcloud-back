@@ -433,7 +433,7 @@ class TrackerCompanyProfileDetailView(
             'language', 'position', 'role', 'fax',
             'mobile', 'note', 'phone', 'photo', 'is_shared', 'is_in_showroom',
             'company_invitation_date', 'profile_invitation_date', 'talk_count',
-            'can_access_files', 'can_access_chat', 'user', 'preference', 'customer', 'trial_used', 'subscription'
+            'can_access_files', 'can_access_chat', 'user', 'preference'
         ]
         self.user_response_include_fields = ['id', 'first_name', 'last_name', 'username']
         super(TrackerCompanyProfileDetailView, self).__init__(*args, **kwargs)
@@ -689,7 +689,7 @@ class TrackerCompanyDetailView(
             'url', 'fax', 'phone2', 'projects_count',
             'messages_count', 'tags_count', 'followers_count',
             'staff_count', 'partnerships_count', 'category', 'is_sponsor',
-            'can_access_files', 'can_access_chat', 'talks', 'last_message_created'
+            'can_access_files', 'can_access_chat', 'talks', 'last_message_created', 'customer', 'trial_used', 'subscription'
         ]
         self.talk_response_include_fields = [
             'id', 'code', 'unread_count'

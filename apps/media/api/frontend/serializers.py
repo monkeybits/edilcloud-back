@@ -132,7 +132,7 @@ class PhotoAddSerializer(
         if 'additional_path' in self.request.data:
             validated_data['additional_path'] = self.request.data['additional_path']
         try:
-            check_limitation_plan(self.profile.customer, 'size', get_media_size(self.profile, validated_data))
+            check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data))
             photo = self.profile.create_photo(validated_data)
             return photo
         except Exception as err:
@@ -365,7 +365,7 @@ class VideoAddSerializer(
         return super(VideoAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
-        check_limitation_plan(self.profile.customer, 'size', get_media_size(self.profile, validated_data))
+        check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data))
         self.get_array_from_string(validated_data)
         try:
             if 'additional_path' in self.request.data:

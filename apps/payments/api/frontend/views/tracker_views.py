@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from djstripe.models import Product
 
-from apps.profile.models import Profile
+from apps.profile.models import Profile, Company
 from web.settings import STRIPE_PUBLIC_KEY, STRIPE_SECRET_KEY
 
 def home(request):
@@ -31,7 +31,7 @@ def home(request):
             prod_list.append(product)
     if customer_id:
         customer = stripe.Customer.retrieve(customer_id)
-        profile = Profile.objects.get(customer=customer_id)
+        profile = Company.objects.get(customer=customer_id)
         if customer.invoice_settings.default_payment_method:
             has_payment_method = True
     return render(request, 'payments/home.html', {"products": prod_list, "customer": customer_id, "profile": profile, 'has_payment_method': has_payment_method})
@@ -118,7 +118,7 @@ def create_sub(request):
                 expand=["latest_invoice.payment_intent"]
             )
             djstripe_subscription = djstripe.models.Subscription.sync_from_stripe_data(subscription)
-            profile = Profile.objects.get(customer=customer.id)
+            profile = Company.objects.get(customer=customer.id)
             profile.subscription = djstripe_subscription.id
             profile.save()
 

@@ -46,8 +46,8 @@ class PreferenceSerializer(
         fields = '__all__'
 
     def get_total_size(self, obj):
-        if obj.profile.customer != '':
-            plan_size = permissions_plan(obj.profile.customer)['max_size']
+        if obj.profile.company.customer != '':
+            plan_size = permissions_plan(obj.profile.company.customer)['max_size']
             used_size = get_media_size(obj.profile, {})
             return {
                 'used': float(used_size),
@@ -58,7 +58,7 @@ class PreferenceSerializer(
             return {}
 
     def get_plan_permissions(self, obj):
-        return permissions_plan(obj.profile.customer)
+        return permissions_plan(obj.profile.company.customer)
 
 
 class PreferenceEditSerializer(
@@ -626,7 +626,7 @@ class ProfileAddSerializer(
 
     def create(self, validated_data):
         try:
-            check_limitation_plan(self.profile.customer, 'profile', self.profile.list_active_profiles().count())
+            check_limitation_plan(self.profile.company.customer, 'profile', self.profile.list_active_profiles().count())
             generic_profile = self.profile
             if not 'user' in validated_data:
                 if not 'email' in validated_data:

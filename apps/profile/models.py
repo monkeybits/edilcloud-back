@@ -326,6 +326,20 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         blank=True,
         verbose_name=_("color")
     )
+    customer = models.CharField(
+        default='',
+        max_length=255,
+        blank=True
+    )
+    subscription = models.CharField(
+        default='',
+        max_length=255,
+        blank=True
+    )
+    trial_used = models.BooleanField(
+        default=False,
+        verbose_name=_('has already used trial plan')
+    )
 
     class Meta:
         verbose_name = _('company')
@@ -699,20 +713,6 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     can_access_files = models.BooleanField(
         default=True,
         verbose_name=_('can access files')
-    )
-    customer = models.CharField(
-        default='',
-        max_length=255,
-        blank=True
-    )
-    subscription = models.CharField(
-        default='',
-        max_length=255,
-        blank=True
-    )
-    trial_used = models.BooleanField(
-        default=False,
-        verbose_name=_('has already used trial plan')
     )
     __original_instance = None
 
@@ -1239,6 +1239,8 @@ class MainProfile(Profile):
             profile.company_invitation_date = datetime.datetime.now()
             profile.profile_invitation_date = datetime.datetime.now()
             profile.invitation_refuse_date = None
+            profile.save()
+
             # create stripe customer
             stripe.api_key = djstripe.settings.STRIPE_SECRET_KEY
             customer = stripe.Customer.create(
@@ -1251,7 +1253,7 @@ class MainProfile(Profile):
             # djstripe_customer.tax_id_data.type = 'eu_vat'
             # djstripe_customer.tax_id_data.value = profile.company.vat_number
             # djstripe.models.Customer.sync_from_stripe_data(djstripe_customer)
-            profile.customer = djstripe_customer.id
+            company.customer = djstripe_customer.id
             subscription = stripe.Subscription.create(
                 customer=customer.id,
                 items=[
@@ -1261,8 +1263,8 @@ class MainProfile(Profile):
                 ],
                 trial_period_days=settings.TRIAL_MAX_DAYS
             )
-            profile.subscription = subscription.id
-            profile.save()
+            company.subscription = subscription.id
+            company.save()
         return company, profile
 
     def list_companies(self):

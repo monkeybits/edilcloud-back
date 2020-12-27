@@ -2311,9 +2311,9 @@ class OwnerProfile(Profile):
             task_worker.workers.add(worker)
         task_worker.save()
 
-        for owner in task.project.members.filter(role__in=['o', 'd']):
-            task_worker.workers.add(owner.profile)
-            task_worker.save()
+        # for owner in task.project.members.filter(role__in=['o', 'd']):
+        #     task_worker.workers.add(owner.profile)
+        #     task_worker.save()
         #act_list.append(task_worker)
         return task_worker
 

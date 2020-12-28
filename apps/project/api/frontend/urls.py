@@ -306,7 +306,7 @@ tracker_urlpatterns = [
         name='tracker_task_activity_add'
     ),
     url(
-        r'^task/(?P<pk>\dteam_list+)/activity_list/$',
+        r'^task/(?P<pk>\d+)/activity_list/$',
         tracker_views.TrackerTaskActivityListView.as_view(),
         name='tracker_task_activity_list'
     ),

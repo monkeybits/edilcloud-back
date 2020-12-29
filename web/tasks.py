@@ -9,8 +9,9 @@ from django.template.loader import render_to_string
 
 from apps.project.models import Project
 from web import settings
-from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT
+from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT, DEFAULT_FROM_EMAIL
 #from weasyprint import HTML, CSS, default_url_fetcher
+import requests
 
 @task()
 def archived_projects_reminder():
@@ -37,14 +38,22 @@ def archived_projects_reminder():
         if delta.days > 30:
             project.delete()
 
-# @task()
-# def generate_pdf_report(html_message, pdf_name, request_path):
-#     print(pdf_name)
-#     html = HTML(string=html_message, base_url=request_path)
-#     html.write_pdf(
-#         'Project_report_1.pdf', presentational_hints=True, stylesheets=[
-#             CSS(STATIC_ROOT + '/css/typography.css'),
-#             CSS(STATIC_ROOT + '/css/bootstrap.min.css'),
-#             CSS(STATIC_ROOT + '/css/style.css'),
-#             CSS(STATIC_ROOT + '/css/responsive.css'),
-#         ])
+@task()
+def generate_pdf_report(html_message, email):
+    url = 'https://api.sejda.com/v2/html-pdf'
+    r = requests.post(url, json={
+        'htmlCode': html_message,
+        'viewportWidth': 1200
+    }, headers={
+        'Authorization': 'Token: {}'.format('api_D0D855D3D00041BFABA9FA5AA514E16D')
+    })
+    open(BASE_DIR + '/media/reports/' + 'Report3.pdf', 'wb').write(r.content)
+    from django.core.mail import EmailMessage
+    mail = EmailMessage(
+        subject='New Report PDF',
+        body="Ciao questo è il report",
+        to=[email],
+        from_email=DEFAULT_FROM_EMAIL,
+    )
+    mail.attach(filename='Report progetto.pdf', content=r.content)
+    mail.send()

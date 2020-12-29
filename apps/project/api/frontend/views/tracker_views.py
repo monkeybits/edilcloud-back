@@ -35,7 +35,7 @@ from apps.quotation.api.frontend import serializers as quotation_serializers
 from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT
-#from web.tasks import generate_pdf_report
+from web.tasks import generate_pdf_report
 from pdfreactor import api
 
 class TrackerProjectMixin(
@@ -2928,15 +2928,22 @@ class TrackerProjectExport(
 
 
             #pdf = render_to_pdf('project/project/export/ProjectReport.html', data)
+
             html_message = render_to_string('project/project/export/ProjectReport.html', data)
-            url = 'https://api.sejda.com/v2/html-pdf'
-            r = requests.post(url, json={
-                'htmlCode': html_message,
-                'viewportWidth': 1200
-            }, headers={
-                'Authorization': 'Token: {}'.format('api_D0D855D3D00041BFABA9FA5AA514E16D')
-            })
-            open(BASE_DIR + '/media/reports/' + 'Report3.pdf', 'wb').write(r.content)
+
+            # url = 'https://api.sejda.com/v2/html-pdf'
+            # r = requests.post(url, json={
+            #     'htmlCode': html_message,
+            #     'viewportWidth': 1200
+            # }, headers={
+            #     'Authorization': 'Token: {}'.format('api_D0D855D3D00041BFABA9FA5AA514E16D')
+            # })
+            # open(BASE_DIR + '/media/reports/' + 'Report3.pdf', 'wb').write(r.content)
+
+
+
+
+
             # pdfReactor = api.PDFreactor("http://pdfreactor:9423/service/rest")
             # # Create a new PDFreactor configuration object
             # config = {
@@ -2981,6 +2988,7 @@ class TrackerProjectExport(
             zip_path = os.path.join(zip_subdir, 'Report3.pdf')
             zf.write(BASE_DIR + '/media/reports/' + 'Report3.pdf', zip_path)
             zf.close()
+            generate_pdf_report.delay(html_message, self.get_profile().email)
             resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
             resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
             return resp

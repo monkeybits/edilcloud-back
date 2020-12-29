@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 
 from apps.project.models import Project
 from web import settings
-from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT, DEFAULT_FROM_EMAIL
+from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT, DEFAULT_FROM_EMAIL, API_SEJDA_PDF_GENERATOR
 #from weasyprint import HTML, CSS, default_url_fetcher
 import requests
 
@@ -39,21 +39,27 @@ def archived_projects_reminder():
             project.delete()
 
 @task()
-def generate_pdf_report(html_message, email):
+def generate_pdf_report(html_message, data):
     url = 'https://api.sejda.com/v2/html-pdf'
     r = requests.post(url, json={
         'htmlCode': html_message,
         'viewportWidth': 1200
     }, headers={
-        'Authorization': 'Token: {}'.format('api_D0D855D3D00041BFABA9FA5AA514E16D')
+        'Authorization': 'Token: {}'.format(API_SEJDA_PDF_GENERATOR)
     })
     open(BASE_DIR + '/media/reports/' + 'Report3.pdf', 'wb').write(r.content)
-    from django.core.mail import EmailMessage
-    mail = EmailMessage(
-        subject='New Report PDF',
-        body="Ciao questo è il report",
-        to=[email],
+    from django.core.mail import EmailMultiAlternatives
+    data_template = {
+        'profile_name': "{} {}".format(data['first_name'], data['last_name']),
+        'project_name': data['project_name'],
+    }
+    report_template = render_to_string('email/report_email.html', data_template)
+    email = EmailMultiAlternatives(
+        subject='Edilcloud.io Report PDF - Progetto {}'.format(data['project_name']),
+        body='ciao questo è un report',
+        to=[data['email']],
         from_email=DEFAULT_FROM_EMAIL,
     )
-    mail.attach(filename='Report progetto.pdf', content=r.content)
-    mail.send()
+    email.attach_alternative(report_template, "text/html")
+    email.attach(filename='Report progetto {}.pdf'.format(data['project_name']), content=r.content)
+    email.send()

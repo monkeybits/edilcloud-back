@@ -818,7 +818,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         already_assigned_workers = obj.workers.all()
         for already_assigned_worker in already_assigned_workers:
             already_assigned_ids.append(already_assigned_worker.id)
-        workers = obj.task.project.members.exclude(profile_id__in=already_assigned_ids)
+        workers = obj.task.project.members.exclude(profile_id__in=already_assigned_ids).filter(profile__company_id=obj.task.assigned_company.id)
         for worker in workers:
             member = TeamBasicSerializer(worker).data
             list_workers.append(member)

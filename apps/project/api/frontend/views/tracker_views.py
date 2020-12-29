@@ -2835,7 +2835,6 @@ class TrackerProjectExport(
         if 'type' in params and params.get('type') == 'zip':
             for task in tasks:
                 filenames = []
-
                 # get task medias
                 task_mediass = MediaAssignment.objects.filter(task=task['id'])
                 for media in task_mediass:
@@ -2894,102 +2893,13 @@ class TrackerProjectExport(
                     # Add file, at correct path
                     zf.write(fpath, zip_path)
 
-            # def download_image(url):
-            #     import base64
-            #     with open(url, "rb") as image_file:
-            #         encoded_string = base64.b64encode(image_file.read())
-            #         return encoded_string.decode('utf-8')
-            # data['company']['logo'] = download_image(MEDIA_ROOT + '/company/logo/ma/Mango.png')
-            # ADD DATA INTO HTML
-            # pdfkit.from_string(html_message, 'Project_report_1.pdf', css=[
-            #     STATIC_ROOT + '/css/typography.css',
-            #     STATIC_ROOT + '/css/bootstrap.min.css',
-            #     STATIC_ROOT + '/css/style.css',
-            #     STATIC_ROOT + '/css/responsive.css',
-            # ])
-
-
-
-            # import pdfcrowd
-            # try:
-            #     # create the API client instance
-            #     client = pdfcrowd.HtmlToPdfClient('monkeybits', '35c346fccd2ca336c0f325a7fbd7468b')
-            #
-            #     # run the conversion and write the result to a file
-            #     html_message = render_to_string('project/project/export/ProjectReport.html', data)
-            #     client.convertStringToFile(html_message, 'MyLayout2.pdf')
-            #     #client.convertFileToFile(BASE_DIR + '/apps/project/templates/project/project/export/project_report_zip.zip', 'MyLayout2.pdf')
-            # except pdfcrowd.Error as why:
-            #     # report the error
-            #     sys.stderr.write('Pdfcrowd Error: {}\n'.format(why))
-            #
-            #     # rethrow or handle the exception
-            #     raise
-
-
-            #pdf = render_to_pdf('project/project/export/ProjectReport.html', data)
-
             html_message = render_to_string('project/project/export/ProjectReport.html', data)
-
-            # url = 'https://api.sejda.com/v2/html-pdf'
-            # r = requests.post(url, json={
-            #     'htmlCode': html_message,
-            #     'viewportWidth': 1200
-            # }, headers={
-            #     'Authorization': 'Token: {}'.format('api_D0D855D3D00041BFABA9FA5AA514E16D')
-            # })
-            # open(BASE_DIR + '/media/reports/' + 'Report3.pdf', 'wb').write(r.content)
-
-
-
-
-
-            # pdfReactor = api.PDFreactor("http://pdfreactor:9423/service/rest")
-            # # Create a new PDFreactor configuration object
-            # config = {
-            #     # Specify the input document
-            #     'document': html_message,
-            # }
-            #
-            # # The resulting PDF
-            # result = None
-            #
-            # # Render document and save result
-            # result = pdfReactor.convertAsBinary(config)
-            #
-            # f = open('report2.pdf', 'wb')
-            # f.write(result)
-            # f.close()
-            #
-            # # Check if successful
-            # if result != None:
-            #     # Used to prevent newlines are converted to Windows newlines (\n --> \r\n)
-            #     # when using Python on Windows systems
-            #     if sys.platform == "win32":
-            #         import msvcrt
-            #         msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
-            #
-            #     # Set the correct header for PDF output and echo PDF content
-            #     print("Content-Type: application/pdf\n")
-            #
-            #     # Check Python version
-            #     if sys.version_info[0] == 2:
-            #         print(result)
-            #     else:
-            #         sys.stdout.flush()
-            #         sys.stdout.buffer.write(result)
-            # return HttpResponse(result, status=status.HTTP_200_OK)
-            # html = HTML(string=html_message, base_url='/office2017.whistle.it')
-            # html.write_pdf(
-            #     'Project_report_1.pdf', stylesheets=[
-            #         CSS(STATIC_ROOT + '/css/slick.min.css'),
-            #     ])
-            #generate_pdf_report.delay(html_message, 'Project_report_1.pdf', request.build_absolute_uri())
             zip_path = os.path.join(zip_subdir, 'Report3.pdf')
             zf.write(BASE_DIR + '/media/reports/' + 'Report3.pdf', zip_path)
             zf.close()
-            generate_pdf_report.delay(html_message, self.get_profile().email)
-            resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
-            resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+            generate_pdf_report.delay(html_message, {'email': self.get_profile().email, 'first_name': self.get_profile().first_name, 'last_name': self.get_profile().last_name, 'project_name': data['name']})
+            resp = Response(data="Il report è stato generato. Controlla la tua email.", status=status.HTTP_201_CREATED)
+            # resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
+            # resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
             return resp
         return response

@@ -11,6 +11,7 @@ from io import BytesIO
 from wsgiref.util import FileWrapper
 
 import magic
+import requests
 from django.db.models import Q
 from django.conf import settings
 from django.http import FileResponse, HttpResponse
@@ -23,7 +24,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from weasyprint import HTML, CSS
 from apps.media.api.frontend.views.tracker_views import TrackerPhotoMixin, TrackerVideoMixin
-from apps.project.models import Team, MediaAssignment, Comment, Post
+from apps.project.models import Team, MediaAssignment, Comment, Post, Project
 from web.api.permissions import RoleAccessPermission
 from web.api.views import QuerysetMixin, JWTPayloadMixin, WhistleGenericViewMixin, DownloadViewMixin
 from apps.project.api.frontend import serializers
@@ -35,7 +36,7 @@ from web import exceptions as django_exception
 from web.drf import exceptions as django_api_exception
 from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT
 #from web.tasks import generate_pdf_report
-
+from pdfreactor import api
 
 class TrackerProjectMixin(
         JWTPayloadMixin):
@@ -2928,23 +2929,57 @@ class TrackerProjectExport(
 
             #pdf = render_to_pdf('project/project/export/ProjectReport.html', data)
             html_message = render_to_string('project/project/export/ProjectReport.html', data)
-            html = HTML(string=html_message, base_url='/office2017.whistle.it')
-            html.write_pdf(
-                'Project_report_1.pdf', presentational_hints=True, stylesheets=[
-                    CSS(STATIC_ROOT + '/css/typography.css'),
-                    CSS(STATIC_ROOT + '/css/bootstrap.min.css'),
-                    CSS(STATIC_ROOT + '/css/style.css'),
-                    CSS(STATIC_ROOT + '/css/responsive.css'),
-                ])
+            url = 'https://api.sejda.com/v2/html-pdf'
+            r = requests.post(url, json={
+                'htmlCode': html_message,
+                'viewportWidth': 1200
+            }, headers={
+                'Authorization': 'Token: {}'.format('api_D0D855D3D00041BFABA9FA5AA514E16D')
+            })
+            open(BASE_DIR + '/media/reports/' + 'Report3.pdf', 'wb').write(r.content)
+            # pdfReactor = api.PDFreactor("http://pdfreactor:9423/service/rest")
+            # # Create a new PDFreactor configuration object
+            # config = {
+            #     # Specify the input document
+            #     'document': html_message,
+            # }
+            #
+            # # The resulting PDF
+            # result = None
+            #
+            # # Render document and save result
+            # result = pdfReactor.convertAsBinary(config)
+            #
+            # f = open('report2.pdf', 'wb')
+            # f.write(result)
+            # f.close()
+            #
+            # # Check if successful
+            # if result != None:
+            #     # Used to prevent newlines are converted to Windows newlines (\n --> \r\n)
+            #     # when using Python on Windows systems
+            #     if sys.platform == "win32":
+            #         import msvcrt
+            #         msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
+            #
+            #     # Set the correct header for PDF output and echo PDF content
+            #     print("Content-Type: application/pdf\n")
+            #
+            #     # Check Python version
+            #     if sys.version_info[0] == 2:
+            #         print(result)
+            #     else:
+            #         sys.stdout.flush()
+            #         sys.stdout.buffer.write(result)
+            # return HttpResponse(result, status=status.HTTP_200_OK)
+            # html = HTML(string=html_message, base_url='/office2017.whistle.it')
+            # html.write_pdf(
+            #     'Project_report_1.pdf', stylesheets=[
+            #         CSS(STATIC_ROOT + '/css/slick.min.css'),
+            #     ])
             #generate_pdf_report.delay(html_message, 'Project_report_1.pdf', request.build_absolute_uri())
-            summary_pdf = list(self.request.FILES.values())
-            if len(summary_pdf) > 0:
-                with open(BASE_DIR + '/media/reports/' + summary_pdf[0].name, 'wb') as f:
-                    f.write(summary_pdf[0].read())
-                fdir, fname = os.path.split(BASE_DIR + '/media/reports/' + summary_pdf[0].name)
-                zip_path = os.path.join(zip_subdir, fname)
-                # Add file, at correct path
-                zf.write(fpath, zip_path)
+            zip_path = os.path.join(zip_subdir, 'Report3.pdf')
+            zf.write(BASE_DIR + '/media/reports/' + 'Report3.pdf', zip_path)
             zf.close()
             resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
             resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename

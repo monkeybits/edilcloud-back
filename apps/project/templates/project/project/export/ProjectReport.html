@@ -1,291 +1,284 @@
 {% load static %}
 {% load staticfiles %}
 
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Report </title>
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="url_for('static', filename='images/favicon.ico')"/>
-    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700,700i,900" rel="stylesheet" />
-</head>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" type="image/png" href="https://askbootstrap.com/preview/osahanin/light/img/fav.png">
+<title>Edilcloud.io Report template</title>
+<link rel="stylesheet" href="https://askbootstrap.com/preview/osahanin/light/vendor/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://askbootstrap.com/preview/osahanin/light/vendor/slick/slick.min.css">
+<link rel="stylesheet" href="https://askbootstrap.com/preview/osahanin/light/vendor/slick/slick-theme.min.css">
+<link rel="stylesheet" href="https://askbootstrap.com/preview/osahanin/light/vendor/icons/feather.css">
+<link rel="stylesheet" href="https://askbootstrap.com/preview/osahanin/light/css/style.css">
+<body>
 
-<body class="sidebar-main-active right-column-fixed">
-<div id="content-page" class="content-page">
-    <div class="container">
-        <div class="row">
-            <div style=" margin-bottom:40px;" class="col-lg-12">
-                <div
-                        style=" margin-bottom:40px; height: 1122px;  width:794px; border-width: 1px; background-color:#fff; border-color: #ffffff; border-style: solid; margin: auto;">
-                    <div style="padding: 30px;" class="row">
-                        <div class="col-lg-6">
-                            <img style="height: 25px; "
-                                 src="https://www.edilcloud.io/wp-content/uploads/2020/12/logo-edilcloud.png"
-                                 class="img-fluid " alt="">
-
-                        </div>
-                        <div class="col-lg-6 align-self-center">
-                            <h4 class="mb-0 float-right">Report State of Work</h4>
-                        </div>
-
-                    </div>
-                    <div class="iq-card position-relative inner-page-bg bg-primary"
-                         style="height: 250px; margin-left: 60px; margin-right: 60px;margin-top:200px; padding:50px;">
-                        <div class="inner-page-title">
-                            {% for profile_owner in profiles %}
-                                {% if profile_owner.role == 'Owner' %}
-                                    <h5 class="text-white">Company Owner:
-                                        {{ profile_owner.first_name }} {{ profile_owner.last_name }}</h5>
-                                {% endif %}
-                            {% endfor %}
-                            <h3 class="text-white">NOME DEL PROGETTO: {{ name }}</h3>
-                            <p class="text-white">Indirizzo del progetto: {{ address }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div style=" margin-bottom:40px;" class="col-lg-12">
-                    <div
-                            style=" margin-bottom:40px; height: 1122px;  width:794px; border-width: 1px; background-color:#fff; border-color: #ffffff; border-style: solid; margin: auto;">
-                        <div class="col-sm-12">
-                            <div style="height: 50px; " class="col-lg-6">
-                                <img style="height: 20px;margin-top: 15px;margin-left:15px; "
-                                     src="https://www.edilcloud.io/wp-content/uploads/2020/12/logo-edilcloud.png"
-                                     class="img-fluid " alt="">
-                            </div>
-                            {% for task in tasks %}
-                                <div class="col-lg-12">
-                                    <div class="iq-card">
-                                        <div class="iq-card-body">
-                                            <ul class="notification-list m-0 p-0">
-                                                <li class="d-flex align-items-center">
-                                                    <div class="user-img img-fluid"><img src="images/user/01.jpg"
-                                                                                         alt="story-img"
-                                                                                         class="rounded-circle avatar-40">
-                                                    </div>
-                                                    <div class="media-support-info ml-3">
-                                                        <h6>{{ task.name }} - {{ task.assigned_company.name }}</h6>
-                                                        <p class="mb-0">{{ task.date_end }}</p>
-                                                    </div>
-                                                    <div class="d-flex align-items-center">
-                                                        <a href=""
-                                                           class="mr-3 iq-notify iq-bg-primary rounded"><i
-                                                                class="ri-award-line"></i></a>
-                                                        <div class="iq-card-header-toolbar d-flex align-items-center">
-                                                            <div class="dropdown">
-                                                   <span class="dropdown-toggle" data-toggle="dropdown">
-                                                      <i class="ri-more-fill"></i>
-                                                   </span>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <a class="dropdown-item" href="#"><i
-                                                                            class="ri-eye-fill mr-2"></i>View</a>
-                                                                    <a class="dropdown-item" href="#"><i
-                                                                            class="ri-delete-bin-6-fill mr-2"></i>Delete</a>
-                                                                    <a class="dropdown-item" href="#"><i
-                                                                            class="ri-pencil-fill mr-2"></i>Edit</a>
-                                                                    <a class="dropdown-item" href="#"><i
-                                                                            class="ri-printer-fill mr-2"></i>Print</a>
-                                                                    <a class="dropdown-item" href="#"><i
-                                                                            class="ri-file-download-fill mr-2"></i>Download</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                {% for post in task.post_set %}
-                                    <div class="col-lg-8">
-                                        <div class="container">
-                                            <div class="iq-card-body">
-                                                <div class="user-post-data">
-                                                    <div class="d-flex flex-wrap">
-                                                        <div class="media-support-user-img mr-3">
-                                                            <img class="rounded-circle img-fluid"
-                                                                 src="{{ post.author.photo }}" alt="">
-                                                        </div>
-                                                        <div class="media-support-info mt-2">
-                                                            <h5 class="mb-0 d-inline-block"><a href="#"
-                                                                                               class="">{{ post.author.first_name }} {{ post.author.last_name }}</a>
-                                                            </h5>
-                                                            <p class="mb-0">{{ post.author.position }} - {{ post.author.company.name }}</p>
-                                                            <p class="mb-0 text-primary">{{ post.published_date }}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="mt-3">
-                                                    <p>{{ post.text }}</p>
-                                                </div>
-                                                <!-- <div class="user-post">
-                                                   <div class="d-flex">
-                                                      <div class="col-md-6">
-                                                         <a href=""><img src="images/page-img/p2.jpg"
-                                                               alt="post-image" class="img-fluid rounded w-100"></a>
-                                                      </div>
-                                                      <div class="col-md-6 row m-0 p-0">
-                                                         <div class="col-sm-12">
-                                                            <a href=""><img src="images/page-img/p1.jpg"
-                                                                  alt="post-image" class="img-fluid rounded w-100"></a>
-                                                         </div>
-                                                         <div class="col-sm-12 mt-3">
-                                                            <a href=""><img src="images/page-img/p3.jpg"
-                                                                  alt="post-image" class="img-fluid rounded w-100"></a>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                </div> -->
-                                                <div class="comment-area mt-3">
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <div class="like-block position-relative d-flex align-items-center">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="like-data">
-                                                                    <div class="dropdown">
-                                                      <span class="dropdown-toggle" data-toggle="dropdown"
-                                                            aria-haspopup="true" aria-expanded="false" role="button">
-                                                         <img src="images/icon/01.png" class="img-fluid" alt="">
-                                                      </span>
-                                                                        <div class="dropdown-menu">
-                                                                            <a class="ml-2 mr-2" href="#"
-                                                                               data-toggle="tooltip"
-                                                                               data-placement="top" title=""
-                                                                               data-original-title="Like"><img
-                                                                                    src="images/icon/01.png"
-                                                                                    class="img-fluid" alt=""></a>
-                                                                            <a class="mr-2" href="#"
-                                                                               data-toggle="tooltip"
-                                                                               data-placement="top" title=""
-                                                                               data-original-title="Love"><img
-                                                                                    src="images/icon/02.png"
-                                                                                    class="img-fluid" alt=""></a>
-                                                                            <a class="mr-2" href="#"
-                                                                               data-toggle="tooltip"
-                                                                               data-placement="top" title=""
-                                                                               data-original-title="Happy"><img
-                                                                                    src="images/icon/03.png"
-                                                                                    class="img-fluid" alt=""></a>
-                                                                            <a class="mr-2" href="#"
-                                                                               data-toggle="tooltip"
-                                                                               data-placement="top" title=""
-                                                                               data-original-title="HaHa"><img
-                                                                                    src="images/icon/04.png"
-                                                                                    class="img-fluid" alt=""></a>
-                                                                            <a class="mr-2" href="#"
-                                                                               data-toggle="tooltip"
-                                                                               data-placement="top" title=""
-                                                                               data-original-title="Think"><img
-                                                                                    src="images/icon/05.png"
-                                                                                    class="img-fluid" alt=""></a>
-                                                                            <a class="mr-2" href="#"
-                                                                               data-toggle="tooltip"
-                                                                               data-placement="top" title=""
-                                                                               data-original-title="Sade"><img
-                                                                                    src="images/icon/06.png"
-                                                                                    class="img-fluid" alt=""></a>
-                                                                            <a class="mr-2" href="#"
-                                                                               data-toggle="tooltip"
-                                                                               data-placement="top" title=""
-                                                                               data-original-title="Lovely"><img
-                                                                                    src="images/icon/07.png"
-                                                                                    class="img-fluid" alt=""></a>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="total-comment-block">
-                                                                <div class="dropdown">
-                                                   <span class="dropdown-toggle" data-toggle="dropdown"
-                                                         aria-haspopup="true" aria-expanded="false" role="button">
-                                                      {{ post.comment_set | length }} Comment
-                                                   </span>
-                                                                    <div class="dropdown-menu">
-                                                                        <a class="dropdown-item" href="#">Max Emum</a>
-                                                                        <a class="dropdown-item" href="#">Bill Yerds</a>
-                                                                        <a class="dropdown-item" href="#">Hap E.
-                                                                            Birthday</a>
-                                                                        <a class="dropdown-item" href="#">Tara Misu</a>
-                                                                        <a class="dropdown-item" href="#">Midge Itz</a>
-                                                                        <a class="dropdown-item" href="#">Sal Vidge</a>
-                                                                        <a class="dropdown-item" href="#">Other</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <hr>
-                                                    <ul class="post-comments p-0 m-0">
-                                                        {% for comment in post.comment_set %}
-                                                            <li class="mb-2">
-                                                                <div class="d-flex flex-wrap">
-                                                                    <div class="user-img">
-                                                                        <img src="{{ comment.author.photo }}"
-                                                                             alt="userimg"
-                                                                             class="avatar-35 rounded-circle img-fluid">
-                                                                    </div>
-                                                                    <div class="comment-data-block ml-3">
-                                                                        <h6>{{ comment.author.first_name }} {{ comment.author.last_name }}</h6>
-                                                                        <p class="mb-0">{{ comment.text }}</p>
-                                                                        <div class="d-flex flex-wrap align-items-center comment-activity">
-                                                                            <a href="">like</a>
-                                                                            <a href="">reply</a>
-                                                                            <a href="">translate</a>
-                                                                            <span> 5 min </span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                            <!-- <ul class="post-comments p-0 m-0">
-                                                               <li style="margin-left: 50px;">
-                                                                  <div class="d-flex flex-wrap">
-                                                                     <div class="user-img">
-                                                                        <img src="images/user/03.jpg" alt="userimg"
-                                                                           class="avatar-35 rounded-circle img-fluid">
-                                                                     </div>
-                                                                     <div class="comment-data-block ml-3">
-                                                                        <h6>Paul Molive</h6>
-                                                                        <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                                        <div class="d-flex flex-wrap align-items-center comment-activity">
-                                                                           <a href="">like</a>
-                                                                           <a href="">reply</a>
-                                                                           <a href="">translate</a>
-                                                                           <span> 5 min </span>
-                                                                        </div>
-                                                                     </div>
-                                                                  </div>
-                                                               </li>
-                                                            </ul> -->
-                                                        {% endfor %}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
+<div class="py-5 bg-primary">
+<div class="container">
+<div class="row">
+<div class="col-md-12 mx-auto">
+<h1 class="text-white font-weight-light"><span class="font-weight-bold">Project:
+</span> {{ name }}</h1>
+<p class="mb-2 text-white-50">Inizio: {{ date_start }}, fine: {{ date_end }}
+</p>
 </div>
+</div>
+</div>
+</div>
+<div class="py-5">
+<div class="container">
+<div class="row">
+<div class="col-lg-8 col-md-8">
+<div class="blog-card padding-card box shadow-sm rounded bg-white mb-3 border-0">
+<span>{{ logo }}</span>
+<img class="card-img-top" src="{{ logo }}" alt="Card image cap">
+<div class="card-body">
+<span class="badge badge-success">House/Villa</span>
+<h2>Possimus aut mollitia eum ipsum</h2>
+<h6 class="mb-3"><i class="feather-calendar"></i> March 09, 2020 / 3 Comments</h6>
+<p>
+There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in
+some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum...
+</p>
+<p>
+Praesent eget euismod nibh. Fusce ac tellus eu nisl lobortis maximus ac eget sapien. Nulla malesuada mauris non nulla imperdiet ullamcorper.
+</p>
+<p>Spacial has both a web app and an android app to make your website easy and always available. It offers you all the designs in collaboration with some smart people. Your projects will look great everywhere you go. Use new components that come included!</p>
+<div class="row">
+<div class="col-xl-10 offset-xl-1">
+<blockquote class="margin-top-1x margin-bottom-1x">
+<p class="font-weight-bold">Perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo.</p>
+<cite>Someone famous</cite>
+</blockquote>
+</div>
+</div>
+<p>
+Focus on creating and growing your projects and websites, and we‘ll take care of spinning up new designs for your users and making sure they’re great. Work with all types of customers right out of the box while still getting paid in your preferred currency.
+</p>
+<p class="mb-0">Sed porta libero metus, nec feugiat enim pharetra vel. Sed vel sagittis augue. Donec hendrerit nibh ac dolor lobortis, eu varius odio sollicitudin. Proin non condimentum nulla, quis dictum leo. Vestibulum lobortis urna eu mauris viverra porttitor. Cras consequat leo condimentum lacus viverra sollicitudin. Donec dignissim ornare est, nec scelerisque purus mollis eu. Phasellus dictum suscipit ligula. Donec malesuada gravida velit. Nulla egestas diam in ligula mollis, nec tincidunt diam porta. Proin eleifend lacinia diam quis pretium. Sed lacinia varius nisi et euismod. Ut ac arcu vulputate, porta nibh non, ultricies erat. Nulla facilisi. </p>
+</div>
+<div class="card-footer border-0">
+<div class="footer-social"><span>Share</span> : &nbsp;
+<a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><i class="feather-facebook"></i></a>
+<a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><i class="feather-twitter"></i></a>
+<a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><i class="feather-instagram"></i></a>
+</div>
+</div>
+</div>
+<div class="padding-card reviews-card box shadow-sm rounded bg-white mb-3 border-0">
+<div class="card-body">
+<h5 class="card-title mb-4">3 Reviews</h5>
+<div class="media mb-4">
+<img class="d-flex mr-3 rounded" src="https://askbootstrap.com/preview/osahanin/light/img/1.jpg" alt="">
+<div class="media-body">
+<h5 class="mt-0">Stave Martin <small>Feb 12, 2020</small>
+<span class="star-rating float-right">
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i><small class="text-success">5/2</small>
+</span></h5>
+<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
+</div>
+</div>
+<div class="media">
+<img class="d-flex mr-3 rounded" src="https://askbootstrap.com/preview/osahanin/light/img/2.jpg" alt="">
+<div class="media-body">
+<h5 class="mt-0">Mark Smith <small>Feb 09, 2020</small> <span class="star-rating float-right">
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i><small class="text-success">5/1</small>
+</span></h5>
+<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
+<div class="media mt-4">
+<img class="d-flex mr-3 rounded" src="https://askbootstrap.com/preview/osahanin/light/img/3.jpg" alt="">
+<div class="media-body">
+<h5 class="mt-0">Ryan Printz <small>Nov 13, 2020</small> <span class="star-rating float-right">
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i><small class="text-success">5/5</small>
+</span></h5>
+<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="media mt-4">
+<img class="d-flex mr-3 rounded" src="https://askbootstrap.com/preview/osahanin/light/img/5.jpg" alt="">
+<div class="media-body">
+<h5 class="mt-0">Stave Mark <small>Feb 12, 2020</small>
+<span class="star-rating float-right">
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i>
+<i class="feather-star text-warning"></i><small class="text-success">5/2</small>
+</span></h5>
+<p class="mb-0">Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="padding-card box shadow-sm rounded bg-white mb-3 border-0">
+<div class="card-body">
+<h5 class="card-title mb-4">Leave a Comment</h5>
+<form name="sentMessage">
+<div class="row">
+<div class="control-group form-group col-lg-6 col-md-6">
+<div class="controls">
+<label>Your Name <span class="text-danger">*</span></label>
+<input type="text" class="form-control" required="">
+</div>
+</div>
+<div class="control-group form-group col-lg-6 col-md-6">
+<div class="controls">
+<label>Your Email <span class="text-danger">*</span></label>
+<input type="email" class="form-control" required="">
+</div>
+</div>
+</div>
+<div class="control-group form-group">
+<div class="controls">
+<label>Review <span class="text-danger">*</span></label>
+<textarea rows="10" cols="100" class="form-control"></textarea>
+</div>
+</div>
+<button type="submit" class="btn btn-primary">SUBMIT</button>
+</form>
+</div>
+</div>
+</div>
+<div class="col-lg-4 col-md-4">
+<div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
+<div class="card-body">
+<h5 class="card-title mb-4">Blog Search</h5>
+<div class="input-group">
+<input class="form-control" placeholder="Type and hit enter" aria-label="Recipient&#39;s username" aria-describedby="basic-addon2" type="text">
+<div class="input-group-append">
+<button class="btn btn-outline-secondary" type="button"><i class="feather-arrow-right"></i></button>
+</div>
+</div>
+</div>
+</div>
+<div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
+<div class="card-body">
+<h5 class="card-title mb-4">Popular Posts</h5>
+<a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><h6>Possimus aut mollitia eum ipsum</h6></a>
+<p class="mb-0"><i class="feather-calendar"></i> April 05, 2020</p>
+<hr>
+<a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><h6>Nulla malesuada mauris non nulla imperdiet ullamcorper</h6></a>
+<p class="mb-0"><i class="feather-calendar"></i> June 20, 2020</p>
+<hr>
+<a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><h6 class="text-dark">Focus on creating and growing your projects and websites</h6></a>
+<p class="mb-0"><i class="feather-calendar"></i> June 29, 2020</p>
+<hr>
+<a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><h6>Vestibulum lobortis urna eu mauris viverra porttitor. Cras consequat </h6></a>
+<p class="mb-0"><i class="feather-calendar"></i> October 10, 2020</p>
+<hr>
+<a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><h6>Sed lacinia varius nisi et euismod.</h6></a>
+<p class="mb-0"><i class="feather-calendar"></i> April 05, 2020</p>
+</div>
+</div>
+<div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
+<div class="card-body">
+<h5 class="card-title mb-3">Archives</h5>
+<ul class="sidebar-card-list">
+<li><a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><i class="feather-arrow-right-circle"></i> December, 2017</a></li>
+<li><a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><i class="feather-arrow-right-circle"></i> November, 2017</a></li>
+<li><a href="https://askbootstrap.com/preview/osahanin/light/blog-single.html#"><i class="feather-arrow-right-circle"></i> October, 2017</a></li>
+</ul>
+</div>
+</div>
+<div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
+<div class="card-body">
+<h5 class="card-title mb-4">Jobs</h5>
+<div id="featured-properties" class="carousel slide" data-ride="carousel">
+<ol class="carousel-indicators">
+<li data-target="#featured-properties" data-slide-to="0" class="active"></li>
+<li data-target="#featured-properties" data-slide-to="1" class=""></li>
+</ol>
+<div class="carousel-inner">
+<div class="carousel-item active">
+<div class="border rounded bg-white job-item">
+<div class="d-flex align-items-center p-3 job-item-header">
+<div class="overflow-hidden mr-2">
+<h6 class="font-weight-bold text-dark mb-0 text-truncate">Product Director</h6>
+<div class="text-truncate text-primary">Spotify Inc.</div>
+<div class="small text-gray-500"><i class="feather-map-pin"></i> India, Punjab</div>
+</div>
+<img class="img-fluid ml-auto" src="https://askbootstrap.com/preview/osahanin/light/img/l3.png" alt="">
+</div>
+<div class="d-flex align-items-center p-3 border-top border-bottom job-item-body">
+<div class="overlap-rounded-circle">
+<img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="" src="https://askbootstrap.com/preview/osahanin/light/img/p9.png" alt="" data-original-title="Sophia Lee">
+<img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="" src="https://askbootstrap.com/preview/osahanin/light/img/p10.png" alt="" data-original-title="John Doe">
+<img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="" src="https://askbootstrap.com/preview/osahanin/light/img/p11.png" alt="" data-original-title="Julia Cox">
+<img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="" src="https://askbootstrap.com/preview/osahanin/light/img/p12.png" alt="" data-original-title="Robert Cook">
+</div>
+<span class="font-weight-bold text-muted">18 connections</span>
+</div>
+<div class="p-3 job-item-footer">
+<small class="text-gray-500"><i class="feather-clock"></i> Posted 3 Days ago</small>
+</div>
+</div>
+</div>
+<div class="carousel-item">
+<div class="border rounded bg-white job-item">
+<div class="d-flex align-items-center p-3 job-item-header">
+<div class="overflow-hidden mr-2">
+<h6 class="font-weight-bold text-dark mb-0 text-truncate">Product Director</h6>
+<div class="text-truncate text-primary">Spotify Inc.</div>
+<div class="small text-gray-500"><i class="feather-map-pin"></i> India, Punjab</div>
+</div>
+<img class="img-fluid ml-auto" src="https://askbootstrap.com/preview/osahanin/light/img/l3.png" alt="">
+</div>
+<div class="d-flex align-items-center p-3 border-top border-bottom job-item-body">
+<div class="overlap-rounded-circle">
+<img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="" src="https://askbootstrap.com/preview/osahanin/light/img/p9.png" alt="" data-original-title="Sophia Lee">
+<img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="" src="https://askbootstrap.com/preview/osahanin/light/img/p10.png" alt="" data-original-title="John Doe">
+<img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="" src="https://askbootstrap.com/preview/osahanin/light/img/p11.png" alt="" data-original-title="Julia Cox">
+<img class="rounded-circle shadow-sm" data-toggle="tooltip" data-placement="top" title="" src="https://askbootstrap.com/preview/osahanin/light/img/p12.png" alt="" data-original-title="Robert Cook">
+</div>
+<span class="font-weight-bold text-muted">18 connections</span>
+</div>
+<div class="p-3 job-item-footer">
+<small class="text-gray-500"><i class="feather-clock"></i> Posted 3 Days ago</small>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script src="https://askbootstrap.com/preview/osahanin/light/img/jquery.min.js.download" type="text/javascript"></script>
+<script src="https://askbootstrap.com/preview/osahanin/light/img/bootstrap.bundle.min.js.download" type="text/javascript"></script>
+
+<script type="text/javascript" src="https://askbootstrap.com/preview/osahanin/light/img/slick.min.js.download"></script>
+
+<script src="https://askbootstrap.com/preview/osahanin/light/img/osahan.js.download" type="text/javascript"></script>
+
+
 </body>
 </html>
+
 <style>
 @page {
     size: "A4";
-    margin: 2.5cm 1.5cm 3.5cm 1.5cm;
-    @bottom-center {
+    margin: 0;
+    {% comment %} @bottom-center {
         padding-top: 1.8cm;
         content: "Report generated by Edilcloud.io";
         font: 10pt "Playfair Display";
@@ -304,6 +297,29 @@
         background: url('https://www.edilcloud.io/wp-content/uploads/2020/12/logo-edilcloud.png') no-repeat;
         background-size: auto 1.5cm;
         font: 15pt "Playfair Display";
+    } {% endcomment %}
+}
+
+@media (min-width: 1200px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+    max-width: 2300px !important;
+}
+}
+@media (min-width: 992px) {
+    .container, .container-lg, .container-md, .container-sm {
+        max-width: 2300px !important;
     }
 }
+@media (min-width: 768px) {
+    .container, .container-lg, .container-md, .container-sm {
+        max-width: 2300px !important;
+    }
+}
+@media (min-width: 576px) {
+    .container, .container-lg, .container-md, .container-sm {
+        max-width: 2300px !important;
+    }
+}
+
+
 </style>

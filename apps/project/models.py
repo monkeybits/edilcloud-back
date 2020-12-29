@@ -210,6 +210,9 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
 
     get_tasks.fget.short_description = _('Tasks')
 
+    def get_media_path(self):
+        return self.logo.url
+
     def get_members(self):
         print(self.members)
         return self.members.all()

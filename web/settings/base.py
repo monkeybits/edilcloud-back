@@ -390,7 +390,7 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [
 #     }
 # }
 
-BASE_URL = 'dev.edilcloud.io'
+BASE_URL = 'localhost:3000'
 
 JWT_AUTH = {
     'JWT_PAYLOAD_HANDLER': 'apps.user.views.custom_jwt_payload_handler',

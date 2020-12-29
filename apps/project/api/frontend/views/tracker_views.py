@@ -24,7 +24,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from weasyprint import HTML, CSS
 from apps.media.api.frontend.views.tracker_views import TrackerPhotoMixin, TrackerVideoMixin
-from apps.project.models import Team, MediaAssignment, Comment, Post
+from apps.project.models import Team, MediaAssignment, Comment, Post, Project
 from web.api.permissions import RoleAccessPermission
 from web.api.views import QuerysetMixin, JWTPayloadMixin, WhistleGenericViewMixin, DownloadViewMixin
 from apps.project.api.frontend import serializers
@@ -2936,7 +2936,7 @@ class TrackerProjectExport(
             }, headers={
                 'Authorization': 'Token: {}'.format('api_D0D855D3D00041BFABA9FA5AA514E16D')
             })
-            open('Report3.pdf', 'wb').write(r.content)
+            open(BASE_DIR + '/media/reports/' + 'Report3.pdf', 'wb').write(r.content)
             # pdfReactor = api.PDFreactor("http://pdfreactor:9423/service/rest")
             # # Create a new PDFreactor configuration object
             # config = {
@@ -2978,19 +2978,10 @@ class TrackerProjectExport(
             #         CSS(STATIC_ROOT + '/css/slick.min.css'),
             #     ])
             #generate_pdf_report.delay(html_message, 'Project_report_1.pdf', request.build_absolute_uri())
-
-
-
-            # summary_pdf = list(self.request.FILES.values())
-            # if len(summary_pdf) > 0:
-            #     with open(BASE_DIR + '/media/reports/' + summary_pdf[0].name, 'wb') as f:
-            #         f.write(summary_pdf[0].read())
-            #     fdir, fname = os.path.split(BASE_DIR + '/media/reports/' + summary_pdf[0].name)
-            #     zip_path = os.path.join(zip_subdir, fname)
-            #     # Add file, at correct path
-            #     zf.write(fpath, zip_path)
-            # zf.close()
-            # resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
-            # resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
-            # return resp
+            zip_path = os.path.join(zip_subdir, 'Report3.pdf')
+            zf.write(BASE_DIR + '/media/reports/' + 'Report3.pdf', zip_path)
+            zf.close()
+            resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
+            resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+            return resp
         return response

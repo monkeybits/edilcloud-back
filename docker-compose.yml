@@ -44,14 +44,6 @@ services:
     links:
       - db
       - redis
-  pdfreactor:
-    image: realobjects/pdfreactor
-    networks:
-      - streams
-    volumes:
-      - .:/ro/config
-    ports:
-      - "9423:9423"
 volumes:
   postgres_data:
 networks:

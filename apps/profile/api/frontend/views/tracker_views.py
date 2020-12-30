@@ -971,7 +971,10 @@ class TrackerCompanyMessageListView(
         ]
         self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
+            'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom', 'position', 'company'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'category', 'color_project'
         ]
         super(TrackerCompanyMessageListView, self).__init__(*args, **kwargs)
 

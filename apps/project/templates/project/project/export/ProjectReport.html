@@ -779,7 +779,7 @@
       margin-right: 10px;
   "><span class="badge badge-success">{{ task.assigned_company.name }}</span>
                             <h2>{{ task.name }}</h2>
-                            <h6 class="mb-3">{{ task.post_set | length }}</h6>
+                            <h6 class="mb-3">{{ task.post_set | length }} posts</h6>
                             {% for post in task.post_set %}
                                 <div class="box mb-3 shadow-sm border rounded bg-white osahan-post">
                                     <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
@@ -813,7 +813,7 @@
                                     </div>{% endcomment %}
                                     <div class="padding-card reviews-card box shadow-sm rounded bg-white mb-3 border-0">
                                         <div class="card-body">
-                                            <h5 class="card-title mb-4">{{ post.comment_set | length }}</h5>
+                                            <h5 class="card-title mb-4">{{ post.comment_set | length }} commenti</h5>
                                             {% for comment in post.comment_set %}
                                                 <div class="media mb-4">
                                                     <img class="d-flex mr-3 rounded"

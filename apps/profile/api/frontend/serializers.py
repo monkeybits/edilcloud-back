@@ -163,11 +163,15 @@ class CompanySerializer(
         return None
 
     def get_color_project(self, obj):
-        obj_color = obj.projectcompanycolorassignment_set.all().filter(project=self.context['view'].kwargs['pk'])
-        if obj_color:
-            return obj_color[0].color
-        else:
+        try:
+            obj_color = obj.projectcompanycolorassignment_set.all().filter(project=self.context['view'].kwargs['pk'])
+            if obj_color:
+                return obj_color[0].color
+            else:
+                return None
+        except:
             return None
+
     def get_can_access_files(self, obj):
         payload = self.get_payload()
         # Todo: Under review

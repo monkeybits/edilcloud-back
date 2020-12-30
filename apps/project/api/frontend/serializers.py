@@ -1736,16 +1736,17 @@ class SharePostToTaskSerializer(
 #         models = models.Post
 #         fields = '__all__'
 
-
+from apps.profile.api.frontend.serializers import CompanySerializer
 class TaskWithActivitiesSerializer(
     DynamicFieldsModelSerializer,
     serializers.ModelSerializer):
     activities = ActivitySerializer(many=True)
     post_set = PostSerializer(many=True)
+    assigned_company = CompanySerializer()
 
     class Meta:
         model = models.Task
-        fields = ['id', 'name', 'date_start', 'date_end', 'date_completed', 'progress',
+        fields = ['id', 'name', 'date_start', 'date_end', 'assigned_company', 'date_completed', 'progress',
                   'alert', 'note', 'activities', 'post_set']
 
 

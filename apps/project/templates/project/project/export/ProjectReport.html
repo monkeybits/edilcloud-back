@@ -773,7 +773,7 @@
                 <div class="col-lg-8 col-md-8 col-sm-8">
                     <div class="blog-card padding-card box shadow-sm rounded bg-white mb-3 border-0">
                         <div class="card-body">
-                            <img class="img-fluid ml-auto" src="{{ post.author.photo }}" alt="" style="
+                            <img class="img-fluid ml-auto" src="{{ task.assigned_company.logo }}" alt="" style="
       width: 25px;
       margin-right: 10px;
   "><span class="badge badge-success">{{ task.assigned_company.name }}</span>
@@ -784,7 +784,7 @@
                                     <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
                                         <div class="dropdown-list-image mr-3">
                                             <img class="rounded-circle"
-                                                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn28e26B3QLqritNKXLtG40yF1AvgLiLlofA&usqp=CAU"
+                                                 src="{{ post.author.photo }}"
                                                  alt="">
                                             <div class="status-indicator bg-success"></div>
                                         </div>

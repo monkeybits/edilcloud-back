@@ -55,7 +55,7 @@ class TrackerMessageListView(
             'id', 'code', 'content_type_name', 'object_id'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo'
+            'id', 'first_name', 'last_name', 'photo', 'position'
         ]
         super(TrackerMessageListView, self).__init__( *args, **kwargs)
 
@@ -88,7 +88,7 @@ class TrackerMessageAddView(
             'id', 'body', 'talk', 'sender', 'date_create', 'files', 'unique_code'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo', 'role', 'company'
+            'id', 'first_name', 'last_name', 'photo', 'role', 'company', 'position'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'category', 'color_project'
@@ -128,7 +128,7 @@ class TrackerMessageDetailView(
             'id', 'code', 'content_type_name', 'object_id'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo'
+            'id', 'first_name', 'last_name', 'photo', 'position'
         ]
         super(TrackerMessageDetailView, self).__init__( *args, **kwargs)
 
@@ -151,7 +151,7 @@ class TrackerMessageDeleteView(
             'id', 'code'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo'
+            'id', 'first_name', 'last_name', 'photo', 'position'
         ]
         super(TrackerMessageDeleteView, self).__init__( *args, **kwargs)
 
@@ -192,7 +192,7 @@ class TrackerTalkListView(
             'id', 'code', 'object_id', 'messages'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo'
+            'id', 'first_name', 'last_name', 'photo', 'position'
         ]
         super(TrackerTalkListView, self).__init__( *args, **kwargs)
 

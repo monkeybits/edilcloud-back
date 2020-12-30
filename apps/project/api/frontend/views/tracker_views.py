@@ -233,7 +233,10 @@ class TrackerProjectDetailView(
         self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'position',
-            'role', 'email', 'fax', 'phone'
+            'role', 'email', 'fax', 'phone', 'company'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'ssn', 'logo'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -2814,7 +2817,10 @@ class TrackerProjectExport(
         self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'position',
-            'role', 'email', 'fax', 'phone'
+            'role', 'email', 'fax', 'phone', 'company'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'ssn', 'logo'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'

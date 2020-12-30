@@ -774,7 +774,7 @@
                 <div class="col-lg-8 col-md-8">
                     <div class="blog-card padding-card box shadow-sm rounded bg-white mb-3 border-0">
                         <div class="card-body">
-                            <img class="img-fluid ml-auto" src="img/l3.png" alt="" style="
+                            <img class="img-fluid ml-auto" src="{{ post.author.photo }}" alt="" style="
       width: 25px;
       margin-right: 10px;
   "><span class="badge badge-success">{{ task.assigned_company.name }}</span>
@@ -817,7 +817,7 @@
                                             {% for comment in post.comment_set %}
                                                 <div class="media mb-4">
                                                     <img class="d-flex mr-3 rounded"
-                                                         src="https://lightstorage.ecodibergamo.it/mediaon/cms.quotidiani/storage/site_media/media/photologue/2019/7/20/photos/cache/la-sfida-del-nuovo-ponte-morandie-un-bergamasco-il-direttore-dei-lavori_495d7dfa-ab27-11e9-8072-77a13993946d_512_512_new_square_large.jpg"
+                                                         src="{{ comment.author.photo }}"
                                                          alt="">
                                                     <div class="media-body">
                                                         <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }} - {{ comment.author.position }} {{ comment.author.company.name }}

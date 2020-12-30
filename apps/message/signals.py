@@ -284,6 +284,7 @@ def message_notification(sender, instance, **kwargs):
                             "last_name": notify_obj.sender.last_name,
                             "photo": None,
                             "role": notify_obj.sender.role,
+                            "position": notify_obj.sender.position,
                             "company": {
                                 "id": notify_obj.sender.company.id,
                                 "name": notify_obj.sender.company.name,

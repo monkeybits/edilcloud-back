@@ -2040,6 +2040,7 @@ class TrackerTeamDeleteView(
         activity_assigned = Activity.objects.filter(workers__in=[instance.profile.id])
         for act in activity_assigned:
             act.workers.remove(instance.profile)
+            act.save()
         profile.remove_member(instance)
 
 

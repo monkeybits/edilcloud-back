@@ -805,7 +805,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
 
     def get_workers_in_activity(self, obj):
         team_list = []
-        workers = obj.workers.all()
+        workers = obj.workers.filter(company=obj.task.assigned_company)
         for worker in workers:
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
             member = TeamBasicSerializer(team_member).data
@@ -815,7 +815,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
     def get_can_assign_in_activity(self, obj):
         list_workers = []
         already_assigned_ids = []
-        already_assigned_workers = obj.workers.all()
+        already_assigned_workers = obj.workers.filter(company=obj.task.assigned_company)
         for already_assigned_worker in already_assigned_workers:
             already_assigned_ids.append(already_assigned_worker.id)
         workers = obj.task.project.members.exclude(profile_id__in=already_assigned_ids).filter(profile__company_id=obj.task.assigned_company.id)
@@ -1372,7 +1372,7 @@ class TaskActivitySerializer(
 
     def get_workers_in_activity(self, obj):
         team_list = []
-        workers = obj.workers.all()
+        workers = obj.workers.filter(company=obj.task.assigned_company)
         for worker in workers:
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
             member = TeamBasicSerializer(team_member).data
@@ -1382,7 +1382,7 @@ class TaskActivitySerializer(
     def get_can_assign_in_activity(self, obj):
         list_workers = []
         already_assigned_ids = []
-        already_assigned_workers = obj.workers.all()
+        already_assigned_workers = obj.workers.filter(company=obj.task.assigned_company)
         for already_assigned_worker in already_assigned_workers:
             already_assigned_ids.append(already_assigned_worker.id)
         workers = obj.task.project.members.exclude(profile_id__in=already_assigned_ids)
@@ -1518,7 +1518,7 @@ class TaskActivityEditSerializer(
 
     def get_workers_in_activity(self, obj):
         team_list = []
-        workers = obj.workers
+        workers = obj.workers.filter(company=obj.task.assigned_company)
         for worker in workers:
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
             team_list.append(TeamSerializer(team_member))

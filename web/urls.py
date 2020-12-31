@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^api/frontend/user/', include('apps.user.api.frontend.urls')),
 
     # JWT Social AUTH
-    #url(r'^api/login/', include('rest_social_auth.urls_jwt')),
+    url(r'^api/login/', include('rest_social_auth.urls_jwt')),
     url(r'^api/frontend/payments/', include('apps.payments.api.frontend.urls')),
 
     url(r'^api/frontend/document/', include('apps.document.api.frontend.urls')),

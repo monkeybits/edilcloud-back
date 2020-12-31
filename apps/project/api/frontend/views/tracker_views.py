@@ -24,7 +24,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from weasyprint import HTML, CSS
 from apps.media.api.frontend.views.tracker_views import TrackerPhotoMixin, TrackerVideoMixin
-from apps.project.models import Team, MediaAssignment, Comment, Post, Project
+from apps.project.models import Team, MediaAssignment, Comment, Post, Project, Activity
 from web.api.permissions import RoleAccessPermission
 from web.api.views import QuerysetMixin, JWTPayloadMixin, WhistleGenericViewMixin, DownloadViewMixin
 from apps.project.api.frontend import serializers
@@ -2037,6 +2037,9 @@ class TrackerTeamDeleteView(
     def perform_destroy(self, instance):
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        activity_assigned = Activity.objects.filter(workers__in=[instance.profile.id])
+        for act in activity_assigned:
+            act.workers.remove(instance.profile)
         profile.remove_member(instance)
 
 

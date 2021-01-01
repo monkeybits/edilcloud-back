@@ -2901,10 +2901,15 @@ class TrackerProjectExport(
                     zf.write(fpath, zip_path)
 
             html_message = render_to_string('project/project/export/ProjectReport.html', data)
-            zip_path = os.path.join(zip_subdir, 'Report3.pdf')
-            zf.write(BASE_DIR + '/media/reports/' + 'Report3.pdf', zip_path)
             zf.close()
-            generate_pdf_report.delay(html_message, {'email': self.get_profile().email, 'first_name': self.get_profile().first_name, 'last_name': self.get_profile().last_name, 'project_name': data['name']})
+            protocol = request.is_secure()
+            if protocol:
+                protocol = 'https://'
+            else:
+                protocol = 'http://'
+            host = request.get_host()
+            url = protocol + host
+            generate_pdf_report.delay(html_message, {'pk': self.get_profile().pk, 'email': self.get_profile().email, 'first_name': self.get_profile().first_name, 'last_name': self.get_profile().last_name, 'project_name': data['name']}, url)
             resp = Response(data="Il report è stato generato. Controlla la tua email.", status=status.HTTP_201_CREATED)
             # resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
             # resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+</head>
+<body>
+    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+    <input id="chat-message-input" type="text" size="100"><br>
+    <input id="chat-message-submit" type="button" value="Send">
+    {{ room_name }}
+    <script>
+        function findGetParameter(parameterName) {
+              var result = null,
+                  tmp = [];
+              location.search
+                  .substr(1)
+                  .split("&")
+                  .forEach(function (item) {
+                    tmp = item.split("=");
+                    if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                  });
+              return result;
+          }
+        var profile_id = findGetParameter('profile_id');
+
+        const roomName = '{{ room_name }}';
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + 'localhost:8000'
+            + '/ws/report/'
+            + roomName
+            + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (data.message['dest']['id'] === parseInt(profile_id)) {
+                document.querySelector('#chat-log').value += (data.message + '\n');
+                console.log(data.message['dest']['id']);
+                console.log(profile_id);å
+            }
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
+    </script>
+</body>
+</html>

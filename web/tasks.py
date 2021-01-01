@@ -3,7 +3,9 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 import os
 
+from asgiref.sync import async_to_sync
 from celery import task
+from channels.layers import get_channel_layer
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
@@ -12,6 +14,16 @@ from web import settings
 from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT, DEFAULT_FROM_EMAIL, API_SEJDA_PDF_GENERATOR
 #from weasyprint import HTML, CSS, default_url_fetcher
 import requests
+
+def event_triger(msg):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        'report_report_channel',
+        {
+            'type': 'report_message',
+            'message': msg
+        }
+    )
 
 @task()
 def archived_projects_reminder():
@@ -39,7 +51,7 @@ def archived_projects_reminder():
             project.delete()
 
 @task()
-def generate_pdf_report(html_message, data):
+def generate_pdf_report(html_message, data, domain_url):
     url = 'https://api.sejda.com/v2/html-pdf'
     r = requests.post(url, json={
         'htmlCode': html_message,
@@ -48,6 +60,16 @@ def generate_pdf_report(html_message, data):
         'Authorization': 'Token: {}'.format(API_SEJDA_PDF_GENERATOR)
     })
     open(BASE_DIR + '/media/reports/' + 'Report3.pdf', 'wb').write(r.content)
+    event_triger(
+        {
+            'message': {
+                "url": domain_url + '/media/reports/' + 'Report3.pdf',
+                "dest": {
+                    "id": data['pk']
+                },
+            }
+        }
+    )
     from django.core.mail import EmailMultiAlternatives
     data_template = {
         'profile_name': "{} {}".format(data['first_name'], data['last_name']),

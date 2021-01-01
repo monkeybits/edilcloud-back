@@ -342,7 +342,7 @@ class ProjectSerializer(
     project_owner = profile_serializers.CompanySerializer(source='get_project_owner')
     company = profile_serializers.CompanySerializer()
     referent = profile_serializers.ProfileSerializer()
-    profiles = profile_serializers.ProfileSerializer(many=True)
+    profiles = profile_serializers.TeamProfileSerializer(many=True)
     talks = TalkSerializer(many=True)
     creator = profile_serializers.UserSerializer()
     last_message_created = serializers.SerializerMethodField()

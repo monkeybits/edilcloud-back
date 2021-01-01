@@ -2854,16 +2854,12 @@ class TrackerProjectExport(
                 # get task posts medias
                 for post in task['post_set']:
                     post_mediass = MediaAssignment.objects.filter(post=post['id'])
-                    if post['author']['photo'] != None:
-                        post['author']['photo'] = '/office2017.whistle.it' + Post.objects.get(id=post['id']).get_media_path()
                     for media in post_mediass:
                         media_url = media.media.url
                         filenames.append(BASE_DIR + media_url)
                     # get task post comments medias
                     for comment in post['comment_set']:
                         comment_mediass = MediaAssignment.objects.filter(comment=comment['id'])
-                        if comment['author']['photo'] != None:
-                            comment['author']['photo'] = '/office2017.whistle.it' + Comment.objects.get(id=comment['id']).get_media_path()
                         for media in comment_mediass:
                             media_url = media.media.url
                             filenames.append(BASE_DIR + media_url)

@@ -13,7 +13,7 @@ jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 from rest_framework import serializers, status
 
 from apps.message.api.frontend.serializers import TalkSerializer
-from apps.profile.api.frontend.serializers import ProfileSerializer, UserSerializer
+from apps.profile.api.frontend.serializers import ProfileSerializer, UserSerializer, TeamProfileSerializer
 from apps.profile.models import Profile
 from ... import models
 from apps.profile.api.frontend import serializers as profile_serializers
@@ -617,7 +617,7 @@ class TaskGenericSerializer(
         return super(TaskGenericSerializer, self).get_field_names(*args, **kwargs)
 
 class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
-    author = ProfileSerializer()
+    author = TeamProfileSerializer()
     replies_set = serializers.SerializerMethodField()
     media_set = serializers.SerializerMethodField()
 
@@ -704,7 +704,7 @@ class CommentSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serialize
 
 class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.ModelSerializer):
     comment_set = CommentSerializer(many=True)
-    author = ProfileSerializer()
+    author = TeamProfileSerializer()
     media_set = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
     task = serializers.SerializerMethodField()
@@ -1171,7 +1171,7 @@ class TeamSerializer(
     DynamicFieldsModelSerializer):
     role = serializers.ReadOnlyField(source="get_role")
     project = ProjectSerializer()
-    profile = profile_serializers.ProfileSerializer()
+    profile = profile_serializers.TeamProfileSerializer()
 
     class Meta:
         model = models.Team

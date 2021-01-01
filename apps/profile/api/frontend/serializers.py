@@ -545,6 +545,23 @@ class ProfileSerializer(
         else:
             return True
 
+class TeamProfileSerializer(ProfileSerializer):
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        main = obj.get_main_profile()
+        request = self.context['request']
+        protocol = request.is_secure()
+        if protocol:
+            protocol = 'https://'
+        else:
+            protocol = 'http://'
+        host = request.get_host()
+        if main.photo:
+            media_url = protocol + host + main.photo.url
+        else:
+            media_url = None
+        return media_url
 
 class MainProfileAddSerializer(
         DynamicFieldsModelSerializer):

@@ -34,10 +34,10 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis-data:/data
+    environment:
+      - REDIS_REPLICATION_MODE=master
     networks:
       - streams
-    ports:
-      - "6379:6379"
 
   celery:
     build: .

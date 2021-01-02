@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 from datetime import datetime
 
 import jwt
@@ -45,13 +46,14 @@ class RegistrationAPIView(
         headers = self.get_success_headers(serializer.data)
         user.send_account_verification_email()
         from web.tasks import update_gspread_users
-        update_gspread_users.delay(
-            {
-                'email': user.email,
-                'full_name': "{} {}".format(main_profile.first_name, main_profile.last_name),
-                'role': main_profile.role
-            }
-        )
+        if os.environ.get('ENV_NAME') == 'test':
+            update_gspread_users.delay(
+                {
+                    'email': user.email,
+                    'full_name': "{} {}".format(main_profile.first_name, main_profile.last_name),
+                    'role': main_profile.role
+                }
+            )
         return Response(
             {
                 'detail': 'Registration Successful'

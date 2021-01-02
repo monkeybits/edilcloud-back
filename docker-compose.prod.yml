@@ -45,7 +45,7 @@ services:
     networks:
       - streams
     volumes:
-      - .:/code
+      - .:/office2017.whistle.it
     links:
       - db
       - redis

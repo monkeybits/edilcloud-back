@@ -59,7 +59,10 @@ def generate_pdf_report(html_message, data, domain_url):
     }, headers={
         'Authorization': 'Token: {}'.format(API_SEJDA_PDF_GENERATOR)
     })
-    open(BASE_DIR + '/media/reports/' + 'Report3.pdf', 'wb').write(r.content)
+    f = open(BASE_DIR + '/media/reports/' + 'Report3.pdf', 'wb')
+    f.write(r.content)
+    f.close()
+
     event_triger(
         {
             'message': {

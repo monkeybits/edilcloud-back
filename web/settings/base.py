@@ -485,6 +485,11 @@ STRIPE_PLANS_METADATA_KEYS = [
     'REPORT_TYPE',
 ]
 
+# gspread new entry
+GSPREAD_USERS_URL = 'https://docs.google.com/spreadsheets/d/1kEMeH0GAOHjE4G54rGSJYSIT6hyDZteGgnpkuyQ9MoE/edit?usp=sharing'
+NEW_ENTRY_SENDER = [
+    'm.carminati@monkeybits.it'
+]
 # override filetype package adding new types
 class Dwg(EdilType):
     """

@@ -37,13 +37,21 @@ class RegistrationAPIView(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        user.create_main_profile({
+        main_profile = user.create_main_profile({
             'first_name': first_name,
             'last_name': last_name,
             'language': 'it'
         })
         headers = self.get_success_headers(serializer.data)
         user.send_account_verification_email()
+        from web.tasks import update_gspread_users
+        update_gspread_users.delay(
+            {
+                'email': user.email,
+                'full_name': "{} {}".format(main_profile.first_name, main_profile.last_name),
+                'role': main_profile.role
+            }
+        )
         return Response(
             {
                 'detail': 'Registration Successful'

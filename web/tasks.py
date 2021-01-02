@@ -11,7 +11,8 @@ from django.template.loader import render_to_string
 
 from apps.project.models import Project
 from web import settings
-from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT, DEFAULT_FROM_EMAIL, API_SEJDA_PDF_GENERATOR
+from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT, DEFAULT_FROM_EMAIL, API_SEJDA_PDF_GENERATOR, \
+    NEW_ENTRY_SENDER, GSPREAD_USERS_URL
 #from weasyprint import HTML, CSS, default_url_fetcher
 import requests
 
@@ -89,3 +90,27 @@ def generate_pdf_report(html_message, data, domain_url):
     email.attach_alternative(report_template, "text/html")
     email.attach(filename='Report progetto {}.pdf'.format(data['project_name']), content=r.content)
     email.send()
+
+
+@task()
+def update_gspread_users(data):
+    email = data['email']
+    full_name = data['full_name']
+    role = data['role']
+    new_data = [email, full_name, role]
+
+    import gspread
+    from oauth2client.service_account import ServiceAccountCredentials
+    gc = gspread.service_account(filename='edilcloud_api.json')
+    gsheet = gc.open_by_url(GSPREAD_USERS_URL)
+    mydata = gsheet.sheet1.get_all_records()
+    print(mydata)
+    wsheet = gsheet.worksheet("Foglio1")
+    wsheet.append_row(new_data)
+
+    send_mail(
+        subject="Nuovo utente aggiunto a Google Sheets",
+        message="Buongiorno,\n un nuovo utente si è registrato. E' stato aggiunto al google sheets.\n\n Altrimenti accedi a questo link:\n {}".format(GSPREAD_USERS_URL),
+        recipient_list=NEW_ENTRY_SENDER,
+        from_email=DEFAULT_FROM_EMAIL
+    )

@@ -29,22 +29,26 @@ services:
       - SOCKET_HOST=35.176.179.55
       - SOCKET_PORT=6969
   redis:
-    image: "redis:alpine"
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    environment:
+      - REDIS_REPLICATION_MODE=master
     networks:
       - streams
-    ports:
-      - "6379:6379"
   celery:
     build: .
     command: celery -A web worker -B
     networks:
       - streams
     volumes:
-      - .:/code
+      - .:/office2017.whistle.it
     links:
       - db
       - redis
 volumes:
   postgres_data:
+  redis-data:
 networks:
   streams:

@@ -340,7 +340,15 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 }
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email']
-
+SOCIAL_AUTH_GOOGLE_PROFILE_EXTRA_PARAMS = {
+    'fields': ','.join([
+        'id', 'cover', 'name', 'first_name',
+        'last_name', 'age_range', 'link',
+        'gender', 'locale', 'picture',
+        'timezone', 'updated_time',
+        'verified', 'email',
+    ]),
+}
 # Add email to requested authorizations.
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress']
 # Add the fields so they will be requested from linkedin.

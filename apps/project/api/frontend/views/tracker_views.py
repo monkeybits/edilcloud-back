@@ -769,7 +769,7 @@ class TrackerProjectTeamListView(
             'email', 'phone', 'note', 'role', 'language', 'company'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'color_project'
+            'id', 'name', 'color_project', 'logo', 'slug', 'email', 'ssn'
         ]
         super(TrackerProjectTeamListView, self).__init__(*args, **kwargs)
 

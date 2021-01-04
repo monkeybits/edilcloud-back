@@ -58,9 +58,15 @@ INSTALLED_APPS = [
 
     'social_django',
     'rest_social_auth',
-
+#     'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'rest_framework_simplejwt',
     'rest_auth', # Todo: Before removing this package, you must create custom serializers for PasswordChange, Reset etc
-
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
     'web',
     'apps.document.apps.DocumentConfig',
     'apps.media.apps.MediaConfig',
@@ -123,6 +129,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect'
             ],
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
@@ -312,8 +320,8 @@ WHISTLE_CRONTAB_USERNAME = '< set in local.py >'
 SOCIAL_AUTH_FACEBOOK_KEY = '1093743794410189'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'eba8fe5d381c5094a68701145c19ed43'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '< set in local.py >'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '< set in local.py >'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1081576602759-1la7b88gqbimjo499nd25jg76d86aulr.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'IJFcOWP7tqqthEQmNS3Dl_K3'
 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '< set in local.py >'
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = '< set in local.py >'
@@ -342,53 +350,53 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [
     ('emailAddress', 'email_address')
 ]
 
-# SOCIALACCOUNT_PROVIDERS = {
-#
-#     'facebook': {
-#         'METHOD': 'oauth2',
-#         'SCOPE': ['email', 'public_profile', 'user_friends'],
-#         'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-#         'INIT_PARAMS': {'cookie': True},
-#         'FIELDS': [
-#             'id',
-#             'email',
-#             'name',
-#             'first_name',
-#             'last_name',
-#             'verified',
-#             'locale',
-#             'timezone',
-#             'link',
-#             'gender',
-#             'updated_time',
-#         ],
-#         'EXCHANGE_TOKEN': True,
-#         'LOCALE_FUNC': lambda request: 'en_US',
-#         'VERIFIED_EMAIL': False,
-#     },
-#     'google': {
-#         'SCOPE': [
-#             'profile',
-#             'email',
-#         ],
-#         'AUTH_PARAMS': {
-#             'access_type': 'online',
-#         }
-#     },
-#     'linkedin_oauth2': {
-#         'SCOPE': [
-#             'r_emailaddress',
-#         ],
-#         'PROFILE_FIELDS': [
-#             'id',
-#             'first-name',
-#             'last-name',
-#             'email-address',
-#             'picture-url',
-#             'public-profile-url',
-#         ]
-#     }
-# }
+SOCIALACCOUNT_PROVIDERS = {
+
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile', 'user_friends'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+            'locale',
+            'timezone',
+            'link',
+            'gender',
+            'updated_time',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': lambda request: 'en_US',
+        'VERIFIED_EMAIL': False,
+    },
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    },
+    'linkedin_oauth2': {
+        'SCOPE': [
+            'r_emailaddress',
+        ],
+        'PROFILE_FIELDS': [
+            'id',
+            'first-name',
+            'last-name',
+            'email-address',
+            'picture-url',
+            'public-profile-url',
+        ]
+    }
+}
 
 BASE_URL = 'localhost:3000'
 

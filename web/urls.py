@@ -5,6 +5,9 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.urls import path
+
+from web.views import FacebookLogin, GoogleLogin
 
 urlpatterns = [
     # API DOCUMENTATION
@@ -13,10 +16,13 @@ urlpatterns = [
     # ADMIN URL
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^accounts/', include('allauth.urls'), name='socialaccount_signup'),
 
     # DRF API URL
     #url(r'^api/backend/auth/', include('rest_framework.urls', namespace='rest_framework')),
-
+    path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
+    path('rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
+    url('rest-auth/', include('social_django.urls', namespace='social')),
     # API FOR REGISTRATION, PASSWORD CHANGE, RESET, LOGIN etc
     url(r'^api/frontend/user/', include('apps.user.api.frontend.urls')),
 

@@ -1687,7 +1687,7 @@ class TrackerCompanyStaffListView(
     """
     permission_classes = (RoleAccessPermission,)
     permission_roles = settings.MEMBERS
-    serializer_class = serializers.ProfileSerializer
+    serializer_class = serializers.TeamProfileSerializer
 
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = [

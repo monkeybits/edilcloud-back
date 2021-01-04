@@ -17,11 +17,10 @@ urlpatterns = [
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls'), name='socialaccount_signup'),
-
     # DRF API URL
     #url(r'^api/backend/auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
-    path('rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
+    path('api/auth/socials/facebook/', FacebookLogin.as_view(), name='fb_login'),
+    path('api/auth/socials/google/', GoogleLogin.as_view(), name='google_login'),
     url('rest-auth/', include('social_django.urls', namespace='social')),
     # API FOR REGISTRATION, PASSWORD CHANGE, RESET, LOGIN etc
     url(r'^api/frontend/user/', include('apps.user.api.frontend.urls')),

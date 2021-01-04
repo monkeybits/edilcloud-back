@@ -7,6 +7,7 @@ import filetype
 import stripe
 from filetype.types import Type as EdilType
 
+
 gettext = lambda s: s
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -281,9 +282,11 @@ REST_FRAMEWORK = {
 }
 REST_FRAMEWORK_PAGE_SIZE_QUERY_PARAM = 'per_page'
 
-# REST_AUTH_SERIALIZERS = {
-#     "PASSWORD_RESET_SERIALIZER": "web.serializers.PasswordResetSerializer"
-# }
+REST_AUTH_SERIALIZERS = {
+    #"PASSWORD_RESET_SERIALIZER": "web.serializers.PasswordResetSerializer",
+    "JWT_SERIALIZER": "rest_framework_jwt.serializers.JSONWebTokenSerializer",
+    "JWT_TOKEN_CLAIMS_SERIALIZER": "apps.user.api.frontend.serializers.CustomLoginJWTSerializer"
+}
 
 DJANGO_ADMIN_LIST_PER_PAGE = 10
 
@@ -408,9 +411,10 @@ JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
-
+#JWT_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
+#JWT_TOKEN_CLAIMS_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
 REST_USE_JWT = True
-
+LOGIN_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
 SOCIALACCOUNT_EMAIL_VERIFICATION = None
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 SOCIALACCOUNT_QUERY_EMAIL = True

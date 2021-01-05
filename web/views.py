@@ -106,6 +106,7 @@ class SocialLoginView(generics.GenericAPIView):
                 except:
                     pass
                 main_profile.photo.save("{}_{}_{}{}".format(provider, authenticated_user.first_name, authenticated_user.last_name, file_ext), File(io))
+
             except:
                 main_profile = authenticated_user.create_main_profile({
                     'first_name': authenticated_user.first_name,
@@ -118,6 +119,21 @@ class SocialLoginView(generics.GenericAPIView):
                 disassembled = urlparse(serializer.data['photo'])
                 filename, file_ext = splitext(basename(disassembled.path))
                 main_profile.photo.save("{}_{}_{}{}".format(provider, authenticated_user.first_name, authenticated_user.last_name, file_ext), File(io))
+                authenticated_user.is_active = False
+                authenticated_user.save()
+                authenticated_user.send_account_verification_email()
+                from web.tasks import update_gspread_users
+                if os.environ.get('ENV_NAME') == 'test':
+                    update_gspread_users.delay(
+                        {
+                            'email': user.email,
+                            'full_name': "{} {}".format(main_profile.first_name, main_profile.last_name),
+                            'role': main_profile.role
+                        }
+                    )
+                return Response(status=status.HTTP_201_CREATED, data={'detail': 'Registration Successful'})
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'non_field_errors': ['Unable to log in with provided credentials.']})
 
         return Response(status=status.HTTP_200_OK, data=response)
 

@@ -97,8 +97,8 @@ class SocialLoginView(generics.GenericAPIView):
             try:
                 main_profile = authenticated_user.get_main_profile()
                 # url, filename, model_instance assumed to be provided
-                response = urlopen(serializer.data['photo'])
-                io = BytesIO(response.read())
+                res = urlopen(serializer.data['photo'])
+                io = BytesIO(res.read())
                 disassembled = urlparse(serializer.data['photo'])
                 filename, file_ext = splitext(basename(disassembled.path))
                 try:

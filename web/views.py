@@ -26,8 +26,54 @@ from social_core.backends.oauth import BaseOAuth2
 from social_core.exceptions import AuthForbidden, AuthTokenError, MissingBackend
 from social_django.utils import load_backend, load_strategy
 
-from apps.user.api.frontend.serializers import jwt_encode_handler, jwt_payload_handler
+from apps.user.api.frontend.serializers import jwt_encode_handler, jwt_payload_handler, User
 from apps.user.views import custom_jwt_response_payload_handler
+
+def common_operations(self, request, custom_function):
+    serializer = self.serializer_class(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    provider = serializer.data.get('provider', None)
+    strategy = load_strategy(request)
+    try:
+        backend = load_backend(strategy=strategy, name=provider,
+                               redirect_uri=None)
+
+    except MissingBackend:
+        return Response({'error': 'Please provide a valid provider'},
+                        status=status.HTTP_400_BAD_REQUEST)
+    response = custom_function(backend, serializer)
+    if type(response) is dict:
+        user = response['user']
+        access_token = response['access_token']
+    else:
+        return response, None, serializer, provider
+    try:
+        authenticated_user = backend.do_auth(access_token, user=user)
+    except HTTPError as error:
+        return Response({
+            "error": "invalid token",
+            "details": str(error)
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    except AuthForbidden as error:
+        return Response({
+            "error": "invalid token",
+            "details": str(error)
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    if authenticated_user:
+        # generate JWT token
+        # login(request, authenticated_user)
+        data = {
+            "token": jwt_encode_handler(
+                jwt_payload_handler(user)
+            )}
+        # customize the response to your needs
+        response = custom_jwt_response_payload_handler(data.get('token'), authenticated_user)
+        return response, authenticated_user, serializer, provider
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST,
+                        data={'non_field_errors': ['Unable to log in with provided credentials.']})
 
 
 class SocialAuthSerializer(serializers.Serializer):
@@ -35,105 +81,121 @@ class SocialAuthSerializer(serializers.Serializer):
     access_token = serializers.CharField(max_length=4096, required=True, trim_whitespace=True)
     photo = serializers.URLField(max_length=255, allow_blank=True, allow_null=False)
 
-class SocialLoginView(generics.GenericAPIView):
+class SocialRegisterView(generics.GenericAPIView):
     serializer_class = SocialAuthSerializer
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
         """Authenticate user through the provider and access_token"""
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        provider = serializer.data.get('provider', None)
-        strategy = load_strategy(request)
-
-        try:
-            backend = load_backend(strategy=strategy, name=provider,
-                                   redirect_uri=None)
-
-        except MissingBackend:
-            return Response({'error': 'Please provide a valid provider'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        try:
-            if isinstance(backend, BaseOAuth2):
-                access_token = serializer.data.get('access_token')
-            user = backend.do_auth(access_token)
-        except HTTPError as error:
-            return Response({
-                "error": {
-                    "access_token": "Invalid token",
-                    "details": str(error)
-                }
-            }, status=status.HTTP_400_BAD_REQUEST)
-        except AuthTokenError as error:
-            return Response({
-                "error": "Invalid credentials",
-                "details": str(error)
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            authenticated_user = backend.do_auth(access_token, user=user)
-
-        except HTTPError as error:
-            return Response({
-                "error": "invalid token",
-                "details": str(error)
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        except AuthForbidden as error:
-            return Response({
-                "error": "invalid token",
-                "details": str(error)
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        if authenticated_user and authenticated_user.is_active:
-            # generate JWT token
-            # login(request, authenticated_user)
-            data = {
-                "token": jwt_encode_handler(
-                    jwt_payload_handler(user)
-                )}
-            # customize the response to your needs
-            response = custom_jwt_response_payload_handler(data.get('token'), authenticated_user)
+        def custom_function(backend, serializer):
             try:
-                main_profile = authenticated_user.get_main_profile()
-                # url, filename, model_instance assumed to be provided
-                res = urlopen(serializer.data['photo'])
-                io = BytesIO(res.read())
-                disassembled = urlparse(serializer.data['photo'])
-                filename, file_ext = splitext(basename(disassembled.path))
-                try:
-                    shutil.rmtree(main_profile.photo.path.rsplit('/', 1)[0])
-                except:
-                    pass
-                main_profile.photo.save("{}_{}_{}{}".format(provider, authenticated_user.first_name, authenticated_user.last_name, file_ext), File(io))
+                if isinstance(backend, BaseOAuth2):
+                    access_token = serializer.data.get('access_token')
+                user_data = backend.user_data(access_token)
+                if User.objects.filter(email=user_data['email']):
+                    return Response({
+                        "error": "Already exists an account with this email"
+                    }, status=status.HTTP_400_BAD_REQUEST)
+                user = backend.do_auth(access_token)
+            except HTTPError as error:
+                return Response({
+                    "error": {
+                        "access_token": "Invalid token",
+                        "details": str(error)
+                    }
+                }, status=status.HTTP_400_BAD_REQUEST)
+            except AuthTokenError as error:
+                return Response({
+                    "error": "Invalid credentials",
+                    "details": str(error)
+                }, status=status.HTTP_400_BAD_REQUEST)
+            return {'user': user, 'access_token': access_token}
 
+
+        response, authenticated_user, serializer, provider = common_operations(self, request, custom_function)
+        try:
+            main_profile = authenticated_user.create_main_profile({
+                'first_name': authenticated_user.first_name,
+                'last_name': authenticated_user.last_name,
+                'language': 'it'
+            })
+            # url, filename, model_instance assumed to be provided
+            res = urlopen(serializer.data['photo'])
+            io = BytesIO(res.read())
+            disassembled = urlparse(serializer.data['photo'])
+            filename, file_ext = splitext(basename(disassembled.path))
+            main_profile.photo.save(
+                "{}_{}_{}{}".format(provider, authenticated_user.first_name, authenticated_user.last_name, file_ext),
+                File(io))
+            authenticated_user.is_active = False
+            authenticated_user.save()
+            authenticated_user.send_account_verification_email()
+            from web.tasks import update_gspread_users
+            if os.environ.get('ENV_NAME') == 'test':
+                update_gspread_users.delay(
+                    {
+                        'email': authenticated_user.email,
+                        'full_name': "{} {}".format(main_profile.first_name, main_profile.last_name),
+                        'role': main_profile.role
+                    }
+                )
+            return Response(status=status.HTTP_201_CREATED, data={'detail': 'Registration Successful'})
+        except Exception as e:
+            print(e.__str__())
+            return response
+
+
+class SocialLoginView(generics.GenericAPIView):
+    serializer_class = SocialAuthSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+    def post(self, request):
+        """Authenticate user through the provider and access_token"""
+
+        def custom_function(backend, serializer):
+            try:
+                if isinstance(backend, BaseOAuth2):
+                    access_token = serializer.data.get('access_token')
+                user_data = backend.user_data(access_token)
+                if not User.objects.filter(email=user_data['email']):
+                    return Response(status=status.HTTP_400_BAD_REQUEST,
+                                    data={'non_field_errors': ['Unable to log in with provided credentials.']})
+                user = backend.do_auth(access_token)
+            except HTTPError as error:
+                return Response({
+                    "error": {
+                        "access_token": "Invalid token",
+                        "details": str(error)
+                    }
+                }, status=status.HTTP_400_BAD_REQUEST)
+            except AuthTokenError as error:
+                return Response(status=status.HTTP_400_BAD_REQUEST,
+                                data={'non_field_errors': ['Unable to log in with provided credentials.']})
+            return {'user': user, 'access_token': access_token}
+
+        response, authenticated_user, serializer, provider = common_operations(self, request, custom_function)
+
+        try:
+            if not authenticated_user.is_active:
+                return Response(status=status.HTTP_400_BAD_REQUEST,
+                                data={'non_field_errors': ['Unable to log in with provided credentials.']})
+            main_profile = authenticated_user.get_main_profile()
+            # url, filename, model_instance assumed to be provided
+            res = urlopen(serializer.data['photo'])
+            io = BytesIO(res.read())
+            disassembled = urlparse(serializer.data['photo'])
+            filename, file_ext = splitext(basename(disassembled.path))
+            try:
+                shutil.rmtree(main_profile.photo.path.rsplit('/', 1)[0])
             except:
-                main_profile = authenticated_user.create_main_profile({
-                    'first_name': authenticated_user.first_name,
-                    'last_name': authenticated_user.last_name,
-                    'language': 'it'
-                })
-                # url, filename, model_instance assumed to be provided
-                res = urlopen(serializer.data['photo'])
-                io = BytesIO(res.read())
-                disassembled = urlparse(serializer.data['photo'])
-                filename, file_ext = splitext(basename(disassembled.path))
-                main_profile.photo.save("{}_{}_{}{}".format(provider, authenticated_user.first_name, authenticated_user.last_name, file_ext), File(io))
-                authenticated_user.is_active = False
-                authenticated_user.save()
-                authenticated_user.send_account_verification_email()
-                from web.tasks import update_gspread_users
-                if os.environ.get('ENV_NAME') == 'test':
-                    update_gspread_users.delay(
-                        {
-                            'email': user.email,
-                            'full_name': "{} {}".format(main_profile.first_name, main_profile.last_name),
-                            'role': main_profile.role
-                        }
-                    )
-                return Response(status=status.HTTP_201_CREATED, data={'detail': 'Registration Successful'})
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'non_field_errors': ['Unable to log in with provided credentials.']})
+                pass
+            main_profile.photo.save(
+                "{}_{}_{}{}".format(provider, authenticated_user.first_name, authenticated_user.last_name, file_ext),
+                File(io))
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST,
+                            data={'non_field_errors': ['Unable to log in with provided credentials.']})
 
         return Response(status=status.HTTP_200_OK, data=response)
 
@@ -142,156 +204,13 @@ class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
 
 
+class FacebookRegister(SocialRegisterView):
+    adapter_class = FacebookOAuth2Adapter
+
+
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
 
-class PublicAuthentication(SessionAuthentication):
-    """
-        Set Authentication as public so that everyone can authenticate
-    """
-    def authenticate(self, request):
-        return None
 
-
-class RestFacebookLoginView(APIView):
-    """
-        Login or register a user based on an authentication token coming
-        from Facebook.
-        Returns user data including session id.
-    """
-    permission_classes = (AllowAny,)
-    authentication_classes = (PublicAuthentication,)
-
-    def dispatch(self, *args, **kwargs):
-        return super(RestFacebookLoginView, self).dispatch(*args, **kwargs)
-
-    def post(self, request, format=None):
-        
-        try:
-            app = SocialApp.objects.get(provider="facebook")
-            adapter = FacebookOAuth2Adapter(request)
-            callback_url = 'http://localhost:3000/'
-            provider = adapter.get_provider()
-            scope = provider.get_scope(request)
-            client = OAuth2Client(self.request, app.client_id, app.secret,
-                              adapter.access_token_method,
-                              adapter.access_token_url,
-                              callback_url,
-                              scope,
-                              scope_delimiter=adapter.scope_delimiter,
-                              headers=adapter.headers,
-                              basic_auth=adapter.basic_auth)
-            data = self.request.data
-            code = data.get('code', '')
-            access_token = client.get_access_token(code)
-            token = adapter.parse_token(access_token)
-            token.app = app
-            login = adapter.complete_login(request,
-                                                app,
-                                                token,
-                                                response=access_token)
-            login.token = token
-            complete_social_login(request, login)
-            logged_in_user = login.account.user
-            token, created= TokenModel.objects.get_or_create(user=logged_in_user)
-            return Response({"success" : True, 'key' : token.key})
-        except Exception as e:
-            # FIXME: Catch only what is needed
-            print(e)
-            return Response({ "erorr" : True })
-
-
-class RestGoogleLoginView(APIView):
-    """
-        Login or register a user based on an authentication token coming
-        from Google.
-        Returns user data including session id.
-    """
-    permission_classes = (AllowAny,)
-    authentication_classes = (PublicAuthentication,)
-
-    def dispatch(self, *args, **kwargs):
-        return super(RestGoogleLoginView, self).dispatch(*args, **kwargs)
-
-    def post(self, request, format=None):
-        
-        try:
-            app = SocialApp.objects.get(provider="google")
-            adapter = GoogleOAuth2Adapter(request)
-            callback_url = 'http://localhost:3000'
-            provider = adapter.get_provider()
-            scope = provider.get_scope(request)
-            client = OAuth2Client(self.request, app.client_id, app.secret,
-                              adapter.access_token_method,
-                              adapter.access_token_url,
-                              callback_url,
-                              scope,
-                              scope_delimiter=adapter.scope_delimiter,
-                              headers=adapter.headers,
-                              basic_auth=adapter.basic_auth)
-            data = self.request.data
-            code = data.get('code', '')
-            access_token = client.get_access_token(code)
-            token = adapter.parse_token(access_token)
-            token.app = app
-            login = adapter.complete_login(request,
-                                                app,
-                                                token,
-                                                response=access_token)
-            login.token = token
-            complete_social_login(request, login)
-            logged_in_user = login.account.user
-            token, created= TokenModel.objects.get_or_create(user=logged_in_user)
-            return Response({"success" : True, 'key' : token.key})
-        except Exception as e:
-            # FIXME: Catch only what is needed
-            print(e)
-            return Response({"erorr" : True})
-
-
-class RestLinkedinLoginView(APIView):
-    """
-        Login or register a user based on an authentication token coming
-        from Linkedin.
-        Returns user data including session id.
-    """
-    permission_classes = (AllowAny,)
-    authentication_classes = (PublicAuthentication,)
-
-    def dispatch(self, *args, **kwargs):
-        return super(RestLinkedinLoginView, self).dispatch(*args, **kwargs)
-
-    def post(self, request, format=None):
-        
-        try:
-            app = SocialApp.objects.get(provider="linkedin_oauth2")
-            adapter = LinkedInOAuth2Adapter(request)
-            callback_url = 'http://localhost:3000/'
-            provider = adapter.get_provider()
-            scope = provider.get_scope(request)
-            client = OAuth2Client(self.request, app.client_id, app.secret,
-                              adapter.access_token_method,
-                              adapter.access_token_url,
-                              callback_url,
-                              scope,
-                              scope_delimiter=adapter.scope_delimiter,
-                              headers=adapter.headers,
-                              basic_auth=adapter.basic_auth)
-            data = self.request.data
-            code = data.get('code', '')
-            access_token = client.get_access_token(code)
-            token = adapter.parse_token(access_token)
-            token.app = app
-            login = adapter.complete_login(request,
-                                                app,
-                                                token,
-                                                response=access_token)
-            login.token = token
-            complete_social_login(request, login)
-            logged_in_user = login.account.user
-            token, created= TokenModel.objects.get_or_create(user=logged_in_user)
-            return Response({"success" : True, 'key' : token.key})
-        except Exception as e:
-            # FIXME: Catch only what is needed
-            print(e)
-            return Response({"erorr" : True})
+class GoogleRegister(SocialRegisterView):
+    adapter_class = GoogleOAuth2Adapter

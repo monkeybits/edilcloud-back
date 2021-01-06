@@ -69,6 +69,8 @@ def generate_pdf_report(html_message, data, domain_url):
         {
             'message': {
                 "url": domain_url + url_report,
+                "name": "Report progetto {}".format(data['project_name']),
+                "extension": ".pdf",
                 "dest": {
                     "id": data['pk']
                 },

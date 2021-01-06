@@ -8,4 +8,5 @@ python manage.py shell < web/management/scripts/import_typology.py && \
 python manage.py shell < web/management/scripts/import_category.py || exit 1
 # docker exec -i edilcloud-back_web_1 python manage.py shell < web/management/scripts/import_typology.py
 # docker exec -i edilcloud-back_web_1 python manage.py shell < web/management/scripts/import_category.py
+# docker exec -it edilcloud-back_web_1 python manage.py  makemessages -l en
 exec "$@"

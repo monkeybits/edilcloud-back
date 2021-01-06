@@ -50,16 +50,11 @@ INSTALLED_APPS = [
     'django.contrib.admindocs',
     'django_extensions',
     'debug_toolbar',
-    #'mptt',
-
     'rest_framework_docs',
-
     'rest_framework',
     'rest_framework.authtoken',
-
     'social_django',
     'rest_social_auth',
-#     'dj_rest_auth',
     'dj_rest_auth.registration',
     'rest_framework_simplejwt',
     'rest_auth', # Todo: Before removing this package, you must create custom serializers for PasswordChange, Reset etc
@@ -84,6 +79,7 @@ INSTALLED_APPS = [
     'channels',
     'apps.ws',
     "djstripe",
+    'rosetta'
 ]
 ASGI_APPLICATION = "web.routing.application"
 CHANNEL_LAYERS = {
@@ -108,6 +104,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -510,6 +507,11 @@ GSPREAD_USERS_URL = 'https://docs.google.com/spreadsheets/d/1kEMeH0GAOHjE4G54rGS
 NEW_ENTRY_SENDER = [
     'm.carminati@monkeybits.it'
 ]
+
+# ROSETTA settings
+ROSETTA_SHOW_AT_ADMIN_PANEL = True
+ROSETTA_WSGI_AUTO_RELOAD = True
+ROSETTA_UWSGI_AUTO_RELOAD = True
 # override filetype package adding new types
 class Dwg(EdilType):
     """

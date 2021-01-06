@@ -6,8 +6,9 @@ RUN mkdir /office2017.whistle.it
 WORKDIR /office2017.whistle.it
 COPY requirements.txt /office2017.whistle.it/
 #RUN wget "https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz"
-#RUN apt-get update
+RUN apt-get update
 RUN apt-get install gcc
+RUN apt-get install gettext --yes
 #RUN tar vxf wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
 #RUN cp wkhtmltox/bin/wk* /usr/local/bin/
 RUN pip install psycopg2

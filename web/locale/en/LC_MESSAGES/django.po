@@ -1,0 +1,23 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2021-01-06 22:17+0000\n"
+"Last-Translator: b'  <root@reply.com>'\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"X-Translated-Using: django-rosetta 0.9.5\n"
+
+msgid "Already exists an account with this email"
+msgstr "Already exists an account with this email"
+
+msgid "Invalid credentials"
+msgstr "Invalid credentials"
+
+msgid "Registration successful"
+msgstr "Registrazione completata"
+
+msgid "Unable to log in with provided credentials."
+msgstr "Impossibile eseguire il login con le credenziali immesse."

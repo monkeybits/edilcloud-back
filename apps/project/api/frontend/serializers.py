@@ -1089,7 +1089,12 @@ class TaskEditSerializer(
         if (not instance.assigned_company) and validated_data['assigned_company']:
             task = self.profile.assign_task(validated_data)
         else:
-            task = self.profile.edit_task(validated_data)
+            if instance.assigned_company != validated_data['assigned_company']:
+                task = instance.clone(validated_data)
+                instance.status = 0
+                instance.save()
+            else:
+                task = self.profile.edit_task(validated_data)
         activities = self.profile.list_task_activities(task)
         for act in activities:
             duration = (task.date_start - instance.date_start).days

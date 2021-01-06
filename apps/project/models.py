@@ -422,17 +422,11 @@ class Task(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             return True
         return False
 
-    def clone(self):
+    def clone(self, validated_data):
         task = Task.objects.get(pk=self.id)
-        internal_project = task.project.internal_projects.filter(company=task.assigned_company).first()
-        if internal_project:
-            task.id = None
-            task.project = internal_project
-            task.assigned_company = internal_project.company
-            task.shared_task = self
-            task.save()
-        else:
-            raise django_exception.ProjectClonePermissionDenied(_('Task clone failed due to internal_project not found'))
+        task.id = None
+        task.assigned_company = validated_data['assigned_company']
+        task.save()
 
 @python_2_unicode_compatible
 class Activity(CleanModel, UserModel, DateModel, OrderedModel):

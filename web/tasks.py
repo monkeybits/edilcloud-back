@@ -77,21 +77,21 @@ def generate_pdf_report(html_message, data, domain_url):
             }
         }
     )
-    from django.core.mail import EmailMultiAlternatives
-    data_template = {
-        'profile_name': "{} {}".format(data['first_name'], data['last_name']),
-        'project_name': data['project_name'],
-    }
-    report_template = render_to_string('email/report_email.html', data_template)
-    email = EmailMultiAlternatives(
-        subject='Edilcloud.io Report PDF - Progetto {}'.format(data['project_name']),
-        body='ciao questo è un report',
-        to=[data['email']],
-        from_email=DEFAULT_FROM_EMAIL,
-    )
-    email.attach_alternative(report_template, "text/html")
-    email.attach(filename='Report progetto {}.pdf'.format(data['project_name']), content=r.content)
-    email.send()
+    # from django.core.mail import EmailMultiAlternatives
+    # data_template = {
+    #     'profile_name': "{} {}".format(data['first_name'], data['last_name']),
+    #     'project_name': data['project_name'],
+    # }
+    # report_template = render_to_string('email/report_email.html', data_template)
+    # email = EmailMultiAlternatives(
+    #     subject='Edilcloud.io Report PDF - Progetto {}'.format(data['project_name']),
+    #     body='ciao questo è un report',
+    #     to=[data['email']],
+    #     from_email=DEFAULT_FROM_EMAIL,
+    # )
+    # email.attach_alternative(report_template, "text/html")
+    # email.attach(filename='Report progetto {}.pdf'.format(data['project_name']), content=r.content)
+    # email.send()
 
 
 @task()

@@ -1090,9 +1090,10 @@ class TaskEditSerializer(
             task = self.profile.assign_task(validated_data)
         else:
             if instance.assigned_company != validated_data['assigned_company']:
-                task = instance.clone(validated_data)
+                instance.clone(validated_data)
                 instance.status = 0
                 instance.save()
+                task = instance
             else:
                 task = self.profile.edit_task(validated_data)
         activities = self.profile.list_task_activities(task)

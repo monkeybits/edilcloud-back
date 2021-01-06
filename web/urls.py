@@ -24,6 +24,8 @@ urlpatterns = [
     path('api/auth/socials/google/login/', GoogleLogin.as_view(), name='google_login'),
     path('api/auth/socials/google/register/', GoogleRegister.as_view(), name='google_register'),
     url('rest-auth/', include('social_django.urls', namespace='social')),
+    # translation ROSETTA
+    url(r'^rosetta/', include('rosetta.urls')),
     # API FOR REGISTRATION, PASSWORD CHANGE, RESET, LOGIN etc
     url(r'^api/frontend/user/', include('apps.user.api.frontend.urls')),
 

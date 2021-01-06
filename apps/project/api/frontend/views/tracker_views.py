@@ -2910,7 +2910,7 @@ class TrackerProjectExport(
             host = request.get_host()
             url = protocol + host
             generate_pdf_report.delay(html_message, {'pk': self.get_profile().pk, 'email': self.get_profile().email, 'first_name': self.get_profile().first_name, 'last_name': self.get_profile().last_name, 'project_name': data['name']}, url)
-            resp = Response(data="Stiamo generando il tuo report, il download partirà appena finito il processo", status=status.HTTP_201_CREATED)
+            resp = Response(data=_("We are generating your report, download will start when process is finished."), status=status.HTTP_201_CREATED)
             # resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
             # resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
             return resp

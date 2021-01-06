@@ -5,7 +5,7 @@ from os.path import splitext, basename
 from urllib.error import HTTPError
 from urllib.parse import urlparse
 from urllib.request import urlopen
-
+from django.utils.translation import ugettext_lazy as _
 from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.helpers import complete_social_login
 from allauth.socialaccount.providers.linkedin_oauth2.views import LinkedInOAuth2Adapter
@@ -39,7 +39,7 @@ def common_operations(self, request, custom_function):
                                redirect_uri=None)
 
     except MissingBackend:
-        return Response({'error': 'Please provide a valid provider'},
+        return Response({'error': _('Please provide a valid provider')},
                         status=status.HTTP_400_BAD_REQUEST)
     response = custom_function(backend, serializer)
     if type(response) is dict:
@@ -73,7 +73,7 @@ def common_operations(self, request, custom_function):
         return response, authenticated_user, serializer, provider
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST,
-                        data={'non_field_errors': ['Unable to log in with provided credentials.']})
+                        data={'non_field_errors': [_('Unable to log in with provided credentials.')]})
 
 
 class SocialAuthSerializer(serializers.Serializer):
@@ -94,19 +94,19 @@ class SocialRegisterView(generics.GenericAPIView):
                 user_data = backend.user_data(access_token)
                 if User.objects.filter(email=user_data['email']):
                     return Response({
-                        "error": "Already exists an account with this email"
+                        "error": _("Already exists an account with this email")
                     }, status=status.HTTP_400_BAD_REQUEST)
                 user = backend.do_auth(access_token)
             except HTTPError as error:
                 return Response({
                     "error": {
-                        "access_token": "Invalid token",
+                        "access_token": _("Invalid token"),
                         "details": str(error)
                     }
                 }, status=status.HTTP_400_BAD_REQUEST)
             except AuthTokenError as error:
                 return Response({
-                    "error": "Invalid credentials",
+                    "error": _("Invalid credentials"),
                     "details": str(error)
                 }, status=status.HTTP_400_BAD_REQUEST)
             return {'user': user, 'access_token': access_token}
@@ -139,7 +139,7 @@ class SocialRegisterView(generics.GenericAPIView):
                         'role': main_profile.role
                     }
                 )
-            return Response(status=status.HTTP_201_CREATED, data={'detail': 'Registration Successful'})
+            return Response(status=status.HTTP_201_CREATED, data={'detail': _('Registration successful')})
         except Exception as e:
             print(e.__str__())
             return response
@@ -160,18 +160,18 @@ class SocialLoginView(generics.GenericAPIView):
                 user_data = backend.user_data(access_token)
                 if not User.objects.filter(email=user_data['email']):
                     return Response(status=status.HTTP_400_BAD_REQUEST,
-                                    data={'non_field_errors': ['Unable to log in with provided credentials.']})
+                                    data={'non_field_errors': [_('Unable to log in with provided credentials.')]})
                 user = backend.do_auth(access_token)
             except HTTPError as error:
                 return Response({
                     "error": {
-                        "access_token": "Invalid token",
+                        "access_token": _("Invalid token"),
                         "details": str(error)
                     }
                 }, status=status.HTTP_400_BAD_REQUEST)
             except AuthTokenError as error:
                 return Response(status=status.HTTP_400_BAD_REQUEST,
-                                data={'non_field_errors': ['Unable to log in with provided credentials.']})
+                                data={'non_field_errors': [_('Unable to log in with provided credentials.')]})
             return {'user': user, 'access_token': access_token}
 
         response, authenticated_user, serializer, provider = common_operations(self, request, custom_function)
@@ -179,7 +179,7 @@ class SocialLoginView(generics.GenericAPIView):
         try:
             if not authenticated_user.is_active:
                 return Response(status=status.HTTP_400_BAD_REQUEST,
-                                data={'non_field_errors': ['Unable to log in with provided credentials.']})
+                                data={'non_field_errors': [_('Unable to log in with provided credentials.')]})
             main_profile = authenticated_user.get_main_profile()
             # url, filename, model_instance assumed to be provided
             res = urlopen(serializer.data['photo'])
@@ -195,7 +195,7 @@ class SocialLoginView(generics.GenericAPIView):
                 File(io))
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST,
-                            data={'non_field_errors': ['Unable to log in with provided credentials.']})
+                            data={'non_field_errors': [_('Unable to log in with provided credentials.')]})
 
         return Response(status=status.HTTP_200_OK, data=response)
 

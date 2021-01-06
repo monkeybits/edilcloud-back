@@ -17,6 +17,7 @@ from django.db.models import Q, Count
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.contenttypes.models import ContentType
+from django.utils import translation
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.http import int_to_base36
 from django.utils.text import slugify
@@ -151,8 +152,9 @@ def get_profile_by_id(self, profile_id, profile_status=1):
     :param profile_status: status profile
     :return: profile instance if it is exists
     """
-    return self.profiles.get(status=profile_status, id=profile_id)
-
+    profile = self.profiles.get(status=profile_status, id=profile_id)
+    translation.activate(profile.language)
+    return profile
 
 def get_user_by_id(self, user_id):
     """

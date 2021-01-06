@@ -153,7 +153,7 @@ def get_profile_by_id(self, profile_id, profile_status=1):
     :return: profile instance if it is exists
     """
     profile = self.profiles.get(status=profile_status, id=profile_id)
-    translation.activate(profile.language)
+    translation.activate(self.get_main_profile().language)
     return profile
 
 def get_user_by_id(self, user_id):

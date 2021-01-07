@@ -30,3 +30,75 @@ msgstr "Inserisci un provider valido, per favore"
 
 msgid "We are generating your report, download will start when process is finished."
 msgstr "Stiamo generando il tuo report, il download partirà appena finito il processo."
+
+msgid "New Comment added in post activity"
+msgstr "Nuovo commento aggiunto al post dell'attività"
+
+msgid "Comment updated in post activity"
+msgstr "Commento modificato al post dell'attività"
+
+msgid "Comment deleted in post activity"
+msgstr "Commento cancellato al post dell'attività"
+
+msgid "New Comment added in post task"
+msgstr "Nuovo commento aggiunto al post della fase"
+
+msgid "Comment updated in post task"
+msgstr "Commento modificato al post della fase"
+
+msgid "Comment deleted in post task"
+msgstr "Commento cancellato al post della fase"
+
+msgid "New Post added in activity"
+msgstr "Nuovo post aggiunto all'attività"
+
+msgid "Post updated in activity"
+msgstr "Post aggiornato nell'attività"
+
+msgid "Post deleted in activity"
+msgstr "Post cancellato nell'attività"
+
+msgid "New Post added in task"
+msgstr "Nuovo post aggiunto nella fase"
+
+msgid "Post updated in task"
+msgstr "Post aggiornato nella fase"
+
+msgid "Post deleted in task"
+msgstr "Post cancellato nella fase"
+
+msgid "There is a issue in activity of task"
+msgstr "C'è un problema nell'attività della fase"
+
+msgid "Issue resolved in activity of task"
+msgstr "Problema risolto nell'attività della fase"
+
+msgid "There is a issue in task"
+msgstr "C'è un problema nella fase"
+
+msgid "Issue resolved in task"
+msgstr "Problema risolto nella fase"
+
+msgid "New Activity added in project"
+msgstr "Nuova attività aggiunta nel progetto"
+
+msgid "Activity updated in project"
+msgstr "Attività aggiornata nel progetto"
+
+msgid "Activity"
+msgstr "Attività"
+
+msgid "New activity"
+msgstr "Nuova attività"
+
+msgid "added in project"
+msgstr "aggiunta nel progetto"
+
+msgid "updated in project"
+msgstr "modificato nel progetto"
+
+msgid "deleted in project"
+msgstr "cancellato nel progetto"
+
+msgid "of task"
+msgstr "della fase"

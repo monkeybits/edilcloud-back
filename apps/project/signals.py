@@ -2,6 +2,7 @@ import json
 import logging
 
 import emoji
+from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
@@ -246,11 +247,11 @@ def activity_notification(sender, instance, **kwargs):
     try:
         if 'created' in kwargs:
             if kwargs['created']:
-                subject = _('New Activity (%s) added in project (%s)'% (instance.title, instance.task.project.name))
+                subject = _('New Activity').__str__ () + " %s " % instance.title + _("added in project").__str__() + " %s" % instance.task.project.name
             else:
-                subject = _('Activity (%s) updated in project (%s)'% (instance.title, instance.task.project.name))
+                subject = _('Activity').__str__ () + " %s " % instance.title + _("updated in project").__str__() + " %s" % instance.task.project.name
         else:
-            subject = _('Activity (%s) deleted in project (%s)'% (instance.title, instance.task.project.name))
+            subject = _('Activity').__str__ () + " %s " % instance.title + _("deleted in project").__str__() + " %s" % instance.task.project.name
 
         endpoint = '/apps/projects/{}/task'.format(str(instance.task.project.id))
         body = json.dumps({
@@ -309,16 +310,14 @@ def alert_notification(sender, instance, **kwargs):
     try:
         if post_for_model == 'activity':
             if instance.alert:
-                subject = _("%s C'è un problema nell'attività %s della fase %s del progetto %s" % (emoji.emojize(':warning:'), instance.sub_task.title, instance.sub_task.task.name, instance.sub_task.task.project.name))
+                subject = "%s " % emoji.emojize(':warning:') + _("There is a issue in activity").__str__() + " %s " % instance.sub_task.title + _("of task").__str__() + " %s" % instance.sub_task.task.name
             else:
-                subject = _("%s Problema risolto nell'attività %s della fase %s del progetto %s" % (emoji.emojize(':warning:'), instance.sub_task.title, instance.sub_task.task.name, instance.sub_task.task.project.name))
+                subject = "%s " % emoji.emojize(':warning:') + _("Issue resolved in activity").__str__() + " %s " % instance.sub_task.title + _("of task").__str__() + " %s" % instance.sub_task.task.name
         else:
             if instance.alert:
-                subject = _("%s C'è un problema nella fase %s del progetto %s" % (emoji.emojize(':warning:'),
-                instance.task.name, instance.task.project.name))
+                subject = "%s " % emoji.emojize(':warning:') + _("There is a issue in task").__str__() + " %s" % (instance.task.name)
             else:
-                subject = _("%s Problema risolto nella fase %s del progetto %s" % (emoji.emojize(':warning:'),
-                instance.task.name, instance.task.project.name))
+                subject = "%s " % emoji.emojize(':warning:') + _("Issue resolved in task").__str__() + " %s" % (instance.task.name)
 
         try:
             endpoint = '/apps/projects/{}/task'.format(str(instance.task.project.id))
@@ -393,19 +392,19 @@ def post_notification(sender, instance, kwargs=None):
         if post_for_model == 'activity':
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = _('%s New Post added in activity (%s)'% (emoji.emojize(':pencil:'), instance.sub_task.title))
+                    subject = '%s ' % emoji.emojize(':pencil:') + _("New Post added in activity").__str__() + " %s" + instance.sub_task.title
                 else:
-                    subject = _('%s Post updated in activity (%s)'% (emoji.emojize(':pencil:'), instance.sub_task.title))
+                    subject = '%s ' % emoji.emojize(':pencil:') + _("Post updated in activity").__str__() + " %s" + instance.sub_task.title
             else:
-                subject = _('%s Post deleted in activity (%s)'% (emoji.emojize(':pencil:'), instance.sub_task.title))
+                subject = '%s ' % emoji.emojize(':pencil:') + _("Post deleted in activity").__str__() + " %s" + instance.sub_task.title
         else:
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = _('%s New Post added in task (%s)' % (emoji.emojize(':pencil:'), instance.task.name))
+                    subject = '%s ' % emoji.emojize(':pencil:') + _("New Post added in task").__str__() + " %s" + instance.task.name
                 else:
-                    subject = _('%s Post updated in task (%s)' % (emoji.emojize(':pencil:'), instance.task.name))
+                    subject = '%s ' % emoji.emojize(':pencil:') + _("Post updated in task").__str__ () + " %s" + instance.task.name
             else:
-                subject = _('%s Post deleted in task (%s)' % (emoji.emojize(':pencil:'), instance.task.name))
+                subject = '%s ' % emoji.emojize(':pencil:') + _("Post deleted in task").__str__() + " %s" + instance.task.name
         try:
             endpoint = '/apps/projects/{}/task'.format(str(instance.task.project.id))
         except:
@@ -479,19 +478,20 @@ def comment_notification(sender, instance, **kwargs):
         if post_for_model == 'activity':
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = _('%s New Comment added in post activity (%s)'% (emoji.emojize(':speech_balloon:'), instance.post.sub_task.title))
+                    subject = '%s ' % emoji.emojize(':speech_balloon:') + _("New Comment added in post activity").__str__() + " (%s)" % instance.post.sub_task.title
                 else:
-                    subject = _('%s Comment updated in post activity (%s)'% (emoji.emojize(':speech_balloon:'), instance.post.sub_task.title))
+                    subject = '%s ' % emoji.emojize(':speech_balloon:') + _("Comment updated in post activity").__str__() + " (%s)" % instance.post.sub_task.title
             else:
-                subject = _('%s Comment deleted in post activity (%s)'% (emoji.emojize(':speech_balloon:'), instance.post.sub_task.title))
+                subject = '%s ' % emoji.emojize(':speech_balloon:') + _("Comment deleted in post activity").__str__() + " (%s)" % instance.post.sub_task.title
         else:
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = _('%s New Comment added in post task (%s)' % (emoji.emojize(':speech_balloon:'), instance.post.task.name))
+                    subject = "%s " % emoji.emojize(':speech_balloon:') + _('New Comment added in post task').__str__() + " (%s)" % instance.post.task.name
                 else:
-                    subject = _('%s Comment updated in post task (%s)' % (emoji.emojize(':speech_balloon:'), instance.post.task.name))
+                    subject = "%s " % emoji.emojize(':speech_balloon:') + _('Comment updated in post task').__str__() + " (%s)" % instance.post.task.name
             else:
-                subject = _('%s Comment deleted in post task (%s)' % (emoji.emojize(':speech_balloon:'), instance.post.task.name))
+                subject = "%s " % emoji.emojize(':speech_balloon:') + _('Comment deleted in post task').__str__() + " (%s)" % instance.post.task.name
+        print(subject)
         try:
             print('endpoint comment for task')
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.task.project.id))
@@ -535,7 +535,7 @@ def comment_notification(sender, instance, **kwargs):
             email_status = get_email_notification_status(
                 staff, sender.__name__.lower()
             )
-
+            translation.activate(staff.user.get_main_profile().language)
             if bell_status or email_status:
                 notify_recipient = notify_models.NotificationRecipient(
                     notification=notify_obj, is_email=email_status,

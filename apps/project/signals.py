@@ -481,7 +481,7 @@ def post_notification(sender, instance, kwargs=None):
         if post_for_model == 'activity':
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = build_array_message('new', [
+                    subject = build_array_message('mailbox_with_mail', [
                         _('New post has been created')
                     ])
                     content = build_array_message(None, [
@@ -499,7 +499,7 @@ def post_notification(sender, instance, kwargs=None):
         else:
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = build_array_message('new', [
+                    subject = build_array_message('mailbox_with_mail', [
                         _('New post has been created')
                     ])
                     content = build_array_message(None, [

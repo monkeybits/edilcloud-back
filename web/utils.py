@@ -1,6 +1,7 @@
 import os
 import configparser
 
+import emoji
 import stripe
 from django.conf import settings
 from rest_framework import status
@@ -82,3 +83,12 @@ def check_limitation_plan(customer, rule, total_count):
         raise APIException(code=status.HTTP_403_FORBIDDEN,
                            detail=detail_error
                            )
+
+def build_array_message(emot, sentences):
+    full_sentence = ""
+    full_emoji = ""
+    if emot is not None:
+        full_emoji = emoji.emojize(':{}:'.format(emot)) + " "
+    for sentence in sentences:
+        full_sentence += str(sentence) + " "
+    return full_emoji + full_sentence

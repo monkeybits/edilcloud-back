@@ -13,6 +13,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
 from web.routing import application
+from web.utils import build_array_message
 from . import models as message_models
 from apps.profile import models as profile_models
 from apps.notify import models as notify_models
@@ -128,14 +129,23 @@ def message_notification(sender, instance, **kwargs):
 
         if 'created' in kwargs:
             if kwargs['created']:
-                subject = _('New Message from %s (%s)' % (title, source))
+                subject = build_array_message('envelope', [
+                    _('New message in'),
+                    title,
+                    source
+                ])
             else:
                 subject = _('Message updated by %s (%s)' % (title, source))
+                return
         else:
             subject = _('Message deleted by %s (%s)' % (title, source))
+            return
 
         body = json.dumps({
-            'content': "New message in {} chat".format(instance.talk.content_type.name.lower()),
+            'content': build_array_message(None, [
+                "{} {} - {}:\n".format(profile.first_name, profile.last_name, profile.company.name),
+                instance.body if instance.body != '' else emoji.emojize(':camera:')
+            ]),
             'url': endpoint
         })
         type = ContentType.objects.get(model=instance.talk.content_type.name.lower())
@@ -195,11 +205,11 @@ def message_notification(sender, instance, **kwargs):
             "include_player_ids": list_players_recipients,
             "android_group": "chat" + str(instance.talk.id),
             "contents": {
-                "en": "{} {}: {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name, instance.body if instance.body != '' else emoji.emojize(':camera:'))
+                "en": body['content']
             },
             "content-available": 1,
             "headings": {
-                "en": addHeading(instance.talk, notify_obj)
+                "en": subject
             },
             "data": {
                 "custom_data": "New Message from Edilcloud",

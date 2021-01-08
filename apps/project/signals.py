@@ -106,7 +106,7 @@ def team_invite_notification(sender, instance, **kwargs):
         email_status = get_email_notification_status(
             instance.profile, sender.__name__.lower()
         )
-        translation.activate(staff.user.get_main_profile().language)
+        translation.activate(profile.user.get_main_profile().language)
         if bell_status or email_status:
             notify_recipient = notify_models.NotificationRecipient(
                 notification=notify_obj, is_email=email_status,
@@ -245,7 +245,6 @@ def task_notification(sender, instance, **kwargs):
             content_type=type, object_id=instance.id,
             creator=profile.user, last_modifier=profile.user
         )
-        translation.activate(staff.user.get_main_profile().language)
         for staff in company_staff:
             bell_status = get_bell_notification_status(
                 staff, sender.__name__.lower()
@@ -253,7 +252,7 @@ def task_notification(sender, instance, **kwargs):
             email_status = get_email_notification_status(
                 staff, sender.__name__.lower()
             )
-
+            translation.activate(staff.user.get_main_profile().language)
             if bell_status or email_status:
                 notify_recipient = notify_models.NotificationRecipient(
                     notification=notify_obj, is_email=email_status,

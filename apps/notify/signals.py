@@ -39,7 +39,7 @@ def addHeading(talk, notify_obj):
             return "Project Chat"
 
 
-def send_push_notification(notify_obj, recipient, body):
+def send_push_notification(notify_obj, recipient, subject, body):
     body = json.loads(body)
     print(body['content'])
     header = {
@@ -69,11 +69,11 @@ def send_push_notification(notify_obj, recipient, body):
         "app_id": "8fc7c8ff-a4c8-4642-823d-4675b809a3c9",
         "include_player_ids": list_players_recipients,
         "contents": {
-            "en": "da: {} {}".format(notify_obj.sender.first_name, notify_obj.sender.last_name)
+            "en": body['content']
         },
         "content-available": 1,
         "headings": {
-            "en": body['content']
+            "en": subject
         },
         "data": {
             "custom_data": body['content'],

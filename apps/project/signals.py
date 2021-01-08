@@ -595,6 +595,7 @@ def comment_notification(sender, instance, **kwargs):
                     ])
                     content = build_array_message(None, [
                         _('User'),
+                        "{} {}".format(profile.first_name, profile.last_name),
                         _('has commented post'),
                         instance.post.text[:50] + '..',
                         _('in activity'),
@@ -614,6 +615,7 @@ def comment_notification(sender, instance, **kwargs):
                     ])
                     content = build_array_message(None, [
                         _('User'),
+                        "{} {}".format(profile.first_name, profile.last_name),
                         _('has commented post'),
                         instance.post.text[:50] + '..',
                         _('in task'),

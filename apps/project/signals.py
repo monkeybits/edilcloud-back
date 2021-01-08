@@ -656,7 +656,6 @@ def comment_notification(sender, instance, **kwargs):
             body['project_id'] = instance.post.sub_task.task.project.id
 
         body = json.dumps(body)
-
         type = ContentType.objects.get(model=sender.__name__.lower())
 
         notify_obj = notify_models.Notify.objects.create(
@@ -680,7 +679,7 @@ def comment_notification(sender, instance, **kwargs):
                     creator=profile.user, last_modifier=profile.user)
                 notify_recipient.save()
                 if post_for_model == 'task':
-                    send_push_notification(notify_obj, staff, body, instance.post.task.project.id)
+                    send_push_notification(notify_obj, staff, subject, body)
                 else:
                     send_push_notification(notify_obj, staff, subject, body)
     except Exception as e:

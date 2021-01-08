@@ -392,7 +392,7 @@ def alert_notification(sender, instance, **kwargs):
                     _('has reported an issue in task'),
                     instance.task.name,
                     _('of project'),
-                    instance.sub_task.task.project.name
+                    instance.task.project.name
                 ])
             else:
                 subject = build_array_message('warning', [
@@ -404,7 +404,7 @@ def alert_notification(sender, instance, **kwargs):
                     _('has resolved an issue in task'),
                     instance.task.name,
                     _('of project'),
-                    instance.sub_task.task.project.name
+                    instance.task.project.name
                 ])
 
         try:

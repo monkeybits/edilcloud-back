@@ -89,7 +89,8 @@ def team_invite_notification(sender, instance, **kwargs):
                 _('from company'),
                 instance.project.company.name
             ]),
-            'url': endpoint
+            'url': endpoint,
+            'project_id': instance.project.id
         })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
@@ -153,7 +154,8 @@ def team_notification(sender, instance, **kwargs):
         endpoint = '/apps/projects/{}/team'.format(str(instance.project.id))
         body = json.dumps({
             'content': content,
-            'url': endpoint
+            'url': endpoint,
+            'project_id': instance.project.id
         })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
@@ -233,7 +235,8 @@ def task_notification(sender, instance, **kwargs):
                 _('in project'),
                 instance.project.name
             ]),
-            'url': endpoint
+            'url': endpoint,
+            'project_id': instance.project.id
         })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
@@ -301,7 +304,8 @@ def activity_notification(sender, instance, **kwargs):
                 instance.task.project.name
             ]),
             'url': endpoint,
-            'task_id': instance.task.id
+            'task_id': instance.task.id,
+            'project_id': instance.task.project.id
         })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
@@ -413,12 +417,14 @@ def alert_notification(sender, instance, **kwargs):
                 'url': endpoint,
                 'activity_id': instance.sub_task.id,
                 'task_id': instance.sub_task.task.id,
+                'project_id': instance.sub_task.task.project.id
             })
         else:
             body = json.dumps({
                 'content': content,
                 'url': endpoint,
-                'task_id': instance.task.id
+                'task_id': instance.task.id,
+                'project_id': instance.task.project.id
             })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
@@ -519,12 +525,14 @@ def post_notification(sender, instance, kwargs=None):
                 'url': endpoint,
                 'activity_id': instance.sub_task.id,
                 'task_id': instance.sub_task.task.id,
+                'project_id': instance.sub_task.task.project.id
             })
         else:
             body = json.dumps({
                 'content': content,
                 'url': endpoint,
-                'task_id': instance.task.id
+                'task_id': instance.task.id,
+                'project_id': instance.task.project.id
             })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
@@ -632,18 +640,21 @@ def comment_notification(sender, instance, **kwargs):
             body = {
                 'content': content,
                 'url': endpoint,
-                'comment_id': instance.parent.id
+                'comment_id': instance.parent.id,
             }
         else:
             body = {
                 'content': content,
-                'url': endpoint
+                'url': endpoint,
             }
         if instance.post.task:
             body['task_id'] = instance.post.task.id
+            body['project_id'] = instance.post.task.project.id
         else:
             body['task_id'] = instance.post.sub_task.task.id
             body['activity_id'] = instance.post.sub_task.id
+            body['project_id'] = instance.post.sub_task.task.project.id
+
         body = json.dumps(body)
 
         type = ContentType.objects.get(model=sender.__name__.lower())

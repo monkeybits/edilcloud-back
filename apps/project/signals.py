@@ -375,7 +375,7 @@ def alert_notification(sender, instance, **kwargs):
     try:
         if post_for_model == 'activity':
             if instance.alert:
-                subject = build_array_message(EMOJI_UNICODES['alarm'],[
+                subject = build_array_message(EMOJI_UNICODES['warning'],[
                     _('There is an issue in an activity')
                 ])
                 content = build_array_message(None, [
@@ -398,7 +398,7 @@ def alert_notification(sender, instance, **kwargs):
                 ])
         else:
             if instance.alert:
-                subject = build_array_message(EMOJI_UNICODES['alarm'], [
+                subject = build_array_message(EMOJI_UNICODES['warning'], [
                     _('There is an issue in a task')
                 ])
                 content = build_array_message(None, [

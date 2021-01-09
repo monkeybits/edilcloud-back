@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from rest_framework_jwt.settings import api_settings
 
-from ...signals import post_notification
+from ...signals import post_notification, comment_notification
 
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 from rest_framework import serializers, status
@@ -1696,6 +1696,7 @@ class PostCommentAddSerializer(
                     comment=post_comment,
                     media=file
                 )
+            comment_notification(post_comment._meta.model, post_comment, {'created': post_comment.created_date})
             return post_comment
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(

@@ -581,8 +581,8 @@ def post_notification(sender, instance, kwargs=None):
         print(e)
 
 
-@receiver([post_save, post_delete], sender=project_models.Comment)
-def comment_notification(sender, instance, **kwargs):
+#@receiver([post_save, post_delete], sender=project_models.Comment)
+def comment_notification(sender, instance, kwargs=None):
     try:
         if instance.post.sub_task is not None:
             company_staff = instance.post.sub_task.workers.all().union(

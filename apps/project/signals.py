@@ -657,11 +657,15 @@ def comment_notification(sender, instance, **kwargs):
             body = {
                 'content': content,
                 'url': endpoint,
+                'big_picture': PROTOCOL + '://back-test.edilcloud.io' + instance.mediaassignment_set.all()[
+                    0].media.url if instance.mediaassignment_set.all().count() > 0 else '',
                 'comment_id': instance.parent.id,
             }
         else:
             body = {
                 'content': content,
+                'big_picture': PROTOCOL + '://back-test.edilcloud.io' + instance.mediaassignment_set.all()[
+                    0].media.url if instance.mediaassignment_set.all().count() > 0 else '',
                 'url': endpoint,
             }
         if instance.post.task:

@@ -804,7 +804,6 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             **post_dict
         )
         post_worker.save()
-        post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
         return post_worker
 
     def create_activity_post(self, post_dict):
@@ -817,7 +816,6 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             **post_dict
         )
         post_worker.save()
-        post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
         return post_worker
 
     def create_post_comment(self, comment_dict):

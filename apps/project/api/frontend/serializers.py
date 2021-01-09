@@ -9,6 +9,8 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from rest_framework_jwt.settings import api_settings
 
+from ...signals import post_notification
+
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 from rest_framework import serializers, status
 
@@ -1575,6 +1577,7 @@ class TaskPostAddSerializer(
                     post=task_post,
                     media=file
                 )
+            post_notification(task_post._meta.model, task_post, {'created': task_post.created_date})
             return task_post
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(
@@ -1615,6 +1618,7 @@ class ActivityPostAddSerializer(
                     post=activity_post,
                     media=file
                 )
+            post_notification(activity_post._meta.model, activity_post, {'created': activity_post.created_date})
             return activity_post
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(

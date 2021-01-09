@@ -77,7 +77,9 @@ def send_push_notification(notify_obj, recipient, subject, body):
             "en": subject
         },
         "big_picture": body['big_picture'],
-        "android_sound": 'message',
+        "android_channel_id": "0fbdf0cf-d9f5-4363-809f-4735b1bba268",
+        "wp_wns_sound": "message",
+        "android_sound": "message",
         "data": {
             "custom_data": body['content'],
             "redirect_url": "https://test.edilcloud.io" + body['url']
@@ -85,9 +87,7 @@ def send_push_notification(notify_obj, recipient, subject, body):
         "small_icon": "ic_stat_onesignal_default"
     }
 
-    # "android_channel_id": "8d3bd99c-1755-4a33-a043-60a92c8b153c",
-    # "wp_wns_sound": "erotic_girl_sound",
-    # "android_sound": "erotic_girl_sound",
+
 
     req = requests.post("https://onesignal.com/api/v1/notifications", headers=header, data=json.dumps(payload))
     print(req.status_code, req.reason)

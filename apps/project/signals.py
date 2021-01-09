@@ -66,7 +66,25 @@ from ..notify.signals import send_push_notification
 #
 #     except Exception as e:
 #         print(e)
-
+EMOJI_UNICODES = {
+    'construction': '\U0001F3D7',
+    'speech_baloon': '\U0001F4AC',
+    'alarm': '\U0001F6A8',
+    'brick': '\U0001F9F1',
+    'stop': '\U0001F6A8',
+    'stars': '\U00002728',
+    'bullseye': '\U0001F3AF',
+    'newspaper': '\U0001F4F0',
+    'mailbox': '\U0001F4EC',
+    'warning': '\U000026A0',
+    'nopass': '\U0001F6B7',
+    'checked': '\U00002705',
+    'worker1': '\U0001F477',
+    'worker2': '\U00002642',
+    'activity': '\U00002692',
+    'clipboard': '\U0001F4CB',
+    'pushpin': '\U0001F4CC'
+}
 def team_invite_notification(sender, instance, **kwargs):
     company_staff = instance.project.profiles.all().union(
         instance.project.company.get_owners_and_delegates()
@@ -78,7 +96,7 @@ def team_invite_notification(sender, instance, **kwargs):
         return
 
     try:
-        subject = build_array_message('house', [
+        subject = build_array_message(EMOJI_UNICODES['construction'], [
             _('You have been invited in a project')
         ])
         endpoint = '/apps/projects'.format(str(instance.project.id))
@@ -131,7 +149,7 @@ def team_notification(sender, instance, **kwargs):
     try:
         if 'created' in kwargs:
             if kwargs['created']:
-                subject = build_array_message('construction_worker', [
+                subject = build_array_message(EMOJI_UNICODES['worker1'], [
                     _('You have been added in a project')
                 ])
                 content = build_array_message(None, [
@@ -141,7 +159,7 @@ def team_notification(sender, instance, **kwargs):
             else:
                 return
         else:
-            subject = build_array_message('do_not_litter', [
+            subject = build_array_message(EMOJI_UNICODES['worker1'], [
                 _('You have been deleted from project')
             ])
             content = build_array_message(None, [
@@ -215,7 +233,7 @@ def task_notification(sender, instance, **kwargs):
 
         if 'created' in kwargs:
             if kwargs['created']:
-                subject = build_array_message('clipboard', [
+                subject = build_array_message(EMOJI_UNICODES['clipboard'], [
                     _('New assignment for your company')
                 ])
             else:
@@ -282,7 +300,7 @@ def activity_notification(sender, instance, **kwargs):
     try:
         if 'created' in kwargs:
             if kwargs['created']:
-                subject = build_array_message('heavy_plus_sign', [
+                subject = build_array_message(EMOJI_UNICODES['pushpin'], [
                     _('New activity assigned')
                 ])
             else:
@@ -357,11 +375,10 @@ def alert_notification(sender, instance, **kwargs):
     try:
         if post_for_model == 'activity':
             if instance.alert:
-                subject = build_array_message('warning',[
+                subject = build_array_message(EMOJI_UNICODES['alarm'],[
                     _('There is an issue in an activity')
                 ])
                 content = build_array_message(None, [
-                    _('User'),
                     "{} {}".format(profile.first_name, profile.last_name),
                     _('has reported an issue in activity'),
                     instance.sub_task.title,
@@ -369,11 +386,10 @@ def alert_notification(sender, instance, **kwargs):
                     instance.sub_task.task.project.name
                 ])
             else:
-                subject = build_array_message('warning', [
+                subject = build_array_message(EMOJI_UNICODES['alarm'], [
                     _('Issue resolved in an activity')
                 ])
                 content = build_array_message(None, [
-                    _('User'),
                     "{} {}".format(profile.first_name, profile.last_name),
                     _('has resolved an issue in activity'),
                     instance.sub_task.title,
@@ -382,7 +398,7 @@ def alert_notification(sender, instance, **kwargs):
                 ])
         else:
             if instance.alert:
-                subject = build_array_message('warning', [
+                subject = build_array_message(EMOJI_UNICODES['alarm'], [
                     _('There is an issue in a task')
                 ])
                 content = build_array_message(None, [
@@ -394,7 +410,7 @@ def alert_notification(sender, instance, **kwargs):
                     instance.task.project.name
                 ])
             else:
-                subject = build_array_message('warning', [
+                subject = build_array_message(EMOJI_UNICODES['alarm'], [
                     _('Issue resolved in a task')
                 ])
                 content = build_array_message(None, [
@@ -481,7 +497,7 @@ def post_notification(sender, instance, kwargs=None):
         if post_for_model == 'activity':
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = build_array_message('\U0001F3D7', [
+                    subject = build_array_message(EMOJI_UNICODES['newspaper'], [
                         _('New post has been created')
                     ])
                     content = build_array_message(None, [
@@ -498,7 +514,7 @@ def post_notification(sender, instance, kwargs=None):
         else:
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = build_array_message('\U0001F3D7', [
+                    subject = build_array_message(EMOJI_UNICODES['newspaper'], [
                         _('New post has been created')
                     ])
                     content = build_array_message(None, [
@@ -587,11 +603,10 @@ def comment_notification(sender, instance, **kwargs):
         if post_for_model == 'activity':
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = build_array_message('speech_balloon', [
+                    subject = build_array_message(EMOJI_UNICODES['speech_baloon'], [
                         _('There is a new comment')
                     ])
                     content = build_array_message(None, [
-                        _('User'),
                         "{} {}".format(profile.first_name, profile.last_name),
                         _('has commented post'),
                         instance.post.text[:50] + '..',
@@ -607,11 +622,10 @@ def comment_notification(sender, instance, **kwargs):
         else:
             if 'created' in kwargs:
                 if kwargs['created']:
-                    subject = build_array_message('speech_balloon', [
+                    subject = build_array_message(EMOJI_UNICODES['speech_baloon'], [
                         _('There is a new comment')
                     ])
                     content = build_array_message(None, [
-                        _('User'),
                         "{} {}".format(profile.first_name, profile.last_name),
                         _('has commented post'),
                         instance.post.text[:50] + '..',

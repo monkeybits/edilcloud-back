@@ -386,7 +386,7 @@ def alert_notification(sender, instance, **kwargs):
                     instance.sub_task.task.project.name
                 ])
             else:
-                subject = build_array_message(EMOJI_UNICODES['alarm'], [
+                subject = build_array_message(EMOJI_UNICODES['stars'], [
                     _('Issue resolved in an activity')
                 ])
                 content = build_array_message(None, [
@@ -410,7 +410,7 @@ def alert_notification(sender, instance, **kwargs):
                     instance.task.project.name
                 ])
             else:
-                subject = build_array_message(EMOJI_UNICODES['alarm'], [
+                subject = build_array_message(EMOJI_UNICODES['stars'], [
                     _('Issue resolved in a task')
                 ])
                 content = build_array_message(None, [

@@ -8,6 +8,7 @@ from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 
+from web.settings import BASE_URL, PROTOCOL
 from web.utils import build_array_message
 from . import models as project_models
 from apps.notify import models as notify_models
@@ -536,7 +537,7 @@ def post_notification(sender, instance, kwargs=None):
             body = json.dumps({
                 'content': content,
                 'url': endpoint,
-                'big_picture': instance.mediaassignment_set.all()[0].media.url if instance.mediaassignment_set.all().count() > 0 else '',
+                'big_picture': PROTOCOL + '://back-test.edilcloud.io' + instance.mediaassignment_set.all()[0].media.url if instance.mediaassignment_set.all().count() > 0 else '',
                 'activity_id': instance.sub_task.id,
                 'task_id': instance.sub_task.task.id,
                 'project_id': instance.sub_task.task.project.id
@@ -545,7 +546,7 @@ def post_notification(sender, instance, kwargs=None):
             body = json.dumps({
                 'content': content,
                 'url': endpoint,
-                'big_picture': instance.mediaassignment_set.all()[
+                'big_picture': PROTOCOL + '://back-test.edilcloud.io' + instance.mediaassignment_set.all()[
                     0].media.url if instance.mediaassignment_set.all().count() > 0 else '',
                 'task_id': instance.task.id,
                 'project_id': instance.task.project.id

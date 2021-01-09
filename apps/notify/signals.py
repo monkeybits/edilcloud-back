@@ -77,6 +77,7 @@ def send_push_notification(notify_obj, recipient, subject, body):
             "en": subject
         },
         "big_picture": body['big_picture'],
+        "android_sound": 'message',
         "data": {
             "custom_data": body['content'],
             "redirect_url": "https://test.edilcloud.io" + body['url']

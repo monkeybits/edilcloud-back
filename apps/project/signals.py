@@ -502,9 +502,9 @@ def post_notification(sender, instance, kwargs=None):
                         _('New post has been created')
                     ])
                     content = build_array_message(None, [
-                        "<b>{} {}</b>".format(profile.first_name, profile.last_name),
+                        "**{} {}**".format(profile.first_name, profile.last_name),
                         _('has created a new post in activity'),
-                        "<b>{}</b>".format(instance.sub_task.title)
+                        "**{}**".format(instance.sub_task.title)
                     ])
                 else:
                     subject = '%s ' % emoji.emojize(':pencil:') + _("Post updated in activity").__str__() + " %s" + instance.sub_task.title
@@ -519,9 +519,9 @@ def post_notification(sender, instance, kwargs=None):
                         _('New post has been created')
                     ])
                     content = build_array_message(None, [
-                        "<b>{} {}</b>".format(profile.first_name, profile.last_name),
+                        "**{} {}**".format(profile.first_name, profile.last_name),
                         _('has created a new post in task'),
-                        "<b>{}</b>".format(instance.task.name)
+                        "**{}**".format(instance.task.name)
                     ])
                 else:
                     subject = '%s ' % emoji.emojize(':pencil:') + _("Post updated in task").__str__ () + " %s" + instance.task.name

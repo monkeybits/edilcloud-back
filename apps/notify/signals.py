@@ -76,6 +76,7 @@ def send_push_notification(notify_obj, recipient, subject, body):
         "headings": {
             "en": subject
         },
+        "big_picture": 'https://i.ytimg.com/vi/eVOlk6XtBgc/maxresdefault.jpg',
         "data": {
             "custom_data": body['content'],
             "redirect_url": "https://test.edilcloud.io" + body['url']

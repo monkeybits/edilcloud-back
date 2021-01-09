@@ -89,7 +89,10 @@ def build_array_message(emot, sentences):
     full_emoji = ""
     # if emot is not None:
     #     full_emoji = emoji.emojize(':{}:'.format(emot)) + " "
-    full_emoji = emot
+    if emot is None:
+        full_emoji = ''
+    else:
+        full_emoji = emot
     for sentence in sentences:
         full_sentence += str(sentence) + " "
     return full_emoji + full_sentence

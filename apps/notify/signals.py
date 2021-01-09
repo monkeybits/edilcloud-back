@@ -77,7 +77,6 @@ def send_push_notification(notify_obj, recipient, subject, body):
             "en": subject
         },
         "big_picture": body['big_picture'],
-        "android_channel_id": "0fbdf0cf-d9f5-4363-809f-4735b1bba268",
         "wp_wns_sound": "message",
         "android_sound": "message",
         "data": {

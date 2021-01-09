@@ -87,8 +87,9 @@ def check_limitation_plan(customer, rule, total_count):
 def build_array_message(emot, sentences):
     full_sentence = ""
     full_emoji = ""
-    if emot is not None:
-        full_emoji = emoji.emojize(':{}:'.format(emot)) + " "
+    # if emot is not None:
+    #     full_emoji = emoji.emojize(':{}:'.format(emot)) + " "
+    full_emoji = emot
     for sentence in sentences:
         full_sentence += str(sentence) + " "
     return full_emoji + full_sentence

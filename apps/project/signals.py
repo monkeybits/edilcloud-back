@@ -502,9 +502,10 @@ def post_notification(sender, instance, kwargs=None):
                         _('New post has been created')
                     ])
                     content = build_array_message(None, [
-                        "**{} {}**".format(profile.first_name, profile.last_name),
+                        "{} {}".format(profile.first_name, profile.last_name),
                         _('has created a new post in activity'),
-                        "**{}**".format(instance.sub_task.title)
+                        instance.sub_task.title,
+                        '\n"' + instance.text + '"'
                     ])
                 else:
                     subject = '%s ' % emoji.emojize(':pencil:') + _("Post updated in activity").__str__() + " %s" + instance.sub_task.title
@@ -519,9 +520,10 @@ def post_notification(sender, instance, kwargs=None):
                         _('New post has been created')
                     ])
                     content = build_array_message(None, [
-                        "**{} {}**".format(profile.first_name, profile.last_name),
+                        "{} {}".format(profile.first_name, profile.last_name),
                         _('has created a new post in task'),
-                        "**{}**".format(instance.task.name)
+                        instance.task.name,
+                        '\n"' + instance.text + '"'
                     ])
                 else:
                     subject = '%s ' % emoji.emojize(':pencil:') + _("Post updated in task").__str__ () + " %s" + instance.task.name
@@ -615,7 +617,8 @@ def comment_notification(sender, instance, kwargs=None):
                         _('has commented post'),
                         instance.post.text[:50] + '..',
                         _('in activity'),
-                        instance.post.sub_task.title
+                        instance.post.sub_task.title,
+                        '\n"' + instance.text + '"'
                     ])
                 else:
                     subject = '%s ' % emoji.emojize(':speech_balloon:') + _("Comment updated in post activity").__str__() + " (%s)" % instance.post.sub_task.title
@@ -634,7 +637,8 @@ def comment_notification(sender, instance, kwargs=None):
                         _('has commented post'),
                         instance.post.text[:50] + '..',
                         _('in task'),
-                        instance.post.task.name
+                        instance.post.task.name,
+                        '\n"' + instance.text + '"'
                     ])
                 else:
                     subject = "%s " % emoji.emojize(':speech_balloon:') + _('Comment updated in post task').__str__() + " (%s)" % instance.post.task.name

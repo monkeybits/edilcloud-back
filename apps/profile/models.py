@@ -35,7 +35,7 @@ from web.drf import exceptions as django_api_exception
 from . import managers
 # Todo: May be, use the following format: from apps.app import models as app_models
 from apps.document.models import Document
-from apps.media.models import Photo, Video
+from apps.media.models import Photo, Video, Folder
 from apps.message.models import Talk, Message, MessageFileAssignment, MessageProfileAssignment
 from apps.project.models import Project, Team, Task, Activity, \
     Post, Comment, TaskPostAssignment, MediaAssignment
@@ -3451,6 +3451,17 @@ class OwnerProfile(Profile):
 
         return Photo.objects.filter(Q(**query1) | Q(**query2))
 
+    def list_project_folders(self, project=None):
+        """
+        Get all project folders of the company/project
+        """
+        query1 = {'projects__company': self.company}
+        query2 = {'projects__profiles__id': self.id}
+        if project:
+            query1.update({'projects__id': project.id})
+
+        return Folder.objects.filter(Q(**query1) | Q(**query2))
+
     def list_bom_photos(self):
         """
         Get all bom photos of the company
@@ -3544,6 +3555,23 @@ class OwnerProfile(Profile):
         video.save()
         return video
 
+    def create_folder(self, folder_dict):
+        if folder_dict['content_type'].model == 'project':
+            self.get_project(folder_dict['object_id'])
+        elif folder_dict['content_type'].model == 'company':
+            self.get_company(folder_dict['object_id'])
+        elif folder_dict['content_type'].model == 'bom':
+            self.get_bom(folder_dict['object_id'])
+        else:
+            raise django_exception.OwnerProfilePermissionDenied(_('Please select the correct content type'))
+        folder = Folder(
+            creator=self.user,
+            last_modifier=self.user,
+            **folder_dict
+        )
+        folder.save()
+        return folder
+
     def list_videos(self):
         """
         Get all videos linked to the company
@@ -3552,6 +3580,15 @@ class OwnerProfile(Profile):
             Q(companies=self.company) |
             Q(projects__company=self.company) |
             Q(boms__owner=self.company)
+        )
+
+    def list_folders(self):
+        """
+        Get all folders linked to the company
+        """
+        return Folder.objects.filter(
+            Q(companies=self.company) |
+            Q(projects__company=self.company)
         )
 
     def list_company_videos(self):
@@ -3648,6 +3685,23 @@ class OwnerProfile(Profile):
         os.remove(video.video.file.name)
         # Deletes the video instance
         video.delete()
+
+    def get_folder(self, folder_id):
+        """
+        Get company folder
+        """
+        folder = self.list_folders().get(id=folder_id)
+        return folder
+
+    def edit_folder(self, folder_dict):
+        folder = self.list_folders().get(id=folder_dict['id'])
+        folder.__dict__.update(**video_dict)
+        folder.save()
+        return folder
+
+    def remove_folder(self, folder):
+        folder = self.list_folders().get(id=folder.id)
+        folder.delete()
 
     # ------ TALK ------
 

@@ -304,6 +304,28 @@ class TrackerVideoMixin(
         else:
             self.serializer_class = output_serializer
 
+class TrackerFolderMixin(
+        JWTPayloadMixin):
+    """
+    Company Folder Mixin
+    """
+    def get_object(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            folder = profile.get_folder(self.kwargs.get('pk', None))
+            self.check_object_permissions(self.request, folder)
+            return video
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.FolderAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+    def set_output_serializer(self, output_serializer=None):
+        if output_serializer is None:
+            self.serializer_class = serializers.VideoSerializer
+        else:
+            self.serializer_class = output_serializer
 
 class TrackerVideoDetailView(
         TrackerVideoMixin,
@@ -704,3 +726,71 @@ class TrackerFolderDeleteView(generics.DestroyAPIView):
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data="Enter a folder name for deleting one")
 
+
+class TrackerFolderAddView(
+        WhistleGenericViewMixin,
+        TrackerFolderMixin,
+        generics.CreateAPIView):
+    """
+    Add a single video
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.FolderAddSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.folder_request_include_fields = [
+           'content_type', 'object_id', 'name', 'pub_date', 'is_public', 'is_root'
+        ]
+        self.folder_response_include_fields = [
+            'id', 'name', 'pub_date', 'is_public', 'is_root', 'content_type', 'object_id'
+        ]
+        super(TrackerFolderAddView, self).__init__(*args, **kwargs)
+
+
+    def post(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+        request.data['content_type'] = ContentType.objects.get(model=self.kwargs['type']).id
+        request.data['object_id'] = self.kwargs['pk']
+        return self.create(request, *args, **kwargs)
+
+
+class TrackerFolderEditView(
+        WhistleGenericViewMixin,
+        TrackerVideoMixin,
+        generics.RetrieveUpdateAPIView):
+    """
+    Edit a company video
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.FolderEditSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.video_request_include_fields = [
+            'name', 'parent', 'is_public', 'is_root'
+        ]
+        self.video_response_include_fields = [
+            'id', 'name', 'parent', 'is_public', 'is_root'
+        ]
+        super(TrackerFolderEditView, self).__init__(*args, **kwargs)
+
+class TrackerFolderDeleteView(
+        TrackerFolderMixin,
+        generics.RetrieveDestroyAPIView):
+    """
+    Delete a company video
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.FolderSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.folder_response_include_fields = ['id', 'name', 'parent', 'is_public', 'is_root']
+        super(TrackerFolderDeleteView, self).__init__(*args, **kwargs)
+
+    def perform_destroy(self, instance):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        profile.remove_folder(instance)

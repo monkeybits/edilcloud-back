@@ -85,15 +85,30 @@ tracker_urlpatterns = [
         tracker_views.TrackerFolderList.as_view(),
         name='tracker_folder_list'
     ),
+    # url(
+    #     r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/add/$',
+    #     tracker_views.TrackerFolderAdd.as_view(),
+    #     name='tracker_folder_add'
+    # ),
+    # url(
+    #     r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/move/$',
+    #     tracker_views.TrackerFolderMove.as_view(),
+    #     name='tracker_folder_move'
+    # ),
+    # url(
+    #     r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/delete/$',
+    #     tracker_views.TrackerFolderDeleteView.as_view(),
+    #     name='tracker_folder_delete'
+    # ),
     url(
         r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/add/$',
-        tracker_views.TrackerFolderAdd.as_view(),
+        tracker_views.TrackerFolderAddView.as_view(),
         name='tracker_folder_add'
     ),
     url(
-        r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/move/$',
-        tracker_views.TrackerFolderMove.as_view(),
-        name='tracker_folder_move'
+        r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/edit/$',
+        tracker_views.TrackerFolderEditView.as_view(),
+        name='tracker_folder_edit'
     ),
     url(
         r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/delete/$',

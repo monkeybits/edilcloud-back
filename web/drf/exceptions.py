@@ -210,6 +210,9 @@ class PhotoAPIDoesNotExist(WhistleAPIException):
 class VideoAPIDoesNotExist(WhistleAPIException):
     pass
 
+class FolderAPIDoesNotExist(WhistleAPIException):
+    pass
+
 
 class FavouriteAPIDoesNotExist(WhistleAPIException):
     pass

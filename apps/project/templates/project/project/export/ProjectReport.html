@@ -48,7 +48,7 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="jobs.html"><span style="margin-left: 10px;" class="d-none d-lg-inline"> Report generato da Carlo Federico - Impresa Edile Marinetti srl</span></a>
+                <a class="nav-link" href="jobs.html"><span style="margin-left: 10px;" class="d-none d-lg-inline"> Report generato da {{ requested_from.first_name }} {{ requested_from.last_name }} - {{ requested_from.company }}</span></a>
             </li>
         </ul>
     </div>
@@ -58,9 +58,9 @@
         <div class="row">
             <div class="col-md-12 mx-auto">
                 <h1 class="text-white font-weight-light"><span class="font-weight-bold">Report:
-</span>{{ name }}</h1>
-                <p class="mb-2 text-white-50">Qui metti l'indirizzo del progetto e non la data, e mettilo come link che
-                    se ci clicchi sopra funziona, nei pdf poi se clicchi sopra va anche li
+                </span>{{ name }}</h1>
+                <p class="mb-2 text-white-50">
+                    <a href="https://test.edilcloud.io/apps/projects/{{ id }}">https://test.edilcloud.io/apps/projects/{{ id }}</a>
                 </p>
             </div>
         </div>
@@ -68,11 +68,9 @@
 </div>
 <div class="pt-5">
     <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
-
-        <h2 class="font-weight-light"><span class="font-weight-bold">1. Informazioni di progetto
+        <h2 class="font-weight-light"><span class="font-weight-bold">
+            1. Informazioni di progetto
         </h2>
-
-
     </div>
 </div>
 <div class="py-5 px-20">
@@ -84,7 +82,7 @@
                         <h6 class="m-0">Descrizione del progetto</h6>
                     </div>
                     <div class="box-body p-3">
-                        <p>{{ Description }}
+                        <p>{{ description }}
                         </p>
 
                     </div>
@@ -302,7 +300,7 @@
                         <div class="box shadow-sm border rounded bg-white mb-3 osahan-post">
                             <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
                                 <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" src="img/p5.png" alt="">
+                                    <img class="rounded-circle" src="{{ post.author.photo }}" alt="">
                                     <div class="status-indicator bg-success"></div>
                                 </div>
                                 <div class="font-weight-bold">
@@ -344,7 +342,7 @@
                                         {% for comment in post.comment_set %}
                                             <div class="media mb-2">
                                                 <img class="d-flex mr-3 rounded"
-                                                     src="https://lightstorage.ecodibergamo.it/mediaon/cms.quotidiani/storage/site_media/media/photologue/2019/7/20/photos/cache/la-sfida-del-nuovo-ponte-morandie-un-bergamasco-il-direttore-dei-lavori_495d7dfa-ab27-11e9-8072-77a13993946d_512_512_new_square_large.jpg"
+                                                     src="{{ comment.author.photo }}"
                                                      alt="">
                                                 <div class="media-body">
                                                     <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }}
@@ -353,19 +351,16 @@
                                                             </small>
                                                                     </span></h5>
                                                                     <p>{{ comment.text }}</p>
-                                                            <div class="media mt-4">
-    <img class="d-flex mr-3 rounded" src="img/user/3.jpg" alt="">
-    <div class="media-body">
-    <h5 class="mt-0">Ryan Printz <small>Nov 13, 2020</small> <span class="star-rating float-right">
-    <i class="feather-star text-warning"></i>
-    <i class="feather-star text-warning"></i>
-    <i class="feather-star text-warning"></i>
-    <i class="feather-star text-warning"></i>
-    <i class="feather-star text-warning"></i><small class="text-success">5/5</small>
-    </span></h5>
-    <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-    </div>
-    </div>
+                                                        {% for reply in comment.reply_set %}
+                                                        <div class="media mt-4">
+                                                            <img class="d-flex mr-3 rounded" src="{{ reply.author.photo }}" alt="">
+                                                            <div class="media-body">
+                                                                <h5 class="mt-0">{{ reply.author.first_name }} {{ reply.author.last_name }} <small>{{ reply.published_date }}</small>
+                                                                </h5>
+                                                                <p>{{ reply.text }}</p>
+                                                            </div>
+                                                        </div>
+                                                        {% endfor %}
                                                 </div>
 
                                             </div>

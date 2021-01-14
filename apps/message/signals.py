@@ -135,8 +135,11 @@ def message_notification(sender, instance, **kwargs):
                     source
                 ])
             else:
-                subject = _('Message updated by %s (%s)' % (title, source))
-                return
+                subject = build_array_message('envelope', [
+                    _('New message in'),
+                    title,
+                    source
+                ])
         else:
             subject = _('Message deleted by %s (%s)' % (title, source))
             return
@@ -205,7 +208,7 @@ def message_notification(sender, instance, **kwargs):
             "include_player_ids": list_players_recipients,
             "android_group": "chat" + str(instance.talk.id),
             "contents": {
-                "en": body['content']
+                "en": json.loads(body)['content']
             },
             "content-available": 1,
             "headings": {

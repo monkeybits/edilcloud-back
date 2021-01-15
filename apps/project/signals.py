@@ -280,6 +280,7 @@ def task_notification(sender, instance, **kwargs):
                 notify_recipient.save()
                 body = json.loads(body)
                 body['url'] = endpoint + '/{}/'.format(instance.id)
+                body = json.dumps(body)
                 send_push_notification(notify_obj, staff, subject, body)
 
     except Exception as e:
@@ -351,6 +352,7 @@ def activity_notification(sender, instance, **kwargs):
                 notify_recipient.save()
                 body = json.loads(body)
                 body['url'] = endpoint + '/{}/activity/{}/'.format(instance.task.id, instance.id)
+                body = json.dumps(body)
                 send_push_notification(notify_obj, staff, subject, body)
 
     except Exception as e:
@@ -471,9 +473,11 @@ def alert_notification(sender, instance, **kwargs):
                 body = json.loads(body)
                 if post_for_model == 'task':
                     body['url'] = endpoint + '/{}/post/{}/'.format(instance.task.id,instance.id)
+                    body = json.dumps(body)
                     send_push_notification(notify_obj, staff, subject, body)
                 else:
                     body['url'] = endpoint + '/{}/activity/{}/post/{}/'.format(instance.sub_task.task.id, instance.sub_task.id,instance.id)
+                    body = json.dumps(body)
                     send_push_notification(notify_obj, staff, subject, body)
     except Exception as e:
         print(e)
@@ -585,9 +589,11 @@ def post_notification(sender, instance, kwargs=None):
                 body = json.loads(body)
                 if post_for_model == 'task':
                     body['url'] = endpoint + '/{}/post/{}/'.format(instance.task.id,instance.id)
+                    body = json.dumps(body)
                     send_push_notification(notify_obj, staff, subject, body)
                 else:
                     body['url'] = endpoint + '/{}/post/{}/'.format(instance.sub_task.id, instance.id)
+                    body = json.dumps(body)
                     send_push_notification(notify_obj, staff, subject, body)
     except Exception as e:
         print(e)
@@ -716,9 +722,11 @@ def comment_notification(sender, instance, kwargs=None):
                 body = json.loads(body)
                 if post_for_model == 'task':
                     body['url'] = endpoint + '/{}/post/{}/comment/{}/'.format(instance.post.task.id,instance.post.id, instance.id)
+                    body = json.dumps(body)
                     send_push_notification(notify_obj, staff, subject, body)
                 else:
                     body['url'] = endpoint + '/{}/activity/{}/post/{}/comment/{}/'.format(instance.post.sub_task.task.id, instance.post.sub_task.id, instance.post.id, instance.id)
+                    body = json.dumps(body)
                     send_push_notification(notify_obj, staff, subject, body)
     except Exception as e:
         logging.error(e.__str__())

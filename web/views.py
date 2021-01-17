@@ -160,7 +160,7 @@ class SocialLoginView(generics.GenericAPIView):
                 user_data = backend.user_data(access_token)
                 if not User.objects.filter(email=user_data['email']):
                     return Response(status=status.HTTP_400_BAD_REQUEST,
-                                    data={'error': _('Unable to log in with provided credentials.')})
+                                    data={'error': _('Unable to log in with provided credentials.') + 'non sei utente del sistema'})
                 user = backend.do_auth(access_token)
             except HTTPError as error:
                 return Response({
@@ -171,7 +171,7 @@ class SocialLoginView(generics.GenericAPIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
             except AuthTokenError as error:
                 return Response(status=status.HTTP_400_BAD_REQUEST,
-                                data={'error': _('Unable to log in with provided credentials.')})
+                                data={'error': _('Unable to log in with provided credentials.') + ' token invalido'})
             return {'user': user, 'access_token': access_token}
 
         response, authenticated_user, serializer, provider = common_operations(self, request, custom_function)
@@ -179,7 +179,7 @@ class SocialLoginView(generics.GenericAPIView):
         try:
             if not authenticated_user.is_active:
                 return Response(status=status.HTTP_400_BAD_REQUEST,
-                                data={'error': _('Unable to log in with provided credentials.')})
+                                data={'error': _('Unable to log in with provided credentials.') + 'non sei attivo'})
             main_profile = authenticated_user.get_main_profile()
             # url, filename, model_instance assumed to be provided
             res = urlopen(serializer.data['photo'])
@@ -195,7 +195,7 @@ class SocialLoginView(generics.GenericAPIView):
                 File(io))
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST,
-                            data={'error': _('Unable to log in with provided credentials.')})
+                            data={'error': _('Unable to log in with provided credentials.') + 'main profile error'})
 
         return Response(status=status.HTTP_200_OK, data=response)
 

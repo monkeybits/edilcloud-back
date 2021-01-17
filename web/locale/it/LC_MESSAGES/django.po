@@ -25,6 +25,9 @@ msgstr "Registrazione completata"
 msgid "Unable to log in with provided credentials."
 msgstr "Impossibile eseguire il login con le credenziali immesse."
 
+msgid "Your account is disabled, check your email to activate it"
+msgstr "Il tuo account è disabilitato, controlla la tua email per attivare."
+
 msgid "Please provide a valid provider"
 msgstr "Inserisci un provider valido, per favore"
 

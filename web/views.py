@@ -93,10 +93,11 @@ class SocialRegisterView(generics.GenericAPIView):
                 if isinstance(backend, BaseOAuth2):
                     access_token = serializer.data.get('access_token')
                 user_data = backend.user_data(access_token)
-                if User.objects.filter(email=user_data['email']):
-                    return Response({
-                        "error": _("Already exists an account with this email")
-                    }, status=status.HTTP_400_BAD_REQUEST)
+                if 'email' in user_data:
+                    if User.objects.filter(email=user_data['email']):
+                        return Response({
+                            "error": _("Already exists an account with this email")
+                        }, status=status.HTTP_400_BAD_REQUEST)
                 user = backend.do_auth(access_token)
             except HTTPError as error:
                 return Response({
@@ -159,9 +160,10 @@ class SocialLoginView(generics.GenericAPIView):
                 if isinstance(backend, BaseOAuth2):
                     access_token = serializer.data.get('access_token')
                 user_data = backend.user_data(access_token)
-                if not User.objects.filter(email=user_data['email']):
-                    return Response(status=status.HTTP_400_BAD_REQUEST,
-                                    data={'error': _('Unable to log in with provided credentials.') + 'non sei utente del sistema'})
+                if 'email' in user_data:
+                    if not User.objects.filter(email=user_data['email']):
+                        return Response(status=status.HTTP_400_BAD_REQUEST,
+                                        data={'error': _('Unable to log in with provided credentials.') + 'non sei utente del sistema'})
                 user = backend.do_auth(access_token)
             except HTTPError as error:
                 return Response({
@@ -179,8 +181,9 @@ class SocialLoginView(generics.GenericAPIView):
 
         try:
             if not authenticated_user.is_active:
+                authenticated_user.send_account_verification_email()
                 return Response(status=status.HTTP_400_BAD_REQUEST,
-                                data={'error': _('Unable to log in with provided credentials.') + 'non sei attivo'})
+                                data={'error': _('Your account is disabled, check your email to activate it')})
             main_profile = authenticated_user.get_main_profile()
             # url, filename, model_instance assumed to be provided
             res = urlopen(serializer.data['photo'])

@@ -72,6 +72,7 @@ def common_operations(self, request, custom_function):
         response = custom_jwt_response_payload_handler(data.get('token'), authenticated_user)
         return response, authenticated_user, serializer, provider
     else:
+        print('error login: not authenticated')
         return Response(status=status.HTTP_400_BAD_REQUEST,
                         data={'error': _('Unable to log in with provided credentials.')})
 
@@ -188,12 +189,13 @@ class SocialLoginView(generics.GenericAPIView):
             filename, file_ext = splitext(basename(disassembled.path))
             try:
                 shutil.rmtree(main_profile.photo.path.rsplit('/', 1)[0])
-            except:
-                pass
+            except Exception as es:
+                print(es.__str__())
             main_profile.photo.save(
                 "{}_{}_{}{}".format(provider, authenticated_user.first_name, authenticated_user.last_name, file_ext),
                 File(io))
-        except:
+        except Exception as e:
+            print(e.__str__())
             return Response(status=status.HTTP_400_BAD_REQUEST,
                             data={'error': _('Unable to log in with provided credentials.') + 'main profile error'})
 

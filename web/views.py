@@ -80,7 +80,7 @@ def common_operations(self, request, custom_function):
 class SocialAuthSerializer(serializers.Serializer):
     provider = serializers.CharField(max_length=255, required=True)
     access_token = serializers.CharField(max_length=4096, required=True, trim_whitespace=True)
-    photo = serializers.URLField(max_length=255, allow_blank=True, allow_null=False)
+    photo = serializers.URLField(max_length=1000, allow_blank=True, allow_null=False)
 
 class SocialRegisterView(generics.GenericAPIView):
     serializer_class = SocialAuthSerializer

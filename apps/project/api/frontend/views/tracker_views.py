@@ -2866,6 +2866,13 @@ class TrackerProjectExport(
         response = super().retrieve(request, *args, **kwargs)
         data = response.data
         tasks = data['tasks']
+        profile = self.get_profile()
+        data['requested_from'] = {
+            'pk': profile.pk,
+            'first_name': profile.first_name,
+            'last_name': profile.last_name,
+            'company': profile.company.name
+        }
         zip_subdir = "Report_" + str(datetime.now())
         zip_filename = "%s.zip" % zip_subdir
         # Open StringIO to grab in-memory ZIP contents

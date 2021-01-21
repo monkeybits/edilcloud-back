@@ -8,10 +8,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Edilcloud.io Transactional Email</title>
   <link rel="shortcut icon" type="image/x-icon" href="" />
-
-
-
-          <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="date=no"><meta name="format-detection" content="address=no"><meta name="format-detection" content="email=no"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="x-apple-disable-message-reformatting"><style type="text/css">
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="date=no"><meta name="format-detection" content="address=no"><meta name="format-detection" content="email=no"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="x-apple-disable-message-reformatting"><style type="text/css">
     /* Reset */
     .email_body,
     .email_section table,
@@ -718,11 +715,12 @@
                             <tr>
                               <td class="column_cell px py_md text_dark text_center" data-color="Dark" style="vertical-align: top;color: #333333;text-align: center;padding-top: 32px;padding-bottom: 32px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                               <h2 class="mt_md mb_xs xs_h1" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 32px;margin-bottom: 8px;word-break: break-word;font-size: 28px;line-height: 38px;font-weight: bold;">Ciao {{recipient_first_name}} {{recipient_last_name}}<br> Hai ricevuto un invito su Edilcloud</h2>
-                              <p class="text_lead text_secondary mb_md xs_h3" data-color="Secondary" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">L'azienda <b> xxx </b> ti ha inviato una richiesta di partecipazione. Registrati con la mail (casella email a cui è stato inviato l invito) cliccando sul tasto qui sotto.</p>
+                              <p class="text_lead text_secondary mb_md xs_h3" data-color="Secondary" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">L'azienda <b>
+                                  {{ company_name }} </b> ti ha inviato una richiesta di partecipazione. Registrati con la mail (casella email a cui è stato inviato l invito) cliccando sul tasto qui sotto.</p>
                               <table role="presentation" class="ebutton" align="center" border="0" cellspacing="0" cellpadding="0" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin: 0 auto;">
                                 <tbody>
                                   <tr>
-                                    <td class="bg_primary" data-bgcolor="Primary" style="background-color: #2376dc;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-size: 16px;padding: 13px 24px;border-radius: 4px;line-height: normal;text-align: center;font-weight: bold;-webkit-transition: box-shadow .25s;transition: box-shadow .25s;"><a href="{{registration_page}}" data-color="White" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #ffffff;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-weight: bold;"><span data-color="White" style="color: #ffffff;text-decoration: none;">CREA ACCOUNT</span></a></td>
+                                    <td class="bg_primary" data-bgcolor="Primary" style="background-color: #2376dc;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-size: 16px;padding: 13px 24px;border-radius: 4px;line-height: normal;text-align: center;font-weight: bold;-webkit-transition: box-shadow .25s;transition: box-shadow .25s;"><a href="{{registration_page}}?email={{ recipient_email }}" data-color="White" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #ffffff;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-weight: bold;"><span data-color="White" style="color: #ffffff;text-decoration: none;">CREA ACCOUNT</span></a></td>
                                   </tr>
                                 </tbody>
                               </table>

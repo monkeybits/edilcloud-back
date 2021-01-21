@@ -412,7 +412,7 @@ JWT_AUTH = {
     'JWT_PAYLOAD_HANDLER': 'apps.user.views.custom_jwt_payload_handler',
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'apps.user.views.custom_jwt_response_payload_handler',
     'JWT_LEEWAY': 100,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=1000),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=30),
     'JWT_ALLOW_REFRESH': True,
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }

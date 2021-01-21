@@ -1089,7 +1089,7 @@ class TaskEditSerializer(
         if (not instance.assigned_company) and validated_data['assigned_company']:
             task = self.profile.assign_task(validated_data)
         else:
-            if instance.assigned_company != validated_data['assigned_company']:
+            if instance.assigned_company != validated_data['assigned_company'] and validated_data['assigned_company'] != None:
                 instance.clone(validated_data)
                 instance.status = 0
                 instance.save()

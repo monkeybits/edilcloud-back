@@ -72,14 +72,15 @@ def common_operations(self, request, custom_function):
         response = custom_jwt_response_payload_handler(data.get('token'), authenticated_user)
         return response, authenticated_user, serializer, provider
     else:
+        print('error login: not authenticated')
         return Response(status=status.HTTP_400_BAD_REQUEST,
-                        data={'non_field_errors': [_('Unable to log in with provided credentials.')]})
+                        data={'error': _('Unable to log in with provided credentials.')})
 
 
 class SocialAuthSerializer(serializers.Serializer):
     provider = serializers.CharField(max_length=255, required=True)
     access_token = serializers.CharField(max_length=4096, required=True, trim_whitespace=True)
-    photo = serializers.URLField(max_length=255, allow_blank=True, allow_null=False)
+    photo = serializers.URLField(max_length=1000, allow_blank=True, allow_null=False)
 
 class SocialRegisterView(generics.GenericAPIView):
     serializer_class = SocialAuthSerializer
@@ -92,10 +93,11 @@ class SocialRegisterView(generics.GenericAPIView):
                 if isinstance(backend, BaseOAuth2):
                     access_token = serializer.data.get('access_token')
                 user_data = backend.user_data(access_token)
-                if User.objects.filter(email=user_data['email']):
-                    return Response({
-                        "error": _("Already exists an account with this email")
-                    }, status=status.HTTP_400_BAD_REQUEST)
+                if 'email' in user_data:
+                    if User.objects.filter(email=user_data['email']):
+                        return Response({
+                            "error": _("Already exists an account with this email")
+                        }, status=status.HTTP_400_BAD_REQUEST)
                 user = backend.do_auth(access_token)
             except HTTPError as error:
                 return Response({
@@ -158,9 +160,10 @@ class SocialLoginView(generics.GenericAPIView):
                 if isinstance(backend, BaseOAuth2):
                     access_token = serializer.data.get('access_token')
                 user_data = backend.user_data(access_token)
-                if not User.objects.filter(email=user_data['email']):
-                    return Response(status=status.HTTP_400_BAD_REQUEST,
-                                    data={'non_field_errors': [_('Unable to log in with provided credentials.')]})
+                if 'email' in user_data:
+                    if not User.objects.filter(email=user_data['email']):
+                        return Response(status=status.HTTP_400_BAD_REQUEST,
+                                        data={'error': _('Unable to log in with provided credentials.') + 'non sei utente del sistema'})
                 user = backend.do_auth(access_token)
             except HTTPError as error:
                 return Response({
@@ -171,15 +174,16 @@ class SocialLoginView(generics.GenericAPIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
             except AuthTokenError as error:
                 return Response(status=status.HTTP_400_BAD_REQUEST,
-                                data={'non_field_errors': [_('Unable to log in with provided credentials.')]})
+                                data={'error': _('Unable to log in with provided credentials.') + ' token invalido'})
             return {'user': user, 'access_token': access_token}
 
         response, authenticated_user, serializer, provider = common_operations(self, request, custom_function)
 
         try:
             if not authenticated_user.is_active:
+                authenticated_user.send_account_verification_email()
                 return Response(status=status.HTTP_400_BAD_REQUEST,
-                                data={'non_field_errors': [_('Unable to log in with provided credentials.')]})
+                                data={'error': _('Your account is disabled, check your email to activate it')})
             main_profile = authenticated_user.get_main_profile()
             # url, filename, model_instance assumed to be provided
             res = urlopen(serializer.data['photo'])
@@ -188,14 +192,15 @@ class SocialLoginView(generics.GenericAPIView):
             filename, file_ext = splitext(basename(disassembled.path))
             try:
                 shutil.rmtree(main_profile.photo.path.rsplit('/', 1)[0])
-            except:
-                pass
+            except Exception as es:
+                print(es.__str__())
             main_profile.photo.save(
                 "{}_{}_{}{}".format(provider, authenticated_user.first_name, authenticated_user.last_name, file_ext),
                 File(io))
-        except:
+        except Exception as e:
+            print(e.__str__())
             return Response(status=status.HTTP_400_BAD_REQUEST,
-                            data={'non_field_errors': [_('Unable to log in with provided credentials.')]})
+                            data={'error': _('Unable to log in with provided credentials.') + 'main profile error'})
 
         return Response(status=status.HTTP_200_OK, data=response)
 

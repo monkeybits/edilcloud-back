@@ -417,14 +417,21 @@ class VideoEditSerializer(
 
 class FolderSerializer(
         DynamicFieldsModelSerializer):
+    folders = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Folder
         fields = '__all__'
+
+    def get_folders(self, obj):
+        return FolderSerializer(obj.folders.all(), many=True).data
+
 
 class FolderAddSerializer(
         JWTPayloadMixin,
         ArrayFieldInMultipartMixin,
         DynamicFieldsModelSerializer):
+    folders = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Folder
@@ -444,6 +451,9 @@ class FolderAddSerializer(
         if not generic_model.objects.filter(pk=data['object_id']):
             raise ValidationError("Object Not Found")
         return data
+
+    def get_folders(self, obj):
+        return FolderSerializer(obj.folders.all(), many=True).data
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -474,10 +484,14 @@ class FolderEditSerializer(
         JWTPayloadMixin,
         ArrayFieldInMultipartMixin,
         DynamicFieldsModelSerializer):
+    folders = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Folder
         fields = '__all__'
+
+    def get_folders(self, obj):
+        return FolderSerializer(obj.folders.all(), many=True).data
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

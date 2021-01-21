@@ -11,6 +11,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
+from apps.media.models import Folder
 from web.core.models import UserModel, DateModel, StatusModel, OrderedModel, CleanModel
 from web.api.views import get_media_root
 
@@ -72,7 +73,11 @@ class Document(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         default=False,
         verbose_name=_('is public')
     )
-
+    folder = models.ForeignKey(
+        Folder,
+        null=True,
+        on_delete=models.CASCADE
+    )
     class Meta:
         verbose_name = _('document')
         verbose_name_plural = _('documents')

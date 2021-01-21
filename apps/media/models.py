@@ -65,6 +65,47 @@ def video_limit_choices_to():
     return q_objects
 
 
+class Folder(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        limit_choices_to=photo_limit_choices_to
+    )
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    for_concrete_model = models.BooleanField(
+        default=False,
+        verbose_name=_('for concrete model'),
+    )
+    name = models.CharField(
+        max_length=255,
+        verbose_name=_('name'),
+    )
+    is_public = models.BooleanField(
+        default=True,
+        verbose_name=_('is public')
+    )
+    is_root = models.BooleanField(
+        default=False,
+        verbose_name=_('is root')
+    )
+    parent = models.ForeignKey('self',
+                               null=True,
+                               blank=True,
+                               related_name='folders',
+                               on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('folder')
+        verbose_name_plural = _('folders')
+        permissions = (
+            ("list_folder", "can list folder"),
+            ("detail_folder", "can detail folder"),
+            ("disable_folder", "can disable folder"),
+        )
+        ordering = ['-date_last_modify']
+        get_latest_by = "date_create"
+
 @python_2_unicode_compatible
 class Photo(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     content_type = models.ForeignKey(
@@ -105,6 +146,11 @@ class Photo(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             max_length=255, blank=True
         ),
         blank=True, null=True,
+    )
+    folder = models.ForeignKey(
+        Folder,
+        null=True,
+        on_delete=models.CASCADE
     )
 
     class Meta:
@@ -173,6 +219,7 @@ class Video(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     )
     folder = models.ForeignKey(
         Folder,
+        null=True,
         on_delete=models.CASCADE
     )
 
@@ -197,44 +244,3 @@ class Video(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     def get_file_extension(self):
         name, extension = os.path.splitext(self.video.name)
         return extension
-
-class Folder(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
-    content_type = models.ForeignKey(
-        ContentType,
-        on_delete=models.CASCADE,
-        limit_choices_to=photo_limit_choices_to
-    )
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey()
-    for_concrete_model = models.BooleanField(
-        default=False,
-        verbose_name=_('for concrete model'),
-    )
-    name = models.CharField(
-        max_length=255,
-        verbose_name=_('name'),
-    )
-    is_public = models.BooleanField(
-        default=True,
-        verbose_name=_('is public')
-    )
-    is_root = models.BooleanField(
-        default=False,
-        verbose_name=_('is root')
-    )
-    parent = models.ForeignKey('self',
-                               null=True,
-                               blank=True,
-                               related_name='folders',
-                               on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = _('folder')
-        verbose_name_plural = _('folders')
-        permissions = (
-            ("list_folder", "can list folder"),
-            ("detail_folder", "can detail folder"),
-            ("disable_folder", "can disable folder"),
-        )
-        ordering = ['-date_last_modify']
-        get_latest_by = "date_create"

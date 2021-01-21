@@ -317,6 +317,11 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         blank=True, null=True,
         related_query_name='companies'
     )
+    folders = GenericRelation(
+        'media.Folder',
+        blank=True, null=True,
+        related_query_name='companies'
+    )
     category = JSONField(
         default={},
         blank=True, null=True,
@@ -3564,6 +3569,13 @@ class OwnerProfile(Profile):
             self.get_bom(folder_dict['object_id'])
         else:
             raise django_exception.OwnerProfilePermissionDenied(_('Please select the correct content type'))
+
+        if 'parent' in folder_dict and folder_dict['parent']:
+            folder_dict['is_root'] = False
+        else:
+            folder_dict['is_root'] = True
+
+
         folder = Folder(
             creator=self.user,
             last_modifier=self.user,
@@ -3590,6 +3602,11 @@ class OwnerProfile(Profile):
             Q(companies=self.company) |
             Q(projects__company=self.company)
         )
+    def list_company_folders(self):
+        """
+        Get all folders linked to the company
+        """
+        return Folder.objects.filter(companies=self.company, is_root=True)
 
     def list_company_videos(self):
         """
@@ -3695,7 +3712,7 @@ class OwnerProfile(Profile):
 
     def edit_folder(self, folder_dict):
         folder = self.list_folders().get(id=folder_dict['id'])
-        folder.__dict__.update(**video_dict)
+        folder.__dict__.update(**folder_dict)
         folder.save()
         return folder
 

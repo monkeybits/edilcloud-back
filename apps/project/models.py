@@ -173,6 +173,11 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
         blank=True, null=True,
         related_query_name='projects'
     )
+    folders = GenericRelation(
+        'media.Folder',
+        blank=True, null=True,
+        related_query_name='projects'
+    )
 
     class Meta:
         verbose_name = _('project')

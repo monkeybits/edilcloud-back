@@ -19,12 +19,14 @@ from apps.profile.models import Company
 from apps.project.models import Project
 from apps.quotation.models import Bom
 from web.api.permissions import RoleAccessPermission
-from web.api.views import JWTPayloadMixin, WhistleGenericViewMixin, DownloadViewMixin, get_media_root
+from web.api.views import JWTPayloadMixin, WhistleGenericViewMixin, DownloadViewMixin, get_media_root, QuerysetMixin
 from .. import serializers
 from web.drf import exceptions as django_api_exception
 from apps.profile import models as profile_models
 from apps.project import models as project_models
 from apps.quotation import models as quotation_models
+from ..serializers import FolderSerializer
+
 
 class TrackerPhotoMixin(
         JWTPayloadMixin):
@@ -63,7 +65,7 @@ class TrackerPhotoDetailView(
     def __init__(self, *args, **kwargs):
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo',
-            'is_public', 'tags', 'note', 'size'
+            'is_public', 'tags', 'note', 'size', 'folder'
         ]
         super(TrackerPhotoDetailView, self).__init__(*args, **kwargs)
 
@@ -82,11 +84,11 @@ class TrackerPhotoAddView(
     def __init__(self, *args, **kwargs):
         self.photo_request_include_fields = [
             'title', 'pub_date', 'photo', 'is_public',
-            'content_type', 'object_id', 'tags', 'note'
+            'content_type', 'object_id', 'tags', 'note', 'folder'
         ]
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo', 'is_public',
-            'tags', 'note', 'photo_64', 'extension'
+            'tags', 'note', 'photo_64', 'extension', 'folder'
         ]
         super(TrackerPhotoAddView, self).__init__(*args, **kwargs)
 
@@ -110,11 +112,11 @@ class TrackerPhotoMoveView(
 
     def __init__(self, *args, **kwargs):
         self.photo_request_include_fields = [
-            'to', 'photo'
+            'to', 'photo', 'folder'
         ]
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo', 'is_public',
-            'tags', 'note', 'photo_64', 'extension'
+            'tags', 'note', 'photo_64', 'extension', 'folder'
         ]
         super(TrackerPhotoMoveView, self).__init__(*args, **kwargs)
 
@@ -152,11 +154,11 @@ class TrackerVideoMoveView(
 
     def __init__(self, *args, **kwargs):
         self.photo_request_include_fields = [
-            'to'
+            'to', 'folder'
         ]
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo', 'is_public',
-            'tags', 'note', 'photo_64', 'extension'
+            'tags', 'note', 'photo_64', 'extension', 'folder'
         ]
         super(TrackerVideoMoveView, self).__init__(*args, **kwargs)
 
@@ -194,11 +196,11 @@ class TrackerDocumentMoveView(
 
     def __init__(self, *args, **kwargs):
         self.photo_request_include_fields = [
-            'to'
+            'to', 'folder'
         ]
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo', 'is_public',
-            'tags', 'note', 'photo_64', 'extension'
+            'tags', 'note', 'photo_64', 'extension', 'folder'
         ]
         super(TrackerDocumentMoveView, self).__init__(*args, **kwargs)
 
@@ -237,11 +239,11 @@ class TrackerPhotoEditView(
 
     def __init__(self, *args, **kwargs):
         self.photo_request_include_fields = [
-            'title', 'pub_date', 'photo', 'note', 'tags'
+            'title', 'pub_date', 'photo', 'note', 'tags', 'folder'
         ]
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo',
-            'tags', 'note', 'is_public', 'photo_64', 'extension'
+            'tags', 'note', 'is_public', 'photo_64', 'extension', 'folder'
         ]
         super(TrackerPhotoEditView, self).__init__(*args, **kwargs)
 
@@ -261,7 +263,7 @@ class TrackerPhotoDeleteView(
     serializer_class = serializers.PhotoSerializer
 
     def __init__(self, *args, **kwargs):
-        self.photo_response_include_fields = ['id', 'title', 'pub_date', 'photo', 'tags', 'note']
+        self.photo_response_include_fields = ['id', 'title', 'pub_date', 'photo', 'tags', 'note', 'folder']
         super(TrackerPhotoDeleteView, self).__init__(*args, **kwargs)
 
     def perform_destroy(self, instance):
@@ -315,7 +317,7 @@ class TrackerFolderMixin(
             profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
             folder = profile.get_folder(self.kwargs.get('pk', None))
             self.check_object_permissions(self.request, folder)
-            return video
+            return folder
         except ObjectDoesNotExist as err:
             raise django_api_exception.FolderAPIDoesNotExist(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
@@ -323,7 +325,7 @@ class TrackerFolderMixin(
 
     def set_output_serializer(self, output_serializer=None):
         if output_serializer is None:
-            self.serializer_class = serializers.VideoSerializer
+            self.serializer_class = serializers.FolderSerializer
         else:
             self.serializer_class = output_serializer
 
@@ -340,7 +342,7 @@ class TrackerVideoDetailView(
     def __init__(self, *args, **kwargs):
         self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
-            'tags', 'note', 'is_public', 'size', 'extension'
+            'tags', 'note', 'is_public', 'size', 'extension', 'folder'
         ]
         super(TrackerVideoDetailView, self).__init__(*args, **kwargs)
 
@@ -359,11 +361,11 @@ class TrackerVideoAddView(
     def __init__(self, *args, **kwargs):
         self.video_request_include_fields = [
             'title', 'pub_date', 'video', 'is_public',
-            'content_type', 'object_id', 'tags', 'note'
+            'content_type', 'object_id', 'tags', 'note', 'folder'
         ]
         self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
-            'tags', 'note', 'extension', 'is_public'
+            'tags', 'note', 'extension', 'is_public', 'folder'
         ]
         super(TrackerVideoAddView, self).__init__(*args, **kwargs)
 
@@ -388,11 +390,11 @@ class TrackerVideoEditView(
 
     def __init__(self, *args, **kwargs):
         self.video_request_include_fields = [
-            'title', 'pub_date', 'video', 'tags', 'note'
+            'title', 'pub_date', 'video', 'tags', 'note', 'folder'
         ]
         self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
-            'tags', 'note', 'extension', 'is_public'
+            'tags', 'note', 'extension', 'is_public', 'folder'
         ]
         super(TrackerVideoEditView, self).__init__(*args, **kwargs)
 
@@ -413,7 +415,7 @@ class TrackerVideoDeleteView(
     serializer_class = serializers.VideoSerializer
 
     def __init__(self, *args, **kwargs):
-        self.video_response_include_fields = ['id', 'title', 'pub_date', 'video', 'tags', 'note']
+        self.video_response_include_fields = ['id', 'title', 'pub_date', 'video', 'tags', 'note', 'folder']
         super(TrackerVideoDeleteView, self).__init__(*args, **kwargs)
 
     def perform_destroy(self, instance):
@@ -611,61 +613,83 @@ class TrackerFolderMove(generics.CreateAPIView):
         return Response(status=status.HTTP_201_CREATED, data=listOfFiles)
 
 
-class TrackerFolderList(generics.CreateAPIView):
+class TrackerFolderList(
+        JWTPayloadMixin,
+        QuerysetMixin,
+        generics.ListAPIView):
     """
-    Folder add
+    Get all company folders
     """
     permission_classes = (RoleAccessPermission,)
     permission_roles = settings.MEMBERS
+    serializer_class = FolderSerializer
 
-    def get(self, request, *args, **kwargs):
-        content_type = ContentType.objects.get(model=self.kwargs['type'])
-        model_name = content_type.model
-        if model_name == 'company':
-            generic_model = profile_models.Company
-        elif model_name == 'project':
-            generic_model = project_models.Project
-        elif model_name == 'bom':
-            generic_model = quotation_models.Bom
+    def __init__(self, *args, **kwargs):
+        self.folder_response_include_fields = [
+            'id', 'title', 'folder', 'is_root',
+            'extension', 'note', 'is_public', 'size'
+        ]
+        super(TrackerFolderList, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        if 'type' in self.kwargs:
+            list_method = 'list_{}_folders'.format(self.kwargs['type'])
+            self.queryset = getattr(profile, list_method)()
         else:
-            raise ValidationError("Model Not Found")
+            self.queryset = profile.list_company_folders()
+        return super(TrackerFolderList, self).get_queryset()
 
-        if not generic_model.objects.filter(pk=self.kwargs['pk']):
-            raise ValidationError("Object Not Found")
-
-        if model_name == 'project':
-            gen_mod = Project.objects.get(id=self.kwargs['pk'])
-        elif model_name == 'company':
-            gen_mod = Company.objects.get(id=self.kwargs['pk'])
-        elif model_name == 'bom':
-            gen_mod = Bom.objects.get(id=self.kwargs['pk'])
-        company_folder = get_upload_folder_path(gen_mod, '', '', False)
-        if company_folder == False:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={
-                'error': 'Folder not created. Max subfolders limit is 3'
-            })
-        folders_list = os.walk(company_folder)
-        print(folders_list)
-        listOfFiles = list()
-        if model_name == 'project':
-            for (dirpath, dirnames, filenames) in folders_list:
-                listOfFiles += [
-                    {
-                        'path': os.path.join(dirpath, dirname).split('project/' + self.kwargs['pk'] + '/')[1],
-                        'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
-                    }
-                    for dirname in dirnames
-                ]
-        else:
-            for (dirpath, dirnames, filenames) in folders_list:
-                listOfFiles += [
-                    {
-                        'path': os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[1],
-                        'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
-                    }
-                    for dirname in dirnames
-                ]
-        return Response(status=status.HTTP_200_OK, data=listOfFiles)
+    # def get(self, request, *args, **kwargs):
+    #     content_type = ContentType.objects.get(model=self.kwargs['type'])
+    #     model_name = content_type.model
+    #     if model_name == 'company':
+    #         generic_model = profile_models.Company
+    #     elif model_name == 'project':
+    #         generic_model = project_models.Project
+    #     elif model_name == 'bom':
+    #         generic_model = quotation_models.Bom
+    #     else:
+    #         raise ValidationError("Model Not Found")
+    #
+    #     if not generic_model.objects.filter(pk=self.kwargs['pk']):
+    #         raise ValidationError("Object Not Found")
+    #
+    #     if model_name == 'project':
+    #         gen_mod = Project.objects.get(id=self.kwargs['pk'])
+    #     elif model_name == 'company':
+    #         gen_mod = Company.objects.get(id=self.kwargs['pk'])
+    #     elif model_name == 'bom':
+    #         gen_mod = Bom.objects.get(id=self.kwargs['pk'])
+    #     company_folder = get_upload_folder_path(gen_mod, '', '', False)
+    #     if company_folder == False:
+    #         return Response(status=status.HTTP_400_BAD_REQUEST, data={
+    #             'error': 'Folder not created. Max subfolders limit is 3'
+    #         })
+    #     folders_list = os.walk(company_folder)
+    #     print(folders_list)
+    #     listOfFiles = list()
+    #     if model_name == 'project':
+    #         for (dirpath, dirnames, filenames) in folders_list:
+    #             listOfFiles += [
+    #                 {
+    #                     'path': os.path.join(dirpath, dirname).split('project/' + self.kwargs['pk'] + '/')[1],
+    #                     'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+    #                 }
+    #                 for dirname in dirnames
+    #             ]
+    #     else:
+    #         for (dirpath, dirnames, filenames) in folders_list:
+    #             listOfFiles += [
+    #                 {
+    #                     'path': os.path.join(dirpath, dirname).split(slugify(gen_mod.__str__().lower()))[1].split('/', 1)[1],
+    #                     'size': get_size_format(os.path.getsize(os.path.join(dirpath, dirname)))
+    #                 }
+    #                 for dirname in dirnames
+    #             ]
+    #     self.list_company_folders()
+    #     return Response(status=status.HTTP_200_OK, data=listOfFiles)
 
 def get_upload_folder_path2(instance, subpath, folder, is_public, create=False, type='photo'):
     media_dir1 = instance._meta.model_name
@@ -740,10 +764,10 @@ class TrackerFolderAddView(
 
     def __init__(self, *args, **kwargs):
         self.folder_request_include_fields = [
-           'content_type', 'object_id', 'name', 'pub_date', 'is_public', 'is_root'
+           'content_type', 'object_id', 'name', 'is_public', 'is_root', 'parent'
         ]
         self.folder_response_include_fields = [
-            'id', 'name', 'pub_date', 'is_public', 'is_root', 'content_type', 'object_id'
+            'id', 'name', 'is_public', 'is_root', 'content_type', 'object_id', 'parent'
         ]
         super(TrackerFolderAddView, self).__init__(*args, **kwargs)
 
@@ -758,7 +782,7 @@ class TrackerFolderAddView(
 
 class TrackerFolderEditView(
         WhistleGenericViewMixin,
-        TrackerVideoMixin,
+        TrackerFolderMixin,
         generics.RetrieveUpdateAPIView):
     """
     Edit a company video
@@ -768,10 +792,10 @@ class TrackerFolderEditView(
     serializer_class = serializers.FolderEditSerializer
 
     def __init__(self, *args, **kwargs):
-        self.video_request_include_fields = [
+        self.folder_request_include_fields = [
             'name', 'parent', 'is_public', 'is_root'
         ]
-        self.video_response_include_fields = [
+        self.folder_response_include_fields = [
             'id', 'name', 'parent', 'is_public', 'is_root'
         ]
         super(TrackerFolderEditView, self).__init__(*args, **kwargs)

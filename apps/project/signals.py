@@ -84,7 +84,8 @@ EMOJI_UNICODES = {
     'worker2': '\U00002642',
     'activity': '\U00002692',
     'clipboard': '\U0001F4CB',
-    'pushpin': '\U0001F4CC'
+    'pushpin': '\U0001F4CC',
+    'envelope': '\U0001F4E9'
 }
 def team_invite_notification(sender, instance, **kwargs):
     company_staff = instance.project.profiles.all().union(

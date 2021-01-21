@@ -24,6 +24,8 @@ from websocket import create_connection
 
 from .models import MessageFileAssignment
 from ..project.models import Project
+from ..project.signals import EMOJI_UNICODES
+
 
 def event_triger(msg):
     channel_layer = get_channel_layer()
@@ -129,13 +131,13 @@ def message_notification(sender, instance, **kwargs):
 
         if 'created' in kwargs:
             if kwargs['created']:
-                subject = build_array_message('envelope', [
+                subject = build_array_message(EMOJI_UNICODES['envelope'], [
                     _('New message in'),
                     title,
                     source
                 ])
             else:
-                subject = build_array_message('envelope', [
+                subject = build_array_message(EMOJI_UNICODES['envelope'], [
                     _('New message in'),
                     title,
                     source

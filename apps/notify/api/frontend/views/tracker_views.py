@@ -77,7 +77,7 @@ class TrackerNotificationRecipientListView(
         ]
         self.notification_response_include_fields = [
             'id', 'sender', 'subject', 'body', 'content_type',
-            'object_id'
+            'object_id', 'project_id'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'

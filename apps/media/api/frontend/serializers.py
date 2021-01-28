@@ -21,7 +21,7 @@ from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, ArrayFieldInMultipartMixin, get_media_root
 from web.api.serializers import DynamicFieldsModelSerializer
 from django.utils.text import slugify
-
+from apps.document.api.frontend.serializers import DocumentSerializer
 
 class PhotoSerializer(
         DynamicFieldsModelSerializer):
@@ -414,3 +414,112 @@ class VideoEditSerializer(
 
     def get_extension(self, obj):
         return obj.get_file_extension()
+
+class FolderSerializer(
+        DynamicFieldsModelSerializer):
+    folders = serializers.SerializerMethodField()
+    media = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Folder
+        fields = '__all__'
+
+    def get_folders(self, obj):
+        return FolderSerializer(obj.folders.all(), many=True).data
+
+    def get_media(self, obj):
+        photos = PhotoSerializer(obj.photo_set.all(), many=True)
+        videos = VideoSerializer(obj.video_set.all(), many=True)
+        documents = DocumentSerializer(obj.document_set.all(), many=True)
+        return {
+            'photo': photos.data,
+            'video': videos.data,
+            'document': documents.data
+        }
+
+
+class FolderAddSerializer(
+        JWTPayloadMixin,
+        ArrayFieldInMultipartMixin,
+        DynamicFieldsModelSerializer):
+    folders = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Folder
+        fields = '__all__'
+
+    def validate(self, data):
+        model_name = data['content_type'].model
+        if model_name == 'company':
+            generic_model = profile_models.Company
+        elif model_name == 'project':
+            generic_model = project_models.Project
+        elif model_name == 'bom':
+            generic_model = quotation_models.Bom
+        else:
+            raise ValidationError("Model Not Found")
+
+        if not generic_model.objects.filter(pk=data['object_id']):
+            raise ValidationError("Object Not Found")
+        return data
+
+    def get_folders(self, obj):
+        return FolderSerializer(obj.folders.all(), many=True).data
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        self.view = self.get_view
+        if self.view:
+            return self.view.folder_request_include_fields
+        return super(FolderAddSerializer, self).get_field_names(*args, **kwargs)
+
+    def create(self, validated_data):
+        check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data))
+        self.get_array_from_string(validated_data)
+        try:
+            folder = self.profile.create_folder(validated_data)
+            return folder
+        except Exception as err:
+            raise django_api_exception.WhistleAPIException(
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+class FolderEditSerializer(
+        JWTPayloadMixin,
+        ArrayFieldInMultipartMixin,
+        DynamicFieldsModelSerializer):
+    folders = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Folder
+        fields = '__all__'
+
+    def get_folders(self, obj):
+        return FolderSerializer(obj.folders.all(), many=True).data
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        self.view = self.get_view
+        if self.view:
+            return self.view.folder_request_include_fields
+        return super(FolderEditSerializer, self).get_field_names(*args, **kwargs)
+
+    def update(self, instance, validated_data):
+        self.get_array_from_string(validated_data)
+        validated_data['id'] = instance.id
+        video = self.profile.edit_folder(validated_data)
+        return video

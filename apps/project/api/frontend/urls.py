@@ -186,6 +186,11 @@ tracker_urlpatterns = [
         name='tracker_project_video_list'
     ),
     url(
+        r'^project/(?P<pk>\d+)/folder_list/$',
+        tracker_views.TrackerProjectPhotoListView.as_view(),
+        name='tracker_project_folder_list'
+    ),
+    url(
         r'^project/(?P<pk>\d+)/internal_task_list/$',
         tracker_views.TrackerProjectInternalTaskListView.as_view(),
         name='tracker_project_internal_task_list'

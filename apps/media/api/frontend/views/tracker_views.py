@@ -627,7 +627,7 @@ class TrackerFolderList(
     def __init__(self, *args, **kwargs):
         self.folder_response_include_fields = [
             'id', 'title', 'folder', 'is_root',
-            'extension', 'note', 'is_public', 'size'
+            'extension', 'note', 'is_public', 'size', 'media'
         ]
         super(TrackerFolderList, self).__init__(*args, **kwargs)
 
@@ -636,9 +636,9 @@ class TrackerFolderList(
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         if 'type' in self.kwargs:
             list_method = 'list_{}_folders'.format(self.kwargs['type'])
-            self.queryset = getattr(profile, list_method)()
+            self.queryset = getattr(profile, list_method)().filter(is_root=True)
         else:
-            self.queryset = profile.list_company_folders()
+            self.queryset = profile.list_company_folders().filter(is_root=True)
         return super(TrackerFolderList, self).get_queryset()
 
     # def get(self, request, *args, **kwargs):

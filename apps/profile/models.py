@@ -3606,7 +3606,7 @@ class OwnerProfile(Profile):
         """
         Get all folders linked to the company
         """
-        return Folder.objects.filter(companies=self.company, is_root=True)
+        return Folder.objects.filter(companies=self.company)
 
     def list_company_videos(self):
         """
@@ -3712,7 +3712,13 @@ class OwnerProfile(Profile):
 
     def edit_folder(self, folder_dict):
         folder = self.list_folders().get(id=folder_dict['id'])
+        if 'parent' in folder_dict and folder_dict['parent']:
+            folder_dict['is_root'] = False
+        else:
+            folder_dict['is_root'] = True
         folder.__dict__.update(**folder_dict)
+        folder.save()
+        folder.parent = folder_dict['parent']
         folder.save()
         return folder
 

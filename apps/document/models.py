@@ -76,6 +76,7 @@ class Document(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     folder = models.ForeignKey(
         Folder,
         null=True,
+        blank=True,
         on_delete=models.CASCADE
     )
     class Meta:

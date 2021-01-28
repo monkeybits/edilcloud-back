@@ -21,7 +21,7 @@ from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, ArrayFieldInMultipartMixin, get_media_root
 from web.api.serializers import DynamicFieldsModelSerializer
 from django.utils.text import slugify
-
+from apps.document.api.frontend.serializers import DocumentSerializer
 
 class PhotoSerializer(
         DynamicFieldsModelSerializer):
@@ -418,6 +418,7 @@ class VideoEditSerializer(
 class FolderSerializer(
         DynamicFieldsModelSerializer):
     folders = serializers.SerializerMethodField()
+    media = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Folder
@@ -425,6 +426,16 @@ class FolderSerializer(
 
     def get_folders(self, obj):
         return FolderSerializer(obj.folders.all(), many=True).data
+
+    def get_media(self, obj):
+        photos = PhotoSerializer(obj.photo_set.all(), many=True)
+        videos = VideoSerializer(obj.video_set.all(), many=True)
+        documents = DocumentSerializer(obj.document_set.all(), many=True)
+        return {
+            'photo': photos.data,
+            'video': videos.data,
+            'document': documents.data
+        }
 
 
 class FolderAddSerializer(

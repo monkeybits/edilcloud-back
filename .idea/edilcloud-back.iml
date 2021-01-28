@@ -14,7 +14,7 @@
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="jdk" jdkName="Remote Python 3.5.10 Docker Compose (web at [C:\Users\tbellini01\PycharmProjects\edilcloud-back\docker-compose.prod.yml])" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Remote Python 3.5.9 Docker Compose (web at [/Users/tommasobellini/Documents/Projects/Edilcloud/edilcloud-back/docker-compose.yml])" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">

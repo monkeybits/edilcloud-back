@@ -105,7 +105,7 @@ def team_invite_notification(sender, instance, **kwargs):
         email_status = get_email_notification_status(
             instance.profile, sender.__name__.lower()
         )
-        translation.activate(staff.user.get_main_profile().language)
+        translation.activate(instance.profile.user.get_main_profile().language)
         if bell_status or email_status:
             notify_recipient = notify_models.NotificationRecipient(
                 notification=notify_obj, is_email=email_status,

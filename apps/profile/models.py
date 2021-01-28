@@ -1834,6 +1834,20 @@ class OwnerProfile(Profile):
                 role=settings.OWNER
             )
             team.save()
+            if project_dict['referent']:
+                referent_team = Team(
+                    creator=self.user,
+                    last_modifier=self.user,
+                    profile=project_dict['referent'],
+                    project=project,
+                    project_invitation_date=datetime.datetime.now(),
+                    role=project_dict['referent'].role,
+                    status=0
+                )
+                referent_team.save()
+                from ..project.signals import team_invite_notification
+                team_invite_notification(referent_team._meta.model, referent_team)
+
             content_type = ContentType.objects.get(model='project')
             self.get_or_create_talk({
                 'content_type': content_type,

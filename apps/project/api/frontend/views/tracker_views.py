@@ -947,6 +947,35 @@ class TrackerProjectVideoListView(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
+class TrackerProjectFolderListView(
+        JWTPayloadMixin,
+        QuerysetMixin,
+        generics.ListAPIView):
+    """
+    Get company all project folders
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = media_serializers.FolderSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.photo_response_include_fields = [
+            'id', 'name', 'is_public', 'is_root'
+        ]
+        super(TrackerProjectFolderListView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            project = profile.list_projects().get(id=self.kwargs.get('pk'))
+            self.queryset = profile.list_project_folders(project=project)
+            return super(TrackerProjectFolderListView, self).get_queryset()
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.ProjectAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
 
 class TrackerProjectParentDocumentListView(
         JWTPayloadMixin,

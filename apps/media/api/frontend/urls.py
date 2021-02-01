@@ -85,6 +85,11 @@ tracker_urlpatterns = [
         tracker_views.TrackerFolderList.as_view(),
         name='tracker_folder_list'
     ),
+    url(
+        r'^folder/(?P<pk>\d+)/detail/$',
+        tracker_views.TrackerFolderDetailView.as_view(),
+        name='tracker_folder_detail'
+    ),
     # url(
     #     r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/add/$',
     #     tracker_views.TrackerFolderAdd.as_view(),

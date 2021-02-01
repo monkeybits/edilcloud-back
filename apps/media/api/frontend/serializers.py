@@ -419,13 +419,36 @@ class FolderSerializer(
         DynamicFieldsModelSerializer):
     folders = serializers.SerializerMethodField()
     media = serializers.SerializerMethodField()
+    path = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Folder
         fields = '__all__'
 
+    full_path = ""
+
+    def get_folder_path(self, obj):
+        global full_path
+        if obj.parent:
+            root_folder = obj.parent
+            path = self.get_folder_path(root_folder)
+            full_path += "/{}".format(path)
+        else:
+            path = obj.name
+        return path
+
     def get_folders(self, obj):
-        return FolderSerializer(obj.folders.all(), many=True).data
+        global full_path
+        full_path = ""
+        self.get_folder_path(obj)
+        data = FolderSerializer(obj.folders.all(), many=True).data
+        return data
+
+    def get_path(self, obj):
+        global full_path
+        full_path = ""
+        self.get_folder_path(obj)
+        return (full_path + '/{}'.format(obj.name)).split('/', 1)[1]
 
     def get_media(self, obj):
         photos = PhotoSerializer(obj.photo_set.all(), many=True)

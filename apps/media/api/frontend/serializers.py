@@ -437,6 +437,11 @@ class FolderSerializer(
             'document': documents.data
         }
 
+class FolderStructureSerializer(
+        DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.Folder
+        fields = '__all__'
 
 class FolderAddSerializer(
         JWTPayloadMixin,

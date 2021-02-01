@@ -656,6 +656,23 @@ class TrackerFolderList(
             self.queryset = profile.list_company_folders().filter(is_root=True)
         return super(TrackerFolderList, self).get_queryset()
 
+class TrackerFolderDetailView(
+    TrackerFolderMixin,
+    generics.RetrieveAPIView):
+    """
+    Get a single video
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    serializer_class = serializers.FolderSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.folder_response_include_fields = [
+             'id', 'title', 'folder', 'is_root',
+            'extension', 'note', 'is_public', 'size', 'media'
+        ]
+        super(TrackerFolderDetailView, self).__init__(*args, **kwargs)
+
 full_path = ""
 
 def get_folder_path(obj):

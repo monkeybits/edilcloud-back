@@ -115,6 +115,11 @@ tracker_urlpatterns = [
         tracker_views.TrackerFolderDeleteView.as_view(),
         name='tracker_folder_delete'
     ),
+    url(
+        r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/structure_list/$',
+        tracker_views.TrackerFolderStructureList.as_view(),
+        name='tracker_folder_structure_list'
+    )
 ]
 
 urlpatterns = user_urlpatterns + generic_urlpatterns + tracker_urlpatterns

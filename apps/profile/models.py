@@ -1130,6 +1130,10 @@ class Preference(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         verbose_name=_('notification'),
         help_text=_('More information about profile notification'),
     )
+    show_again = models.BooleanField(
+        default=True,
+        verbose_name=_('show again')
+    )
 
     class Meta:
         verbose_name = _('preference')

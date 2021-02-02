@@ -550,6 +550,8 @@ class TeamProfileSerializer(ProfileSerializer):
 
     def get_photo(self, obj):
         main = obj.get_main_profile()
+        if main is None:
+            return ""
         request = self.context['request']
         protocol = request.is_secure()
         if protocol:

@@ -111,7 +111,7 @@ tracker_urlpatterns = [
         name='tracker_folder_add'
     ),
     url(
-        r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/edit/$',
+        r'^folder/(?P<pk>\d+)/edit/$',
         tracker_views.TrackerFolderEditView.as_view(),
         name='tracker_folder_edit'
     ),

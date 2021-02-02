@@ -746,50 +746,50 @@ def get_upload_folder_path2(instance, subpath, folder, is_public, create=False, 
     return os.path.join(media_root, type, format(media_dir1), format(media_dir2))
 
 
-class TrackerFolderDeleteView(generics.DestroyAPIView):
-    """
-    Delete a company photo
-    """
-    permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE,)
-
-    def delete(self, request, *args, **kwargs):
-        folder_name = self.request.query_params.get('name')
-        if folder_name:
-            content_type = ContentType.objects.get(model=self.kwargs['type'])
-            model_name = content_type.model
-            if model_name == 'company':
-                generic_model = profile_models.Company
-            elif model_name == 'project':
-                generic_model = project_models.Project
-            elif model_name == 'bom':
-                generic_model = quotation_models.Bom
-            else:
-                raise ValidationError("Model Not Found")
-
-            if not generic_model.objects.filter(pk=self.kwargs['pk']):
-                raise ValidationError("Object Not Found")
-
-            if model_name == 'project':
-                gen_mod = Project.objects.get(id=self.kwargs['pk'])
-            elif model_name == 'company':
-                gen_mod = Company.objects.get(id=self.kwargs['pk'])
-            elif model_name == 'bom':
-                gen_mod = Bom.objects.get(id=self.kwargs['pk'])
-            for type in ['photo', 'video', 'document']:
-                company_folder = get_upload_folder_path2(gen_mod, '', '', False, False, type)
-                if company_folder == False:
-                    return Response(status=status.HTTP_400_BAD_REQUEST, data={
-                        'error': 'Folder not created. Max subfolders limit is 3'
-                    })
-                try:
-                    shutil.rmtree(os.path.join(company_folder, folder_name))  # remove dir and all contains
-                except Exception as e:
-                    continue
-            return Response(status=status.HTTP_200_OK, data="Folder deleted successfully")
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data="Enter a folder name for deleting one")
-
+# class TrackerFolderDeleteView(generics.DestroyAPIView):
+#     """
+#     Delete a company photo
+#     """
+#     permission_classes = (RoleAccessPermission,)
+#     permission_roles = (settings.OWNER, settings.DELEGATE,)
+#
+#     def delete(self, request, *args, **kwargs):
+#         folder_name = self.request.query_params.get('name')
+#         if folder_name:
+#             content_type = ContentType.objects.get(model=self.kwargs['type'])
+#             model_name = content_type.model
+#             if model_name == 'company':
+#                 generic_model = profile_models.Company
+#             elif model_name == 'project':
+#                 generic_model = project_models.Project
+#             elif model_name == 'bom':
+#                 generic_model = quotation_models.Bom
+#             else:
+#                 raise ValidationError("Model Not Found")
+#
+#             if not generic_model.objects.filter(pk=self.kwargs['pk']):
+#                 raise ValidationError("Object Not Found")
+#
+#             if model_name == 'project':
+#                 gen_mod = Project.objects.get(id=self.kwargs['pk'])
+#             elif model_name == 'company':
+#                 gen_mod = Company.objects.get(id=self.kwargs['pk'])
+#             elif model_name == 'bom':
+#                 gen_mod = Bom.objects.get(id=self.kwargs['pk'])
+#             for type in ['photo', 'video', 'document']:
+#                 company_folder = get_upload_folder_path2(gen_mod, '', '', False, False, type)
+#                 if company_folder == False:
+#                     return Response(status=status.HTTP_400_BAD_REQUEST, data={
+#                         'error': 'Folder not created. Max subfolders limit is 3'
+#                     })
+#                 try:
+#                     shutil.rmtree(os.path.join(company_folder, folder_name))  # remove dir and all contains
+#                 except Exception as e:
+#                     continue
+#             return Response(status=status.HTTP_200_OK, data="Folder deleted successfully")
+#         else:
+#             return Response(status=status.HTTP_400_BAD_REQUEST, data="Enter a folder name for deleting one")
+#
 
 class TrackerFolderAddView(
     WhistleGenericViewMixin,

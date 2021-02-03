@@ -1843,7 +1843,7 @@ class OwnerProfile(Profile):
                 role=settings.OWNER
             )
             team.save()
-            if project_dict['referent'] and project_dict['referent'] != self:
+            if project_dict['referent'] and project_dict['referent'] != '' and project_dict['referent'] != self:
                 referent_team = Team(
                     creator=self.user,
                     last_modifier=self.user,

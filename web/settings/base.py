@@ -488,7 +488,7 @@ TEST_API_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717J
 
 # PAYMENTS SETTINGS
 TRIAL_MAX_DAYS = 14
-TRIAL_PLAN = 'price_1I0OpZCPJO2Tjuq1xjOnYhVm' # standard plan
+TRIAL_PLAN = 'price_1IGqGDCPJO2Tjuq184IvJanw' # standard plan
 stripe.api_key = STRIPE_SECRET_KEY
 
 # API_SEJDA_PDF_GENERATOR

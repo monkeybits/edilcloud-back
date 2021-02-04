@@ -61,7 +61,7 @@ class Document(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         verbose_name=_('title'),
     )
     description = models.TextField(
-        verbose_name=_('description'),
+        verbose_name=_('description'), blank=True
     )
     document = models.FileField(
         storage=doc_fs,

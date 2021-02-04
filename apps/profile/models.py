@@ -1843,7 +1843,7 @@ class OwnerProfile(Profile):
                 role=settings.OWNER
             )
             team.save()
-            if project_dict['referent'] and project_dict['referent'] != '' and project_dict['referent'] != self:
+            if 'referent' in project_dict and project_dict['referent'] and project_dict['referent'] != '' and project_dict['referent'] != self:
                 referent_team = Team(
                     creator=self.user,
                     last_modifier=self.user,
@@ -3389,14 +3389,11 @@ class OwnerProfile(Profile):
 
     def edit_document(self, document_dict):
         document = self.list_documents().get(id=document_dict['id'])
-        if 'document' in document_dict:
-            # Deletes the document media
-            os.remove(document.document.file.name)
-
         document.__dict__.update(document_dict)
-
         if 'document' in document_dict:
             document.document.save(document_dict['document'].name, document_dict['document'])
+        if 'folder' in document_dict:
+            document.folder = document_dict['folder']
         document.save()
         return document
 
@@ -3533,14 +3530,11 @@ class OwnerProfile(Profile):
 
     def edit_photo(self, photo_dict):
         photo = self.list_photos().get(id=photo_dict['id'])
-        if 'photo' in photo_dict:
-            # Deletes the photo media
-            os.remove(photo.photo.file.name)
-
         photo.__dict__.update(**photo_dict)
-
         if 'photo' in photo_dict:
             photo.photo.save(photo_dict['photo'].name, photo_dict['photo'])
+        if 'folder' in photo_dict:
+            photo.folder = photo_dict['folder']
         photo.save()
         return photo
 
@@ -3703,14 +3697,11 @@ class OwnerProfile(Profile):
 
     def edit_video(self, video_dict):
         video = self.list_videos().get(id=video_dict['id'])
-        if 'video' in video_dict:
-            # Deletes the video media
-            os.remove(video.video.file.name)
-
         video.__dict__.update(**video_dict)
-
         if 'video' in video_dict:
             video.video.save(video_dict['video'].name, video_dict['video'])
+        if 'folder' in video_dict:
+            video.folder = video_dict['folder']
         video.save()
         return video
 

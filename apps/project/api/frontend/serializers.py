@@ -25,6 +25,7 @@ from web.drf import exceptions as django_api_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
 from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment, Task, Project
+from web.api.views import JWTPayloadMixin, ArrayFieldInMultipartMixin
 
 palette_color = [
     '#d32f2f',
@@ -788,7 +789,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
     def get_sub_task(self, obj):
         return TaskActivityEditSerializer(obj.sub_task).data
 
-class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
+class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, ArrayFieldInMultipartMixin):
     media_set = serializers.SerializerMethodField()
     workers = ProfileSerializer(many=True, read_only=True)
     can_assign_in_activity = serializers.SerializerMethodField()
@@ -798,6 +799,14 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
     class Meta:
         model = models.Activity
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -810,7 +819,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         workers = obj.workers.filter(company=obj.task.assigned_company)
         for worker in workers:
             team_member = obj.task.project.members.all().get(profile__id=worker.id)
-            member = TeamBasicSerializer(team_member).data
+            member = TeamBasicSerializer(team_member, context=self.context).data
             team_list.append(member)
         return team_list
 
@@ -822,7 +831,7 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
             already_assigned_ids.append(already_assigned_worker.id)
         workers = obj.task.project.members.exclude(profile_id__in=already_assigned_ids).filter(profile__company_id=obj.task.assigned_company.id)
         for worker in workers:
-            member = TeamBasicSerializer(worker).data
+            member = TeamBasicSerializer(worker, context=self.context).data
             list_workers.append(member)
         return list_workers
 
@@ -857,6 +866,8 @@ class ActivitySerializer(DynamicFieldsModelSerializer, JWTPayloadMixin):
         return media_list
 
 class  TaskSerializer(
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
     DynamicFieldsModelSerializer):
     project = ProjectSerializer()
     assigned_company = profile_serializers.CompanySerializer()
@@ -869,6 +880,14 @@ class  TaskSerializer(
     class Meta:
         model = models.Task
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -1161,6 +1180,8 @@ class TaskDisableSerializer(
         return task
 
 class TeamBasicSerializer(
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
     DynamicFieldsModelSerializer):
     role = serializers.ReadOnlyField(source="get_role")
     profile = profile_serializers.ProfileEditSerializer()
@@ -1169,10 +1190,21 @@ class TeamBasicSerializer(
         model = models.Team
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
-            return view.team_response_include_fields
+            try:
+                return view.team_response_include_fields
+            except:
+                return super(TeamBasicSerializer, self).get_field_names(*args, **kwargs)
         return super(TeamBasicSerializer, self).get_field_names(*args, **kwargs)
 
 class TeamSerializer(

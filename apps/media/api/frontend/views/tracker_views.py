@@ -644,6 +644,18 @@ class TrackerFolderList(
             'id', 'title', 'folder', 'is_root',
             'extension', 'note', 'is_public', 'size', 'media'
         ]
+        self.photo_response_include_fields = [
+            'id', 'title', 'pub_date', 'photo',
+            'is_public', 'tags', 'note', 'size', 'folder'
+        ]
+        self.video_response_include_fields = [
+            'id', 'title', 'pub_date', 'video',
+            'tags', 'note', 'extension', 'is_public', 'folder'
+        ]
+        self.document_response_include_fields = [
+            'id', 'title', 'description', 'document',
+            'date_create', 'date_last_modify', 'is_public', 'folder'
+        ]
         super(TrackerFolderList, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -670,6 +682,18 @@ class TrackerFolderDetailView(
         self.folder_response_include_fields = [
              'id', 'title', 'folder', 'is_root',
             'extension', 'note', 'is_public', 'size', 'media'
+        ]
+        self.photo_response_include_fields = [
+            'id', 'title', 'pub_date', 'photo', 'is_public',
+            'tags', 'note', 'photo_64', 'extension', 'folder'
+        ]
+        self.video_response_include_fields = [
+            'id', 'title', 'pub_date', 'video',
+            'tags', 'note', 'extension', 'is_public', 'folder'
+        ]
+        self.document_response_include_fields = [
+            'id', 'title', 'description', 'document',
+            'date_create', 'date_last_modify', 'is_public', 'folder'
         ]
         super(TrackerFolderDetailView, self).__init__(*args, **kwargs)
 

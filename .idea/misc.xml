@@ -3,5 +3,5 @@
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.5.9 Docker Compose (web at [/Users/tommasobellini/Documents/Projects/Edilcloud/edilcloud-back/docker-compose.yml])" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.5.10 Docker Compose (web at [/Users/tommasobellini/PycharmProjects/edilcloud-back/docker-compose.yml])" project-jdk-type="Python SDK" />
 </project>

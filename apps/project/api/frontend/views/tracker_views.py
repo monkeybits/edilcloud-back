@@ -908,7 +908,7 @@ class TrackerProjectPhotoListView(
             payload = self.get_payload()
             profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
             project = profile.list_projects().get(id=self.kwargs.get('pk'))
-            self.queryset = profile.list_project_photos(project=project)
+            self.queryset = profile.list_project_photos(project=project).distinct()
             return super(TrackerProjectPhotoListView, self).get_queryset()
         except ObjectDoesNotExist as err:
             raise django_api_exception.ProjectAPIDoesNotExist(

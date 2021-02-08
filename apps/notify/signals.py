@@ -76,7 +76,7 @@ def send_push_notification(notify_obj, recipient, subject, body):
         "headings": {
             "en": subject
         },
-        "big_picture": body['big_picture'],
+        "big_picture": body['big_picture'] if 'big_picture' in body else None,
         "android_channel_id": "4b0b1a93-ec1c-4381-b928-713507c635fe",
         "wp_wns_sound": "message",
         "android_sound": "message",

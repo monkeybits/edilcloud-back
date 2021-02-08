@@ -33,8 +33,11 @@ class NotifySerializer(
 
     def get_project_id(self, obj):
         if obj.content_type.name == 'project':
-            project = Project.objects.get(id=obj.object_id)
-            return project.id
+            try:
+                project = Project.objects.get(id=obj.object_id)
+                return project.id
+            except:
+                return None
         elif obj.content_type.name == 'task':
             task = Task.objects.get(id=obj.object_id)
             return task.project.id

@@ -68,8 +68,10 @@
 </div>
 <div class="pt-5">
     <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
-        <h2 class="font-weight-light"><span class="font-weight-bold">
-            1. Informazioni di progetto
+        <h2 class="font-weight-light">
+            <span class="font-weight-bold">
+                1. Informazioni di progetto
+            </span>
         </h2>
     </div>
 </div>
@@ -84,7 +86,6 @@
                     <div class="box-body p-3">
                         <p>{{ description }}
                         </p>
-
                     </div>
                 </div>
                 <div class="box shadow-sm border rounded bg-white ">
@@ -140,7 +141,6 @@
                         <h6 class="font-weight-bold text-dark mb-1 mt-0">{{ company.name }}</h6>
                         </p>
                     </div>
-
                     <div class="box shadow-sm border rounded bg-white mb-3">
                         <div class="box-title border-bottom p-3">
                             <h6 class="m-0">Persone coinvolte nel progetto</h6>
@@ -161,6 +161,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                </div>
             </aside>
             <aside class="col col-xl-3 order-xl-3 col-lg-3 order-lg-3 prder-sm-3 order-md-3 col-md-3 col-sm-3 col-12">
                 <div class="box shadow-sm border rounded bg-white mb-3">
@@ -281,220 +282,227 @@
 
 <div class="pb-5">
     <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
-        <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">2. Dettaglio delle fasi di lavoro</span></h2>
+        <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">2. Dettaglio delle fasi di lavoro</span>
+        </h2>
     </div>
 </div>
 {% for task in tasks %}
-    {% for post in task.post_set %}
-        <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
-        <div class="row">
-            <div class="col-lg-9 col-md-9 col-sm-9">
+    <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-9">
 
-                <div class="blog-card padding-card box shadow-sm rounded bg-white mb-3 border-0">
+            <div class="blog-card padding-card box shadow-sm rounded bg-white mb-3 border-0">
 
-                    <div class="card-body">
+                <div class="card-body">
 
-                        <h2>{{ task.name }}</h2>
-                        <h6 class="mb-3">{{ task.post_set | length }} posts</h6>
-
-                        <div class="box shadow-sm border rounded bg-white mb-3 osahan-post">
-                            <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
-                                <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" src="{{ post.author.photo }}" alt="">
-                                    <div class="status-indicator bg-success"></div>
-                                </div>
-                                <div class="font-weight-bold">
-                                    <div class="text-truncate">{{ post.author.first_name }} {{ post.author.last_name }}</div>
-                                    <div class="small text-gray-500">{{ post.author.position }}
-                                        - {{ post.author.company.name }}</div>
-                                </div>
-                                <span class="ml-auto small">{{ post.published_date }}</span>
+                    <h2>{{ task.name }}</h2>
+                    <h6 class="mb-3">{{ task.post_set | length }} posts</h6>
+                    {% for post in task.post_set %}
+                    <div class="box shadow-sm border rounded bg-white mb-3 osahan-post">
+                        <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="{{ post.author.photo }}" alt="">
+                                <div class="status-indicator bg-success"></div>
                             </div>
-                            <div class="p-3 border-bottom osahan-post-body">
-                                <p class="mb-0">{{ post.text }} </p>
+                            <div class="font-weight-bold">
+                                <div class="text-truncate">{{ post.author.first_name }} {{ post.author.last_name }}</div>
+                                <div class="small text-gray-500">{{ post.author.position }}
+                                    - {{ post.author.company.name }}</div>
                             </div>
-                            <img style="max-width:24%;" src="https://i.stack.imgur.com/EAK1B.png" class="img-fluid p-2"
-                                 alt="Responsive image">
+                            <span class="ml-auto small">{{ post.published_date }}</span>
+                        </div>
+                        <div class="p-3 border-bottom osahan-post-body">
+                            <p class="mb-0">{{ post.text }} </p>
+                        </div>
+                        {#                            <img style="max-width:24%;" src="https://i.stack.imgur.com/EAK1B.png" class="img-fluid p-2"#}
+                        {#                                 alt="Responsive image">#}
+                        {##}
+                        {#                            <img style="max-width:24%;" src="https://i.ytimg.com/vi/5tCs-5-nuyw/maxresdefault.jpg"#}
+                        {#                                 class="img-fluid p-2" alt="Responsive image">#}
+                        {##}
+                        {#                            <img style="max-width:24%;"#}
+                        {#                                 src="https://cdn.guidingtech.com/media/assets/WordPress-Import/2015/12/_1200x630_crop_center-center_82_none/Chromer-for-Android.jpg?mtime=1507902987"#}
+                        {#                                 class="img-fluid p-2" alt="Responsive image">#}
+                        {##}
+                        {#                            <img style="max-width:24%;" src="https://i.stack.imgur.com/EAK1B.png" class="img-fluid p-2"#}
+                        {#                                 alt="Responsive image">#}
+                        <div class="p-3">
+                            <button type="button" class="btn btn-outline-primary btn-sm mr-1">nome immagine 1
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm mr-1">nome immagine 2
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm mr-1">nome immagine 3
+                            </button>
 
-                            <img style="max-width:24%;" src="https://i.ytimg.com/vi/5tCs-5-nuyw/maxresdefault.jpg"
-                                 class="img-fluid p-2" alt="Responsive image">
-
-                            <img style="max-width:24%;"
-                                 src="https://cdn.guidingtech.com/media/assets/WordPress-Import/2015/12/_1200x630_crop_center-center_82_none/Chromer-for-Android.jpg?mtime=1507902987"
-                                 class="img-fluid p-2" alt="Responsive image">
-
-                            <img style="max-width:24%;" src="https://i.stack.imgur.com/EAK1B.png" class="img-fluid p-2"
-                                 alt="Responsive image">
-                            <div class="p-3">
-                                <button type="button" class="btn btn-outline-primary btn-sm mr-1">nome immagine 1</button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm mr-1">nome immagine 2</button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm mr-1">nome immagine 3</button>
-
-                                <button type="button" class="btn btn-outline-secondary btn-sm mr-1">nome immagine 4</button>
-                            </div>
-                            <div class="p-3 border-top osahan-post-body"><a href="profile.html">
-                            </a>
-                                <div class=" reviews-card rounded bg-white border-0">
-                                    <div class="card-body" style="
-        padding: 0px;
-    ">
-                                        <h5 class="card-title mb-4">{{ post.comment_set | length }} commenti</h5>
-                                        {% for comment in post.comment_set %}
-                                            <div class="media mb-2">
-                                                <img class="d-flex mr-3 rounded"
-                                                     src="{{ comment.author.photo }}"
-                                                     alt="">
-                                                <div class="media-body">
-                                                    <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }}
-                                                        - {{ comment.author.position }} {{ comment.author.company.name }}
-                                                        <span class="star-rating float-right"><small>{{ comment.published_date }}
-                                                            </small>
-                                                                    </span></h5>
-                                                                    <p>{{ comment.text }}</p>
-                                                        {% for reply in comment.reply_set %}
-                                                        <div class="media mt-4">
-                                                            <img class="d-flex mr-3 rounded" src="{{ reply.author.photo }}" alt="">
-                                                            <div class="media-body">
-                                                                <h5 class="mt-0">{{ reply.author.first_name }} {{ reply.author.last_name }} <small>{{ reply.published_date }}</small>
-                                                                </h5>
-                                                                <p>{{ reply.text }}</p>
-                                                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm mr-1">nome immagine 4
+                            </button>
+                        </div>
+                        <div class="p-3 border-top osahan-post-body"><a href="profile.html">
+                        </a>
+                            <div class=" reviews-card rounded bg-white border-0">
+                                <div class="card-body" style="
+    padding: 0px;
+">
+                                    <h5 class="card-title mb-4">{{ post.comment_set | length }} commenti</h5>
+                                    {% for comment in post.comment_set %}
+                                        <div class="media mb-2">
+                                            <img class="d-flex mr-3 rounded"
+                                                 src="{{ comment.author.photo }}"
+                                                 alt="">
+                                            <div class="media-body">
+                                                <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }}
+                                                    - {{ comment.author.position }} {{ comment.author.company.name }}
+                                                    <span class="star-rating float-right"><small>{{ comment.published_date }}
+                                                        </small>
+                                                                </span></h5>
+                                                <p>{{ comment.text }}</p>
+                                                {% for reply in comment.reply_set %}
+                                                    <div class="media mt-4">
+                                                        <img class="d-flex mr-3 rounded"
+                                                             src="{{ reply.author.photo }}" alt="">
+                                                        <div class="media-body">
+                                                            <h5 class="mt-0">{{ reply.author.first_name }} {{ reply.author.last_name }}
+                                                                <small>{{ reply.published_date }}</small>
+                                                            </h5>
+                                                            <p>{{ reply.text }}</p>
                                                         </div>
-                                                        {% endfor %}
-                                                </div>
-
+                                                    </div>
+                                                {% endfor %}
                                             </div>
-                                        {% endfor %}
 
-                                    </div>
+                                        </div>
+                                    {% endfor %}
+
                                 </div>
-                                <a href="profile.html">
-                                </a></div>
-                        </div>
-
-
+                            </div>
+                            <a href="profile.html">
+                            </a></div>
                     </div>
-
+                    {% endfor %}
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-3">
-
-                <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
-                    <div class="card-body" style="
-        padding: 0px;
-    ">
-                        <h5 class="card-title p-2">Info Fase di Lavoro</h5>
-
-                        <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">
-                            <div class="p-5">
-                                <img src="{{ task.assigned_company.logo }}" class="img-fluid" alt="Responsive image">
-                            </div>
-                            <div class="p-3 border-top border-bottom">
-                                <h6 class="font-weight-bold text-dark mb-1 mt-0">{{ task.assigned_company.name }}</h6>
-                                <p></p>
-                            </div>
-
-                            <div class="box shadow-sm border rounded bg-white mb-3">
-                                <div class="box-title border-bottom p-3">
-                                    <h6 class="m-0">Persone coinvolte nella fase di lavoro</h6>
-                                </div>
-                                <div class="box-body p-3">
-                                    <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
-                                        <div class="dropdown-list-image mr-3">
-                                            <img class="rounded-circle" src="img/p4.png" alt="">
-                                        </div>
-                                        <div class="font-weight-bold mr-2">
-                                            <div class="text-truncate">Mauro Cappelletti</div>
-                                            <div class="small text-gray-500">CEO - Itinera Group Spa
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
-                                        <div class="dropdown-list-image mr-3">
-                                            <img class="rounded-circle" src="img/p9.png" alt="">
-                                        </div>
-                                        <div class="font-weight-bold mr-2">
-                                            <div class="text-truncate">Carla Mastrantonio</div>
-                                            <div class="small text-gray-500">Direttrice Sicurezza Cantieri - Itinera Group
-                                                Spa
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
-                                        <div class="dropdown-list-image mr-3">
-                                            <img class="rounded-circle" src="img/p10.png" alt="">
-                                        </div>
-                                        <div class="font-weight-bold mr-2">
-                                            <div class="text-truncate">Edoardo Bianchessi</div>
-                                            <div class="small text-gray-500">Architetto - Itinera Spa
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
-                                        <div class="dropdown-list-image mr-3">
-                                            <img class="rounded-circle" src="img/p11.png" alt="">
-                                        </div>
-                                        <div class="font-weight-bold mr-2">
-                                            <div class="text-truncate">Robert Cook</div>
-                                            <div class="small text-gray-500">Engineer - Itinera Group Spa
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="d-flex align-items-center osahan-post-header people-list">
-                                        <div class="dropdown-list-image mr-3">
-                                            <img class="rounded-circle" src="img/p12.png" alt="">
-                                        </div>
-                                        <div class="font-weight-bold mr-2">
-                                            <div class="text-truncate">Federico Rapisarda</div>
-                                            <div class="small text-gray-500">Resonsabile Cantiere - Itinera Group Spa
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
-                                    <div class="card-body" style="
-        padding: 0px;
-    ">
-                                        <h5 class="card-title mb-3">Alerted</h5>
-                                        <ul class="sidebar-card-list">
-                                            <li><a href="#"><i class="feather-arrow-right-circle"></i> December, 2017</a>
-                                            </li>
-                                            <li><a href="#"><i class="feather-arrow-right-circle"></i> November, 2017</a>
-                                            </li>
-                                            <li><a href="#"><i class="feather-arrow-right-circle"></i> October, 2017</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
         </div>
-    {% endfor %}
+        <div class="col-lg-3 col-md-3 col-sm-3">
+
+            <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
+                <div class="card-body" style="
+    padding: 0px;
+">
+                    <h5 class="card-title p-2">Info Fase di Lavoro</h5>
+
+                    <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">
+                        <div class="p-5">
+                            <img src="{{ task.assigned_company.logo }}" class="img-fluid" alt="Responsive image">
+                        </div>
+                        <div class="p-3 border-top border-bottom">
+                            <h6 class="font-weight-bold text-dark mb-1 mt-0">{{ task.assigned_company.name }}</h6>
+                            <p></p>
+                        </div>
+
+                        <div class="box shadow-sm border rounded bg-white mb-3">
+                            <div class="box-title border-bottom p-3">
+                                <h6 class="m-0">Persone coinvolte nella fase di lavoro</h6>
+                            </div>
+                            <div class="box-body p-3">
+                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p4.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">Mauro Cappelletti</div>
+                                        <div class="small text-gray-500">CEO - Itinera Group Spa
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p9.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">Carla Mastrantonio</div>
+                                        <div class="small text-gray-500">Direttrice Sicurezza Cantieri - Itinera
+                                            Group
+                                            Spa
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p10.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">Edoardo Bianchessi</div>
+                                        <div class="small text-gray-500">Architetto - Itinera Spa
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p11.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">Robert Cook</div>
+                                        <div class="small text-gray-500">Engineer - Itinera Group Spa
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="d-flex align-items-center osahan-post-header people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p12.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">Federico Rapisarda</div>
+                                        <div class="small text-gray-500">Resonsabile Cantiere - Itinera Group Spa
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
+                                <div class="card-body" style="
+    padding: 0px;
+">
+                                    <h5 class="card-title mb-3">Alerted</h5>
+                                    <ul class="sidebar-card-list">
+                                        <li><a href="#"><i class="feather-arrow-right-circle"></i> December,
+                                            2017</a>
+                                        </li>
+                                        <li><a href="#"><i class="feather-arrow-right-circle"></i> November,
+                                            2017</a>
+                                        </li>
+                                        <li><a href="#"><i class="feather-arrow-right-circle"></i> October, 2017</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
 {% endfor %}
 </div>
 <div class="pb-5">
     <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
-
-        <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">3. Diagramma di Gantt
+        <h2 class="font-weight-light"><span style="color:  #0d0a27;"
+                                            class="font-weight-bold">3. Diagramma di Gantt</span></h2>
     </div>
 </div>
 <div class="pb-5">
     <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
-
-        <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">4. Allegati
-                    <p> Potete trovare il materiale allegato nella mail ricevuta con il report pdf
+        <h2 class="font-weight-light">
+            <span style="color:  #0d0a27;" class="font-weight-bold">4. Allegati
+            <p> Potete trovare il materiale allegato nella mail ricevuta con il report pdf</p></span>
+        </h2>
     </div>
 </div>
 </body>

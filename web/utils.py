@@ -14,27 +14,41 @@ config.read(os.path.join(settings.PROJECT_PATH, 'messages.ini'))
 
 def get_media_size(current_profile, validated_data):
     total_size = 0
+    photo_size = 0
+    video_size = 0
+    document_size = 0
 
     # existing files
     all_company_photo = current_profile.list_photos()
     for photo in all_company_photo:
         total_size += photo.photo.size
+        photo_size += photo.photo.size
     all_company_video = current_profile.list_videos()
     for video in all_company_video:
         total_size += video.video.size
+        video_size += video.video.size
     all_company_document = current_profile.list_documents()
     for document in all_company_document:
         total_size += document.document.size
+        document_size += document.document.size
 
     # new file
     if 'photo' in validated_data:
         total_size += validated_data['photo'].size
+        photo_size += validated_data['photo'].size
     if 'video' in validated_data:
         total_size += validated_data['video'].size
+        video_size += validated_data['video'].size
     if 'document' in validated_data:
         total_size += validated_data['document'].size
+        document_size += validated_data['document'].size
 
-    return round(total_size/float(1<<17), 2)
+    return {
+        'total_size': round(total_size/float(1<<17), 2),
+        'photo_size': round(photo_size / float(1 << 17), 2),
+        'video_size': round(video_size / float(1 << 17), 2),
+        'document_size': round(document_size / float(1 << 17), 2),
+    }
 
 def info_plan(customer):
     customer = stripe.Customer.retrieve(customer)

@@ -28,6 +28,7 @@ class PhotoSerializer(
 
     extension = serializers.SerializerMethodField()
     photo_64 = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField()
     relative_path = serializers.SerializerMethodField()
     folder_relative_path = serializers.SerializerMethodField()
@@ -81,6 +82,21 @@ class PhotoSerializer(
         f.close()
         return data
 
+    def get_photo(self, obj):
+        try:
+            photo_url = obj.photo.url
+            protocol = self.context['request'].is_secure()
+            if protocol:
+                protocol = 'https://'
+            else:
+                protocol = 'http://'
+            host = self.context['request'].get_host()
+            media_url = protocol + host + photo_url
+        except:
+            media_url = None
+
+        return media_url
+
     def get_size(self, obj):
         return obj.photo.size
 
@@ -132,7 +148,7 @@ class PhotoAddSerializer(
         if 'additional_path' in self.request.data:
             validated_data['additional_path'] = self.request.data['additional_path']
         try:
-            check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data))
+            check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data)['total_size'])
             photo = self.profile.create_photo(validated_data)
             return photo
         except Exception as err:
@@ -365,7 +381,7 @@ class VideoAddSerializer(
         return super(VideoAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
-        check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data))
+        check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data)['total_size'])
         self.get_array_from_string(validated_data)
         try:
             if 'additional_path' in self.request.data:
@@ -416,7 +432,8 @@ class VideoEditSerializer(
         return obj.get_file_extension()
 
 class FolderSerializer(
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     folders = serializers.SerializerMethodField()
     media = serializers.SerializerMethodField()
     path = serializers.SerializerMethodField()
@@ -424,6 +441,14 @@ class FolderSerializer(
     class Meta:
         model = models.Folder
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
 
     full_path = ""
 
@@ -451,9 +476,9 @@ class FolderSerializer(
         return (full_path + '/{}'.format(obj.name)).split('/', 1)[1]
 
     def get_media(self, obj):
-        photos = PhotoSerializer(obj.photo_set.all(), many=True)
-        videos = VideoSerializer(obj.video_set.all(), many=True)
-        documents = DocumentSerializer(obj.document_set.all(), many=True)
+        photos = PhotoSerializer(obj.photo_set.all(), many=True, context=self.context)
+        videos = VideoSerializer(obj.video_set.all(), many=True, context=self.context)
+        documents = DocumentSerializer(obj.document_set.all(), many=True, context=self.context)
         return {
             'photo': photos.data,
             'video': videos.data,
@@ -509,7 +534,7 @@ class FolderAddSerializer(
         return super(FolderAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
-        check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data))
+        check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data)['total_size'])
         self.get_array_from_string(validated_data)
         try:
             folder = self.profile.create_folder(validated_data)

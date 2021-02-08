@@ -19,6 +19,7 @@ from web.drf import exceptions as django_api_exception
 from web import exceptions as django_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
+from web.api.views import JWTPayloadMixin, ArrayFieldInMultipartMixin
 
 User = get_user_model()
 
@@ -690,8 +691,11 @@ class ProfileAddSerializer(
 
 
 class ProfileEditSerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
+    DynamicFieldsModelSerializer):
+    photo = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -708,8 +712,28 @@ class ProfileEditSerializer(
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
-            return view.profile_request_include_fields
+            try:
+                return view.profile_request_include_fields
+            except:
+                return super(ProfileEditSerializer, self).get_field_names(*args, **kwargs)
+
         return super(ProfileEditSerializer, self).get_field_names(*args, **kwargs)
+
+    def get_photo(self, obj):
+        try:
+            photo_url = obj.photo.url
+            protocol = self.context['request'].is_secure()
+            if protocol:
+                protocol = 'https://'
+            else:
+                protocol = 'http://'
+            host = self.context['request'].get_host()
+            media_url = protocol + host + photo_url
+        except:
+            media_url = None
+
+        return media_url
+
 
     def update(self, instance, validated_data):
         try:

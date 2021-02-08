@@ -651,9 +651,9 @@ class TrackerFolderList(
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         if 'type' in self.kwargs:
             list_method = 'list_{}_folders'.format(self.kwargs['type'])
-            self.queryset = getattr(profile, list_method)().filter(is_root=True)
+            self.queryset = getattr(profile, list_method)().filter(is_root=True).distinct()
         else:
-            self.queryset = profile.list_company_folders().filter(is_root=True)
+            self.queryset = profile.list_company_folders().filter(is_root=True).distinct()
         return super(TrackerFolderList, self).get_queryset()
 
 class TrackerFolderDetailView(

@@ -661,9 +661,10 @@ class TrackerFolderList(
     def get_queryset(self):
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-        if 'type' in self.kwargs:
+        if 'type' in self.kwargs and self.kwargs['type'] != 'company':
             list_method = 'list_{}_folders'.format(self.kwargs['type'])
-            self.queryset = getattr(profile, list_method)().filter(is_root=True).distinct()
+            project = Project.objects.get(id=self.kwargs['pk'])
+            self.queryset = getattr(profile, list_method)(project=project).filter(is_root=True).distinct()
         else:
             self.queryset = profile.list_company_folders().filter(is_root=True).distinct()
         return super(TrackerFolderList, self).get_queryset()
@@ -731,9 +732,10 @@ class TrackerFolderStructureList(
     def get_queryset(self):
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-        if 'type' in self.kwargs:
+        if 'type' in self.kwargs and self.kwargs['type'] != 'company':
             list_method = 'list_{}_folders'.format(self.kwargs['type'])
-            self.queryset = getattr(profile, list_method)().filter()
+            project = Project.objects.get(id=self.kwargs['pk'])
+            self.queryset = getattr(profile, list_method)(project=project).filter()
         else:
             self.queryset = profile.list_company_folders().filter()
         return super(TrackerFolderStructureList, self).get_queryset()

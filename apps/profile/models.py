@@ -3324,7 +3324,7 @@ class OwnerProfile(Profile):
         if project:
             query1.update({'projects__id': project.id})
 
-        return Document.objects.filter(Q(**query1) | Q(**query2))
+        return Document.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project', object_id=project.id)
 
     def list_project_parent_documents(self, project_id):
         """
@@ -3467,7 +3467,7 @@ class OwnerProfile(Profile):
         if project:
             query1.update({'projects__id': project.id})
 
-        return Photo.objects.filter(Q(**query1) | Q(**query2))
+        return Photo.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project', object_id=project.id)
 
     def list_project_folders(self, project=None):
         """
@@ -3478,7 +3478,7 @@ class OwnerProfile(Profile):
         if project:
             query1.update({'projects__id': project.id})
 
-        return Folder.objects.filter(Q(**query1) | Q(**query2))
+        return Folder.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project', object_id=project.id)
 
     def list_bom_photos(self):
         """
@@ -3645,7 +3645,7 @@ class OwnerProfile(Profile):
         if project:
             query1.update({'projects__id': project.id})
 
-        return Video.objects.filter(Q(**query1) | Q(**query2))
+        return Video.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project', object_id=project.id)
 
     def list_bom_videos(self):
         """

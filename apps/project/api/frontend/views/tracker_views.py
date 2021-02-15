@@ -108,7 +108,7 @@ class TrackerProjectListView(
             'shared_companies', 'logo', 'address'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -138,7 +138,7 @@ class TrackerActivityPostListAlertView(
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerActivityPostListAlertView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -164,7 +164,7 @@ class TrackerTaskPostListAlertView(
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerTaskPostListAlertView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -195,7 +195,7 @@ class TrackerProjectParentDetailView(
             'shared_project', 'logo'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'position',
@@ -228,7 +228,7 @@ class TrackerProjectDetailView(
             'shared_project', 'date_create', 'note', 'logo', 'talks', 'address'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         self.profile_response_include_fields = [
@@ -236,7 +236,7 @@ class TrackerProjectDetailView(
             'role', 'email', 'fax', 'phone', 'company'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -266,7 +266,7 @@ class TrackerProjectAddView(
             'profiles', 'shared_companies', 'typology', 'logo', 'address'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -296,7 +296,7 @@ class TrackerProjectEditView(
             'profiles', 'shared_companies', 'typology', 'logo', 'address'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -320,7 +320,7 @@ class TrackerProjectEnableView(
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'tags'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.profile_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerProjectEnableView, self).__init__(*args, **kwargs)
 
@@ -341,7 +341,7 @@ class TrackerProjectDisableView(
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'tags'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.profile_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerProjectDisableView, self).__init__(*args, **kwargs)
 
@@ -361,7 +361,7 @@ class TrackerProjectDeleteView(
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent',
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.profile_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerProjectDeleteView, self).__init__(*args, **kwargs)
 
@@ -389,7 +389,7 @@ class TrackerProjectShareView(
             'company', 'referent',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn'
+            'id', 'name', 'slug', 'email', 'tax_code'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -433,7 +433,7 @@ class TrackerProjectBomSenderListView(
             'date_bom', 'deadline', 'selected_companies', 'tags'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -464,7 +464,7 @@ class TrackerProjectBomDraftListView(
             'date_bom', 'deadline', 'selected_companies',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -495,7 +495,7 @@ class TrackerProjectBomReceiverListView(
             'date_bom', 'deadline', 'selected_companies',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -526,7 +526,7 @@ class TrackerProjectQuotationSenderListView(
             'deadline', 'bom', 'tags'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -560,7 +560,7 @@ class TrackerProjectQuotationDraftListView(
             'deadline', 'bom', 'tags'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -594,7 +594,7 @@ class TrackerProjectQuotationReceiverListView(
             'deadline', 'bom', 'tags', 'is_valid', 'is_accepted'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -769,7 +769,7 @@ class TrackerProjectTeamListView(
             'email', 'phone', 'note', 'role', 'language', 'company'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'color_project', 'logo', 'slug', 'email', 'ssn'
+            'id', 'name', 'color_project', 'logo', 'slug', 'email', 'tax_code'
         ]
         super(TrackerProjectTeamListView, self).__init__(*args, **kwargs)
 
@@ -1375,7 +1375,7 @@ class TrackerProjectInternalTaskListView(
             'date_end', 'typology'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -1417,7 +1417,7 @@ class TrackerProjectParentTaskListView(
             'date_end', 'shared_project'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -1464,7 +1464,7 @@ class TrackerProjectTaskListView(
             'date_end', 'shared_project'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'color_project'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'color_project'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -1510,7 +1510,7 @@ class TrackerProjectsTasksActivitiesListView(
             'date_end', 'shared_project'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -1556,7 +1556,7 @@ class TrackerGanttProjectTaskListView(
             'date_end', 'shared_project'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'color_project'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'color_project'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -1618,7 +1618,7 @@ class TrackerProjectTaskAddView(
             'date_end',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'color_project'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'color_project'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo',

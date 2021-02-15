@@ -275,11 +275,11 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         blank=True, null=True,
         verbose_name=_('description'),
     )
-    ssn = models.CharField(
+    tax_code = models.CharField(
         max_length=16,
         blank=True,
         db_index=True,
-        verbose_name=_("ssn"),
+        verbose_name=_("tax_code"),
     )
     vat_number = models.CharField(
         max_length=14,

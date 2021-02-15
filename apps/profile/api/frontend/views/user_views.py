@@ -346,12 +346,12 @@ class CompanyAddView(
 
     def __init__(self, *args, **kwargs):
         self.company_request_include_fields = [
-            'name', 'slug', 'brand', 'ssn', 'vat_number',
+            'name', 'slug', 'brand', 'tax_code', 'vat_number',
             'url', 'email', 'phone', 'phone2', 'fax', 'logo',
             'note', 'category', 'description', 'is_supplier', 'color'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'brand', 'ssn', 'vat_number',
+            'id', 'name', 'slug', 'brand', 'tax_code', 'vat_number',
             'url', 'email', 'phone', 'phone2', 'fax', 'logo',
             'note', 'category', 'color'
         ]
@@ -385,7 +385,7 @@ class MyCompanyListView(
 
     def __init__(self, *args, **kwargs):
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn',
+            'id', 'name', 'slug', 'email', 'tax_code',
             'email', 'phone', 'logo'
         ]
         super(MyCompanyListView, self).__init__(*args, **kwargs)
@@ -415,7 +415,7 @@ class MyCompanyActiveListView(
 
     def __init__(self, *args, **kwargs):
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn',
+            'id', 'name', 'slug', 'email', 'tax_code',
             'email', 'phone', 'logo'
         ]
         super(MyCompanyActiveListView, self).__init__(*args, **kwargs)
@@ -445,7 +445,7 @@ class MyCompanyInactiveListView(
 
     def __init__(self, *args, **kwargs):
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn',
+            'id', 'name', 'slug', 'email', 'tax_code',
             'email', 'phone', 'logo'
         ]
         super(MyCompanyInactiveListView, self).__init__(*args, **kwargs)
@@ -478,7 +478,7 @@ class ProfileActiveListView(
             'id', 'first_name', 'last_name', 'company', 'user', 'photo'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -514,7 +514,7 @@ class ProfilesActiveListView(
             'company', 'photo', 'email', 'language'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(ProfilesActiveListView, self).__init__(*args, **kwargs)
         
@@ -587,7 +587,7 @@ class ProfileListView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo', 'creator', 'color', 'vat_number', 'description',
+            'tax_code', 'logo', 'creator', 'color', 'vat_number', 'description',
             'fax', 'phone', 'phone2', 'customer', 'trial_used', 'subscription'
         ]
         self.user_response_include_fields = [
@@ -634,7 +634,7 @@ class ProfileAcceptListView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo'
+            'tax_code', 'logo'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -665,7 +665,7 @@ class ProfileRefuseListView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo'
+            'tax_code', 'logo'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -802,7 +802,7 @@ class ProfileSendInviteView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo'
+            'tax_code', 'logo'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'

@@ -69,7 +69,7 @@ class TrackerBomDetailView(
             'description', 'unit', 'quantity'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.product_response_include_fields = [
             'code', 'name', 'description'
@@ -114,7 +114,7 @@ class TrackerBomBomTypeDetailView(
             'description', 'unit', 'quantity'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.product_response_include_fields = [
             'code', 'name', 'description'
@@ -158,7 +158,7 @@ class TrackerBomSenderListView(
             'description', 'unit', 'quantity', 'status'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -216,7 +216,7 @@ class TrackerBomDraftListView(
             'description', 'unit', 'quantity', 'status'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -273,7 +273,7 @@ class TrackerBomReceiverListView(
             'description', 'unit', 'quantity', 'status'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -338,7 +338,7 @@ class TrackerBomAddView(
             'description', 'unit', 'quantity'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.product_response_include_fields = [
             'code', 'name', 'description'
@@ -371,7 +371,7 @@ class TrackerBomEditView(
             'date_end', 'typology'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerBomEditView, self).__init__(*args, **kwargs)
 
@@ -401,7 +401,7 @@ class TrackerBomPublishView(
             'date_end', 'typology'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerBomPublishView, self).__init__(*args, **kwargs)
 
@@ -443,7 +443,7 @@ class TrackerBomSendView(
             'date_end', 'typology'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerBomSendView, self).__init__(*args, **kwargs)
 
@@ -468,7 +468,7 @@ class TrackerBomDeleteView(
             'tags', 'selected_companies'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerBomDeleteView, self).__init__(*args, **kwargs)
 

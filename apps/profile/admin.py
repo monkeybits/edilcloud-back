@@ -119,7 +119,7 @@ class CompanyAdmin(UserAdminMixin, admin.ModelAdmin):
         (_('general_information'), {
             'fields': (
                 'name', 'slug', 'brand', 'description',
-                'ssn', 'vat_number', 'url',
+                'tax_code', 'vat_number', 'url',
                 'email', 'phone', 'phone2',
                 'fax', 'logo', 'note',
             )
@@ -143,7 +143,7 @@ class CompanyAdmin(UserAdminMixin, admin.ModelAdmin):
     )
     list_display = (
         'id', 'creator', 'status', 'name',
-        'slug', 'ssn', 'vat_number',
+        'slug', 'tax_code', 'vat_number',
         'url', 'email', 'get_profiles_count', 'get_owner_profiles_count',
         'get_delegate_profiles_count', 'get_level1_profiles_count',
         'get_level2_profiles_count', 'get_internal_projects_count',
@@ -159,7 +159,7 @@ class CompanyAdmin(UserAdminMixin, admin.ModelAdmin):
     show_full_result_count = False
     list_filter = ('status',)
     search_fields = (
-        'name', 'slug', 'ssn',
+        'name', 'slug', 'tax_code',
         'url', 'email',
     )
 

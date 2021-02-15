@@ -394,10 +394,10 @@ class CompanyAddSerializer(
         return super(CompanyAddSerializer, self).get_field_names(*args, **kwargs)
 
     def validate(self, attrs):
-        if 'ssn' not in attrs and 'vat_number' not in attrs:
+        if 'tax_code' not in attrs and 'vat_number' not in attrs:
             raise serializers.ValidationError({
-                'ssn': _('Please provide either SSN or Vat Number'),
-                'vat_number':  _('Please provide either SSN or Vat Number')
+                'tax_code': _('Please provide either tax_code or Vat Number'),
+                'vat_number':  _('Please provide either tax_code or Vat Number')
             })
         return attrs
 

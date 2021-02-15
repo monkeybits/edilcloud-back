@@ -43,7 +43,7 @@ class CompanyDetailView(
 
     def __init__(self, *args, **kwargs):
         self.company_response_include_fields = [
-            'id', 'name', 'brand', 'description', 'slug', 'email', 'ssn',
+            'id', 'name', 'brand', 'description', 'slug', 'email', 'tax_code',
             'email', 'phone', 'logo', 'vat_number',
             'url', 'fax', 'phone2', 'projects_count',
             'messages_count', 'tags_count', 'followers_count',
@@ -161,7 +161,7 @@ class CompanyOfferListView(
             'id', 'first_name', 'last_name',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn'
+            'id', 'name', 'slug', 'email', 'tax_code'
         ]
         super(CompanyOfferListView, self).__init__(*args, **kwargs)
 
@@ -191,7 +191,7 @@ class CompanyActiveOfferListView(
             'id', 'first_name', 'last_name',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn'
+            'id', 'name', 'slug', 'email', 'tax_code'
         ]
         super(CompanyActiveOfferListView, self).__init__(*args, **kwargs)
 
@@ -242,7 +242,7 @@ class CompanyCertificationListView(
     def __init__(self, *args, **kwargs):
         self.certification_response_include_fields = ['id', 'title', 'description', 'document', 'contact', 'owner',]
         self.profile_response_include_fields = ['id', 'first_name', 'last_name',]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(CompanyCertificationListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -264,7 +264,7 @@ class CompanyStaffListView(
 
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'can_access_files', 'can_access_chat']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(CompanyStaffListView, self).__init__(*args, **kwargs)
 
@@ -288,7 +288,7 @@ class CompanyPublicStaffListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'role', 'is_shared', 'is_in_showroom', 'photo']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn', 'is_supplier']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'is_supplier']
 
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(CompanyPublicStaffListView, self).__init__(*args, **kwargs)
@@ -313,7 +313,7 @@ class CompanyShowroomContactListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'role', 'is_shared', 'is_in_showroom', 'photo']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
 
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(CompanyShowroomContactListView, self).__init__(*args, **kwargs)
@@ -338,7 +338,7 @@ class CompanyContactListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'role', 'is_shared', 'photo', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
 
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(CompanyContactListView, self).__init__(*args, **kwargs)
@@ -362,7 +362,7 @@ class CompanyOwnerListView(
 
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(CompanyOwnerListView, self).__init__(*args, **kwargs)
 
@@ -385,7 +385,7 @@ class CompanyDelegateListView(
 
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(CompanyDelegateListView, self).__init__(*args, **kwargs)
 
@@ -408,7 +408,7 @@ class CompanyLevel1ListView(
 
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(CompanyLevel1ListView, self).__init__(*args, **kwargs)
 
@@ -431,7 +431,7 @@ class CompanyLevel2ListView(
 
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(CompanyLevel2ListView, self).__init__(*args, **kwargs)
 

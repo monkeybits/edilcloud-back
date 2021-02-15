@@ -1617,7 +1617,7 @@ class TrackerCompanyCertificationListView(
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerCompanyCertificationListView, self).__init__(*args, **kwargs)
 
@@ -1642,7 +1642,7 @@ class TrackerCompanyPhantomListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user',
                                                 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyPhantomListView, self).__init__(*args, **kwargs)
 
@@ -1667,7 +1667,7 @@ class TrackerCompanyGuestListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user',
                                                 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyGuestListView, self).__init__(*args, **kwargs)
 
@@ -1698,7 +1698,7 @@ class TrackerCompanyStaffListView(
             'can_access_files', 'can_access_chat'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'is_supplier'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'is_supplier'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -1745,7 +1745,7 @@ class TrackerProjectStaffListView(
             'can_access_files', 'can_access_chat'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'is_supplier'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'is_supplier'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -1790,7 +1790,7 @@ class TrackerCompanyStaffListAndExternalView(
             'can_access_files', 'can_access_chat', 'is_external'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'is_supplier'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'is_supplier'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -1846,7 +1846,7 @@ class TrackerCompanyStaffListDisabledView(
             'can_access_files', 'can_access_chat'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'is_supplier'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'is_supplier'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -1884,7 +1884,7 @@ class TrackerCompanyPublicStaffListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'role', 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
 
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyPublicStaffListView, self).__init__(*args, **kwargs)
@@ -1910,7 +1910,7 @@ class TrackerCompanyShowroomStaffListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'role', 'is_shared', 'is_in_showroom', 'photo']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
 
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyShowroomStaffListView, self).__init__(*args, **kwargs)
@@ -1936,7 +1936,7 @@ class TrackerCompanyOwnerListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
 
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyOwnerListView, self).__init__(*args, **kwargs)
@@ -1962,7 +1962,7 @@ class TrackerCompanyDelegateListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyDelegateListView, self).__init__(*args, **kwargs)
 
@@ -1987,7 +1987,7 @@ class TrackerCompanyLevel1ListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user',
                                                 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyLevel1ListView, self).__init__(*args, **kwargs)
 
@@ -2012,7 +2012,7 @@ class TrackerCompanyLevel2ListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user',
                                                 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyLevel2ListView, self).__init__(*args, **kwargs)
 
@@ -2042,7 +2042,7 @@ class TrackerCompanyProjectListView(
             'shared_companies', 'logo', 'talks', 'last_message_created', 'address'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
@@ -2100,7 +2100,7 @@ class TrackerCompanyInternalProjectListView(
             'company', 'referent', 'typology', 'completed', 'shared_project', 'logo'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
@@ -2130,7 +2130,7 @@ class TrackerCompanySharedProjectListView(
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'typology', 'completed'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'is_shared', 'is_in_showroom']
         super(TrackerCompanySharedProjectListView, self).__init__(*args, **kwargs)
 
@@ -2240,7 +2240,7 @@ class TrackerCompanyFavouriteListView(
 
     def __init__(self, *args, **kwargs):
         self.favourite_response_include_fields = ['id', 'company_followed', 'company']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn', 'is_supplier', 'logo',
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'is_supplier', 'logo',
                                                 'url', 'email', 'phone', 'phone2', 'fax']
         super(TrackerCompanyFavouriteListView, self).__init__(*args, **kwargs)
 
@@ -2264,7 +2264,7 @@ class TrackerCompanyFavouriteWaitingListView(
 
     def __init__(self, *args, **kwargs):
         self.favourite_response_include_fields = ['id', 'company_followed', 'company']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn', 'is_supplier', 'logo',
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'is_supplier', 'logo',
                                                 'url', 'email', 'phone', 'phone2', 'fax']
         super(TrackerCompanyFavouriteWaitingListView, self).__init__(*args, **kwargs)
 
@@ -2288,7 +2288,7 @@ class TrackerCompanyFavouriteReceivedListView(
 
     def __init__(self, *args, **kwargs):
         self.favourite_response_include_fields = ['id', 'company_followed', 'company']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn', 'is_supplier', 'logo',
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'is_supplier', 'logo',
                                                 'url', 'email', 'phone', 'phone2', 'fax']
         super(TrackerCompanyFavouriteReceivedListView, self).__init__(*args, **kwargs)
 
@@ -2311,7 +2311,7 @@ class TrackerCompanyNotFavouriteListView(
     serializer_class = serializers.CompanySerializer
 
     def __init__(self, *args, **kwargs):
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn', 'is_supplier', 'logo']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'is_supplier', 'logo']
         super(TrackerCompanyNotFavouriteListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -2344,7 +2344,7 @@ class TrackerCompanyFavouriteContactListView(
             'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'is_supplier'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'is_supplier'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -2386,7 +2386,7 @@ class TrackerCompanyFavouriteDetailView(
     serializer_class = serializers.CompanySerializer
 
     def __init__(self, *args, **kwargs):
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerCompanyFavouriteDetailView, self).__init__(*args, **kwargs)
 
 
@@ -2401,7 +2401,7 @@ class TrackerCompanyFavouriteDeleteView(
     serializer_class = serializers.CompanySerializer
 
     def __init__(self, *args, **kwargs):
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerCompanyFavouriteDeleteView, self).__init__(*args, **kwargs)
 
     def perform_destroy(self, instance):

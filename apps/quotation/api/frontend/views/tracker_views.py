@@ -989,7 +989,7 @@ class TrackerQuotationReceiverListView(
             'deadline', 'tags', 'status', 'project'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1034,7 +1034,7 @@ class TrackerQuotationDraftListView(
             'deadline', 'tags', 'status', 'project'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -1096,7 +1096,7 @@ class TrackerQuotationTypeDetailView(
             'bom_rows_id_list', 'is_valid', 'is_accepted'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.bom_response_include_fields = [
             'id', 'title', 'description', 'date_bom',

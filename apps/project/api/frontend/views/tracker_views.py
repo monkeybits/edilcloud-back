@@ -1669,7 +1669,7 @@ class TrackerTaskDetailView(
             'date_end',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerTaskDetailView, self).__init__(*args, **kwargs)
 
@@ -1697,7 +1697,7 @@ class TrackerTaskShareView(
             'date_end',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo',
@@ -1741,7 +1741,7 @@ class TrackerTaskCloneView(
             'date_end',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo',
@@ -1792,7 +1792,7 @@ class TrackerTaskEditView(
             'date_end',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerTaskEditView, self).__init__(*args, **kwargs)
 
@@ -1818,7 +1818,7 @@ class TrackerTaskEnableView(
             'date_end',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerTaskEnableView, self).__init__(*args, **kwargs)
 
@@ -1844,7 +1844,7 @@ class TrackerTaskDisableView(
             'date_end',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerTaskDisableView, self).__init__(*args, **kwargs)
 
@@ -1869,7 +1869,7 @@ class TrackerTaskDeleteView(
             'date_end',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerTaskDeleteView, self).__init__(*args, **kwargs)
 
@@ -1913,7 +1913,7 @@ class TrackerTeamInviationListView(
     def __init__(self, *args, **kwargs):
         self.team_response_include_fields = ['id', 'project', 'profile', 'role', 'status']
         self.project_response_include_fields = ['id', 'name', 'description', 'date_start', 'date_end', 'company']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.profile_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerTeamInviationListView, self).__init__(*args, **kwargs)
 
@@ -2168,7 +2168,7 @@ class TrackerTaskAttachmentAddView(
             'date_end',
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         super(TrackerTaskAttachmentAddView, self).__init__(*args, **kwargs)
 
@@ -2380,7 +2380,7 @@ class TrackerActivityPostAddView(
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerActivityPostAddView, self).__init__(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -2419,7 +2419,7 @@ class TrackerTaskPostAddView(
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerTaskPostAddView, self).__init__(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -2473,7 +2473,7 @@ class TrackerActivityPostListView(
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerActivityPostListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -2513,7 +2513,7 @@ class TrackerTaskPostListView(
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerTaskPostListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -2552,7 +2552,7 @@ class TrackerPostCommentListView(
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerPostCommentListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -2581,7 +2581,7 @@ class TrackerCommentRepliesListView(
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerCommentRepliesListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -2641,7 +2641,7 @@ class TrackerPostCommentAddView(
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerPostCommentAddView, self).__init__(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -2786,7 +2786,7 @@ class TrackerTaskPostsListView(WhistleGenericViewMixin,
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerTaskPostsListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -2846,7 +2846,7 @@ class TrackerProjectExport(
             'datetime_start', 'datetime_end', 'alert', 'can_assign_in_activity', 'workers_in_activity', 'post_set'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         self.profile_response_include_fields = [
@@ -2854,7 +2854,7 @@ class TrackerProjectExport(
             'role', 'email', 'fax', 'phone', 'company'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'

@@ -231,6 +231,30 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         db_index=True,
         verbose_name=_("name"),
     )
+    city = models.CharField(
+        max_length=255,
+        blank=True,
+        db_index=True,
+        verbose_name=_("city"),
+    )
+    address = models.CharField(
+        max_length=255,
+        blank=True,
+        db_index=True,
+        verbose_name=_("address"),
+    )
+    province = models.CharField(
+        max_length=255,
+        blank=True,
+        db_index=True,
+        verbose_name=_("province"),
+    )
+    cap = models.CharField(
+        max_length=255,
+        blank=True,
+        db_index=True,
+        verbose_name=_("cap"),
+    )
     slug = models.SlugField(
         max_length=255,
         unique=True,
@@ -263,6 +287,12 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         db_index=True,
         verbose_name=_("vat number"),
     )
+    sdi = models.CharField(
+        max_length=7,
+        blank=True,
+        db_index=True,
+        verbose_name=_("sdi"),
+    )
     url = models.CharField(
         max_length=255,
         blank=True,
@@ -272,6 +302,16 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         max_length=100,
         blank=True,
         verbose_name=_("email"),
+    )
+    pec = models.EmailField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("pec"),
+    )
+    billing_email = models.EmailField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("billing_email"),
     )
     phone = models.CharField(
         max_length=20,

@@ -735,9 +735,9 @@ class TrackerFolderStructureList(
         if 'type' in self.kwargs and self.kwargs['type'] != 'company':
             list_method = 'list_{}_folders'.format(self.kwargs['type'])
             project = Project.objects.get(id=self.kwargs['pk'])
-            self.queryset = getattr(profile, list_method)(project=project).filter()
+            self.queryset = getattr(profile, list_method)(project=project).filter().distinct()
         else:
-            self.queryset = profile.list_company_folders().filter()
+            self.queryset = profile.list_company_folders().filter().distinct()
         return super(TrackerFolderStructureList, self).get_queryset()
 
     def list(self, request, *args, **kwargs):
@@ -862,6 +862,18 @@ class TrackerFolderEditView(
         ]
         self.folder_response_include_fields = [
             'id', 'name', 'parent', 'is_public', 'is_root'
+        ]
+        self.video_response_include_fields = [
+            'id', 'title', 'pub_date', 'video',
+            'tags', 'note', 'extension', 'is_public', 'folder'
+        ]
+        self.document_response_include_fields = [
+            'id', 'title', 'description', 'document',
+            'date_create', 'date_last_modify', 'status',
+        ]
+        self.photo_response_include_fields = [
+            'id', 'title', 'pub_date', 'photo', 'is_public',
+            'tags', 'note', 'photo_64', 'extension', 'folder'
         ]
         super(TrackerFolderEditView, self).__init__(*args, **kwargs)
 

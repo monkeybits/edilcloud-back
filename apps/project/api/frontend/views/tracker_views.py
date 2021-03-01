@@ -2364,12 +2364,12 @@ class TrackerActivityPostAddView(
     serializer_class = serializers.ActivityPostAddSerializer
 
     def __init__(self, *args, **kwargs):
-        self.activity_request_include_fields = [
-            'text', 'alert',
+        self.post_request_include_fields = [
+            'text', 'alert', 'is_public',
             'published_date', 'created_date', 'unique_code'
         ]
         self.activity_response_include_fields = [
-            'id', 'author', 'text', 'sub_task',
+            'id', 'author', 'text', 'sub_task', 'is_public',
             'published_date', 'created_date', 'unique_code', 'alert'
         ]
         self.user_response_include_fields = [
@@ -2403,12 +2403,12 @@ class TrackerTaskPostAddView(
     serializer_class = serializers.TaskPostAddSerializer
 
     def __init__(self, *args, **kwargs):
-        self.activity_request_include_fields = [
-            'text', 'alert',
+        self.post_request_include_fields = [
+            'text', 'alert', 'is_public',
             'published_date', 'created_date', 'unique_code'
         ]
         self.activity_response_include_fields = [
-            'id', 'author', 'text', 'task', 'sub_task',
+            'id', 'author', 'text', 'task', 'sub_task', 'is_public',
             'published_date', 'created_date', 'unique_code', 'alert'
         ]
         self.user_response_include_fields = [
@@ -2443,7 +2443,7 @@ class TrackerPostEditView(
 
     def __init__(self, *args, **kwargs):
         self.post_request_include_fields = [
-            'text', 'alert',
+            'text', 'alert', 'is_public',
             'published_date', 'created_date', 'unique_code'
         ]
         self.profile_response_include_fields = [

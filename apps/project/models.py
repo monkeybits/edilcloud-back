@@ -596,7 +596,7 @@ class Post(OrderedModel):
         default=False,
         verbose_name=_('alert')
     )
-    text = models.TextField()
+    text = models.TextField(blank=True)
     created_date = models.DateTimeField(
             default=timezone.now)
     published_date = models.DateTimeField(

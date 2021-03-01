@@ -724,6 +724,7 @@ class PostSerializer(DynamicFieldsModelSerializer, JWTPayloadMixin, serializers.
             'text',
             'comment_set',
             'alert',
+            'is_public',
             'unique_code'
         ]
 
@@ -1593,7 +1594,7 @@ class TaskPostAddSerializer(
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
-            return view.activity_request_include_fields
+            return view.post_request_include_fields
         return super(TaskPostAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
@@ -1633,7 +1634,7 @@ class ActivityPostAddSerializer(
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
-            return view.activity_request_include_fields
+            return view.post_request_include_fields
         return super(ActivityPostAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):

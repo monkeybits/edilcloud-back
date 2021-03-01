@@ -849,7 +849,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             **post_dict
         )
         post_worker.save()
-        post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
+        #post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
         return post_worker
 
     def create_activity_post(self, post_dict):
@@ -862,7 +862,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             **post_dict
         )
         post_worker.save()
-        post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
+        #post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
         return post_worker
 
     def create_post_comment(self, comment_dict):
@@ -895,14 +895,14 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         Get all posts of a specific activity
         """
         activity_obj = Activity.objects.get(id=activity)
-        return activity_obj.post_set.all()
+        return activity_obj.post_set.filter((Q(is_public=False, author__company=self.company) | Q(is_public=True)))
 
     def list_task_own_posts(self, task):
         """
         Get all posts of a specific activity
         """
         task_obj = Task.objects.get(id=task)
-        return task_obj.post_set.all()
+        return task_obj.post_set.filter(Q(is_public=False, author__company=self.company) | Q(is_public=True))
 
     def remove_post(self, post):
         post = Post.objects.get(id=post.id)
@@ -2233,7 +2233,8 @@ class OwnerProfile(Profile):
         if only_alert:
             alert_notification(post._meta.model, post)
         else:
-            post_notification(post._meta.model, post, {'created': None})
+            pass
+            #post_notification(post._meta.model, post, {'created': None})
         return post
 
     def get_attachment(self, attachment_id):

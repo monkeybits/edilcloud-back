@@ -20,6 +20,7 @@ services:
       - .:/office2017.whistle.it
     ports:
       - "8000:8000"
+      - "3000:3000"
     networks:
       - streams
     depends_on:

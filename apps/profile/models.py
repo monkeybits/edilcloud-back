@@ -2198,12 +2198,23 @@ class OwnerProfile(Profile):
         post = Post.objects.get(id=post_id)
         return post
 
-    def edit_post(self, post_dict):
+    def notify_post(self, post_dict):
         """
-        Update a company project
+        Notify post 
+        """
+        from ..project.signals import post_notification
+        post = self.get_post(post_dict['id'])
+        post_notification(post._meta.model, post, self.request)
+        return post
+        
+        
+    def edit_post(self, post_dict, request):
+        """
+        Update post
         """
         from ..project.signals import post_notification, alert_notification
         post = self.get_post(post_dict['id'])
+        post_notification(post._meta.model, post, request)
         if post.alert != post_dict['alert']:
             only_alert = True
         else:

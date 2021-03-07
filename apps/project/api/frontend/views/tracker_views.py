@@ -2435,7 +2435,7 @@ class TrackerPostEditView(
         TrackerPostEditMixin,
         generics.UpdateAPIView):
     """
-    Create a Post for an activity
+    Edit a Post for an activity
     """
     permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
@@ -2451,7 +2451,33 @@ class TrackerPostEditView(
             'role', 'email', 'fax', 'phone'
         ]
         super(TrackerPostEditView, self).__init__(*args, **kwargs)
+    
+    
 
+class TrackerPostNotifyView(
+WhistleGenericViewMixin,
+TrackerPostMixin,
+generics.CreateAPIView):
+    """
+    Edit a Post for an activity
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
+    serializer_class = serializers.PostNotifySerializer
+
+    def __init__(self, *args, **kwargs):
+        self.post_request_include_fields = [
+        'text', 'alert', 'is_public',
+        'published_date', 'created_date', 'unique_code'
+        ]
+        self.profile_response_include_fields = [
+        'id', 'first_name', 'last_name', 'photo', 'position',
+        'role', 'email', 'fax', 'phone'
+        ]
+        super(TrackerPostNotifyView, self).__init__(*args, **kwargs)
+
+        
+        
 class TrackerActivityPostListView(
         WhistleGenericViewMixin,
         QuerysetMixin,

@@ -20,21 +20,40 @@ from web import exceptions as django_exception
 from web.api.views import WhistleGenericViewMixin, JWTPayloadMixin
 
 palette_color = [
-    '#d32f2f',
-    '#7b1fa2',
-    '#303f9f',
-    '#00796b',
-    '#00e5ff',
-    '#1b5e20',
-    '#76ff03',
-    '#ffeb3b',
-    '#ff6f00',
-    '#795548',
-    '#212121',
-    '#ff4081',
+  '#EF5350',
+  '#EC407A',
+  '#AB47BC',
+  '#7E57C2',
+  '#5C6BC0',
+  '#42A5F5',
+  '#29B6F6',
+  '#26C6DA',
+  '#26A69A',
+  '#66BB6A',
+  '#9CCC65',
+  '#D4E157',
+  '#FFEE58',
+  '#FFCA28',
+  '#FFA726',
+  '#8D6E63',
+  '#FF7043',
+  '#BDBDBD',
+  '#78909C',
 ]
 palette_color2 = [
-'#F44336',
+  '#D32F2F',
+  '#7B1FA2',
+  '#303F9F',
+  '#00796B',
+  '#00E5FF',
+  '#1B5E20',
+  '#76FF03',
+  '#FFEB3B',
+  '#FF6F00',
+  '#795548',
+  '#212121',
+  '#FF4081',
+  '#F44336',
   '#FFEBEE',
   '#FFCDD2',
   '#EF9A9A',
@@ -316,11 +335,11 @@ class UserProfileMixin(
     """
     Profile Mixin
     """
-    def set_output_serializer(self, output_serializer=None):
+    def set_output_serializer(self, output_serializer = None):
         if output_serializer is None:
-            self.serializer_class = serializers.ProfileSerializer
+            self.serializer_class=serializers.ProfileSerializer
         else:
-            self.serializer_class = output_serializer
+            self.serializer_class=output_serializer
 
 
 class UserCompanyMixin(
@@ -328,11 +347,11 @@ class UserCompanyMixin(
     """
     Company Mixin
     """
-    def set_output_serializer(self, output_serializer=None):
+    def set_output_serializer(self, output_serializer = None):
         if output_serializer is None:
-            self.serializer_class = serializers.CompanySerializer
+            self.serializer_class=serializers.CompanySerializer
         else:
-            self.serializer_class = output_serializer
+            self.serializer_class=output_serializer
 
 
 class CompanyAddView(
@@ -342,10 +361,10 @@ class CompanyAddView(
     """
     Creates a company and then company profile
     """
-    serializer_class = serializers.CompanyAddSerializer
+    serializer_class=serializers.CompanyAddSerializer
 
     def __init__(self, *args, **kwargs):
-        self.company_request_include_fields = [
+        self.company_request_include_fields=[
             'name', 'slug', 'brand', 'tax_code', 'vat_number',
             'url', 'email', 'phone', 'phone2', 'fax', 'logo',
             'note', 'category', 'description', 'is_supplier', 'color'
@@ -356,7 +375,7 @@ class CompanyAddView(
             'note', 'category', 'color'
         ]
         super(CompanyAddView, self).__init__(*args, **kwargs)
-    
+
     def post(self, request, *args, **kwargs):
         if not request.POST._mutable:
             request.POST._mutable = True
@@ -381,10 +400,10 @@ class MyCompanyListView(
     Get all companies connected to their user
     """
 
-    serializer_class = serializers.CompanySerializer
+    serializer_class=serializers.CompanySerializer
 
     def __init__(self, *args, **kwargs):
-        self.company_response_include_fields = [
+        self.company_response_include_fields=[
             'id', 'name', 'slug', 'email', 'tax_code',
             'email', 'phone', 'logo'
         ]

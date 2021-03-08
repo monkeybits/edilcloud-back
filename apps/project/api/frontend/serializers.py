@@ -1661,7 +1661,7 @@ class TaskPostAddSerializer(
                     post=task_post,
                     media=file
                 )
-            post_notification(task_post._meta.model, task_post, {'created': task_post.created_date})
+            #post_notification(task_post._meta.model, task_post, {'created': task_post.created_date})
             return task_post
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(

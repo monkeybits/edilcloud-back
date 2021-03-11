@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from djstripe.models import Product
 
+from apps.payments.signals import payment_failed_notification, payment_success_notification
 from apps.profile.models import Profile, Company
 from web.settings import STRIPE_PUBLIC_KEY, STRIPE_SECRET_KEY
 
@@ -142,39 +143,37 @@ def customer_portal(request):
 
 @csrf_exempt
 def my_webhook_view(request):
-    webhook_secret = 'whsec_c5UDu75y55yZ2JRry8BGOEvZ8u0PNu7R'
-    request_data = json.loads(request.data)
-
-    if webhook_secret:
-        # Retrieve the event by verifying the signature using the raw body and secret if webhook signing is configured.
-        signature = request.headers.get('stripe-signature')
-        try:
-            event = stripe.Webhook.construct_event(
-                payload=request.data, sig_header=signature, secret=webhook_secret)
-            data = event['data']
-        except Exception as e:
-            return e
-        # Get the type of webhook event sent - used to check the status of PaymentIntents.
-        event_type = event['type']
-    else:
-        data = request_data['data']
-        event_type = request_data['type']
-    data_object = data['object']
-
+    payload = json.loads(request.body.decode('utf-8'))
+    event = None
+    # Retrieve the event by verifying the signature using the raw body and secret if webhook signing is configured.
+    try:
+        event = stripe.Event.construct_from(
+            payload, STRIPE_SECRET_KEY)
+        event_type = event.type
+    except Exception as e:
+        return e
+    customer_id = event.data.object.customer
+    company = Company.objects.get(customer=customer_id)
+    # Get the type of webhook event sent - used to check the status of PaymentIntents.
+    if event_type == 'customer.subscription.trial_will_end':
+        company.trial_used = True
+        company.save()
     if event_type == 'checkout.session.completed':
         # Payment is successful and the subscription is created.
         # You should provision the subscription.
-        print(data)
+        print(event.data.object)
     elif event_type == 'invoice.paid':
         # Continue to provision the subscription as payments continue to be made.
         # Store the status in your database and check when a user accesses your service.
         # This approach helps you avoid hitting rate limits.
-        print(data)
+        print(event.data.object)
+        payment_success_notification(company.get_owners())
     elif event_type == 'invoice.payment_failed':
         # The payment failed or the customer does not have a valid payment method.
         # The subscription becomes past_due. Notify your customer and send them to the
         # customer portal to update their payment information.
-        print(data)
+        print(event.data.object)
+        payment_failed_notification(company.get_owners())
     else:
         print('Unhandled event type {}'.format(event.type))
 

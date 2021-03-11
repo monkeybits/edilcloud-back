@@ -1,4 +1,17 @@
 # -*- coding: utf-8 -*-
+from web.api.views import JWTPayloadMixin, ArrayFieldInMultipartMixin
+from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment, Task, Project
+from web.api.serializers import DynamicFieldsModelSerializer
+from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
+from web.drf import exceptions as django_api_exception
+from web import exceptions as django_exception
+from apps.document.api.frontend import serializers as document_serializers
+from apps.profile.api.frontend import serializers as profile_serializers
+from ... import models
+from apps.profile.models import Profile
+from apps.profile.api.frontend.serializers import ProfileSerializer, UserSerializer, TeamProfileSerializer
+from apps.message.api.frontend.serializers import TalkSerializer
+from rest_framework import serializers, status
 import datetime
 import os
 import random
@@ -10,37 +23,43 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework_jwt.settings import api_settings
 
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
-from rest_framework import serializers, status
 
-from apps.message.api.frontend.serializers import TalkSerializer
-from apps.profile.api.frontend.serializers import ProfileSerializer, UserSerializer, TeamProfileSerializer
-from apps.profile.models import Profile
-from ... import models
-from apps.profile.api.frontend import serializers as profile_serializers
-from apps.document.api.frontend import serializers as document_serializers
-from web import exceptions as django_exception
-from web.drf import exceptions as django_api_exception
-from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
-from web.api.serializers import DynamicFieldsModelSerializer
-from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment, Task, Project
-from web.api.views import JWTPayloadMixin, ArrayFieldInMultipartMixin
 
-palette_color = [
-    '#d32f2f',
-    '#7b1fa2',
-    '#303f9f',
-    '#00796b',
-    '#00e5ff',
-    '#1b5e20',
-    '#76ff03',
-    '#ffeb3b',
-    '#ff6f00',
-    '#795548',
-    '#212121',
-    '#ff4081',
+palette_color =
+  '#EF5350',
+  '#EC407A',
+  '#AB47BC',
+  '#7E57C2',
+  '#5C6BC0',
+  '#42A5F5',
+  '#29B6F6',
+  '#26C6DA',
+  '#26A69A',
+  '#66BB6A',
+  '#9CCC65',
+  '#D4E157',
+  '#FFEE58',
+  '#FFCA28',
+  '#FFA726',
+  '#8D6E63',
+  '#FF7043',
+  '#BDBDBD',
+  '#78909C',
 ]
 palette_color2 = [
-'#F44336',
+  '#D32F2F',
+  '#7B1FA2',
+  '#303F9F',
+  '#00796B',
+  '#00E5FF',
+  '#1B5E20',
+  '#76FF03',
+  '#FFEB3B',
+  '#FF6F00',
+  '#795548',
+  '#212121',
+  '#FF4081',
+  '#F44336',
   '#FFEBEE',
   '#FFCDD2',
   '#EF9A9A',
@@ -335,33 +354,35 @@ class FilteredListSerializer(serializers.ListSerializer):
 
 class ProjectSerializer(
     DynamicFieldsModelSerializer):
-    typology = serializers.ReadOnlyField(source='get_typology')
-    completed = serializers.ReadOnlyField(source='get_completed_perc')
-    shared_companies = serializers.ReadOnlyField(source='get_shared_companies')
-    messages_count = serializers.ReadOnlyField(source='get_messages_count')
-    days_for_gantt = serializers.SerializerMethodField(source='get_days_for_gantt')
-    project_owner = profile_serializers.CompanySerializer(source='get_project_owner')
-    company = profile_serializers.CompanySerializer()
-    referent = profile_serializers.ProfileSerializer()
-    profiles = profile_serializers.TeamProfileSerializer(many=True)
-    talks = TalkSerializer(many=True)
-    creator = profile_serializers.UserSerializer()
-    last_message_created = serializers.SerializerMethodField()
+    typology=serializers.ReadOnlyField(source = 'get_typology')
+    completed=serializers.ReadOnlyField(source = 'get_completed_perc')
+    shared_companies=serializers.ReadOnlyField(source = 'get_shared_companies')
+    messages_count=serializers.ReadOnlyField(source = 'get_messages_count')
+    days_for_gantt=serializers.SerializerMethodField(
+        source = 'get_days_for_gantt')
+    project_owner=profile_serializers.CompanySerializer(
+        source = 'get_project_owner')
+    company=profile_serializers.CompanySerializer()
+    referent=profile_serializers.ProfileSerializer()
+    profiles=profile_serializers.TeamProfileSerializer(many = True)
+    talks=TalkSerializer(many = True)
+    creator=profile_serializers.UserSerializer()
+    last_message_created=serializers.SerializerMethodField()
 
     class Meta:
-        model = models.Project
-        fields = '__all__'
+        model=models.Project
+        fields='__all__'
 
     def get_field_names(self, *args, **kwargs):
-        view = self.get_view
+        view=self.get_view
         if view:
-            if 'month' in view.kwargs: self.month = view.kwargs['month']
-            if 'year' in view.kwargs: self.year = view.kwargs['year']
+            if 'month' in view.kwargs: self.month=view.kwargs['month']
+            if 'year' in view.kwargs: self.year=view.kwargs['year']
             return view.project_response_include_fields
         return super(ProjectSerializer, self).get_field_names(*args, **kwargs)
 
     def get_last_message_created(self, obj):
-        talk = obj.talks.last()
+        talk=obj.talks.last()
         try:
             if talk:
                 return talk.messages.all().last().date_create
@@ -371,12 +392,13 @@ class ProjectSerializer(
 
 
     def get_days_for_gantt(self, obj):
-        days = []
-        date_from, date_to = get_first_last_dates_of_month_and_year(self.month, self.year)
+        days=[]
+        date_from, date_to=get_first_last_dates_of_month_and_year(
+            self.month, self.year)
 
-        start_date, end_date = (date_from, date_to)
-        if obj.date_start.month == date_from.month: start_date = obj.date_start
-        if obj.date_end.month == date_from.month: end_date = obj.date_end
+        start_date, end_date=(date_from, date_to)
+        if obj.date_start.month == date_from.month: start_date=obj.date_start
+        if obj.date_end.month == date_from.month: end_date=obj.date_end
         for dt in daterange(start_date, end_date):
             days.append(dt.day)
         return days
@@ -385,30 +407,30 @@ class ProjectSerializer(
 class SimpleProjectSerializer(
     DynamicFieldsModelSerializer):
     class Meta:
-        model = models.Project
-        fields = '__all__'
+        model=models.Project
+        fields='__all__'
 
     def get_field_names(self, *args, **kwargs):
-        view = self.get_view
+        view=self.get_view
         if view:
-            if 'month' in view.kwargs: self.month = view.kwargs['month']
-            if 'year' in view.kwargs: self.year = view.kwargs['year']
+            if 'month' in view.kwargs: self.month=view.kwargs['month']
+            if 'year' in view.kwargs: self.year=view.kwargs['year']
             return view.project_response_include_fields
         return super(SimpleProjectSerializer, self).get_field_names(*args, **kwargs)
 
 
 class ProjectCalendarSerializer(
     DynamicFieldsModelSerializer):
-    start = serializers.DateField(source='date_start')
-    end = serializers.DateField(source='date_end')
-    title = serializers.CharField(source='name')
+    start=serializers.DateField(source = 'date_start')
+    end=serializers.DateField(source = 'date_end')
+    title=serializers.CharField(source = 'name')
 
     class Meta:
-        model = models.Project
-        fields = '__all__'
+        model=models.Project
+        fields='__all__'
 
     def get_field_names(self, *args, **kwargs):
-        view = self.get_view
+        view=self.get_view
         if view:
             return view.project_response_include_fields
         return super(ProjectCalendarSerializer, self).get_field_names(*args, **kwargs)
@@ -418,19 +440,20 @@ class ProjectAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin):
     class Meta:
-        model = models.Project
-        fields = '__all__'
+        model=models.Project
+        fields='__all__'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        context = kwargs.get('context', None)
+        context=kwargs.get('context', None)
         if context:
-            self.request = kwargs['context']['request']
-            payload = self.get_payload()
-            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            self.request=kwargs['context']['request']
+            payload=self.get_payload()
+            self.profile=self.request.user.get_profile_by_id(
+                payload['extra']['profile']['id'])
 
     def get_field_names(self, *args, **kwargs):
-        view = self.get_view
+        view=self.get_view
         if view:
             return view.project_request_include_fields
         return super(ProjectAddSerializer, self).get_field_names(*args, **kwargs)
@@ -445,9 +468,10 @@ class ProjectAddSerializer(
 
     def create(self, validated_data):
         try:
-            project = self.profile.create_project(validated_data)
+            project=self.profile.create_project(validated_data)
             ProjectCompanyColorAssignment.objects.create(
-                project=project, company=project.company, color=choose_random_color(project.company, project)
+                project = project, company = project.company, color = choose_random_color(
+                    project.company, project)
             )
             return project
         except Exception as exc:
@@ -1254,7 +1278,7 @@ class TeamAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
     serializers.ModelSerializer):
-    #profile = profile_serializers.ProfileEditSerializer()
+    # profile = profile_serializers.ProfileEditSerializer()
 
     class Meta:
         model = models.Team

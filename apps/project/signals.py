@@ -1,3 +1,4 @@
+import ast
 import json
 import logging
 
@@ -67,6 +68,8 @@ from ..notify.signals import send_push_notification
 #
 #     except Exception as e:
 #         print(e)
+from ..profile.models import Company
+
 EMOJI_UNICODES = {
     'construction': '\U0001F3D7',
     'speech_baloon': '\U0001F4AC',
@@ -502,10 +505,11 @@ def alert_notification(sender, instance, **kwargs):
 
 # @receiver([post_save, post_delete], sender=project_models.Post)
 def post_notification(sender, instance, request, **kwargs):
-    if not 'notification_type' in request.query_params:
+    if not 'company_ids' in request.query_params:
         return
-    type_notify = request.query_params.get('notification_type')
-    print(type_notify)
+    company_ids = request.query_params.get('company_ids')
+    company_ids = ast.literal_eval(company_ids)
+    print(company_ids)
     profile = get_current_profile()
 
     try:
@@ -518,18 +522,10 @@ def post_notification(sender, instance, request, **kwargs):
                 # company_staff = instance.sub_task.workers.all().union(
                 #     instance.sub_task.task.project.company.get_owners_and_delegates()
                 # )
-            if type_notify == 'mycompany':
-                company_staff = instance.sub_task.task.project.profiles.filter(company=profile.company).union(
-                        instance.sub_task.task.project.company.get_owners_and_delegates()
-                    )
-            if type_notify == 'mycompany_and_creator':
-                company_staff = instance.sub_task.task.project.profiles.filter(company__in=[profile.company, instance.sub_task.task.project.company]).union(
-                        instance.sub_task.task.project.company.get_owners_and_delegates()
-                    )
-            if type_notify == 'all':
-                company_staff = instance.sub_task.task.project.profiles.all().union(
-                        instance.sub_task.task.project.company.get_owners_and_delegates()
-                    )
+            companies_choosen = Company.objects.filter(id__in=company_ids)
+            company_staff = instance.sub_task.task.project.profiles.filter(company__in=companies_choosen).union(
+                    instance.sub_task.task.project.company.get_owners_and_delegates()
+                )
             post_for_model = 'activity'
         else:
             #  if instance.is_public:
@@ -540,22 +536,11 @@ def post_notification(sender, instance, request, **kwargs):
             #     company_staff = instance.task.project.profiles.all().union(
             #         instance.task.project.company.get_owners_and_delegates()
             #     )
-            if type_notify == 'mycompany':
-                company_staff = instance.task.project.profiles.filter(company=profile.company).union(
-                        instance.task.project.company.get_owners_and_delegates()
-                    )
-            if type_notify == 'mycompany_and_creator':
-                company_staff = instance.task.project.profiles.filter(company__in=[profile.company, instance.task.project.company]).union(
-                        instance.task.project.company.get_owners_and_delegates()
-                    )
-            if type_notify == 'all':
-                company_staff = instance.task.project.profiles.all().union(
-                        instance.task.project.company.get_owners_and_delegates()
-                    )
+            companies_choosen = Company.objects.filter(id__in=company_ids)
+            company_staff = instance.task.project.profiles.filter(company__in=companies_choosen).union(
+                    instance.task.project.company.get_owners_and_delegates()
+                )
             post_for_model = 'task'
-        print(company_staff)
-        
-
     except:
         return
     # If there is no JWT token in the request,

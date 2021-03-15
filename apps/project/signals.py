@@ -550,21 +550,21 @@ def post_notification(sender, instance, request, **kwargs):
     try:
         if post_for_model == 'activity':
             subject = build_array_message(EMOJI_UNICODES['newspaper'], [
-                _('New post has been created')
+               'Nuovo post notificato'
             ])
             content = build_array_message(None, [
                 "{} {}".format(profile.first_name, profile.last_name),
-                _('has created a new post in activity'),
+                "ha notificato il post",
                 instance.sub_task.title,
                 '\n"' + instance.text + '"'
             ])
         else:
             subject = build_array_message(EMOJI_UNICODES['newspaper'], [
-                _('New post has been created')
+                'Nuovo post notificato'
             ])
             content = build_array_message(None, [
                 "{} {}".format(profile.first_name, profile.last_name),
-                _('has created a new post in task'),
+                "ha notificato il post",
                 instance.task.name,
                 '\n"' + instance.text + '"'
             ])

@@ -505,10 +505,9 @@ def alert_notification(sender, instance, **kwargs):
 
 # @receiver([post_save, post_delete], sender=project_models.Post)
 def post_notification(sender, instance, request, **kwargs):
-    if not 'company_ids' in request.query_params:
+    if not 'company_ids' in request.data:
         return
-    company_ids = request.query_params.get('company_ids')
-    company_ids = ast.literal_eval(company_ids)
+    company_ids = request.data['company_ids']
     print(company_ids)
     profile = get_current_profile()
 
@@ -550,41 +549,25 @@ def post_notification(sender, instance, request, **kwargs):
 
     try:
         if post_for_model == 'activity':
-            if 'created' in kwargs:
-                if kwargs['created']:
-                    subject = build_array_message(EMOJI_UNICODES['newspaper'], [
-                        _('New post has been created')
-                    ])
-                    content = build_array_message(None, [
-                        "{} {}".format(profile.first_name, profile.last_name),
-                        _('has created a new post in activity'),
-                        instance.sub_task.title,
-                        '\n"' + instance.text + '"'
-                    ])
-                else:
-                    subject = '%s ' % emoji.emojize(':pencil:') + _("Post updated in activity").__str__() + " %s" + instance.sub_task.title
-                    return
-            else:
-                subject = '%s ' % emoji.emojize(':pencil:') + _("Post deleted in activity").__str__() + " %s" + instance.sub_task.title
-                return
+            subject = build_array_message(EMOJI_UNICODES['newspaper'], [
+                _('New post has been created')
+            ])
+            content = build_array_message(None, [
+                "{} {}".format(profile.first_name, profile.last_name),
+                _('has created a new post in activity'),
+                instance.sub_task.title,
+                '\n"' + instance.text + '"'
+            ])
         else:
-            if 'created' in kwargs:
-                if kwargs['created']:
-                    subject = build_array_message(EMOJI_UNICODES['newspaper'], [
-                        _('New post has been created')
-                    ])
-                    content = build_array_message(None, [
-                        "{} {}".format(profile.first_name, profile.last_name),
-                        _('has created a new post in task'),
-                        instance.task.name,
-                        '\n"' + instance.text + '"'
-                    ])
-                else:
-                    subject = '%s ' % emoji.emojize(':pencil:') + _("Post updated in task").__str__ () + " %s" + instance.task.name
-                    return
-            else:
-                subject = '%s ' % emoji.emojize(':pencil:') + _("Post deleted in task").__str__() + " %s" + instance.task.name
-                return
+            subject = build_array_message(EMOJI_UNICODES['newspaper'], [
+                _('New post has been created')
+            ])
+            content = build_array_message(None, [
+                "{} {}".format(profile.first_name, profile.last_name),
+                _('has created a new post in task'),
+                instance.task.name,
+                '\n"' + instance.text + '"'
+            ])
         try:
             endpoint = '/apps/projects/{}/task'.format(str(instance.task.project.id))
         except:

@@ -237,6 +237,12 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         db_index=True,
         verbose_name=_("city"),
     )
+    country = models.CharField(
+        max_length=255,
+        blank=True,
+        db_index=True,
+        verbose_name=_("country"),
+    )
     address = models.CharField(
         max_length=255,
         blank=True,

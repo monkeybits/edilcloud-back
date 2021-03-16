@@ -23,7 +23,9 @@ class CompanyListView(
     def __init__(self, *args, **kwargs):
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'url', 'email', 'phone',
-            'logo', 'followed', 'is_supplier'
+            'logo', 'followed', 'is_supplier','country', 'address',
+            'sdi', 'province', 'cap', 'tax_code', 
+            'vat_number', 'pec', 'billing_email'
         ]
         super(CompanyListView, self).__init__(*args, **kwargs)
 

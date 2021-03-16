@@ -25,7 +25,7 @@ from rest_framework_jwt.settings import api_settings
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 
 
-palette_color =
+palette_color = [
   '#EF5350',
   '#EC407A',
   '#AB47BC',

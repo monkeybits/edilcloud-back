@@ -905,7 +905,9 @@ class TrackerCompanyEditView(
             'vat_number', 'url',
             'email', 'phone', 'phone2', 'fax',
             'note', 'logo', 'category',
-            'color'
+            'color', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'pec', 'billing_email'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'brand', 'description', 'tax_code',

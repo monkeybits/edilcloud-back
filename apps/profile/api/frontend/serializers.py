@@ -739,7 +739,7 @@ class ProfileEditSerializer(
 
     def get_photo(self, obj):
         try:
-            photo_url = obj.photo.url
+            photo_url = obj.get_main_profile().photo.url
             protocol = self.context['request'].is_secure()
             if protocol:
                 protocol = 'https://'

@@ -151,7 +151,6 @@ class SocialLoginView(generics.GenericAPIView):
     serializer_class = SocialAuthSerializer
     permission_classes = [permissions.AllowAny]
 
-
     def post(self, request):
         """Authenticate user through the provider and access_token"""
 

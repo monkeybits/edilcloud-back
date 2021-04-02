@@ -194,9 +194,9 @@ class SocialLoginView(generics.GenericAPIView):
                 shutil.rmtree(main_profile.photo.path.rsplit('/', 1)[0])
             except Exception as es:
                 print(es.__str__())
-            main_profile.photo.save(
-                "{}_{}_{}{}".format(provider, authenticated_user.first_name, authenticated_user.last_name, file_ext),
-                File(io))
+            # main_profile.photo.save(
+            #     "{}_{}_{}{}".format(provider, authenticated_user.first_name, authenticated_user.last_name, file_ext),
+            #     File(io))
         except Exception as e:
             print(e.__str__())
             return Response(status=status.HTTP_400_BAD_REQUEST,

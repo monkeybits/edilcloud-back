@@ -761,6 +761,9 @@ class ProfileEditSerializer(
                 generic_profile = instance
 
             validated_data['id'] = instance.id
+            files = list(self.request.FILES.values())
+            if len(files) > 0:
+                validated_data['photo'] = files[0]
             profile = generic_profile.edit_profile(validated_data)
             return profile
         except Exception as err:

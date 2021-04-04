@@ -313,29 +313,16 @@
                         </div>
                         <div class="p-3 border-bottom osahan-post-body">
                             <p class="mb-0">{{ post.text }} </p>
-                        </div>
-                        {#                            <img style="max-width:24%;" src="https://i.stack.imgur.com/EAK1B.png" class="img-fluid p-2"#}
-                        {#                                 alt="Responsive image">#}
-                        {##}
-                        {#                            <img style="max-width:24%;" src="https://i.ytimg.com/vi/5tCs-5-nuyw/maxresdefault.jpg"#}
-                        {#                                 class="img-fluid p-2" alt="Responsive image">#}
-                        {##}
-                        {#                            <img style="max-width:24%;"#}
-                        {#                                 src="https://cdn.guidingtech.com/media/assets/WordPress-Import/2015/12/_1200x630_crop_center-center_82_none/Chromer-for-Android.jpg?mtime=1507902987"#}
-                        {#                                 class="img-fluid p-2" alt="Responsive image">#}
-                        {##}
-                        {#                            <img style="max-width:24%;" src="https://i.stack.imgur.com/EAK1B.png" class="img-fluid p-2"#}
-                        {#                                 alt="Responsive image">#}
+                        </div>  {% for media in task.mediaassignement_set.all() %}
+                              <img style="max-width:24%;" src="{{ media.media.url }}" class="img-fluid p-2" alt="Responsive image">
+                                {% endfor %}  
+                              
                         <div class="p-3">
-                            <button type="button" class="btn btn-outline-primary btn-sm mr-1">nome immagine 1
+                            {% for media in task.mediaassignement_set.all() %}
+                            <button type="button" class="btn btn-outline-primary btn-sm mr-1">{{ media.name.url }}
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm mr-1">nome immagine 2
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm mr-1">nome immagine 3
-                            </button>
-
-                            <button type="button" class="btn btn-outline-secondary btn-sm mr-1">nome immagine 4
-                            </button>
+                            {% endfor %}  
+                        
                         </div>
                         <div class="p-3 border-top osahan-post-body"><a href="profile.html">
                         </a>

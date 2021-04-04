@@ -23,9 +23,9 @@ from web.api.serializers import DynamicFieldsModelSerializer
 from django.utils.text import slugify
 from apps.document.api.frontend.serializers import DocumentSerializer
 
-class PhotoSerializer(
-        DynamicFieldsModelSerializer):
 
+class PhotoSerializer(
+    DynamicFieldsModelSerializer):
     extension = serializers.SerializerMethodField()
     photo_64 = serializers.SerializerMethodField()
     photo = serializers.SerializerMethodField()
@@ -102,10 +102,9 @@ class PhotoSerializer(
 
 
 class PhotoAddSerializer(
-        JWTPayloadMixin,
-        ArrayFieldInMultipartMixin,
-        DynamicFieldsModelSerializer):
-
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
+    DynamicFieldsModelSerializer):
     photo_64 = serializers.SerializerMethodField(read_only=True)
     extension = serializers.SerializerMethodField(read_only=True)
     size = serializers.SerializerMethodField(read_only=True)
@@ -148,12 +147,14 @@ class PhotoAddSerializer(
         if 'additional_path' in self.request.data:
             validated_data['additional_path'] = self.request.data['additional_path']
         try:
-            check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data)['total_size'])
+            check_limitation_plan(self.profile.company.customer, 'size',
+                                  get_media_size(self.profile, validated_data)['total_size'])
             photo = self.profile.create_photo(validated_data)
             return photo
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
     def get_photo_64(self, obj):
@@ -169,6 +170,7 @@ class PhotoAddSerializer(
     def get_extension(self, obj):
         return obj.get_file_extension()[1:]
 
+
 def get_upload_folder_path2(instance, subpath, folder, is_public, create=False, type='photo'):
     media_dir1 = instance._meta.model_name
     media_dir2 = slugify(instance.__str__().lower())
@@ -178,16 +180,17 @@ def get_upload_folder_path2(instance, subpath, folder, is_public, create=False, 
     media_root = get_media_root(is_public)
     if create:
         if subpath == '' or subpath == '/':
-            os.makedirs(os.path.join(media_root, type, format(media_dir1), format(media_dir2),  folder))
+            os.makedirs(os.path.join(media_root, type, format(media_dir1), format(media_dir2), folder))
         else:
-            os.makedirs(os.path.join(media_root, type, format(media_dir1), format(media_dir2), subpath,folder))
+            os.makedirs(os.path.join(media_root, type, format(media_dir1), format(media_dir2), subpath, folder))
 
     return os.path.join(media_root, type, format(media_dir1), format(media_dir2))
 
+
 class PhotoMoveSerializer(
-        JWTPayloadMixin,
-        ArrayFieldInMultipartMixin,
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
+    DynamicFieldsModelSerializer):
     to = serializers.SerializerMethodField()
 
     class Meta:
@@ -241,10 +244,9 @@ class PhotoMoveSerializer(
 
 
 class PhotoEditSerializer(
-        JWTPayloadMixin,
-        ArrayFieldInMultipartMixin,
-        DynamicFieldsModelSerializer):
-
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
+    DynamicFieldsModelSerializer):
     photo_64 = serializers.SerializerMethodField(read_only=True)
     extension = serializers.SerializerMethodField(read_only=True)
     size = serializers.SerializerMethodField()
@@ -286,9 +288,9 @@ class PhotoEditSerializer(
     def get_extension(self, obj):
         return obj.get_file_extension()[1:]
 
-class VideoSerializer(
-        DynamicFieldsModelSerializer):
 
+class VideoSerializer(
+    DynamicFieldsModelSerializer):
     extension = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField()
     relative_path = serializers.SerializerMethodField()
@@ -341,10 +343,9 @@ class VideoSerializer(
 
 
 class VideoAddSerializer(
-        JWTPayloadMixin,
-        ArrayFieldInMultipartMixin,
-        DynamicFieldsModelSerializer):
-
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
+    DynamicFieldsModelSerializer):
     extension = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -381,7 +382,8 @@ class VideoAddSerializer(
         return super(VideoAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
-        check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data)['total_size'])
+        check_limitation_plan(self.profile.company.customer, 'size',
+                              get_media_size(self.profile, validated_data)['total_size'])
         self.get_array_from_string(validated_data)
         try:
             if 'additional_path' in self.request.data:
@@ -390,7 +392,8 @@ class VideoAddSerializer(
             return video
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
     def get_extension(self, obj):
@@ -398,10 +401,9 @@ class VideoAddSerializer(
 
 
 class VideoEditSerializer(
-        JWTPayloadMixin,
-        ArrayFieldInMultipartMixin,
-        DynamicFieldsModelSerializer):
-
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
+    DynamicFieldsModelSerializer):
     extension = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -430,6 +432,7 @@ class VideoEditSerializer(
 
     def get_extension(self, obj):
         return obj.get_file_extension()
+
 
 class FolderSerializer(
     JWTPayloadMixin,
@@ -466,7 +469,7 @@ class FolderSerializer(
         global full_path
         full_path = ""
         self.get_folder_path(obj)
-        data = FolderSerializer(obj.folders.all(), many=True).data
+        data = FolderSerializer(obj.folders.all(), many=True, context=self.context).data
         return data
 
     def get_path(self, obj):
@@ -485,16 +488,18 @@ class FolderSerializer(
             'document': documents.data
         }
 
+
 class FolderStructureSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Folder
         fields = '__all__'
 
+
 class FolderAddSerializer(
-        JWTPayloadMixin,
-        ArrayFieldInMultipartMixin,
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
+    DynamicFieldsModelSerializer):
     folders = serializers.SerializerMethodField()
 
     class Meta:
@@ -534,20 +539,23 @@ class FolderAddSerializer(
         return super(FolderAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
-        check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data)['total_size'])
+        check_limitation_plan(self.profile.company.customer, 'size',
+                              get_media_size(self.profile, validated_data)['total_size'])
         self.get_array_from_string(validated_data)
         try:
             folder = self.profile.create_folder(validated_data)
             return folder
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
+
 class FolderEditSerializer(
-        JWTPayloadMixin,
-        ArrayFieldInMultipartMixin,
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
+    DynamicFieldsModelSerializer):
     folders = serializers.SerializerMethodField()
 
     class Meta:

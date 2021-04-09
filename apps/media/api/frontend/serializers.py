@@ -544,8 +544,16 @@ class FolderAddSerializer(
         self.get_array_from_string(validated_data)
         try:
             folder = self.profile.create_folder(validated_data)
+            if folder == 400:
+                raise django_api_exception.WhistleAPIException(
+                    status.HTTP_400_BAD_REQUEST, self.request, _('Folder not created. Max subfolders limit is 3')
+                )
             return folder
         except Exception as err:
+            if err.status_code == 400:
+                raise django_api_exception.WhistleAPIException(
+                    status.HTTP_400_BAD_REQUEST, self.request, _('Folder not created. Max subfolders limit is 3')
+                )
             raise django_api_exception.WhistleAPIException(
                 status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
                 _("{}".format(err.msg if hasattr(err, 'msg') else err))

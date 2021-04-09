@@ -156,6 +156,7 @@ def get_profile_by_id(self, profile_id, profile_status=1):
     translation.activate(self.get_main_profile().language)
     return profile
 
+
 def get_user_by_id(self, user_id):
     """
     :param user_id: id user
@@ -184,7 +185,7 @@ def send_account_verification_email(self, to_email=None, language_code=None):
         ),
         "first_name": self.username,
         "endpoint": os.path.join(
-            settings.PROTOCOL+"://", settings.BASE_URL,
+            settings.PROTOCOL + "://", settings.BASE_URL,
             'user-account-activation', urlsafe_base64_encode(force_bytes(self.id)),
             account_activation_token.make_token(self)
         ) + os.sep,
@@ -824,7 +825,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             new_obj = True
         else:
             new_obj = False
-        super(Profile, self).save(user=self.user,*args, **kwargs)
+        super(Profile, self).save(user=self.user, *args, **kwargs)
         if new_obj:
             self.create_preference()
 
@@ -855,7 +856,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             **post_dict
         )
         post_worker.save()
-        #post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
+        # post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
         return post_worker
 
     def create_activity_post(self, post_dict):
@@ -868,7 +869,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             **post_dict
         )
         post_worker.save()
-        #post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
+        # post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
         return post_worker
 
     def create_post_comment(self, comment_dict):
@@ -1094,7 +1095,6 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     def get_favourites(self):
         return self.favourites.all()
 
-
     def get_invitation_status(self):
         if self.company_invitation_date and not self.profile_invitation_date and not self.invitation_refuse_date:
             return settings.PROFILE_PROFILE_INVITATION_STATUS_PENDING
@@ -1111,10 +1111,10 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @property
     def is_main(self):
         if (
-            self.user
-            and not self.company
-            and not self.role
-            and self.profile_invitation_date
+                self.user
+                and not self.company
+                and not self.role
+                and self.profile_invitation_date
         ):
             return True
         return False
@@ -1122,9 +1122,9 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @property
     def is_owner(self):
         if (
-            self.company
-            and self.role == settings.OWNER
-            and self.profile_invitation_date
+                self.company
+                and self.role == settings.OWNER
+                and self.profile_invitation_date
         ):
             return True
         return False
@@ -1132,9 +1132,9 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @property
     def is_delegate(self):
         if (
-            self.company
-            and self.role == settings.DELEGATE
-            and self.profile_invitation_date
+                self.company
+                and self.role == settings.DELEGATE
+                and self.profile_invitation_date
         ):
             return True
         return False
@@ -1142,9 +1142,9 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @property
     def is_level_1(self):
         if (
-            self.company
-            and self.role == settings.LEVEL_1
-            and self.profile_invitation_date
+                self.company
+                and self.role == settings.LEVEL_1
+                and self.profile_invitation_date
         ):
             return True
         return False
@@ -1152,9 +1152,9 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @property
     def is_level_2(self):
         if (
-            self.company
-            and self.role == settings.LEVEL_2
-            and self.profile_invitation_date
+                self.company
+                and self.role == settings.LEVEL_2
+                and self.profile_invitation_date
         ):
             return True
         return False
@@ -1198,7 +1198,6 @@ class Preference(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
 
 @python_2_unicode_compatible
 class MainProfile(Profile):
-
     objects = managers.MainProfileManager()
 
     class Meta:
@@ -1234,7 +1233,7 @@ class MainProfile(Profile):
             **profile_dict
         )
         level2.save()
-        #Todo: Email send
+        # Todo: Email send
         return level2
 
     def edit_profile(self, profile_dict):
@@ -1468,7 +1467,7 @@ class OwnerProfile(Profile):
         notification_receipient = self.list_notification_receipient().get(
             id=notification_rcp.id
         )
-        notification_receipient.status=False
+        notification_receipient.status = False
         notification_receipient.save()
 
     def list_notification_receipient_event(self, type):
@@ -1889,7 +1888,8 @@ class OwnerProfile(Profile):
                 role=settings.OWNER
             )
             team.save()
-            if 'referent' in project_dict and project_dict['referent'] and project_dict['referent'] != '' and project_dict['referent'] != self:
+            if 'referent' in project_dict and project_dict['referent'] and project_dict['referent'] != '' and \
+                    project_dict['referent'] != self:
                 referent_team = Team(
                     creator=self.user,
                     last_modifier=self.user,
@@ -1927,7 +1927,8 @@ class OwnerProfile(Profile):
         Get all company projects
         """
         if self.role == 'o' or self.role == 'd':
-            return Project.objects.filter(Q(company=self.company) | Q(members__profile__in=[self], members__status=1)).distinct()
+            return Project.objects.filter(
+                Q(company=self.company) | Q(members__profile__in=[self], members__status=1)).distinct()
         else:
             return Project.objects.filter(Q(members__profile__in=[self], members__status=1)).distinct()
 
@@ -2012,6 +2013,7 @@ class OwnerProfile(Profile):
         raise django_api_exception.ProfileAPIDoesNotMatch(
             status.HTTP_403_FORBIDDEN, self.request, _('You are not the project owner!')
         )
+
     # ------ PROJECT TASK ------
 
     def create_task(self, task_dict):
@@ -2081,7 +2083,7 @@ class OwnerProfile(Profile):
         Get all company tasks of a company project
         """
         project = self.list_projects().get(id=project.id)
-        #return project.tasks.filter(Q(assigned_company=self.company) | Q(project__company_id=self.company.id))
+        # return project.tasks.filter(Q(assigned_company=self.company) | Q(project__company_id=self.company.id))
         return project.tasks.all()
 
     def list_projects_tasks(self, projects):
@@ -2116,8 +2118,8 @@ class OwnerProfile(Profile):
         date_from, date_to = get_first_last_dates_of_month_and_year(month, year)
         if date_from:
             query = (
-                Q(activities__datetime_start__gte=date_from, activities__datetime_start__lte=date_to)
-                | Q(activities__datetime_start__lt=date_from, activities__datetime_end__gte=date_from)
+                    Q(activities__datetime_start__gte=date_from, activities__datetime_start__lte=date_to)
+                    | Q(activities__datetime_start__lt=date_from, activities__datetime_end__gte=date_from)
             )
             queryset = queryset.filter(query).distinct()
         return queryset
@@ -2131,8 +2133,8 @@ class OwnerProfile(Profile):
         date_from, date_to = get_first_last_dates_of_month_and_year(month, year)
         if date_from:
             query = (
-                Q(date_start__gte=date_from, date_start__lte=date_to)
-                | Q(date_start__lt=date_from, date_end__gte=date_from)
+                    Q(date_start__gte=date_from, date_start__lte=date_to)
+                    | Q(date_start__lt=date_from, date_end__gte=date_from)
             )
             queryset = queryset.filter(query).distinct()
 
@@ -2147,8 +2149,8 @@ class OwnerProfile(Profile):
         date_from, date_to = get_first_last_dates_of_month_and_year(month, year)
         if date_from:
             query = (
-                Q(date_start__gte=date_from, date_start__lte=date_to)
-                | Q(date_start__lt=date_from, date_end__gte=date_from)
+                    Q(date_start__gte=date_from, date_start__lte=date_to)
+                    | Q(date_start__lt=date_from, date_end__gte=date_from)
             )
             queryset = queryset.filter(query).distinct()
 
@@ -2163,8 +2165,8 @@ class OwnerProfile(Profile):
         date_from, date_to = get_first_last_dates_of_month_and_year(month, year)
         if date_from:
             query = (
-                Q(datetime_start__gte=date_from, datetime_start__lte=date_to)
-                | Q(datetime_start__lt=date_from, datetime_end__gte=date_from)
+                    Q(datetime_start__gte=date_from, datetime_start__lte=date_to)
+                    | Q(datetime_start__lt=date_from, datetime_end__gte=date_from)
             )
             queryset = queryset.filter(query).distinct()
 
@@ -2251,7 +2253,7 @@ class OwnerProfile(Profile):
             alert_notification(post._meta.model, post)
         else:
             pass
-            #post_notification(post._meta.model, post, {'created': None})
+            # post_notification(post._meta.model, post, {'created': None})
         return post
 
     def get_attachment(self, attachment_id):
@@ -2286,11 +2288,11 @@ class OwnerProfile(Profile):
         #         task_dict['progress'] = 100
         #     task.__dict__.update(**task_dict)
         #     task.save()
-        if task_dict['date_completed'] and (not 'progress'in task_dict):
+        if task_dict['date_completed'] and (not 'progress' in task_dict):
             task_dict['progress'] = 100
         task.__dict__.update(**task_dict)
         task.save()
-        if 'progress'in task_dict and task.shared_task:
+        if 'progress' in task_dict and task.shared_task:
             self.update_shared_task_progress(task.shared_task)
         return task
 
@@ -2301,15 +2303,14 @@ class OwnerProfile(Profile):
         task_days = (task.date_end - task.date_start).days
         for child in task_list:
             prj_days = (child.date_end - child.date_start).days
-            completed_pry_days = (child.progress*prj_days)/100
+            completed_pry_days = (child.progress * prj_days) / 100
             tot_days += prj_days
             completed_day += completed_pry_days
 
-        parent_completed_days = (completed_day*task_days)/tot_days
-        parent_progress = (parent_completed_days*100)/task_days
+        parent_completed_days = (completed_day * task_days) / tot_days
+        parent_progress = (parent_completed_days * 100) / task_days
         task.progress = int(parent_progress)
         task.save()
-
 
     def assign_task(self, task_dict):
         """
@@ -2381,7 +2382,7 @@ class OwnerProfile(Profile):
     def create_task_activity(self, activity_dict):
         task = self.get_task(activity_dict['task'].id)
         # Todo: Put the following logic in a new function
-        #act_list = []
+        # act_list = []
         workers = activity_dict.pop('workers')
         task_worker = Activity(
             creator=self.user,
@@ -2397,7 +2398,7 @@ class OwnerProfile(Profile):
         # for owner in task.project.members.filter(role__in=['o', 'd']):
         #     task_worker.workers.add(owner.profile)
         #     task_worker.save()
-        #act_list.append(task_worker)
+        # act_list.append(task_worker)
         return task_worker
 
     def list_task_internal_activities(self, project_id):
@@ -2561,7 +2562,7 @@ class OwnerProfile(Profile):
         """
         Disable a company project member, if it is enabled
         """
-        #member = self.list_waiting_members(member.project.id).get(id=member.id)
+        # member = self.list_waiting_members(member.project.id).get(id=member.id)
         if member.status == 1:
             member.status = 0
             member.save()
@@ -2634,9 +2635,9 @@ class OwnerProfile(Profile):
         if self.company.is_supplier:
             return Bom.objects.filter(
                 Q(is_draft=False) & (
-                    Q(selected_companies=self.company) | (
+                        Q(selected_companies=self.company) | (
                         Q(selected_companies=None) & Q(bom_rows__category__code__in=self.company.category.keys())
-                    )
+                )
                 )
             ).distinct()
         return self.company.selected_boms.all()
@@ -2752,7 +2753,7 @@ class OwnerProfile(Profile):
         bom_archive = BomArchive(
             creator=self.user,
             last_modifier=self.user,
-            ** bomarchive_dict
+            **bomarchive_dict
         )
         bom_archive.save()
         return bom_archive
@@ -3045,7 +3046,7 @@ class OwnerProfile(Profile):
         quotation_archive = QuotationArchive(
             creator=self.user,
             last_modifier=self.user,
-            ** quotationarchive_dict
+            **quotationarchive_dict
         )
         quotation_archive.save()
         return quotation_archive
@@ -3255,7 +3256,6 @@ class OwnerProfile(Profile):
     def cancel_buy_offer(self, offer):
         BoughtOffer.objects.get(profile=self, offer=offer).delete()
 
-
     # ------ CERTIFICATION ------
 
     def create_certification(self, cert_dict):
@@ -3384,14 +3384,15 @@ class OwnerProfile(Profile):
         if project:
             query1.update({'projects__id': project.id})
 
-        return Document.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project', object_id=project.id)
+        return Document.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project',
+                                                                         object_id=project.id)
 
     def list_project_parent_documents(self, project_id):
         """
         Get all project documents linked to the company/project
         """
         project = self.get_parent_project(project_id)
-        return Document.objects.filter(projects__id= project.id)
+        return Document.objects.filter(projects__id=project.id)
 
     def list_profile_documents(self):
         """
@@ -3527,7 +3528,8 @@ class OwnerProfile(Profile):
         if project:
             query1.update({'projects__id': project.id})
 
-        return Photo.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project', object_id=project.id)
+        return Photo.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project',
+                                                                      object_id=project.id)
 
     def list_project_folders(self, project=None):
         """
@@ -3538,7 +3540,8 @@ class OwnerProfile(Profile):
         if project:
             query1.update({'projects__id': project.id})
 
-        return Folder.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project', object_id=project.id)
+        return Folder.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project',
+                                                                       object_id=project.id)
 
     def list_bom_photos(self):
         """
@@ -3630,7 +3633,21 @@ class OwnerProfile(Profile):
         video.save()
         return video
 
+    def check_parents(self, folder_obj):
+        parent_count = 0
+
+        def fn(obj, parent_count):
+            if obj.parent:
+                parent_count += 1
+                parent_count = fn(obj.parent, parent_count)
+            return parent_count
+
+        parent_count = fn(folder_obj, parent_count)
+
+        return parent_count
+
     def create_folder(self, folder_dict):
+
         if folder_dict['content_type'].model == 'project':
             self.get_project(folder_dict['object_id'])
         elif folder_dict['content_type'].model == 'company':
@@ -3645,7 +3662,10 @@ class OwnerProfile(Profile):
         else:
             folder_dict['is_root'] = True
 
-
+        # check 3 level
+        total_parents = self.check_parents(folder_dict['parent']) + 1
+        if total_parents >= 3:
+            return 400
         folder = Folder(
             creator=self.user,
             last_modifier=self.user,
@@ -3672,6 +3692,7 @@ class OwnerProfile(Profile):
             Q(companies=self.company) |
             Q(projects__company=self.company)
         )
+
     def list_company_folders(self):
         """
         Get all folders linked to the company
@@ -3705,7 +3726,8 @@ class OwnerProfile(Profile):
         if project:
             query1.update({'projects__id': project.id})
 
-        return Video.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project', object_id=project.id)
+        return Video.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project',
+                                                                      object_id=project.id)
 
     def list_bom_videos(self):
         """
@@ -3802,20 +3824,20 @@ class OwnerProfile(Profile):
 
         if content_type.model == 'profile':
             query = (
-                Q(content_type=content_type)
-                & (
-                    Q(object_id=self.id)
-                    | Q(messages__sender_id=self.id)
-                )
-                & (
-                    Q(object_id=talk_dict['object_id'])
-                    | Q(messages__sender_id=talk_dict['object_id'])
-                )
+                    Q(content_type=content_type)
+                    & (
+                            Q(object_id=self.id)
+                            | Q(messages__sender_id=self.id)
+                    )
+                    & (
+                            Q(object_id=talk_dict['object_id'])
+                            | Q(messages__sender_id=talk_dict['object_id'])
+                    )
             )
         else:
             query = (
-                Q(content_type=content_type)
-                & Q(object_id=talk_dict['object_id'])
+                    Q(content_type=content_type)
+                    & Q(object_id=talk_dict['object_id'])
             )
 
         talk = Talk.objects.filter(query)
@@ -3897,7 +3919,7 @@ class OwnerProfile(Profile):
     def list_profile_messages(self):
         content_type_id = ContentType.objects.get(model='profile').id
         query = Q(talk__content_type_id=content_type_id) & (
-                    Q(sender=self) | Q(talk__object_id=self.id)
+                Q(sender=self) | Q(talk__object_id=self.id)
         )
         return Message.objects.filter(query)
 
@@ -3914,7 +3936,7 @@ class OwnerProfile(Profile):
         content_type_id = ContentType.objects.get(model='profile').id
         return Talk.objects.filter(
             Q(content_type_id=content_type_id) & (
-                Q(object_id=self.id) | Q(messages__sender_id=self.id)
+                    Q(object_id=self.id) | Q(messages__sender_id=self.id)
             )
         ).distinct()
 
@@ -4023,12 +4045,12 @@ class OwnerProfile(Profile):
             refuse_date__isnull=True,
             invitation_date__isnull=False)
 
-    def list_followers(self): # TODO
+    def list_followers(self):  # TODO
         """
         Company followers (Company <---- Profile)
         :return: Profiles
         """
-        #return self.company.followers.all()
+        # return self.company.followers.all()
 
     def accept_follower(self, company):
         follow = self.company.request_favourites.get(company=company)
@@ -4097,7 +4119,6 @@ class OwnerProfile(Profile):
             query_categories |= Q(tags__has_key=category)
         query = Q(status=1) & query_categories
         return Sponsor.objects.filter(query).distinct()
-
 
 
 @python_2_unicode_compatible

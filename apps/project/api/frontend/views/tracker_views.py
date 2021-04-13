@@ -2455,15 +2455,15 @@ class TrackerPostEditView(
     
 
 class TrackerPostNotifyView(
-WhistleGenericViewMixin,
-TrackerPostMixin,
-generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerPostMixin,
+    generics.CreateAPIView):
     """
     Edit a Post for an activity
     """
     permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
-    serializer_class = serializers.PostNotifySerializer
+    serializer_class = serializers.PostSerializer
 
     def __init__(self, *args, **kwargs):
         self.post_request_include_fields = [

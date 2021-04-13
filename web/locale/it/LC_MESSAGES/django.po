@@ -198,3 +198,6 @@ msgstr "ha completato la task"
 
 msgid "has completed activity"
 msgstr "ha completato l'attività"
+
+msgid "Folder not created. Max subfolders limit is 3"
+msgstr "Cartella non creata. Il limite massimo di sotto cartelle è di 3"

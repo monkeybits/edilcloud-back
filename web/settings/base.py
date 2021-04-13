@@ -414,7 +414,7 @@ JWT_AUTH = {
     'JWT_LEEWAY': 100,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=30),
     'JWT_ALLOW_REFRESH': True,
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
 }
 #JWT_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
 #JWT_TOKEN_CLAIMS_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'

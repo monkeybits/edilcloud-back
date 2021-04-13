@@ -539,12 +539,16 @@ class FolderAddSerializer(
         return super(FolderAddSerializer, self).get_field_names(*args, **kwargs)
 
     def create(self, validated_data):
+        from web import exceptions as django_exception
+        from django.utils import translation
+
         check_limitation_plan(self.profile.company.customer, 'size',
                               get_media_size(self.profile, validated_data)['total_size'])
         self.get_array_from_string(validated_data)
         folder = self.profile.create_folder(validated_data)
         if folder == 400:
-            raise serializers.ValidationError("Folder not created. Max subfolders limit is 3")
+            translation.activate(self.profile.user.get_main_profile().language)
+            raise ValidationError(detail=_('Folder not created. Max subfolders limit is 3'), code=status.HTTP_400_BAD_REQUEST)
 
         return folder
 

@@ -3637,7 +3637,7 @@ class OwnerProfile(Profile):
         parent_count = 0
 
         def fn(obj, parent_count):
-            if obj.parent:
+            if hasattr(obj, 'parent') and obj.parent:
                 parent_count += 1
                 parent_count = fn(obj.parent, parent_count)
             return parent_count

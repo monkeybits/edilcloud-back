@@ -542,7 +542,7 @@ class PostEditSerializer(
 
     def update(self, instance, validated_data):
         validated_data['id'] = instance.id
-        project = self.profile.edit_post(validated_data)
+        project = self.profile.edit_post(validated_data, self.request)
         return project
 
 

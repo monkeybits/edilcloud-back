@@ -592,3 +592,4 @@ class FolderEditSerializer(
         validated_data['id'] = instance.id
         video = self.profile.edit_folder(validated_data)
         return video
+

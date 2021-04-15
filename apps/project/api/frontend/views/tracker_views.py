@@ -1913,7 +1913,7 @@ class TrackerTeamInviationListView(
     def __init__(self, *args, **kwargs):
         self.team_response_include_fields = ['id', 'project', 'profile', 'role', 'status']
         self.project_response_include_fields = ['id', 'name', 'description', 'date_start', 'date_end', 'company']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'address']
         self.profile_response_include_fields = ['id', 'first_name','position', 'last_name']
         super(TrackerTeamInviationListView, self).__init__(*args, **kwargs)
 

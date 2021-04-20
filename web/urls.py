@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path
 
-from web.views import FacebookLogin, GoogleLogin, FacebookRegister, GoogleRegister
+from web.views import FacebookLogin, GoogleLogin, FacebookRegister, GoogleRegister, AppleLogin, AppleRegister
 
 urlpatterns = [
     # API DOCUMENTATION
@@ -23,6 +23,8 @@ urlpatterns = [
     path('api/auth/socials/facebook/register/', FacebookRegister.as_view(), name='fb_register'),
     path('api/auth/socials/google/login/', GoogleLogin.as_view(), name='google_login'),
     path('api/auth/socials/google/register/', GoogleRegister.as_view(), name='google_register'),
+    path('api/auth/socials/apple/login/', AppleLogin.as_view(), name='apple_login'),
+    path('api/auth/socials/apple/register/', AppleRegister.as_view(), name='apple_register'),
     url('rest-auth/', include('social_django.urls', namespace='social')),
     # translation ROSETTA
     url(r'^rosetta/', include('rosetta.urls')),

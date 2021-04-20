@@ -7,7 +7,6 @@ import filetype
 import stripe
 from filetype.types import Type as EdilType
 
-
 gettext = lambda s: s
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -57,7 +56,7 @@ INSTALLED_APPS = [
     'rest_social_auth',
     'dj_rest_auth.registration',
     'rest_framework_simplejwt',
-    'rest_auth', # Todo: Before removing this package, you must create custom serializers for PasswordChange, Reset etc
+    'rest_auth',  # Todo: Before removing this package, you must create custom serializers for PasswordChange, Reset etc
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -92,7 +91,7 @@ CHANNEL_LAYERS = {
 }
 
 CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_IMPORTS = ['web.tasks',]
+CELERY_IMPORTS = ['web.tasks', ]
 CELERY_BEAT_SCHEDULE = {
     'printHello': {
         'task': 'web.tasks.archived_projects_reminder',
@@ -280,7 +279,7 @@ REST_FRAMEWORK = {
 REST_FRAMEWORK_PAGE_SIZE_QUERY_PARAM = 'per_page'
 
 REST_AUTH_SERIALIZERS = {
-    #"PASSWORD_RESET_SERIALIZER": "web.serializers.PasswordResetSerializer",
+    # "PASSWORD_RESET_SERIALIZER": "web.serializers.PasswordResetSerializer",
     "JWT_SERIALIZER": "rest_framework_jwt.serializers.JSONWebTokenSerializer",
     "JWT_TOKEN_CLAIMS_SERIALIZER": "apps.user.api.frontend.serializers.CustomLoginJWTSerializer"
 }
@@ -391,6 +390,30 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         }
     },
+    "apple": {
+        "APP": {
+            # Your service identifier.
+            "client_id": "com.monkeybits.edilcloud.io",
+
+            # The Key ID (visible in the "View Key Details" page).
+            "secret": "FPD4PR8LBC",
+
+            # Member ID/App ID Prefix -- you can find it below your name
+            # at the top right corner of the page, or it’s your App ID
+            # Prefix in your App ID.
+            "key": "4TVXD29D7P",
+
+            # The certificate you downloaded when generating the key.
+            "certificate_key": """
+                            -----BEGIN PRIVATE KEY-----
+                            MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQglqa9iU43lk13NgRR
+                            itGWvxzmACV2yrn3d3uaDvsNJBmgCgYIKoZIzj0DAQehRANCAAS4hwryxakGLwp4
+                            RGWqiYrY/7/oUkqbJGrRUM7BM2P7XpGGdHjufBBaalmRJ2e60ILD2lrFuR5vhIZK
+                            pY6S1Xmj
+                            -----END PRIVATE KEY-----
+                        """
+        }
+    },
     'linkedin_oauth2': {
         'SCOPE': [
             'r_emailaddress',
@@ -416,8 +439,8 @@ JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
 }
-#JWT_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
-#JWT_TOKEN_CLAIMS_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
+# JWT_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
+# JWT_TOKEN_CLAIMS_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
 REST_USE_JWT = True
 LOGIN_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
 SOCIALACCOUNT_EMAIL_VERIFICATION = None
@@ -455,7 +478,6 @@ CORS_ALLOW_METHODS = (
 FAKER_LOCALE = None
 FAKER_PROVIDERS = None
 
-
 UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media')
 
 PROTOCOL = 'https'
@@ -474,11 +496,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 NEW_SPONSOR_REQUEST_RECIPIENT = 'edilcloud.activation@gmail.com'
 
 # stripe settings
-#live
-#STRIPE_PUBLIC_KEY ='pk_live_51Hr7tlCPJO2Tjuq18IVS505Hh91jthPuDAeiHHZX4zRIex1sDRj0ezBSOypO7cUNRLCkXEup8YE2bbvcjnoCyI9400m9fKRBGf'
-#STRIPE_SECRET_KEY = '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'
-#test
-STRIPE_PUBLIC_KEY ='pk_test_51Hr7tlCPJO2Tjuq1PUy2FdjQAvuDkRPNxYWvN2YwdOWqykdtKBZArXrFRXjZ4R7IkcAwDmAbwnd57M5gPplJIjej00BrnpqbdI'
+# live
+# STRIPE_PUBLIC_KEY ='pk_live_51Hr7tlCPJO2Tjuq18IVS505Hh91jthPuDAeiHHZX4zRIex1sDRj0ezBSOypO7cUNRLCkXEup8YE2bbvcjnoCyI9400m9fKRBGf'
+# STRIPE_SECRET_KEY = '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'
+# test
+STRIPE_PUBLIC_KEY = 'pk_test_51Hr7tlCPJO2Tjuq1PUy2FdjQAvuDkRPNxYWvN2YwdOWqykdtKBZArXrFRXjZ4R7IkcAwDmAbwnd57M5gPplJIjej00BrnpqbdI'
 STRIPE_SECRET_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
 STRIPE_LIVE_MODE = False  # Change to True in production
 DJSTRIPE_WEBHOOK_SECRET = "whsec_DPmr9NI6XAaAveZIGqo0DDxHqkSnsyg8"
@@ -488,7 +510,7 @@ TEST_API_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717J
 
 # PAYMENTS SETTINGS
 TRIAL_MAX_DAYS = 14
-TRIAL_PLAN = 'price_1I0OpZCPJO2Tjuq1xjOnYhVm' # standard plan
+TRIAL_PLAN = 'price_1I0OpZCPJO2Tjuq1xjOnYhVm'  # standard plan
 stripe.api_key = STRIPE_SECRET_KEY
 
 # API_SEJDA_PDF_GENERATOR
@@ -514,6 +536,8 @@ NEW_ENTRY_SENDER = [
 ROSETTA_SHOW_AT_ADMIN_PANEL = True
 ROSETTA_WSGI_AUTO_RELOAD = True
 ROSETTA_UWSGI_AUTO_RELOAD = True
+
+
 # override filetype package adding new types
 class Dwg(EdilType):
     """
@@ -532,7 +556,7 @@ class Dwg(EdilType):
         return (len(buf) > 3 and
                 buf[0] == 0x50 and buf[1] == 0x4B and
                 (buf[2] == 0x3 or buf[2] == 0x5 or
-                    buf[2] == 0x7) and
+                 buf[2] == 0x7) and
                 (buf[3] == 0x4 or buf[3] == 0x6 or
-                    buf[3] == 0x8))
-#filetype.types.insert(0, Dwg)
+                 buf[3] == 0x8))
+# filetype.types.insert(0, Dwg)

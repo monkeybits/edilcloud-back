@@ -21,6 +21,8 @@ from rest_framework.views import APIView
 from rest_auth.models import TokenModel
 
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from allauth.socialaccount.providers.apple.views import AppleOAuth2Adapter
+from allauth.socialaccount.providers.apple.client import AppleOAuth2Client
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from social_core.backends.oauth import BaseOAuth2
 from social_core.exceptions import AuthForbidden, AuthTokenError, MissingBackend
@@ -218,3 +220,13 @@ class GoogleLogin(SocialLoginView):
 
 class GoogleRegister(SocialRegisterView):
     adapter_class = GoogleOAuth2Adapter
+
+
+class AppleLogin(SocialLoginView):
+    client_class = AppleOAuth2Client
+    adapter_class = AppleOAuth2Adapter
+
+
+class AppleRegister(SocialRegisterView):
+    client_class = AppleOAuth2Client
+    adapter_class = AppleOAuth2Adapter

@@ -291,7 +291,7 @@ SITE_ID = 1
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.linkedin.LinkedinOAuth2',
+    'web.views.AppleIdAuth',
     'django.contrib.auth.backends.ModelBackend',
     # 'allauth.account.auth_backends.AuthenticationBackend',
 )
@@ -393,8 +393,11 @@ SOCIALACCOUNT_PROVIDERS = {
     "apple": {
         "APP": {
             # Your service identifier.
-            "client_id": "com.monkeybits.edilcloud.io",
-
+            "client_id": "com.monkeybits.edilcloud.signin",
+            "scope": [
+                'name',
+                'email',
+            ],
             # The Key ID (visible in the "View Key Details" page).
             "secret": "FPD4PR8LBC",
 

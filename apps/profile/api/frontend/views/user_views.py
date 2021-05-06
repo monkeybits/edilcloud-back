@@ -365,7 +365,7 @@ class CompanyAddView(
 
     def __init__(self, *args, **kwargs):
         self.company_request_include_fields=[
-            'name', 'slug', 'brand', 'tax_code', 'vat_number',
+            'name', 'slug', 'brand',
             'url', 'email', 'phone', 'phone2', 'fax', 'logo',
             'note', 'category', 'description', 'is_supplier', 'color'
         ]

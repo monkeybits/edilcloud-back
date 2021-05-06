@@ -409,11 +409,11 @@ class CompanyAddSerializer(
         return super(CompanyAddSerializer, self).get_field_names(*args, **kwargs)
 
     def validate(self, attrs):
-        if 'tax_code' not in attrs and 'vat_number' not in attrs:
-            raise serializers.ValidationError({
-                'tax_code': _('Please provide either tax_code or Vat Number'),
-                'vat_number':  _('Please provide either tax_code or Vat Number')
-            })
+        # if 'tax_code' not in attrs and 'vat_number' not in attrs:
+        #     raise serializers.ValidationError({
+        #         'tax_code': _('Please provide either tax_code or Vat Number'),
+        #         'vat_number':  _('Please provide either tax_code or Vat Number')
+        #     })
         return attrs
 
     def create(self, validated_data):

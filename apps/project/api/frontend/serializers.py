@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from web.api.views import JWTPayloadMixin, ArrayFieldInMultipartMixin
-from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment, Task, Project
+from ...models import ProjectCompanyColorAssignment, Comment, MediaAssignment, Task, Project, CodeTeamAssignment
 from web.api.serializers import DynamicFieldsModelSerializer
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.drf import exceptions as django_api_exception
@@ -21,6 +21,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from rest_framework_jwt.settings import api_settings
+import uuid
 
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 
@@ -1284,6 +1285,120 @@ def choose_random_color(company, project):
     return random_color
 
 
+class TeamGenerateCodeSerializer(
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
+    class Meta:
+        model = models.CodeTeamAssignment
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.team_request_include_fields
+        return super(TeamGenerateCodeSerializer, self).get_field_names(*args, **kwargs)
+
+    def create(self, validated_data):
+        from django.conf import settings
+        from django.template.loader import render_to_string
+        from django.core.mail import send_mail
+
+        registration_link = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL,
+                                         'pages/auth/register')
+        from_mail = settings.NOTIFY_NOTIFY_NO_REPLY_EMAIL
+        subject = _('Your email is added to Edilcloud')
+        unique_code = uuid.uuid5(uuid.NAMESPACE_DNS, validated_data['email'])
+        validated_data['unique_code'] = str(unique_code)
+        code_assignment = CodeTeamAssignment.objects.get_or_create(creator=self.profile.user, last_modifier=self.profile.user,unique_code=unique_code, project=validated_data['project'], role=validated_data['role'], email=validated_data['email'])
+        context = {
+            'logo_url': os.path.join(
+                settings.PROTOCOL + '://',
+                settings.BASE_URL,
+                'assets/images/logos/fuse.svg'
+            ),
+            'recipient_email': self.initial_data['email'],
+            'company_name': validated_data['project'].company.name,
+            'registration_page': registration_link,
+            'code': unique_code
+        }
+
+        lang = self.profile.language if self.profile.language else 'en'
+
+        # Html message
+        html_message = render_to_string('project/project/invitation/ProjectInvitation_{}.html'.format(
+            lang), context)
+
+        try:
+            send_mail(
+                subject=subject,
+                message="",
+                html_message=html_message,
+                recipient_list=[self.initial_data['email']],
+                from_email=from_mail,
+            )
+        except Exception as e:
+            print(e)
+        try:
+            return code_assignment[0]
+        except:
+            return code_assignment
+
+class TeamAddTeamByCodeSerializer(
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
+    class Meta:
+        model = models.CodeTeamAssignment
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.team_request_include_fields
+        return super(TeamAddTeamByCodeSerializer, self).get_field_names(*args, **kwargs)
+
+    def create(self, validated_data):
+        from apps.project.signals import team_invite_notification
+        from django.conf import settings
+        unique_code = validated_data.pop('unique_code')
+        teamcodeass = models.CodeTeamAssignment.objects.filter(unique_code=unique_code)
+        if len(teamcodeass) == 1:
+            teamcodeass = teamcodeass[0]
+            validated_data['project'] = teamcodeass.project
+            validated_data['role'] = teamcodeass.role
+            profiles = Profile.objects.filter(email=teamcodeass.email)
+            for profile in profiles:
+                if not profile.is_main:
+                    validated_data['profile'] = profile
+                    validated_data['project_invitation_date'] = datetime.datetime.now()
+                    validated_data['status'] = 1
+                    member = profile.create_member(validated_data)
+                    team_invite_notification(member._meta.model, member)
+                    if not ProjectCompanyColorAssignment.objects.filter(project=member.project,
+                                                                        company=member.profile.company).exists():
+                        ProjectCompanyColorAssignment.objects.create(
+                            project=member.project, company=member.profile.company,
+                            color=choose_random_color(member.profile.company, member.project)
+                        )
+        return teamcodeass
+
 class TeamAddSerializer(
     DynamicFieldsModelSerializer,
     JWTPayloadMixin,
@@ -1310,6 +1425,7 @@ class TeamAddSerializer(
 
     def create(self, validated_data):
         from apps.project.signals import team_invite_notification
+
         try:
             is_external = self.context['request'].query_params.get('is_external')
             if is_external.lower() == 'true':

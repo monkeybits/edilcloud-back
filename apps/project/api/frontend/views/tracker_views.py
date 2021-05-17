@@ -38,11 +38,13 @@ from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT
 from web.tasks import generate_pdf_report
 from pdfreactor import api
 
+
 class TrackerProjectMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Mixin
     """
+
     def get_profile(self):
         payload = self.get_payload()
         return self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
@@ -66,10 +68,11 @@ class TrackerProjectMixin(
 
 
 class TrackerProjectParentMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -90,9 +93,9 @@ class TrackerProjectParentMixin(
 
 
 class TrackerProjectListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all internal and shared company projects w.r.t. profile
     # Todo: Use managers, if required
@@ -121,10 +124,11 @@ class TrackerProjectListView(
         self.queryset = profile.list_projects()
         return super(TrackerProjectListView, self).get_queryset()
 
+
 class TrackerActivityPostListAlertView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     permission_classes = (RoleAccessPermission,)
     permission_roles = settings.MEMBERS
     serializer_class = serializers.PostSerializer
@@ -147,10 +151,11 @@ class TrackerActivityPostListAlertView(
         self.queryset = profile.list_post_alert_all_activities()
         return super(TrackerActivityPostListAlertView, self).get_queryset()
 
+
 class TrackerTaskPostListAlertView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     permission_classes = (RoleAccessPermission,)
     permission_roles = settings.MEMBERS
     serializer_class = serializers.PostSerializer
@@ -175,9 +180,9 @@ class TrackerTaskPostListAlertView(
 
 
 class TrackerProjectParentDetailView(
-        TrackerProjectParentMixin,
-        QuerysetMixin,
-        generics.RetrieveAPIView):
+    TrackerProjectParentMixin,
+    QuerysetMixin,
+    generics.RetrieveAPIView):
     """
     Get a company project
     # Todo: Use managers, if required
@@ -208,9 +213,9 @@ class TrackerProjectParentDetailView(
 
 
 class TrackerProjectDetailView(
-        TrackerProjectMixin,
-        QuerysetMixin,
-        generics.RetrieveAPIView):
+    TrackerProjectMixin,
+    QuerysetMixin,
+    generics.RetrieveAPIView):
     """
     Get a company project
     # Todo: Use managers, if required
@@ -245,9 +250,9 @@ class TrackerProjectDetailView(
 
 
 class TrackerProjectAddView(
-        WhistleGenericViewMixin,
-        TrackerProjectMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerProjectMixin,
+    generics.CreateAPIView):
     """
     Create a company project
     """
@@ -275,9 +280,9 @@ class TrackerProjectAddView(
 
 
 class TrackerProjectEditView(
-        WhistleGenericViewMixin,
-        TrackerProjectMixin,
-        generics.RetrieveUpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerProjectMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Update a company project
     """
@@ -299,14 +304,14 @@ class TrackerProjectEditView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerProjectEditView, self).__init__(*args, **kwargs)
 
 
 class TrackerProjectEnableView(
-        TrackerProjectMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerProjectMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Enable a company project
     """
@@ -326,8 +331,8 @@ class TrackerProjectEnableView(
 
 
 class TrackerProjectDisableView(
-        TrackerProjectMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerProjectMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Disable a company project
     """
@@ -347,8 +352,8 @@ class TrackerProjectDisableView(
 
 
 class TrackerProjectDeleteView(
-        TrackerProjectMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerProjectMixin,
+    generics.RetrieveDestroyAPIView):
     """
     Delete a company project
     """
@@ -372,8 +377,8 @@ class TrackerProjectDeleteView(
 
 
 class TrackerProjectShareView(
-        JWTPayloadMixin,
-        generics.RetrieveAPIView):
+    JWTPayloadMixin,
+    generics.RetrieveAPIView):
     """
     Create a shared project
     #Todo: Need more information
@@ -417,9 +422,9 @@ class TrackerProjectShareView(
 
 
 class TrackerProjectBomSenderListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company bill of materials
     """
@@ -436,7 +441,7 @@ class TrackerProjectBomSenderListView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerProjectBomSenderListView, self).__init__(*args, **kwargs)
 
@@ -448,9 +453,9 @@ class TrackerProjectBomSenderListView(
 
 
 class TrackerProjectBomDraftListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company bill of materials
     """
@@ -467,7 +472,7 @@ class TrackerProjectBomDraftListView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerProjectBomDraftListView, self).__init__(*args, **kwargs)
 
@@ -479,9 +484,9 @@ class TrackerProjectBomDraftListView(
 
 
 class TrackerProjectBomReceiverListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company bill of materials
     """
@@ -498,7 +503,7 @@ class TrackerProjectBomReceiverListView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerProjectBomReceiverListView, self).__init__(*args, **kwargs)
 
@@ -510,9 +515,9 @@ class TrackerProjectBomReceiverListView(
 
 
 class TrackerProjectQuotationSenderListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company quotations
     """
@@ -529,7 +534,7 @@ class TrackerProjectQuotationSenderListView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         self.bom_response_include_fields = [
             'id', 'title', 'description', 'date_bom', 'deadline'
@@ -544,9 +549,9 @@ class TrackerProjectQuotationSenderListView(
 
 
 class TrackerProjectQuotationDraftListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company quotations
     """
@@ -563,7 +568,7 @@ class TrackerProjectQuotationDraftListView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         self.bom_response_include_fields = [
             'id', 'title', 'description', 'date_bom', 'deadline'
@@ -578,14 +583,14 @@ class TrackerProjectQuotationDraftListView(
 
 
 class TrackerProjectQuotationReceiverListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company quotations
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, )
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1,)
     serializer_class = quotation_serializers.QuotationSerializer
 
     def __init__(self, *args, **kwargs):
@@ -597,7 +602,7 @@ class TrackerProjectQuotationReceiverListView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         self.bom_response_include_fields = [
             'id', 'title', 'description', 'date_bom', 'deadline'
@@ -612,9 +617,9 @@ class TrackerProjectQuotationReceiverListView(
 
 
 class TrackerProjectInternalActivityListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
         Get all activities of a company project task
         """
@@ -635,7 +640,7 @@ class TrackerProjectInternalActivityListView(
             'id', 'name', 'description', 'date_start', 'date_end',
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerProjectInternalActivityListView, self).__init__(*args, **kwargs)
 
@@ -647,9 +652,9 @@ class TrackerProjectInternalActivityListView(
 
 
 class TrackerProjectParentActivityListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
         Get all activities of a company project task
         """
@@ -670,7 +675,7 @@ class TrackerProjectParentActivityListView(
             'id', 'name', 'description', 'date_start', 'date_end',
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerProjectParentActivityListView, self).__init__(*args, **kwargs)
 
@@ -682,9 +687,9 @@ class TrackerProjectParentActivityListView(
 
 
 class TrackerProjectActivityListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
         Get all activities of a company project task
         """
@@ -705,7 +710,7 @@ class TrackerProjectActivityListView(
             'id', 'name', 'description', 'date_start', 'date_end',
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerProjectActivityListView, self).__init__(*args, **kwargs)
 
@@ -717,9 +722,9 @@ class TrackerProjectActivityListView(
 
 
 class TrackerProjectParentTeamListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all team members w.r.t. project
     """
@@ -750,9 +755,9 @@ class TrackerProjectParentTeamListView(
 
 
 class TrackerProjectTeamListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all team members w.r.t. project
     """
@@ -789,7 +794,7 @@ class TrackerProjectTeamListView(
             profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
             generic = 'list_' + self.kwargs.get('type') + '_members'
             self.queryset = getattr(profile, generic)(self.kwargs.get('pk'))
-            #self.queryset = profile.list_members(self.kwargs.get('pk'))
+            # self.queryset = profile.list_members(self.kwargs.get('pk'))
             return super(TrackerProjectTeamListView, self).get_queryset()
         except ObjectDoesNotExist as err:
             raise django_api_exception.ProjectAPIDoesNotExist(
@@ -798,9 +803,9 @@ class TrackerProjectTeamListView(
 
 
 class TrackerProjectTalkListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all project talks
     """
@@ -826,9 +831,9 @@ class TrackerProjectTalkListView(
 
 
 class TrackerProjectParentMessageListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all project messages
     """
@@ -839,7 +844,7 @@ class TrackerProjectParentMessageListView(
             'id', 'body', 'sender', 'date_create', 'unique_code'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo','position', 'role', 'company'
+            'id', 'first_name', 'last_name', 'photo', 'position', 'role', 'company'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'category'
@@ -855,9 +860,9 @@ class TrackerProjectParentMessageListView(
 
 
 class TrackerProjectMessageListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all project messages
     """
@@ -869,7 +874,7 @@ class TrackerProjectMessageListView(
         ]
         self.talk_response_include_fields = ['id', 'code', 'content_type_name', 'unread_count']
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo','position', 'role', 'company'
+            'id', 'first_name', 'last_name', 'photo', 'position', 'role', 'company'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'category', 'color_project'
@@ -885,9 +890,9 @@ class TrackerProjectMessageListView(
 
 
 class TrackerProjectPhotoListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get company all project photos
     # Todo: Use managers, if required
@@ -917,9 +922,9 @@ class TrackerProjectPhotoListView(
 
 
 class TrackerProjectVideoListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get company all project videos
     # Todo: Use managers, if required
@@ -947,10 +952,11 @@ class TrackerProjectVideoListView(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
+
 class TrackerProjectFolderListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get company all project folders
     """
@@ -978,9 +984,9 @@ class TrackerProjectFolderListView(
 
 
 class TrackerProjectParentDocumentListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all project documents
     # Todo: Use managers, if required
@@ -1008,9 +1014,9 @@ class TrackerProjectParentDocumentListView(
 
 
 class TrackerProjectDocumentListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all project documents
     # Todo: Use managers, if required
@@ -1040,8 +1046,8 @@ class TrackerProjectDocumentListView(
 
 
 class TrackerProjectShowCaseListView(
-        QuerysetMixin,
-        generics.ListAPIView):
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all project showcase
     """
@@ -1050,9 +1056,9 @@ class TrackerProjectShowCaseListView(
 
 
 class TrackerProjectParentGanttIntervalDetailView(
-        TrackerProjectParentMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    TrackerProjectParentMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get a company project gantt
     """
@@ -1066,7 +1072,7 @@ class TrackerProjectParentGanttIntervalDetailView(
             'date_end', 'date_completed', 'progress'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'logo'
@@ -1088,9 +1094,9 @@ class TrackerProjectParentGanttIntervalDetailView(
 
 
 class TrackerProjectGanttIntervalDetailView(
-        TrackerProjectMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    TrackerProjectMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get a company project gantt
     """
@@ -1126,9 +1132,9 @@ class TrackerProjectGanttIntervalDetailView(
 
 
 class TrackerProjectInternalGanttDetailView(
-        TrackerProjectMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    TrackerProjectMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get a company project gantt
     """
@@ -1162,9 +1168,9 @@ class TrackerProjectInternalGanttDetailView(
 
 
 class TrackerProjectGanttDetailView(
-        TrackerProjectMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    TrackerProjectMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get a company project gantt
     """
@@ -1198,10 +1204,11 @@ class TrackerProjectGanttDetailView(
 
 
 class TrackerTaskMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Task Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -1220,11 +1227,13 @@ class TrackerTaskMixin(
         else:
             self.serializer_class = output_serializer
 
+
 class TrackerPostMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Task Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -1243,11 +1252,13 @@ class TrackerPostMixin(
         else:
             self.serializer_class = output_serializer
 
+
 class TrackerPostEditMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Task Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -1266,11 +1277,13 @@ class TrackerPostEditMixin(
         else:
             self.serializer_class = output_serializer
 
+
 class TrackerCommentEditMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Task Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -1289,11 +1302,13 @@ class TrackerCommentEditMixin(
         else:
             self.serializer_class = output_serializer
 
+
 class TrackerPostObjectMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Task Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -1311,6 +1326,7 @@ class TrackerPostObjectMixin(
             self.serializer_class = serializers.PostSerializer
         else:
             self.serializer_class = output_serializer
+
 
 class TrackerAttachmentMixin(JWTPayloadMixin):
     def get_object(self):
@@ -1331,11 +1347,13 @@ class TrackerAttachmentMixin(JWTPayloadMixin):
         else:
             self.serializer_class = output_serializer
 
+
 class TrackerCommentObjectMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Task Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -1354,10 +1372,11 @@ class TrackerCommentObjectMixin(
         else:
             self.serializer_class = output_serializer
 
+
 class TrackerProjectInternalTaskListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all tasks w.r.t. project
     """
@@ -1396,9 +1415,9 @@ class TrackerProjectInternalTaskListView(
 
 
 class TrackerProjectParentTaskListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all tasks w.r.t. project
     """
@@ -1420,7 +1439,7 @@ class TrackerProjectParentTaskListView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'position','photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerProjectParentTaskListView, self).__init__(*args, **kwargs)
 
@@ -1437,9 +1456,9 @@ class TrackerProjectParentTaskListView(
 
 
 class TrackerProjectTaskListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all tasks w.r.t. project
     """
@@ -1467,7 +1486,7 @@ class TrackerProjectTaskListView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'color_project'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerProjectTaskListView, self).__init__(*args, **kwargs)
 
@@ -1483,10 +1502,11 @@ class TrackerProjectTaskListView(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
+
 class TrackerProjectsTasksActivitiesListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all tasks w.r.t. project
     """
@@ -1513,7 +1533,7 @@ class TrackerProjectsTasksActivitiesListView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerProjectsTasksActivitiesListView, self).__init__(*args, **kwargs)
 
@@ -1529,10 +1549,11 @@ class TrackerProjectsTasksActivitiesListView(
                 status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
+
 class TrackerGanttProjectTaskListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all tasks w.r.t. project
     """
@@ -1559,7 +1580,7 @@ class TrackerGanttProjectTaskListView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'color_project'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'position','photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerGanttProjectTaskListView, self).__init__(*args, **kwargs)
 
@@ -1591,9 +1612,9 @@ class TrackerGanttProjectTaskListView(
 
 
 class TrackerProjectTaskAddView(
-        WhistleGenericViewMixin,
-        TrackerTaskMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerTaskMixin,
+    generics.CreateAPIView):
     """
     Create a project task
     """
@@ -1621,7 +1642,7 @@ class TrackerProjectTaskAddView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'color_project'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'position','photo',
+            'id', 'first_name', 'last_name', 'position', 'photo',
         ]
         super(TrackerProjectTaskAddView, self).__init__(*args, **kwargs)
 
@@ -1638,7 +1659,8 @@ class TrackerProjectTaskAddView(
                 serializer.is_valid(raise_exception=True)
                 input_serializer = serializer.save()
                 self.set_output_serializer()
-                output_serializer = self.get_serializer(self.serializer_class.Meta.model.objects.filter(project=self.kwargs.get('pk', None)), many=True)
+                output_serializer = self.get_serializer(
+                    self.serializer_class.Meta.model.objects.filter(project=self.kwargs.get('pk', None)), many=True)
                 return Response(output_serializer.data, status=status.HTTP_201_CREATED)
             else:
                 request.data['project'] = self.kwargs.get('pk', None)
@@ -1648,9 +1670,10 @@ class TrackerProjectTaskAddView(
     # def get_serializer(self, *args, **kwargs):
     #     return self.get_serializer_class()(data=self.request.data, many=True)
 
+
 class TrackerTaskDetailView(
-        TrackerTaskMixin,
-        generics.RetrieveAPIView):
+    TrackerTaskMixin,
+    generics.RetrieveAPIView):
     """
     Get a project task
     """
@@ -1675,9 +1698,9 @@ class TrackerTaskDetailView(
 
 
 class TrackerTaskShareView(
-        WhistleGenericViewMixin,
-        TrackerTaskMixin,
-        generics.RetrieveAPIView):
+    WhistleGenericViewMixin,
+    TrackerTaskMixin,
+    generics.RetrieveAPIView):
     """
     Update a project task
     """
@@ -1700,7 +1723,7 @@ class TrackerTaskShareView(
             'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo',
+            'id', 'first_name', 'last_name', 'position', 'photo',
         ]
         super(TrackerTaskShareView, self).__init__(*args, **kwargs)
 
@@ -1719,9 +1742,9 @@ class TrackerTaskShareView(
 
 
 class TrackerTaskCloneView(
-        WhistleGenericViewMixin,
-        TrackerTaskMixin,
-        generics.RetrieveAPIView):
+    WhistleGenericViewMixin,
+    TrackerTaskMixin,
+    generics.RetrieveAPIView):
     """
     Update a project task
     """
@@ -1764,9 +1787,9 @@ class TrackerTaskCloneView(
 
 
 class TrackerTaskEditView(
-        WhistleGenericViewMixin,
-        TrackerTaskMixin,
-        generics.RetrieveUpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerTaskMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Update a project task
     """
@@ -1798,8 +1821,8 @@ class TrackerTaskEditView(
 
 
 class TrackerTaskEnableView(
-        TrackerTaskMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerTaskMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Enable a project task
     """
@@ -1824,8 +1847,8 @@ class TrackerTaskEnableView(
 
 
 class TrackerTaskDisableView(
-        TrackerTaskMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerTaskMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Disable a project task
     """
@@ -1850,8 +1873,8 @@ class TrackerTaskDisableView(
 
 
 class TrackerTaskDeleteView(
-        TrackerTaskMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerTaskMixin,
+    generics.RetrieveDestroyAPIView):
     """
     Delete a project task
     """
@@ -1879,11 +1902,37 @@ class TrackerTaskDeleteView(
         profile.remove_task(instance)
 
 
+class TrackerTeamCodeGenerateMixin(
+    JWTPayloadMixin):
+    """
+    Company Project Team Code Generate Mixin
+    """
+
+    def get_object(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            member = profile.get_member(self.kwargs.get('pk', None))
+            self.check_object_permissions(self.request, member)
+            return member
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.TeamAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+    def set_output_serializer(self, output_serializer=None):
+        if output_serializer is None:
+            self.serializer_class = serializers.TeamGenerateCodeSerializer
+        else:
+            self.serializer_class = output_serializer
+
+
 class TrackerTeamMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Team Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -1902,6 +1951,7 @@ class TrackerTeamMixin(
         else:
             self.serializer_class = output_serializer
 
+
 class TrackerTeamInviationListView(
     TrackerTeamMixin,
     generics.ListAPIView
@@ -1912,9 +1962,10 @@ class TrackerTeamInviationListView(
 
     def __init__(self, *args, **kwargs):
         self.team_response_include_fields = ['id', 'project', 'profile', 'role', 'status']
-        self.project_response_include_fields = ['id', 'name', 'description', 'address', 'date_start', 'date_end', 'company']
+        self.project_response_include_fields = ['id', 'name', 'description', 'address', 'date_start', 'date_end',
+                                                'company']
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'address']
-        self.profile_response_include_fields = ['id', 'first_name','position', 'last_name']
+        self.profile_response_include_fields = ['id', 'first_name', 'position', 'last_name']
         super(TrackerTeamInviationListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -1930,8 +1981,8 @@ class TrackerTeamInviationListView(
 
 
 class TrackerTeamDetailView(
-        TrackerTeamMixin,
-        generics.RetrieveAPIView):
+    TrackerTeamMixin,
+    generics.RetrieveAPIView):
     """
     Get a project team member
     """
@@ -1941,15 +1992,15 @@ class TrackerTeamDetailView(
 
     def __init__(self, *args, **kwargs):
         self.team_response_include_fields = ['id', 'project', 'profile', 'role']
-        self.project_response_include_fields = ['id', 'name', 'description', 'date_start', 'date_end',]
-        self.profile_response_include_fields = ['id', 'first_name','position', 'last_name']
+        self.project_response_include_fields = ['id', 'name', 'description', 'date_start', 'date_end', ]
+        self.profile_response_include_fields = ['id', 'first_name', 'position', 'last_name']
         super(TrackerTeamDetailView, self).__init__(*args, **kwargs)
 
 
 class TrackerProjectTeamAddView(
-        WhistleGenericViewMixin,
-        TrackerTeamMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerTeamMixin,
+    generics.CreateAPIView):
     """
     Create a project team member
     """
@@ -1959,7 +2010,7 @@ class TrackerProjectTeamAddView(
 
     def __init__(self, *args, **kwargs):
         self.team_request_include_fields = [
-            'project', 'profile', 'role'
+            'project', 'role'
         ]
         self.team_response_include_fields = [
             'id', 'profile', 'role', 'status'
@@ -1978,10 +2029,63 @@ class TrackerProjectTeamAddView(
             request.data['project'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
+
+class TrackerProjectGenerateCodeView(
+    WhistleGenericViewMixin,
+    TrackerTeamCodeGenerateMixin,
+    generics.CreateAPIView):
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    serializer_class = serializers.TeamGenerateCodeSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.team_request_include_fields = [
+            'project', 'email', 'role'
+        ]
+        self.team_response_include_fields = [
+            'id', 'email', 'project', 'status', 'unique_code'
+        ]
+        super(TrackerProjectGenerateCodeView, self).__init__(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+
+        if request.data:
+            request.data['project'] = self.kwargs.get('pk', None)
+        return self.create(request, *args, **kwargs)
+
+
+class TrackerProjectAddTeamByCodeView(
+    WhistleGenericViewMixin,
+    TrackerTeamCodeGenerateMixin,
+    generics.CreateAPIView):
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    serializer_class = serializers.TeamAddTeamByCodeSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.team_request_include_fields = [
+            'unique_code'
+        ]
+        self.team_response_include_fields = [
+            'id', 'email', 'project', 'status', 'role', 'unique_code'
+        ]
+        super(TrackerProjectAddTeamByCodeView, self).__init__(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+
+        if request.data:
+            request.data['project'] = self.kwargs.get('pk', None)
+        return self.create(request, *args, **kwargs)
+
+
 class TrackerTeamEditView(
-        WhistleGenericViewMixin,
-        TrackerTeamMixin,
-        generics.RetrieveUpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerTeamMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Update a project team member
     """
@@ -2007,8 +2111,8 @@ class TrackerTeamEditView(
 
 
 class TrackerTeamEnableView(
-        TrackerTeamMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerTeamMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Enable a project team member
     """
@@ -2019,14 +2123,14 @@ class TrackerTeamEnableView(
     def __init__(self, *args, **kwargs):
         self.team_request_include_fields = []
         self.team_response_include_fields = ['id', 'project', 'profile', 'role']
-        self.project_response_include_fields = ['id', 'name', 'description', 'date_start', 'date_end',]
-        self.profile_response_include_fields = ['id', 'first_name','position', 'last_name']
+        self.project_response_include_fields = ['id', 'name', 'description', 'date_start', 'date_end', ]
+        self.profile_response_include_fields = ['id', 'first_name', 'position', 'last_name']
         super(TrackerTeamEnableView, self).__init__(*args, **kwargs)
 
 
 class TrackerTeamDisableView(
-        TrackerTeamMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerTeamMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Disable a project team member
     """
@@ -2037,14 +2141,14 @@ class TrackerTeamDisableView(
     def __init__(self, *args, **kwargs):
         self.team_request_include_fields = []
         self.team_response_include_fields = ['id', 'project', 'profile', 'role']
-        self.project_response_include_fields = ['id', 'name', 'description', 'date_start', 'date_end',]
-        self.profile_response_include_fields = ['id', 'first_name','position', 'last_name']
+        self.project_response_include_fields = ['id', 'name', 'description', 'date_start', 'date_end', ]
+        self.profile_response_include_fields = ['id', 'first_name', 'position', 'last_name']
         super(TrackerTeamDisableView, self).__init__(*args, **kwargs)
 
 
 class TrackerTeamDeleteView(
-        TrackerTeamMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerTeamMixin,
+    generics.RetrieveDestroyAPIView):
     """
     Delete a project team member
     """
@@ -2060,7 +2164,7 @@ class TrackerTeamDeleteView(
             'id', 'name', 'description', 'date_start', 'date_end',
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerTeamDeleteView, self).__init__(*args, **kwargs)
 
@@ -2075,10 +2179,11 @@ class TrackerTeamDeleteView(
 
 
 class TrackerTaskActivityMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Task Worker Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -2099,9 +2204,9 @@ class TrackerTaskActivityMixin(
 
 
 class TrackerTaskActivityAddView(
-        WhistleGenericViewMixin,
-        TrackerTaskActivityMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerTaskActivityMixin,
+    generics.CreateAPIView):
     """
     Create a company project task activity
     """
@@ -2130,7 +2235,7 @@ class TrackerTaskActivityAddView(
             'date_end',
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerTaskActivityAddView, self).__init__(*args, **kwargs)
 
@@ -2142,10 +2247,11 @@ class TrackerTaskActivityAddView(
             request.data['task'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
+
 class TrackerTaskAttachmentAddView(
-        WhistleGenericViewMixin,
-        TrackerTaskMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerTaskMixin,
+    generics.CreateAPIView):
     """
     Create a company project task activity
     """
@@ -2161,7 +2267,7 @@ class TrackerTaskAttachmentAddView(
             'date_end', 'date_completed', 'progress', 'status', 'media_set'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start',
@@ -2180,10 +2286,11 @@ class TrackerTaskAttachmentAddView(
             request.data['task'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
+
 class TrackerTaskActivityListView(
-        QuerysetMixin,
-        TrackerTaskMixin,
-        generics.ListAPIView):
+    QuerysetMixin,
+    TrackerTaskMixin,
+    generics.ListAPIView):
     """
     Get all activities of a company project task
     """
@@ -2207,7 +2314,7 @@ class TrackerTaskActivityListView(
             'date_end',
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerTaskActivityListView, self).__init__(*args, **kwargs)
 
@@ -2219,8 +2326,8 @@ class TrackerTaskActivityListView(
 
 
 class TrackerActivityDetailView(
-        TrackerTaskActivityMixin,
-        generics.RetrieveAPIView):
+    TrackerTaskActivityMixin,
+    generics.RetrieveAPIView):
     """
     Get a company project task activity
     """
@@ -2242,15 +2349,15 @@ class TrackerActivityDetailView(
             'date_end',
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerActivityDetailView, self).__init__(*args, **kwargs)
 
 
 class TrackerActivityEditStatusView(
-        WhistleGenericViewMixin,
-        TrackerTaskActivityMixin,
-        generics.RetrieveUpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerTaskActivityMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Edit a company project task activity
     """
@@ -2275,15 +2382,15 @@ class TrackerActivityEditStatusView(
             'date_end',
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerActivityEditStatusView, self).__init__(*args, **kwargs)
 
 
 class TrackerActivityEditView(
-        WhistleGenericViewMixin,
-        TrackerTaskActivityMixin,
-        generics.RetrieveUpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerTaskActivityMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Edit a company project task activity
     """
@@ -2314,14 +2421,14 @@ class TrackerActivityEditView(
             'date_end',
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name','position', 'photo'
+            'id', 'first_name', 'last_name', 'position', 'photo'
         ]
         super(TrackerActivityEditView, self).__init__(*args, **kwargs)
 
 
 class TrackerActivityDeleteView(
-        TrackerTaskActivityMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerTaskActivityMixin,
+    generics.RetrieveDestroyAPIView):
     """
     Delete a company project task activity
     """
@@ -2352,10 +2459,11 @@ class TrackerActivityDeleteView(
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         profile.remove_task_activity(instance)
 
+
 class TrackerActivityPostAddView(
-        WhistleGenericViewMixin,
-        TrackerPostMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerPostMixin,
+    generics.CreateAPIView):
     """
     Create a Post for an activity
     """
@@ -2377,7 +2485,7 @@ class TrackerActivityPostAddView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user', 'photo','position',
+            'id', 'user', 'photo', 'position',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
@@ -2391,10 +2499,11 @@ class TrackerActivityPostAddView(
             request.data['activity'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
+
 class TrackerTaskPostAddView(
-        WhistleGenericViewMixin,
-        TrackerPostMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerPostMixin,
+    generics.CreateAPIView):
     """
     Create a Post for an activity
     """
@@ -2416,7 +2525,7 @@ class TrackerTaskPostAddView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user', 'photo','position',
+            'id', 'user', 'photo', 'position',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
@@ -2430,10 +2539,11 @@ class TrackerTaskPostAddView(
             request.data['task'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
+
 class TrackerPostEditView(
-        WhistleGenericViewMixin,
-        TrackerPostEditMixin,
-        generics.UpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerPostEditMixin,
+    generics.UpdateAPIView):
     """
     Edit a Post for an activity
     """
@@ -2451,8 +2561,7 @@ class TrackerPostEditView(
             'role', 'email', 'fax', 'phone'
         ]
         super(TrackerPostEditView, self).__init__(*args, **kwargs)
-    
-    
+
 
 class TrackerPostNotifyView(
     WhistleGenericViewMixin,
@@ -2467,22 +2576,21 @@ class TrackerPostNotifyView(
 
     def __init__(self, *args, **kwargs):
         self.post_request_include_fields = [
-        'text', 'alert', 'is_public',
-        'published_date', 'created_date', 'unique_code'
+            'text', 'alert', 'is_public',
+            'published_date', 'created_date', 'unique_code'
         ]
         self.profile_response_include_fields = [
-        'id', 'first_name', 'last_name', 'photo', 'position',
-        'role', 'email', 'fax', 'phone'
+            'id', 'first_name', 'last_name', 'photo', 'position',
+            'role', 'email', 'fax', 'phone'
         ]
         super(TrackerPostNotifyView, self).__init__(*args, **kwargs)
 
-        
-        
+
 class TrackerActivityPostListView(
-        WhistleGenericViewMixin,
-        QuerysetMixin,
-        TrackerTaskActivityMixin,
-        generics.ListAPIView):
+    WhistleGenericViewMixin,
+    QuerysetMixin,
+    TrackerTaskActivityMixin,
+    generics.ListAPIView):
     """
     Create a Post for an activity
     """
@@ -2496,7 +2604,7 @@ class TrackerActivityPostListView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user', 'photo','position',
+            'id', 'user', 'photo', 'position',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
@@ -2518,11 +2626,12 @@ class TrackerActivityPostListView(
                 return reduce(operator.or_, [Q(x) for x in query])
         return filters
 
+
 class TrackerTaskPostListView(
-        WhistleGenericViewMixin,
-        QuerysetMixin,
-        TrackerTaskActivityMixin,
-        generics.ListAPIView):
+    WhistleGenericViewMixin,
+    QuerysetMixin,
+    TrackerTaskActivityMixin,
+    generics.ListAPIView):
     """
     Create a Post for a task
     """
@@ -2536,7 +2645,7 @@ class TrackerTaskPostListView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user', 'photo','position',
+            'id', 'user', 'photo', 'position',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
@@ -2558,10 +2667,11 @@ class TrackerTaskPostListView(
                 return reduce(operator.or_, [Q(x) for x in query])
         return filters
 
+
 class TrackerPostCommentListView(
-        WhistleGenericViewMixin,
-        TrackerTaskActivityMixin,
-        generics.ListAPIView):
+    WhistleGenericViewMixin,
+    TrackerTaskActivityMixin,
+    generics.ListAPIView):
     """
     Create a Post for an activity
     """
@@ -2575,7 +2685,7 @@ class TrackerPostCommentListView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user', 'photo','position',
+            'id', 'user', 'photo', 'position',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
@@ -2587,10 +2697,11 @@ class TrackerPostCommentListView(
         self.queryset = profile.list_post_comments(self.kwargs.get('pk', None))
         return super(TrackerPostCommentListView, self).get_queryset()
 
+
 class TrackerCommentRepliesListView(
-        WhistleGenericViewMixin,
-        TrackerTaskActivityMixin,
-        generics.ListAPIView):
+    WhistleGenericViewMixin,
+    TrackerTaskActivityMixin,
+    generics.ListAPIView):
     """
     List of comment replies
     """
@@ -2604,7 +2715,7 @@ class TrackerCommentRepliesListView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user', 'photo','position',
+            'id', 'user', 'photo', 'position',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
@@ -2616,11 +2727,13 @@ class TrackerCommentRepliesListView(
         self.queryset = profile.list_comment_replies(self.kwargs.get('pk', None))
         return super(TrackerCommentRepliesListView, self).get_queryset()
 
+
 class TrackerCommentMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Task Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -2641,9 +2754,9 @@ class TrackerCommentMixin(
 
 
 class TrackerPostCommentAddView(
-        WhistleGenericViewMixin,
-        TrackerCommentMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerCommentMixin,
+    generics.CreateAPIView):
     """
     Create a Comment for a Post
     """
@@ -2664,7 +2777,7 @@ class TrackerPostCommentAddView(
             'email', 'first_name', 'last_name', 'is_active'
         ]
         self.profile_response_include_fields = [
-            'id', 'user', 'photo','position',
+            'id', 'user', 'photo', 'position',
             'company', 'role', 'email', 'first_name', 'last_name'
         ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
@@ -2680,9 +2793,9 @@ class TrackerPostCommentAddView(
 
 
 class TrackerCommentEditView(
-        WhistleGenericViewMixin,
-        TrackerCommentEditMixin,
-        generics.UpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerCommentEditMixin,
+    generics.UpdateAPIView):
     """
     Create a Post for an activity
     """
@@ -2700,9 +2813,10 @@ class TrackerCommentEditView(
         ]
         super(TrackerCommentEditView, self).__init__(*args, **kwargs)
 
+
 class TrackerAttachmentDeleteView(
-        TrackerAttachmentMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerAttachmentMixin,
+    generics.RetrieveDestroyAPIView):
     """
     Delete a talk
     """
@@ -2717,8 +2831,8 @@ class TrackerAttachmentDeleteView(
 
 
 class TrackerPostDeleteView(
-        TrackerPostObjectMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerPostObjectMixin,
+    generics.RetrieveDestroyAPIView):
     """
     Delete a talk
     """
@@ -2731,9 +2845,10 @@ class TrackerPostDeleteView(
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         profile.remove_post(instance)
 
+
 class TrackerCommentDeleteView(
-        TrackerCommentObjectMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerCommentObjectMixin,
+    generics.RetrieveDestroyAPIView):
     """
     Delete a talk
     """
@@ -2746,11 +2861,13 @@ class TrackerCommentDeleteView(
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         profile.remove_comment(instance)
 
+
 class TrackerSharePostToTaskMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Project Task Mixin
     """
+
     def get_object(self):
         try:
             payload = self.get_payload()
@@ -2769,10 +2886,11 @@ class TrackerSharePostToTaskMixin(
         else:
             self.serializer_class = output_serializer
 
+
 class TrackerSharePostToTaskView(
-        WhistleGenericViewMixin,
-        TrackerSharePostToTaskMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerSharePostToTaskMixin,
+    generics.CreateAPIView):
     """
     Create a Comment for a Post
     """
@@ -2796,9 +2914,10 @@ class TrackerSharePostToTaskView(
             request.data['post'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
+
 class TrackerTaskPostsListView(WhistleGenericViewMixin,
-        TrackerPostMixin,
-        generics.ListAPIView):
+                               TrackerPostMixin,
+                               generics.ListAPIView):
     permission_classes = (RoleAccessPermission,)
     permission_roles = (settings.OWNER, settings.DELEGATE)
     serializer_class = serializers.PostSerializer
@@ -2822,32 +2941,33 @@ class TrackerTaskPostsListView(WhistleGenericViewMixin,
         return super(TrackerTaskPostsListView, self).get_queryset()
 
 
-
 class TrackerProjectPhotoDownloadView(
-        TrackerPhotoMixin, DownloadViewMixin,
-        views.APIView):
+    TrackerPhotoMixin, DownloadViewMixin,
+    views.APIView):
     """
     Download a photo
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2, )
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2,)
     file_field_name = 'photo'
 
+
 class TrackerProjectVideoDownloadView(
-        TrackerVideoMixin, DownloadViewMixin,
-        views.APIView):
+    TrackerVideoMixin, DownloadViewMixin,
+    views.APIView):
     """
     Download a photo
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2, )
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2,)
     file_field_name = 'video'
+
 
 # exports apis
 class TrackerProjectExport(
-        TrackerProjectMixin,
-        QuerysetMixin,
-        generics.RetrieveAPIView, generics.CreateAPIView):
+    TrackerProjectMixin,
+    QuerysetMixin,
+    generics.RetrieveAPIView, generics.CreateAPIView):
     """
     Export project data
     """
@@ -2971,8 +3091,12 @@ class TrackerProjectExport(
                 protocol = 'http://'
             host = request.get_host()
             url = protocol + host
-            generate_pdf_report.delay(html_message, {'pk': self.get_profile().pk, 'email': self.get_profile().email, 'first_name': self.get_profile().first_name, 'last_name': self.get_profile().last_name, 'project_name': data['name']}, url)
-            resp = Response(data=_("We are generating your report, download will start when process is finished."), status=status.HTTP_201_CREATED)
+            generate_pdf_report.delay(html_message, {'pk': self.get_profile().pk, 'email': self.get_profile().email,
+                                                     'first_name': self.get_profile().first_name,
+                                                     'last_name': self.get_profile().last_name,
+                                                     'project_name': data['name']}, url)
+            resp = Response(data=_("We are generating your report, download will start when process is finished."),
+                            status=status.HTTP_201_CREATED)
             # resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
             # resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
             return resp

@@ -34,6 +34,7 @@ from ..document.models import document_limit_choices_to
 from ..media.models import get_upload_photo_path
 
 import uuid
+import uuid
 
 def get_upload_logo_path(instance, filename):
     media_dir = slugify(instance.name[0:2])
@@ -507,6 +508,48 @@ class Activity(CleanModel, UserModel, DateModel, OrderedModel):
     def duration(self):
         return (self.datetime_end.date() - self.datetime_start.date()).days + 1
 
+@python_2_unicode_compatible
+class CodeTeamAssignment(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='project_code_assingmnet',
+        verbose_name=_('project')
+    )
+    unique_code = models.CharField(
+        max_length=255,
+        default='',
+        verbose_name=_('unique_code')
+    )
+    email = models.CharField(
+        max_length=255,
+        default='',
+        verbose_name=_('email')
+    )
+    role = models.CharField(
+        max_length=1,
+        choices=settings.PROJECT_TEAM_ROLE_CHOICES,
+        verbose_name=_('role'),
+    )
+
+    class Meta:
+        verbose_name = _('codeteamassignment')
+        verbose_name_plural = _('codeteamassignments')
+        permissions = (
+            ("list_team", "can list team"),
+            ("detail_team", "can detail team"),
+            ("disable_team", "can disable team"),
+        )
+        unique_together = (
+            ('project', 'email', 'unique_code'),
+        )
+        ordering = ['-date_last_modify']
+        get_latest_by = "date_create"
+
+    def __str__(self):
+        return '{} {} ({})'.format(
+            self.project.name, self.email, self.role,
+        )
 @python_2_unicode_compatible
 class Team(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     project = models.ForeignKey(

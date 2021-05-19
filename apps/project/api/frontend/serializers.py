@@ -1389,7 +1389,13 @@ class TeamAddTeamByCodeSerializer(
                     validated_data['profile'] = profile
                     validated_data['project_invitation_date'] = datetime.datetime.now()
                     validated_data['status'] = 1
-                    member = profile.create_member(validated_data)
+                    try:
+                        member = profile.create_member(validated_data)
+                    except Exception as err:
+                        raise django_api_exception.WhistleAPIException(
+                            status.HTTP_400_BAD_REQUEST, self.request,
+                            _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                        )
                     team_invite_notification(member._meta.model, member)
                     if not ProjectCompanyColorAssignment.objects.filter(project=member.project,
                                                                         company=member.profile.company).exists():

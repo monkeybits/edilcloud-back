@@ -106,7 +106,7 @@ tracker_urlpatterns = [
         name='tracker_project_team_generate_code'
     ),
     url(
-        r'^project/(?P<pk>\d+)/add_team_by_code/$',
+        r'^project/add_team_by_code/$',
         tracker_views.TrackerProjectAddTeamByCodeView.as_view(),
         name='tracker_project_add_team_by_code'
     ),

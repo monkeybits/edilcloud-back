@@ -2077,8 +2077,6 @@ class TrackerProjectAddTeamByCodeView(
         if not request.POST._mutable:
             request.POST._mutable = True
 
-        if request.data:
-            request.data['project'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
 
 

@@ -1318,7 +1318,7 @@ class TeamGenerateCodeSerializer(
         subject = _('Your email is added to Edilcloud')
         unique_code = uuid.uuid5(uuid.NAMESPACE_DNS, validated_data['email'])
         validated_data['unique_code'] = str(unique_code)
-        code_assignment = CodeTeamAssignment.objects.get_or_create(creator=self.profile.user, last_modifier=self.profile.user,unique_code=unique_code, project=validated_data['project'], role=validated_data['role'], email=validated_data['email'])
+        code_assignment = CodeTeamAssignment.objects.get_or_create(creator=self.profile.user, last_modifier=self.profile.user,unique_code=unique_code, project=validated_data['project'], role='o', email=validated_data['email'])
         context = {
             'logo_url': os.path.join(
                 settings.PROTOCOL + '://',
@@ -1382,11 +1382,11 @@ class TeamAddTeamByCodeSerializer(
         if len(teamcodeass) == 1:
             teamcodeass = teamcodeass[0]
             validated_data['project'] = teamcodeass.project
-            validated_data['role'] = teamcodeass.role
             profiles = Profile.objects.filter(email=teamcodeass.email)
             for profile in profiles:
                 if not profile.is_main:
                     validated_data['profile'] = profile
+                    validated_data['role'] = profile.role
                     validated_data['project_invitation_date'] = datetime.datetime.now()
                     validated_data['status'] = 1
                     member = profile.create_member(validated_data)

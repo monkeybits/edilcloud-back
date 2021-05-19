@@ -2040,7 +2040,7 @@ class TrackerProjectGenerateCodeView(
 
     def __init__(self, *args, **kwargs):
         self.team_request_include_fields = [
-            'project', 'email', 'role'
+            'project', 'email'
         ]
         self.team_response_include_fields = [
             'id', 'email', 'project', 'status', 'unique_code'
@@ -2930,7 +2930,7 @@ class TrackerTaskPostsListView(WhistleGenericViewMixin,
         self.profile_response_include_fields = [
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'position', 'last_name'
-        ]
+        ]   
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerTaskPostsListView, self).__init__(*args, **kwargs)
 

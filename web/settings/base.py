@@ -6,6 +6,7 @@ import datetime
 import filetype
 import stripe
 from filetype.types import Type as EdilType
+import dotenv
 
 gettext = lambda s: s
 
@@ -14,6 +15,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
 )
 
 SETTINGS_PATH = os.path.abspath(os.path.dirname(__file__))
+
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -95,7 +97,7 @@ CELERY_IMPORTS = ['web.tasks', ]
 CELERY_BEAT_SCHEDULE = {
     'printHello': {
         'task': 'web.tasks.archived_projects_reminder',
-        'schedule': 86400.0,
+        'schedule': datetime.timedelta(seconds=60),
     },
 }
 
@@ -316,11 +318,11 @@ GRAPH_MODELS = {
 WHISTLE_CRONTAB_USERNAME = '< set in local.py >'
 
 # SOCIAL AUTH SETTINGS
-SOCIAL_AUTH_FACEBOOK_KEY = '1093743794410189'
-SOCIAL_AUTH_FACEBOOK_SECRET = 'eba8fe5d381c5094a68701145c19ed43'
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('SOCIAL_AUTH_FACEBOOK_KEY')
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('SOCIAL_AUTH_FACEBOOK_SECRET')
 #SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1069029983695-hv8kifhpc9n64sldage6tmggkr817qj6.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1069029983695-o8lv0olsm7511o0jc2dv1b6g6ftgvub6.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'UaaQoCbFd_jIyLq4bXuA5ocn'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRETKEY')
 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '< set in local.py >'
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = '< set in local.py >'
@@ -399,22 +401,13 @@ SOCIALACCOUNT_PROVIDERS = {
                 'email',
             ],
             # The Key ID (visible in the "View Key Details" page).
-            "secret": "FPD4PR8LBC",
-
+            "secret": os.environ.get('APPLE_SECRET_KEY'),
             # Member ID/App ID Prefix -- you can find it below your name
             # at the top right corner of the page, or it’s your App ID
             # Prefix in your App ID.
             "key": "4TVXD29D7P",
-
             # The certificate you downloaded when generating the key.
-            "certificate_key": """
-                            -----BEGIN PRIVATE KEY-----
-                            MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQglqa9iU43lk13NgRR
-                            itGWvxzmACV2yrn3d3uaDvsNJBmgCgYIKoZIzj0DAQehRANCAAS4hwryxakGLwp4
-                            RGWqiYrY/7/oUkqbJGrRUM7BM2P7XpGGdHjufBBaalmRJ2e60ILD2lrFuR5vhIZK
-                            pY6S1Xmj
-                            -----END PRIVATE KEY-----
-                        """
+            "certificate_key": os.environ.get('APPLE_CERTIFICATE_KEY')
         }
     },
     'linkedin_oauth2': {
@@ -492,7 +485,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = 'mail.edilcloud.io'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'notification@edilcloud.io'
-EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -503,12 +496,12 @@ NEW_SPONSOR_REQUEST_RECIPIENT = 'edilcloud.activation@gmail.com'
 # STRIPE_PUBLIC_KEY ='pk_live_51Hr7tlCPJO2Tjuq18IVS505Hh91jthPuDAeiHHZX4zRIex1sDRj0ezBSOypO7cUNRLCkXEup8YE2bbvcjnoCyI9400m9fKRBGf'
 # STRIPE_SECRET_KEY = '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'
 # test
-STRIPE_PUBLIC_KEY = 'pk_test_51Hr7tlCPJO2Tjuq1PUy2FdjQAvuDkRPNxYWvN2YwdOWqykdtKBZArXrFRXjZ4R7IkcAwDmAbwnd57M5gPplJIjej00BrnpqbdI'
-STRIPE_SECRET_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_LIVE_MODE = False  # Change to True in production
-DJSTRIPE_WEBHOOK_SECRET = "whsec_DPmr9NI6XAaAveZIGqo0DDxHqkSnsyg8"
-STRIPE_TEST_SECRET_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
-STRIPE_TEST_PUBLIC_KEY = 'pk_test_51Hr7tlCPJO2Tjuq1PUy2FdjQAvuDkRPNxYWvN2YwdOWqykdtKBZArXrFRXjZ4R7IkcAwDmAbwnd57M5gPplJIjej00BrnpqbdI'
+DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET')
+STRIPE_TEST_SECRET_KEY = os.environ.get('STRIPE_TEST_SECRET_KEY')
+STRIPE_TEST_PUBLIC_KEY = os.environ.get('STRIPE_TEST_PUBLIC_KEY')
 TEST_API_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
 
 # PAYMENTS SETTINGS
@@ -517,7 +510,7 @@ TRIAL_PLAN = 'price_1I0OpZCPJO2Tjuq1xjOnYhVm'  # standard plan
 stripe.api_key = STRIPE_SECRET_KEY
 
 # API_SEJDA_PDF_GENERATOR
-API_SEJDA_PDF_GENERATOR = 'api_D0D855D3D00041BFABA9FA5AA514E16D'
+API_SEJDA_PDF_GENERATOR = os.environ.get('API_SEJDA_PDF_GENERATOR')
 
 STRIPE_PLANS_METADATA_KEYS = [
     'TRIAL_MAX_PROJECTS',

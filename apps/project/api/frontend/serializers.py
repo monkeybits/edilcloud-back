@@ -1318,7 +1318,12 @@ class TeamGenerateCodeSerializer(
         subject = _('Your email is added to Edilcloud')
         unique_code = uuid.uuid5(uuid.NAMESPACE_DNS, validated_data['email'])
         validated_data['unique_code'] = str(unique_code)
-        code_assignment = CodeTeamAssignment.objects.get_or_create(creator=self.profile.user, last_modifier=self.profile.user,unique_code=unique_code, project=validated_data['project'], role='o', email=validated_data['email'])
+        code_assignment, created = CodeTeamAssignment.objects.get_or_create(creator=self.profile.user, last_modifier=self.profile.user,unique_code=unique_code, project=validated_data['project'], role='o', email=validated_data['email'])
+        if not created:
+            raise django_api_exception.WhistleAPIException(
+                status.HTTP_400_BAD_REQUEST, self.request,
+                _("Member already on the team")
+            )
         context = {
             'logo_url': os.path.join(
                 settings.PROTOCOL + '://',

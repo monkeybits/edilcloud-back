@@ -2010,9 +2010,6 @@ class OwnerProfile(Profile):
         project = self.get_project(project.id)
         if project.creator == self.user:
             project.delete()
-        raise django_api_exception.ProfileAPIDoesNotMatch(
-            status.HTTP_403_FORBIDDEN, self.request, _('You are not the project owner!')
-        )
 
     # ------ PROJECT TASK ------
 

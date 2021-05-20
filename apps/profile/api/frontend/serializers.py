@@ -533,6 +533,7 @@ class ProfileSerializer(
 
     def get_subscription(self, obj):
         if obj.subscription != '':
+            stripe.api_key = settings.STRIPE_SECRET_KEY
             sub = stripe.Subscription.retrieve(obj.subscription)
             return {
                 'id': sub.id,

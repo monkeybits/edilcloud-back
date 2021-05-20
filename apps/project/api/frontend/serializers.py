@@ -1383,6 +1383,11 @@ class TeamAddTeamByCodeSerializer(
             teamcodeass = teamcodeass[0]
             validated_data['project'] = teamcodeass.project
             profiles = Profile.objects.filter(email=teamcodeass.email)
+            if len(profiles) < 2:
+                raise django_api_exception.WhistleAPIException(
+                    status.HTTP_400_BAD_REQUEST, self.request,
+                    _("{}".format('No user related to this code.'))
+                )
             for profile in profiles:
                 if not profile.is_main:
                     validated_data['profile'] = profile

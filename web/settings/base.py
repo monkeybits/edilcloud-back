@@ -97,7 +97,7 @@ CELERY_IMPORTS = ['web.tasks', ]
 CELERY_BEAT_SCHEDULE = {
     'printHello': {
         'task': 'web.tasks.archived_projects_reminder',
-        'schedule': datetime.timedelta(seconds=60),
+        'schedule': datetime.timedelta(days=1),
     },
 }
 

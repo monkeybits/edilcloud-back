@@ -2010,7 +2010,7 @@ class TrackerProjectTeamAddView(
 
     def __init__(self, *args, **kwargs):
         self.team_request_include_fields = [
-            'project', 'role'
+            'project', 'role', 'profile'
         ]
         self.team_response_include_fields = [
             'id', 'profile', 'role', 'status'

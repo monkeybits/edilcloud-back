@@ -1700,6 +1700,7 @@ class TaskActivityEditSerializer(
     JWTPayloadMixin,
     serializers.ModelSerializer):
     workers = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), many=True)
+    task = TaskEditSerializer()
 
     class Meta:
         model = models.Activity

@@ -8,6 +8,8 @@ import pathlib
 import calendar
 from itertools import chain
 
+import djstripe
+import stripe
 from django.db import transaction
 from django.core.mail import send_mail
 from django.db import models
@@ -15,6 +17,7 @@ from django.db.models import Q, Count
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.contenttypes.models import ContentType
+from django.utils import translation
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.http import int_to_base36
 from django.utils.text import slugify
@@ -25,13 +28,17 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from rest_framework import status
+
+from web.drf import exceptions as django_api_exception
 
 from . import managers
 # Todo: May be, use the following format: from apps.app import models as app_models
 from apps.document.models import Document
-from apps.media.models import Photo, Video
-from apps.message.models import Talk, Message
-from apps.project.models import Project, Team, Task, Activity, InternalProject, SharedProject, InternalSharedProject
+from apps.media.models import Photo, Video, Folder
+from apps.message.models import Talk, Message, MessageFileAssignment, MessageProfileAssignment
+from apps.project.models import Project, Team, Task, Activity, \
+    Post, Comment, TaskPostAssignment, MediaAssignment
 from apps.quotation.models import Bom, BomRow, Offer, Certification, Quotation, QuotationRow, FavouriteOffer, \
     BoughtOffer, BomArchive, QuotationArchive
 from apps.user.api.frontend.views.mixin import UserMixin, TokenGenerator as UserTokenGenerator
@@ -40,7 +47,6 @@ from web.core.models import UserModel, DateModel, StatusModel, OrderedModel, Cle
 from web.functions import zerofill
 from web.token import TokenGenerator
 from web.api.views import get_first_last_dates_of_month_and_year
-
 
 User = get_user_model()
 
@@ -94,9 +100,13 @@ def create_main_profile(self, validated_data):
         profile.photo.save('photo', photo)
 
     # Link Profiles (Phantom)
-    Profile.objects.filter(
+    check_profiles = Profile.objects.filter(
         email=self.email, user__isnull=True
-    ).update(user=self)
+    )
+    if len(check_profiles) > 0:
+        check_profiles.update(user=self)
+        profile.is_invited = True
+        profile.save()
 
     return profile
 
@@ -142,7 +152,9 @@ def get_profile_by_id(self, profile_id, profile_status=1):
     :param profile_status: status profile
     :return: profile instance if it is exists
     """
-    return self.profiles.get(status=profile_status, id=profile_id)
+    profile = self.profiles.get(status=profile_status, id=profile_id)
+    translation.activate(self.get_main_profile().language)
+    return profile
 
 
 def get_user_by_id(self, user_id):
@@ -154,33 +166,33 @@ def get_user_by_id(self, user_id):
 
 
 def send_account_verification_email(self, to_email=None, language_code=None):
-    from_mail = settings.PROFILE_PROFILE_NO_REPLY_EMAIL
+    from_mail = settings.REGISTRATION_FROM_EMAIL
     if not to_email:
         to_email = self.email or self.user.email
     if not language_code:
         language_code = 'en'
 
-    subject = 'WhistlePRO Account Activation'
+    subject = 'Edilcloud Account Activation'
     if language_code == 'it':
-        subject = 'Attivazione account WhistlePRO'
+        subject = 'Attivazione account Edilcloud'
 
     account_activation_token = UserTokenGenerator()
     context = {
         'logo_url': os.path.join(
             settings.PROTOCOL + '://',
             settings.BASE_URL,
-            'assets/images/patterns/logowhistle.png'
+            'assets/images/logos/fuse.svg'
         ),
         "first_name": self.username,
         "endpoint": os.path.join(
-            settings.PROTOCOL+"://", settings.BASE_URL,
-            'user-account-activation', urlsafe_base64_encode(force_bytes(self.id)).decode("utf-8"),
+            settings.PROTOCOL + "://", settings.BASE_URL,
+            'user-account-activation', urlsafe_base64_encode(force_bytes(self.id)),
             account_activation_token.make_token(self)
         ) + os.sep,
         "protocol": settings.PROTOCOL,
         "base_url": settings.BASE_URL
     }
-    subject = "Whistle Account Activation"
+    subject = "Edilcloud Account Activation"
 
     # Text message
     text_message = render_to_string('user/user/registration/account_{}.txt'.format(language_code), context)
@@ -193,6 +205,8 @@ def send_account_verification_email(self, to_email=None, language_code=None):
         html_message=html_message,
         recipient_list=[to_email],
         from_email=from_mail,
+        auth_user=from_mail,
+        auth_password=settings.REGISTRATION_EMAIL_HOST_PASSWORD
     )
 
 
@@ -218,6 +232,36 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         db_index=True,
         verbose_name=_("name"),
     )
+    city = models.CharField(
+        max_length=255,
+        blank=True,
+        db_index=True,
+        verbose_name=_("city"),
+    )
+    country = models.CharField(
+        max_length=255,
+        blank=True,
+        db_index=True,
+        verbose_name=_("country"),
+    )
+    address = models.CharField(
+        max_length=255,
+        blank=True,
+        db_index=True,
+        verbose_name=_("address"),
+    )
+    province = models.CharField(
+        max_length=255,
+        blank=True,
+        db_index=True,
+        verbose_name=_("province"),
+    )
+    cap = models.CharField(
+        max_length=255,
+        blank=True,
+        db_index=True,
+        verbose_name=_("cap"),
+    )
     slug = models.SlugField(
         max_length=255,
         unique=True,
@@ -238,11 +282,11 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         blank=True, null=True,
         verbose_name=_('description'),
     )
-    ssn = models.CharField(
+    tax_code = models.CharField(
         max_length=16,
         blank=True,
         db_index=True,
-        verbose_name=_("ssn"),
+        verbose_name=_("tax_code"),
     )
     vat_number = models.CharField(
         max_length=14,
@@ -250,7 +294,13 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         db_index=True,
         verbose_name=_("vat number"),
     )
-    url = models.URLField(
+    sdi = models.CharField(
+        max_length=7,
+        blank=True,
+        db_index=True,
+        verbose_name=_("sdi"),
+    )
+    url = models.CharField(
         max_length=255,
         blank=True,
         verbose_name=_("url"),
@@ -259,6 +309,16 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         max_length=100,
         blank=True,
         verbose_name=_("email"),
+    )
+    pec = models.EmailField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("pec"),
+    )
+    billing_email = models.EmailField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("billing_email"),
     )
     phone = models.CharField(
         max_length=20,
@@ -304,11 +364,35 @@ class Company(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         blank=True, null=True,
         related_query_name='companies'
     )
+    folders = GenericRelation(
+        'media.Folder',
+        blank=True, null=True,
+        related_query_name='companies'
+    )
     category = JSONField(
         default={},
         blank=True, null=True,
         verbose_name=_('category'),
         help_text=_('Company Categories'),
+    )
+    color = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name=_("color")
+    )
+    customer = models.CharField(
+        default='',
+        max_length=255,
+        blank=True
+    )
+    subscription = models.CharField(
+        default='',
+        max_length=255,
+        blank=True
+    )
+    trial_used = models.BooleanField(
+        default=False,
+        verbose_name=_('has already used trial plan')
     )
 
     class Meta:
@@ -579,6 +663,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         blank=True, null=True,
         related_name='profiles',
         verbose_name=_('company'),
+        on_delete=models.DO_NOTHING
     )
     last_name = models.CharField(
         max_length=255,
@@ -663,6 +748,10 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         default=False,
         verbose_name=_('is shared')
     )
+    is_invited = models.BooleanField(
+        default=False,
+        verbose_name=_('is invited')
+    )
     is_in_showroom = models.BooleanField(
         default=False,
         verbose_name=_('is in showroom')
@@ -671,7 +760,14 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         default=False,
         verbose_name=_('is superuser')
     )
-
+    can_access_chat = models.BooleanField(
+        default=True,
+        verbose_name=_('can access chat')
+    )
+    can_access_files = models.BooleanField(
+        default=True,
+        verbose_name=_('can access files')
+    )
     __original_instance = None
 
     class Meta:
@@ -729,7 +825,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             new_obj = True
         else:
             new_obj = False
-        super(Profile, self).save(*args, **kwargs)
+        super(Profile, self).save(user=self.user, *args, **kwargs)
         if new_obj:
             self.create_preference()
 
@@ -743,13 +839,114 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         )
         if info_preference_json:
             preference.info = info_preference_json
-        preference.save()
+        preference.save(user=self.user)
 
     def get_preference(self):
         return self.preference
 
     def get_count_closed_preference(self):
         return sum(len(value['closed']) for key, value in self.preference.info['results'].items())
+
+    def create_task_post(self, post_dict):
+        from ..project.signals import post_notification
+        task = Task.objects.get(id=post_dict['task'])
+        post_dict.pop('task')
+        post_worker = Post(
+            task=task,
+            **post_dict
+        )
+        post_worker.save()
+        # post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
+        return post_worker
+
+    def create_activity_post(self, post_dict):
+        from ..project.signals import post_notification
+
+        activity = Activity.objects.get(id=post_dict['activity'])
+        post_dict.pop('activity')
+        post_worker = Post(
+            sub_task=activity,
+            **post_dict
+        )
+        post_worker.save()
+        # post_notification(post_worker._meta.model, post_worker, {'created': post_worker.created_date})
+        return post_worker
+
+    def create_post_comment(self, comment_dict):
+        post = Post.objects.get(id=comment_dict['post'])
+        comment_dict.pop('post')
+        comment_worker = Comment(
+            post=post,
+            **comment_dict
+        )
+        comment_worker.save()
+        return comment_worker
+
+    def share_post(self, post_dict):
+        post = Post.objects.get(id=post_dict['post'])
+        try:
+            task = post.sub_task.task
+        except:
+            task = post.task
+        post_dict.pop('post')
+        task_post_ass = TaskPostAssignment(
+            post=post,
+            task=task,
+            **post_dict
+        )
+        task_post_ass.save()
+        return task_post_ass
+
+    def list_activity_posts(self, activity):
+        """
+        Get all posts of a specific activity
+        """
+        activity_obj = Activity.objects.get(id=activity)
+        return activity_obj.post_set.filter((Q(is_public=False, author__company=self.company) | Q(is_public=True)))
+
+    def list_task_own_posts(self, task):
+        """
+        Get all posts of a specific activity
+        """
+        task_obj = Task.objects.get(id=task)
+        return task_obj.post_set.filter(Q(is_public=False, author__company=self.company) | Q(is_public=True))
+
+    def remove_post(self, post):
+        post = Post.objects.get(id=post.id)
+        post.delete()
+
+    def remove_comment(self, comment):
+        comment = Comment.objects.get(id=comment.id)
+        comment.delete()
+
+    def remove_attachment(self, attachment):
+        attachment = MediaAssignment.objects.get(id=attachment.id)
+        attachment.delete()
+
+    def list_task_posts(self, task):
+        """
+        Get all posts of a specific activity
+        """
+        all_posts = []
+        task_obj = Task.objects.get(id=task)
+        taskpost_assigments = task_obj.taskpostassignment_set.all()
+        for taskpost_ass in taskpost_assigments:
+            all_posts.append(taskpost_ass.post)
+        return all_posts
+
+    def list_post_comments(self, post):
+        """
+        Get all comments of a specific post
+        """
+        post_obj = Post.objects.get(id=post)
+        return post_obj.comment_set.filter(parent__isnull=True)
+
+    def list_comment_replies(self, comment):
+        """
+        Get all comments of a specific post
+        """
+        comments = Comment.objects.filter(parent=comment)
+        return comments
 
     def edit_preference(self, preference_dict):
         """
@@ -761,6 +958,19 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             preference.save()
             return preference
         raise django_exception.OwnerProfilePermissionDenied(_('You can\'t edit others preference'))
+
+    def edit_profile(self, profile_dict):
+        """
+        Updates main profile
+        :return: profile obj
+        """
+        # PS: We could add object level permission in two different ways.
+        # 1. If condition (Doesn't return any exception) i.e. if MyModel(id=1) == MyModel(id=1):
+        # 2. The below codebase
+        profile = Profile.objects.filter(id=self.id).get(id=profile_dict['id'])
+        profile.__dict__.update(**profile_dict)
+        profile.save()
+        return profile
 
     # ------ PROFILE CLONE ------
 
@@ -842,12 +1052,12 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         accept_url = self.get_accept_url()
         refuse_url = self.get_refuse_url()
 
-        endpoint = os.path.join(settings.PROTOCOL + ':/', settings.BASE_URL, 'profile')
+        endpoint = os.path.join(settings.PROTOCOL + ':/', settings.BASE_URL, 'apps/companies')
         context = {
             'logo_url': os.path.join(
                 settings.PROTOCOL + '://',
                 settings.BASE_URL,
-                'assets/images/patterns/logowhistle.png'
+                'assets/images/logos/fuse.svg'
             ),
             "first_name": self.first_name,
             "last_name": self.last_name,
@@ -856,9 +1066,9 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         }
 
         if language_code == 'en':
-            subject = "WhistlePRO Company {} Profile Activation".format(self.company)
+            subject = "Edilcloud Company {} Profile Activation".format(self.company)
         else:
-            subject = "Attivazione nuovo profilo WhistlePRO per l'impresa {}".format(self.company)
+            subject = "Attivazione nuovo profilo Edilcloud per l'impresa {}".format(self.company)
         # Text message
         text_message = render_to_string('profile/profile/email/profile_{}.txt'.format(language_code), context)
 
@@ -901,10 +1111,10 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @property
     def is_main(self):
         if (
-            self.user
-            and not self.company
-            and not self.role
-            and self.profile_invitation_date
+                self.user
+                and not self.company
+                and not self.role
+                and self.profile_invitation_date
         ):
             return True
         return False
@@ -912,9 +1122,9 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @property
     def is_owner(self):
         if (
-            self.company
-            and self.role == settings.OWNER
-            and self.profile_invitation_date
+                self.company
+                and self.role == settings.OWNER
+                and self.profile_invitation_date
         ):
             return True
         return False
@@ -922,9 +1132,9 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @property
     def is_delegate(self):
         if (
-            self.company
-            and self.role == settings.DELEGATE
-            and self.profile_invitation_date
+                self.company
+                and self.role == settings.DELEGATE
+                and self.profile_invitation_date
         ):
             return True
         return False
@@ -932,9 +1142,9 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @property
     def is_level_1(self):
         if (
-            self.company
-            and self.role == settings.LEVEL_1
-            and self.profile_invitation_date
+                self.company
+                and self.role == settings.LEVEL_1
+                and self.profile_invitation_date
         ):
             return True
         return False
@@ -942,9 +1152,9 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @property
     def is_level_2(self):
         if (
-            self.company
-            and self.role == settings.LEVEL_2
-            and self.profile_invitation_date
+                self.company
+                and self.role == settings.LEVEL_2
+                and self.profile_invitation_date
         ):
             return True
         return False
@@ -968,6 +1178,10 @@ class Preference(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         verbose_name=_('notification'),
         help_text=_('More information about profile notification'),
     )
+    show_again = models.BooleanField(
+        default=True,
+        verbose_name=_('show again')
+    )
 
     class Meta:
         verbose_name = _('preference')
@@ -984,7 +1198,6 @@ class Preference(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
 
 @python_2_unicode_compatible
 class MainProfile(Profile):
-
     objects = managers.MainProfileManager()
 
     class Meta:
@@ -1020,7 +1233,7 @@ class MainProfile(Profile):
             **profile_dict
         )
         level2.save()
-        #Todo: Email send
+        # Todo: Email send
         return level2
 
     def edit_profile(self, profile_dict):
@@ -1064,8 +1277,8 @@ class MainProfile(Profile):
     def create_company(self, company_dict):
         # todo: active
         # todo: authenticated
-        if self.get_company_count() >= settings.MAX_COMPANIES_PER_USER:
-            raise django_exception.OwnerProfilePermissionDenied(_('no permission to create other than 10 companies'))
+        # if self.get_company_count() >= settings.MAX_COMPANIES_PER_USER:
+        #     raise django_exception.OwnerProfilePermissionDenied(_('no permission to create other than 10 companies'))
 
         with transaction.atomic():
             company = Company(
@@ -1084,6 +1297,30 @@ class MainProfile(Profile):
             profile.invitation_refuse_date = None
             profile.save()
 
+            # create stripe customer
+            stripe.api_key = djstripe.settings.STRIPE_SECRET_KEY
+            customer = stripe.Customer.create(
+                email=profile.email,
+                name="{} {} - ({})".format(profile.first_name, profile.last_name, profile.company.name),
+                phone=profile.phone
+            )
+            djstripe_customer = djstripe.models.Customer.sync_from_stripe_data(customer)
+            # TODO: ADD OTHER INFO LIKE VAT NUMBER ECC ECC
+            # djstripe_customer.tax_id_data.type = 'eu_vat'
+            # djstripe_customer.tax_id_data.value = profile.company.vat_number
+            # djstripe.models.Customer.sync_from_stripe_data(djstripe_customer)
+            company.customer = djstripe_customer.id
+            subscription = stripe.Subscription.create(
+                customer=customer.id,
+                items=[
+                    {
+                        "price": settings.TRIAL_PLAN
+                    }
+                ],
+                trial_period_days=settings.TRIAL_MAX_DAYS
+            )
+            company.subscription = subscription.id
+            company.save()
         return company, profile
 
     def list_companies(self):
@@ -1230,7 +1467,7 @@ class OwnerProfile(Profile):
         notification_receipient = self.list_notification_receipient().get(
             id=notification_rcp.id
         )
-        notification_receipient.status=False
+        notification_receipient.status = False
         notification_receipient.save()
 
     def list_notification_receipient_event(self, type):
@@ -1338,6 +1575,7 @@ class OwnerProfile(Profile):
             company=self.company,
             company_invitation_date=datetime.datetime.now(),
             profile_invitation_date=datetime.datetime.now(),
+            is_invited=True,
             **profile_dict
         )
         phantom.save()
@@ -1395,13 +1633,35 @@ class OwnerProfile(Profile):
         """
         Get all company profiles linked to the company
         """
-        return self.company.profiles.company_invitation_waiting()
+        complete_staff = []
+        waiting_staff = self.company.profiles.company_invitation_waiting().filter(status=1)
+        for staff in waiting_staff:
+            complete_staff.append(staff)
+        requested_staff = self.company.profiles.company_invitation_request().filter(status=1)
+        for staff in requested_staff:
+            complete_staff.append(staff)
+        return complete_staff
 
     def list_approve_profiles(self):
         """
         Get all company profiles linked to the company
         """
-        return self.company.profiles.company_invitation_approve()
+        return self.company.profiles.company_invitation_approve().filter(status=1)
+
+    def list_approve_profiles_and_external(self, is_creator, profile):
+        """
+        Get all company profiles linked to the company and external owners
+        """
+        print(is_creator)
+        if is_creator or profile.role == 'o' or profile.role == 'd':
+            return Profile.objects.filter(
+                Q(company__profiles__in=self.company.profiles.company_invitation_approve()) | \
+                Q(role='o') | \
+                Q(role='d')) \
+                .filter(status=1) \
+                .distinct()
+        else:
+            return self.company.profiles.company_invitation_approve()
 
     def list_refuse_profiles(self):
         """
@@ -1414,6 +1674,12 @@ class OwnerProfile(Profile):
         Get all company active profiles linked to the company
         """
         return self.company.profiles.all()
+
+    def list_approve_profiles_inactive(self):
+        """
+        Get all company profiles linked to the company
+        """
+        return self.company.profiles.company_invitation_approve_inactive()
 
     def get_profile(self, profile_id):
         profile = self.list_profiles().get(id=profile_id)
@@ -1618,10 +1884,31 @@ class OwnerProfile(Profile):
                 last_modifier=self.user,
                 profile=self,
                 project=project,
+                project_invitation_date=datetime.datetime.now(),
                 role=settings.OWNER
             )
             team.save()
+            if 'referent' in project_dict and project_dict['referent'] and project_dict['referent'] != '' and \
+                    project_dict['referent'] != self:
+                referent_team = Team(
+                    creator=self.user,
+                    last_modifier=self.user,
+                    profile=project_dict['referent'],
+                    project=project,
+                    project_invitation_date=datetime.datetime.now(),
+                    role=project_dict['referent'].role,
+                    status=0
+                )
+                referent_team.save()
+                from ..project.signals import team_invite_notification
+                team_invite_notification(referent_team._meta.model, referent_team)
 
+            content_type = ContentType.objects.get(model='project')
+            self.get_or_create_talk({
+                'content_type': content_type,
+                'content_type_id': content_type.id,
+                'object_id': project.id
+            })
         return project
 
     def clone_project(self, project):
@@ -1631,36 +1918,39 @@ class OwnerProfile(Profile):
         else:
             raise django_exception.ProjectClonePermissionDenied(_('Internal Project can\'t be cloned'))
 
+    def list_projects_basic(self):
+        return self.company.projects.filter(
+            Q(profiles__in=[self.id]) | Q(company=self.company)).distinct()
+
     def list_projects(self):
         """
         Get all company projects
         """
-        return self.company.projects.filter(
-            Q(profiles__in=[self.id]) | Q(company=self.company)).distinct()
+        if self.role == 'o' or self.role == 'd':
+            return Project.objects.filter(
+                Q(company=self.company) | Q(members__profile__in=[self], members__status=1)).distinct()
+        else:
+            return Project.objects.filter(Q(members__profile__in=[self], members__status=1)).distinct()
 
-    def list_internal_projects(self):
-        """
-        Get all company projects
-        """
-        # Todo: FIX
-        # return Project.objects.filter(
-        #     tasks__isnull=False).filter(
-        #     tasks__assigned_company=self.company).annotate(
-        #     tasks__assigned_company__count=Count('tasks__assigned_company', distinct=True)).filter(
-        #     tasks__assigned_company__count=1)
-        return InternalProject.objects.filter(company=self.company)
+    def list_post_alert_all_activities(self):
+        activities_list = []
+        projects = self.list_projects()
+        for project in projects:
+            tasks = self.list_tasks(project)
+            for task in tasks:
+                activities = self.list_task_activities(task)
+                for act in activities:
+                    activities_list.append(act)
+        return Post.objects.filter(alert=True, sub_task__in=activities_list)
 
-    def list_shared_projects(self):
-        """
-        Get all company projects
-        """
-        # Todo: FIX
-        # return self.company.projects.all().order_by('-date_create')
-        return Project.objects.filter(
-            tasks__isnull=False).exclude(tasks__assigned_company=self.company)
-        # return self.company.projects.filter(
-        #     typology=settings.PROJECT_PROJECT_SHARED
-        # )
+    def list_post_alert_all_tasks(self):
+        tasks_list = []
+        projects = self.list_projects()
+        for project in projects:
+            tasks = self.list_tasks(project)
+            for task in tasks:
+                tasks_list.append(task)
+        return Post.objects.filter(alert=True, task__in=tasks_list)
 
     def get_generic_project(self, project_id):
         return Project.objects.get(pk=project_id)
@@ -1718,21 +2008,12 @@ class OwnerProfile(Profile):
         Delete a company project
         """
         project = self.get_project(project.id)
-        project.delete()
+        if project.creator == self.user:
+            project.delete()
 
     # ------ PROJECT TASK ------
 
     def create_task(self, task_dict):
-        # Internal typology is not allowed to assign a task to a different company.
-        # if (
-        #     'project' in task_dict
-        #     and task_dict['project']
-        # ):
-        #     project = self.list_projects().get(id=task_dict['project'].id)
-        #     if project.is_internal_project:
-        #         if 'assigned_company' in task_dict and task_dict['assigned_company'] != project.company:
-        #             task_dict['assigned_company'] = project.company
-
         task = Task(
             creator=self.user,
             last_modifier=self.user,
@@ -1799,7 +2080,17 @@ class OwnerProfile(Profile):
         Get all company tasks of a company project
         """
         project = self.list_projects().get(id=project.id)
+        # return project.tasks.filter(Q(assigned_company=self.company) | Q(project__company_id=self.company.id))
         return project.tasks.all()
+
+    def list_projects_tasks(self, projects):
+        """
+        Get all company tasks of a company project
+        """
+        projects_list = []
+        for project in projects:
+            projects_list.append(project.id)
+        return Task.objects.filter(project__id__in=projects_list)
 
     def list_tasks_and_parent_tasks(self, project):
         my_tasks = self.list_tasks(project)
@@ -1824,8 +2115,8 @@ class OwnerProfile(Profile):
         date_from, date_to = get_first_last_dates_of_month_and_year(month, year)
         if date_from:
             query = (
-                Q(activities__datetime_start__gte=date_from, activities__datetime_start__lte=date_to)
-                | Q(activities__datetime_start__lt=date_from, activities__datetime_end__gte=date_from)
+                    Q(activities__datetime_start__gte=date_from, activities__datetime_start__lte=date_to)
+                    | Q(activities__datetime_start__lt=date_from, activities__datetime_end__gte=date_from)
             )
             queryset = queryset.filter(query).distinct()
         return queryset
@@ -1839,8 +2130,8 @@ class OwnerProfile(Profile):
         date_from, date_to = get_first_last_dates_of_month_and_year(month, year)
         if date_from:
             query = (
-                Q(date_start__gte=date_from, date_start__lte=date_to)
-                | Q(date_start__lt=date_from, date_end__gte=date_from)
+                    Q(date_start__gte=date_from, date_start__lte=date_to)
+                    | Q(date_start__lt=date_from, date_end__gte=date_from)
             )
             queryset = queryset.filter(query).distinct()
 
@@ -1855,8 +2146,8 @@ class OwnerProfile(Profile):
         date_from, date_to = get_first_last_dates_of_month_and_year(month, year)
         if date_from:
             query = (
-                Q(date_start__gte=date_from, date_start__lte=date_to)
-                | Q(date_start__lt=date_from, date_end__gte=date_from)
+                    Q(date_start__gte=date_from, date_start__lte=date_to)
+                    | Q(date_start__lt=date_from, date_end__gte=date_from)
             )
             queryset = queryset.filter(query).distinct()
 
@@ -1871,8 +2162,8 @@ class OwnerProfile(Profile):
         date_from, date_to = get_first_last_dates_of_month_and_year(month, year)
         if date_from:
             query = (
-                Q(datetime_start__gte=date_from, datetime_start__lte=date_to)
-                | Q(datetime_start__lt=date_from, datetime_end__gte=date_from)
+                    Q(datetime_start__gte=date_from, datetime_start__lte=date_to)
+                    | Q(datetime_start__lt=date_from, datetime_end__gte=date_from)
             )
             queryset = queryset.filter(query).distinct()
 
@@ -1904,6 +2195,81 @@ class OwnerProfile(Profile):
         task = project.tasks.all().get(id=task_id)
         return task
 
+    def get_post(self, post_id):
+        """
+        Get a company project
+        """
+        # Todo: Ameliorate
+        post = Post.objects.get(id=post_id)
+        return post
+
+    def notify_post(self, post_dict):
+        """
+        Notify post 
+        """
+        from ..project.signals import post_notification
+        post = self.get_post(post_dict['id'])
+        post_notification(post._meta.model, post, self.request)
+        return post
+        
+        
+    def edit_post(self, post_dict, request):
+        """
+        Update post
+        """
+        from ..project.signals import post_notification, alert_notification
+        post = self.get_post(post_dict['id'])
+        post_notification(post._meta.model, post, request)
+        if post.alert != post_dict['alert']:
+            only_alert = True
+        else:
+            only_alert = False
+        post.__dict__.update(**post_dict)
+        if post_dict['alert'] is True:
+            try:
+                post.sub_task.alert = True
+                post.sub_task.save()
+            except:
+                post.task.alert = True
+                post.task.save()
+        else:
+            try:
+                posts = post.sub_task.post_set.exclude(id=post.id)
+                find_alerts = posts.filter(alert=True).count()
+                if find_alerts == 0:
+                    post.sub_task.alert = False
+                    post.sub_task.save()
+            except:
+                posts = post.task.post_set.exclude(id=post.id)
+                find_alerts = posts.filter(alert=True).count()
+                if find_alerts == 0:
+                    post.task.alert = False
+                    post.task.save()
+        post.save()
+        if only_alert:
+            alert_notification(post._meta.model, post)
+        else:
+            pass
+            # post_notification(post._meta.model, post, {'created': None})
+        return post
+
+    def get_attachment(self, attachment_id):
+        attachment = MediaAssignment.objects.get(id=attachment_id)
+        return attachment
+
+    def get_comment(self, comment_id):
+        comment = Comment.objects.get(id=comment_id)
+        return comment
+
+    def edit_comment(self, comment_dict):
+        """
+        Update a company project
+        """
+        comment = self.get_comment(comment_dict['id'])
+        comment.__dict__.update(**comment_dict)
+        comment.save()
+        return comment
+
     def edit_task(self, task_dict):
         """
         Update a company task
@@ -1919,11 +2285,11 @@ class OwnerProfile(Profile):
         #         task_dict['progress'] = 100
         #     task.__dict__.update(**task_dict)
         #     task.save()
-        if task_dict['date_completed'] and (not 'progress'in task_dict):
+        if task_dict['date_completed'] and (not 'progress' in task_dict):
             task_dict['progress'] = 100
         task.__dict__.update(**task_dict)
         task.save()
-        if 'progress'in task_dict and task.shared_task:
+        if 'progress' in task_dict and task.shared_task:
             self.update_shared_task_progress(task.shared_task)
         return task
 
@@ -1934,15 +2300,14 @@ class OwnerProfile(Profile):
         task_days = (task.date_end - task.date_start).days
         for child in task_list:
             prj_days = (child.date_end - child.date_start).days
-            completed_pry_days = (child.progress*prj_days)/100
+            completed_pry_days = (child.progress * prj_days) / 100
             tot_days += prj_days
             completed_day += completed_pry_days
 
-        parent_completed_days = (completed_day*task_days)/tot_days
-        parent_progress = (parent_completed_days*100)/task_days
+        parent_completed_days = (completed_day * task_days) / tot_days
+        parent_progress = (parent_completed_days * 100) / task_days
         task.progress = int(parent_progress)
         task.save()
-
 
     def assign_task(self, task_dict):
         """
@@ -2014,14 +2379,23 @@ class OwnerProfile(Profile):
     def create_task_activity(self, activity_dict):
         task = self.get_task(activity_dict['task'].id)
         # Todo: Put the following logic in a new function
-        task.project.members.all().get(profile__id=activity_dict['profile'].id)
-
+        # act_list = []
+        workers = activity_dict.pop('workers')
         task_worker = Activity(
             creator=self.user,
             last_modifier=self.user,
             **activity_dict
         )
+        for worker in workers:
+            task.project.members.all().get(profile__id=worker.id)
+            task_worker.save()
+            task_worker.workers.add(worker)
         task_worker.save()
+
+        # for owner in task.project.members.filter(role__in=['o', 'd']):
+        #     task_worker.workers.add(owner.profile)
+        #     task_worker.save()
+        # act_list.append(task_worker)
         return task_worker
 
     def list_task_internal_activities(self, project_id):
@@ -2036,7 +2410,7 @@ class OwnerProfile(Profile):
         Get all company activities of a company project task
         """
         task = self.get_task(task.id)
-        return task.activities.all()
+        return task.activities.all().order_by('-date_create')
 
     def list_project_parent_activities(self, project_id):
         project = self.get_parent_project(project_id)
@@ -2067,7 +2441,13 @@ class OwnerProfile(Profile):
         """
         # Todo: Don't update Task, profile
         activity = self.get_task_activity(activity_dict['id'])
+        workers = activity_dict.pop('workers')
         activity.__dict__.update(**activity_dict)
+        activity.workers.clear()
+        for worker in workers:
+            activity.task.project.members.all().get(profile__id=worker.id)
+            activity.save()
+            activity.workers.add(worker)
         activity.save()
         return activity
 
@@ -2107,6 +2487,39 @@ class OwnerProfile(Profile):
         project = self.list_projects().get(id=project_id)
         return project.members.all()
 
+    def list_approve_members(self, project_id):
+        """
+        Get all members of a company project approved
+        """
+        project = self.list_projects().get(id=project_id)
+        return project.members.filter(
+            status=1,
+            project_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=True,
+        )
+
+    def list_waiting_members(self, project_id):
+        """
+        Get all members of a company project waiting
+        """
+        project = self.list_projects().get(id=project_id)
+        return project.members.filter(
+            status=0,
+            project_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=True,
+        )
+
+    def list_refuse_members(self, project_id):
+        """
+        Get all members of a company project refused
+        """
+        project = self.list_projects().get(id=project_id)
+        return project.members.filter(
+            status=0,
+            project_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=False,
+        )
+
     def list_parent_members(self, project_id):
         """
         Get all members of a company project
@@ -2119,8 +2532,7 @@ class OwnerProfile(Profile):
         Get a company project member
         """
         # Todo: Ameliorate
-        project = self.list_projects().get(members__id=member_id)
-        member = project.members.all().get(id=member_id)
+        member = Team.objects.get(id=member_id)
         return member
 
     def edit_member(self, member_dict):
@@ -2138,7 +2550,6 @@ class OwnerProfile(Profile):
         """
         Enable a company project member, if it is disabled
         """
-        member = self.list_members(member.project.id).get(id=member.id)
         if member.status == 0:
             member.status = 1
             member.save()
@@ -2148,9 +2559,13 @@ class OwnerProfile(Profile):
         """
         Disable a company project member, if it is enabled
         """
-        member = self.list_members(member.project.id).get(id=member.id)
+        # member = self.list_waiting_members(member.project.id).get(id=member.id)
         if member.status == 1:
             member.status = 0
+            member.save()
+        else:
+            member.status = 0
+            member.invitation_refuse_date = datetime.datetime.now()
             member.save()
         return member
 
@@ -2217,9 +2632,9 @@ class OwnerProfile(Profile):
         if self.company.is_supplier:
             return Bom.objects.filter(
                 Q(is_draft=False) & (
-                    Q(selected_companies=self.company) | (
+                        Q(selected_companies=self.company) | (
                         Q(selected_companies=None) & Q(bom_rows__category__code__in=self.company.category.keys())
-                    )
+                )
                 )
             ).distinct()
         return self.company.selected_boms.all()
@@ -2335,7 +2750,7 @@ class OwnerProfile(Profile):
         bom_archive = BomArchive(
             creator=self.user,
             last_modifier=self.user,
-            ** bomarchive_dict
+            **bomarchive_dict
         )
         bom_archive.save()
         return bom_archive
@@ -2628,7 +3043,7 @@ class OwnerProfile(Profile):
         quotation_archive = QuotationArchive(
             creator=self.user,
             last_modifier=self.user,
-            ** quotationarchive_dict
+            **quotationarchive_dict
         )
         quotation_archive.save()
         return quotation_archive
@@ -2838,7 +3253,6 @@ class OwnerProfile(Profile):
     def cancel_buy_offer(self, offer):
         BoughtOffer.objects.get(profile=self, offer=offer).delete()
 
-
     # ------ CERTIFICATION ------
 
     def create_certification(self, cert_dict):
@@ -2904,6 +3318,7 @@ class OwnerProfile(Profile):
     # ------ DOCUMENT ------
 
     def create_document(self, document_dict):
+        additional_path = None
         if document_dict['content_type'].model == 'project':
             self.get_project(document_dict['object_id'])
         elif document_dict['content_type'].model == 'company':
@@ -2914,12 +3329,15 @@ class OwnerProfile(Profile):
             self.get_bom(document_dict['object_id'])
         else:
             raise django_exception.OwnerProfilePermissionDenied(_('Please select the correct content type'))
-
+        if 'additional_path' in document_dict:
+            additional_path = document_dict.pop('additional_path')
         document = Document(
             creator=self.user,
             last_modifier=self.user,
             **document_dict
         )
+        if additional_path:
+            document.additional_path = additional_path
         if 'name' in document_dict['document']:
             document.document.save(document_dict['document'].name, document_dict['document'])
         document.save()
@@ -2958,18 +3376,20 @@ class OwnerProfile(Profile):
         """
         Get all project documents linked to the company/project
         """
-        query = {'projects__company': self.company}
+        query1 = {'projects__company': self.company}
+        query2 = {'projects__profiles__id': self.id}
         if project:
-            query.update({'projects__id': project.id})
+            query1.update({'projects__id': project.id})
 
-        return Document.objects.filter(**query)
+        return Document.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project',
+                                                                         object_id=project.id)
 
     def list_project_parent_documents(self, project_id):
         """
         Get all project documents linked to the company/project
         """
         project = self.get_parent_project(project_id)
-        return Document.objects.filter(projects__id= project.id)
+        return Document.objects.filter(projects__id=project.id)
 
     def list_profile_documents(self):
         """
@@ -3025,14 +3445,11 @@ class OwnerProfile(Profile):
 
     def edit_document(self, document_dict):
         document = self.list_documents().get(id=document_dict['id'])
-        if 'document' in document_dict:
-            # Deletes the document media
-            os.remove(document.document.file.name)
-
         document.__dict__.update(document_dict)
-
         if 'document' in document_dict:
             document.document.save(document_dict['document'].name, document_dict['document'])
+        if 'folder' in document_dict:
+            document.folder = document_dict['folder']
         document.save()
         return document
 
@@ -3046,6 +3463,7 @@ class OwnerProfile(Profile):
     # ------ PHOTO ------
 
     def create_photo(self, photo_dict):
+        additional_path = None
         if photo_dict['content_type'].model == 'project':
             self.get_project(photo_dict['object_id'])
         elif photo_dict['content_type'].model == 'company':
@@ -3054,13 +3472,17 @@ class OwnerProfile(Profile):
             self.get_bom(photo_dict['object_id'])
         else:
             raise django_exception.OwnerProfilePermissionDenied(_('Please select the correct content type'))
-
+        if 'additional_path' in photo_dict:
+            additional_path = photo_dict.pop('additional_path')
         photo = Photo(
             creator=self.user,
             last_modifier=self.user,
             pub_date=datetime.datetime.now(),
             **photo_dict
         )
+        if additional_path:
+            photo.additional_path = additional_path
+
         if 'name' in photo_dict['photo']:
             photo.photo.save(photo_dict['photo'].name, photo_dict['photo'])
         photo.save()
@@ -3098,11 +3520,25 @@ class OwnerProfile(Profile):
         """
         Get all project photos of the company/project
         """
-        query = {'projects__company': self.company}
+        query1 = {'projects__company': self.company}
+        query2 = {'projects__profiles__id': self.id}
         if project:
-            query.update({'projects__id': project.id})
+            query1.update({'projects__id': project.id})
 
-        return Photo.objects.filter(**query)
+        return Photo.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project',
+                                                                      object_id=project.id)
+
+    def list_project_folders(self, project=None):
+        """
+        Get all project folders of the company/project
+        """
+        query1 = {'projects__company': self.company}
+        query2 = {'projects__profiles__id': self.id}
+        if project:
+            query1.update({'projects__id': project.id})
+
+        return Folder.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project',
+                                                                       object_id=project.id)
 
     def list_bom_photos(self):
         """
@@ -3152,14 +3588,11 @@ class OwnerProfile(Profile):
 
     def edit_photo(self, photo_dict):
         photo = self.list_photos().get(id=photo_dict['id'])
-        if 'photo' in photo_dict:
-            # Deletes the photo media
-            os.remove(photo.photo.file.name)
-
         photo.__dict__.update(**photo_dict)
-
         if 'photo' in photo_dict:
             photo.photo.save(photo_dict['photo'].name, photo_dict['photo'])
+        if 'folder' in photo_dict:
+            photo.folder = photo_dict['folder']
         photo.save()
         return photo
 
@@ -3173,6 +3606,7 @@ class OwnerProfile(Profile):
     # ------ VIDEO ------
 
     def create_video(self, video_dict):
+        additional_path = None
         if video_dict['content_type'].model == 'project':
             self.get_project(video_dict['object_id'])
         elif video_dict['content_type'].model == 'company':
@@ -3181,17 +3615,61 @@ class OwnerProfile(Profile):
             self.get_bom(video_dict['object_id'])
         else:
             raise django_exception.OwnerProfilePermissionDenied(_('Please select the correct content type'))
-
+        if 'additional_path' in video_dict:
+            additional_path = video_dict.pop('additional_path')
         video = Video(
             creator=self.user,
             last_modifier=self.user,
             pub_date=datetime.datetime.now(),
             **video_dict
         )
+        if additional_path:
+            video.additional_path = additional_path
         if 'name' in video_dict['video']:
             video.video.save(video_dict['video'].name, video_dict['video'])
         video.save()
         return video
+
+    def check_parents(self, folder_obj):
+        parent_count = 0
+
+        def fn(obj, parent_count):
+            if hasattr(obj, 'parent') and obj.parent:
+                parent_count += 1
+                parent_count = fn(obj.parent, parent_count)
+            return parent_count
+
+        parent_count = fn(folder_obj, parent_count)
+
+        return parent_count
+
+    def create_folder(self, folder_dict):
+
+        if folder_dict['content_type'].model == 'project':
+            self.get_project(folder_dict['object_id'])
+        elif folder_dict['content_type'].model == 'company':
+            self.get_company(folder_dict['object_id'])
+        elif folder_dict['content_type'].model == 'bom':
+            self.get_bom(folder_dict['object_id'])
+        else:
+            raise django_exception.OwnerProfilePermissionDenied(_('Please select the correct content type'))
+
+        if 'parent' in folder_dict and folder_dict['parent']:
+            folder_dict['is_root'] = False
+        else:
+            folder_dict['is_root'] = True
+
+        # check 3 level
+        total_parents = self.check_parents(folder_dict['parent']) + 1
+        if total_parents >= 3:
+            return 400
+        folder = Folder(
+            creator=self.user,
+            last_modifier=self.user,
+            **folder_dict
+        )
+        folder.save()
+        return folder
 
     def list_videos(self):
         """
@@ -3202,6 +3680,21 @@ class OwnerProfile(Profile):
             Q(projects__company=self.company) |
             Q(boms__owner=self.company)
         )
+
+    def list_folders(self):
+        """
+        Get all folders linked to the company
+        """
+        return Folder.objects.filter(
+            Q(companies=self.company) |
+            Q(projects__company=self.company)
+        )
+
+    def list_company_folders(self):
+        """
+        Get all folders linked to the company
+        """
+        return Folder.objects.filter(companies=self.company)
 
     def list_company_videos(self):
         """
@@ -3225,11 +3718,13 @@ class OwnerProfile(Profile):
         """
         Get all project videos of the company
         """
-        query = {'projects__company': self.company}
+        query1 = {'projects__company': self.company}
+        query2 = {'projects__profiles__id': self.id}
         if project:
-            query.update({'projects__id': project.id})
+            query1.update({'projects__id': project.id})
 
-        return Video.objects.filter(**query)
+        return Video.objects.filter(Q(**query1) | Q(**query2)).filter(content_type__model='project',
+                                                                      object_id=project.id)
 
     def list_bom_videos(self):
         """
@@ -3279,14 +3774,11 @@ class OwnerProfile(Profile):
 
     def edit_video(self, video_dict):
         video = self.list_videos().get(id=video_dict['id'])
-        if 'video' in video_dict:
-            # Deletes the video media
-            os.remove(video.video.file.name)
-
         video.__dict__.update(**video_dict)
-
         if 'video' in video_dict:
             video.video.save(video_dict['video'].name, video_dict['video'])
+        if 'folder' in video_dict:
+            video.folder = video_dict['folder']
         video.save()
         return video
 
@@ -3297,6 +3789,29 @@ class OwnerProfile(Profile):
         # Deletes the video instance
         video.delete()
 
+    def get_folder(self, folder_id):
+        """
+        Get company folder
+        """
+        folder = self.list_folders().get(id=folder_id)
+        return folder
+
+    def edit_folder(self, folder_dict):
+        folder = self.list_folders().get(id=folder_dict['id'])
+        if 'parent' in folder_dict and folder_dict['parent']:
+            folder_dict['is_root'] = False
+        else:
+            folder_dict['is_root'] = True
+        folder.__dict__.update(**folder_dict)
+        folder.save()
+        folder.parent = folder_dict['parent']
+        folder.save()
+        return folder
+
+    def remove_folder(self, folder):
+        folder = self.list_folders().get(id=folder.id)
+        folder.delete()
+
     # ------ TALK ------
 
     def get_or_create_talk(self, talk_dict):
@@ -3306,20 +3821,20 @@ class OwnerProfile(Profile):
 
         if content_type.model == 'profile':
             query = (
-                Q(content_type=content_type)
-                & (
-                    Q(object_id=self.id)
-                    | Q(messages__sender_id=self.id)
-                )
-                & (
-                    Q(object_id=talk_dict['object_id'])
-                    | Q(messages__sender_id=talk_dict['object_id'])
-                )
+                    Q(content_type=content_type)
+                    & (
+                            Q(object_id=self.id)
+                            | Q(messages__sender_id=self.id)
+                    )
+                    & (
+                            Q(object_id=talk_dict['object_id'])
+                            | Q(messages__sender_id=talk_dict['object_id'])
+                    )
             )
         else:
             query = (
-                Q(content_type=content_type)
-                & Q(object_id=talk_dict['object_id'])
+                    Q(content_type=content_type)
+                    & Q(object_id=talk_dict['object_id'])
             )
 
         talk = Talk.objects.filter(query)
@@ -3401,7 +3916,7 @@ class OwnerProfile(Profile):
     def list_profile_messages(self):
         content_type_id = ContentType.objects.get(model='profile').id
         query = Q(talk__content_type_id=content_type_id) & (
-                    Q(sender=self) | Q(talk__object_id=self.id)
+                Q(sender=self) | Q(talk__object_id=self.id)
         )
         return Message.objects.filter(query)
 
@@ -3418,7 +3933,7 @@ class OwnerProfile(Profile):
         content_type_id = ContentType.objects.get(model='profile').id
         return Talk.objects.filter(
             Q(content_type_id=content_type_id) & (
-                Q(object_id=self.id) | Q(messages__sender_id=self.id)
+                    Q(object_id=self.id) | Q(messages__sender_id=self.id)
             )
         ).distinct()
 
@@ -3434,16 +3949,36 @@ class OwnerProfile(Profile):
 
     def create_message(self, message_dict):
         talk_dict = message_dict.pop('talk')
-        talk = self.get_or_create_talk(talk_dict)
+        talk = self.get_or_create_talk(talk_dict[0])
 
         message = Message(
             creator=self.user,
             last_modifier=self.user,
             sender=self,
             talk=talk,
-            **message_dict
+            status=0,
+            body=message_dict['body'][0],
+            unique_code=message_dict['unique_code'][0]
         )
         message.save()
+        if talk.content_type.name == 'project':
+            staffs = []
+            project = Project.objects.get(id=talk.object_id)
+            teams = project.members.filter(
+                status=1,
+                project_invitation_date__isnull=False,
+                invitation_refuse_date__isnull=True,
+            )
+            for team in teams:
+                staffs.append(team.profile)
+        else:
+            staffs = self.company.get_active_staff()
+
+        for staff in staffs:
+            MessageProfileAssignment.objects.create(
+                message=message,
+                profile=staff
+            )
         return message
 
     def list_messages(self):
@@ -3507,12 +4042,12 @@ class OwnerProfile(Profile):
             refuse_date__isnull=True,
             invitation_date__isnull=False)
 
-    def list_followers(self): # TODO
+    def list_followers(self):  # TODO
         """
         Company followers (Company <---- Profile)
         :return: Profiles
         """
-        #return self.company.followers.all()
+        # return self.company.followers.all()
 
     def accept_follower(self, company):
         follow = self.company.request_favourites.get(company=company)
@@ -3581,7 +4116,6 @@ class OwnerProfile(Profile):
             query_categories |= Q(tags__has_key=category)
         query = Q(status=1) & query_categories
         return Sponsor.objects.filter(query).distinct()
-
 
 
 @python_2_unicode_compatible
@@ -3662,8 +4196,6 @@ class Level1Profile(OwnerProfile):
         delattr(OwnerProfile, 'remove_task_activity')
         delattr(OwnerProfile, 'create_member')
         delattr(OwnerProfile, 'edit_member')
-        delattr(OwnerProfile, 'enable_member')
-        delattr(OwnerProfile, 'disable_member')
         delattr(OwnerProfile, 'remove_member')
         delattr(OwnerProfile, 'create_bom')
         delattr(OwnerProfile, 'edit_bom')

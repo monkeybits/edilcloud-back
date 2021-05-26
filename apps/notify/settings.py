@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 NOTIFY_NOTIFY_EVENT_CHOICES = (
     ('mr', _('received message'),),
 )
-NOTIFY_NOTIFY_NO_REPLY_EMAIL = 'jumbo@thux.it'
+NOTIFY_NOTIFY_NO_REPLY_EMAIL = 'notification@edilcloud.io'
 NOTIFY_NOTIFY_SEND_NOTIFICATION_ENABLED = True
 
 NOTIFY_CONTENT_TYPE_LIMIT_CHOICES_TO = [
@@ -18,6 +18,8 @@ NOTIFY_CONTENT_TYPE_LIMIT_CHOICES_TO = [
     {'app_label': 'project', 'model': 'team'},
     {'app_label': 'project', 'model': 'task'},
     {'app_label': 'project', 'model': 'activity'},
+    {'app_label': 'project', 'model': 'post'},
+    {'app_label': 'project', 'model': 'comment'},
     {'app_label': 'quotation', 'model': 'offer'},
     {'app_label': 'quotation', 'model': 'bom'},
 ]

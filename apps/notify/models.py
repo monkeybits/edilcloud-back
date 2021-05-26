@@ -131,7 +131,7 @@ class NotificationRecipient(UserModel, DateModel, StatusModel):
                 'logo_url': os.path.join(
                     settings.PROTOCOL + '://',
                     settings.BASE_URL,
-                    'assets/images/patterns/logowhistle.png'
+                    'assets/images/logos/fuse.svg'
                 ),
                 "first_name": self.recipient.first_name,
                 "last_name": self.recipient.last_name,

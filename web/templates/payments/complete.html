@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subscription Succeeded</title>
+    <script>
+        setTimeout(() => {
+            window.location.href = "http://localhost:3000/apps/dashboard";
+        },2000);
+    </script>
+</head>
+<body>
+    <div id="first-div">
+        <h1>Complimenti, hai completato la sottoscrizione correttamente!</h1>
+        <br>
+        <br>
+        <br>
+        <button>Torna alla Home</button>
+    </div>
+</body>
+</html>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    #first-div {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+</style>

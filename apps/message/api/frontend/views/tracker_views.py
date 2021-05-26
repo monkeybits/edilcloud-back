@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import generics, status
+from rest_framework.response import Response
 
 from web.api.permissions import RoleAccessPermission
 from web.api.views import QuerysetMixin, JWTPayloadMixin, WhistleGenericViewMixin
@@ -48,13 +49,16 @@ class TrackerMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'talk', 'sender', 'date_create'
+            'id', 'body', 'talk', 'sender', 'date_create', 'files', 'unique_code'
         ]
         self.talk_response_include_fields = [
             'id', 'code', 'content_type_name', 'object_id'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo'
+            'id', 'first_name', 'last_name', 'photo', 'position', 'company'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'category', 'color_project'
         ]
         super(TrackerMessageListView, self).__init__( *args, **kwargs)
 
@@ -78,19 +82,19 @@ class TrackerMessageAddView(
 
     def __init__(self, *args, **kwargs):
         self.message_request_include_fields = [
-            'id', 'body', 'talk'
+            'id', 'body', 'talk', 'unique_code'
         ]
         self.talk_request_include_fields = [
             'id', 'content_type', 'object_id'
         ]
         self.message_response_include_fields = [
-            'id', 'body', 'talk', 'sender', 'date_create'
+            'id', 'body', 'talk', 'sender', 'date_create', 'files', 'unique_code'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo', 'role', 'company'
+            'id', 'first_name', 'last_name', 'photo', 'role', 'company', 'position'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'category'
+            'id', 'name', 'category', 'color_project'
         ]
         self.talk_response_include_fields = [
             'id', 'code', 'content_type_name', 'object_id'
@@ -103,7 +107,8 @@ class TrackerMessageAddView(
         if not 'talk' in request.data:
             request.data['talk'] = dict()
 
-        request.data['talk']['content_type'] = ContentType.objects.get(model=self.kwargs['type']).id
+        request.data['talk']['content_type'] = ContentType.objects.get(model=self.kwargs['type'])
+        request.data['talk']['content_type_id'] = request.data['talk']['content_type'].id
         request.data['talk']['object_id'] = self.kwargs['pk']
         return self.create(request, *args, **kwargs)
 
@@ -120,13 +125,16 @@ class TrackerMessageDetailView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'talk', 'sender', 'date_create'
+            'id', 'body', 'talk', 'sender', 'date_create', 'unique_code'
         ]
         self.talk_response_include_fields = [
             'id', 'code', 'content_type_name', 'object_id'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo'
+            'id', 'first_name', 'last_name', 'photo', 'position', 'company'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'category', 'color_project'
         ]
         super(TrackerMessageDetailView, self).__init__( *args, **kwargs)
 
@@ -143,13 +151,16 @@ class TrackerMessageDeleteView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'talk', 'sender', 'date_create'
+            'id', 'body', 'talk', 'sender', 'date_create', 'unique_code'
         ]
         self.talk_response_include_fields = [
             'id', 'code'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo'
+            'id', 'first_name', 'last_name', 'photo', 'position', 'company'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'category', 'color_project'
         ]
         super(TrackerMessageDeleteView, self).__init__( *args, **kwargs)
 
@@ -190,7 +201,10 @@ class TrackerTalkListView(
             'id', 'code', 'object_id', 'messages'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo'
+            'id', 'first_name', 'last_name', 'photo', 'position', 'company'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'category', 'color_project'
         ]
         super(TrackerTalkListView, self).__init__( *args, **kwargs)
 
@@ -213,6 +227,23 @@ class TrackerTalkDetailView(
         self.talk_message_response_include_fields = ['id', 'code', 'messages']
         super(TrackerTalkDetailView, self).__init__( *args, **kwargs)
 
+class TrackerTalkReadAllView(
+        TrackerTalkMixin,
+        generics.CreateAPIView):
+    """
+    Get a talk with all messages
+    """
+    serializer_class = serializers.TalkSerializer
+
+    def __init__(self, *args, **kwargs):
+        super(TrackerTalkReadAllView, self).__init__( *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        talk = self.get_object()
+        talk.read_all(profile)
+        return Response(status=status.HTTP_200_OK, data="Successfully read")
 
 class TrackerTalkDeleteView(
         TrackerTalkMixin,

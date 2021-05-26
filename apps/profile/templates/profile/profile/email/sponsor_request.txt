@@ -1,4 +1,4 @@
-Gentile WhistlePRO,
+Gentile Edilcloud,
 
 l'impresa {{ company_name }} ha richiesto di diventare sponsor della piattaforma.
 
@@ -12,14 +12,14 @@ Site: {{company_url}}
 
 
 
-WhistlePRO permette a tutti gli attori del settore costruzioni di
+Edilcloud permette a tutti gli attori del settore costruzioni di
 collaborare, condividere informazioni e scegliere i materiali dai fornitori
 preferiti.
 
 --------------------------------------
 Grazie,
 
-Il Team WhistlePRO
+Il Team Edilcloud
 
 
 

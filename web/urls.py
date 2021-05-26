@@ -4,34 +4,48 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.urls import path
 
+from web.views import FacebookLogin, GoogleLogin, FacebookRegister, GoogleRegister, AppleLogin, AppleRegister
 
 urlpatterns = [
     # API DOCUMENTATION
-    url(r'^docs/', include('rest_framework_docs.urls')),
+    #url(r'^docs/', include('rest_framework_docs.urls')),
 
     # ADMIN URL
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
-
+    url(r'^accounts/', include('allauth.urls'), name='socialaccount_signup'),
     # DRF API URL
-    url(r'^api/backend/auth/', include('rest_framework.urls', namespace='rest_framework')),
-
+    #url(r'^api/backend/auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/auth/socials/facebook/login/', FacebookLogin.as_view(), name='fb_login'),
+    path('api/auth/socials/facebook/register/', FacebookRegister.as_view(), name='fb_register'),
+    path('api/auth/socials/google/login/', GoogleLogin.as_view(), name='google_login'),
+    path('api/auth/socials/google/register/', GoogleRegister.as_view(), name='google_register'),
+    path('api/auth/socials/apple/login/', AppleLogin.as_view(), name='apple_login'),
+    path('api/auth/socials/apple/register/', AppleRegister.as_view(), name='apple_register'),
+    url('rest-auth/', include('social_django.urls', namespace='social')),
+    # translation ROSETTA
+    url(r'^rosetta/', include('rosetta.urls')),
     # API FOR REGISTRATION, PASSWORD CHANGE, RESET, LOGIN etc
-    url(r'^api/frontend/user/', include('apps.user.api.frontend.urls', namespace='api_frontend_user')),
+    url(r'^api/frontend/user/', include('apps.user.api.frontend.urls')),
 
     # JWT Social AUTH
     url(r'^api/login/', include('rest_social_auth.urls_jwt')),
+    url(r'^api/frontend/payments/', include('apps.payments.api.frontend.urls')),
 
-    url(r'^api/frontend/document/', include('apps.document.api.frontend.urls', namespace='api_frontend_document')),
-    url(r'^api/frontend/media/', include('apps.media.api.frontend.urls', namespace='api_frontend_media')),
-    url(r'^api/frontend/menu/', include('apps.menu.api.frontend.urls', namespace='api_frontend_menu')),
-    url(r'^api/frontend/message/', include('apps.message.api.frontend.urls', namespace='api_frontend_message')),
-    url(r'^api/frontend/notify/', include('apps.notify.api.frontend.urls', namespace='api_frontend_notify')),
-    url(r'^api/frontend/product/', include('apps.product.api.frontend.urls', namespace='api_frontend_product')),
-    url(r'^api/frontend/profile/', include('apps.profile.api.frontend.urls', namespace='api_frontend_profile')),
-    url(r'^api/frontend/project/', include('apps.project.api.frontend.urls', namespace='api_frontend_project')),
-    url(r'^api/frontend/quotation/', include('apps.quotation.api.frontend.urls', namespace='api_frontend_quotation')),
+    url(r'^api/frontend/document/', include('apps.document.api.frontend.urls')),
+    url(r'^api/frontend/media/', include('apps.media.api.frontend.urls')),
+    url(r'^api/frontend/menu/', include('apps.menu.api.frontend.urls')),
+    url(r'^api/frontend/message/', include('apps.message.api.frontend.urls')),
+    url(r'^api/frontend/notify/', include('apps.notify.api.frontend.urls')),
+    url(r'^api/frontend/product/', include('apps.product.api.frontend.urls')),
+    url(r'^api/frontend/profile/', include('apps.profile.api.frontend.urls', namespace="api_frontend_profile")),
+    url(r'^api/frontend/project/', include('apps.project.api.frontend.urls')),
+    url(r'^api/frontend/quotation/', include('apps.quotation.api.frontend.urls')),
+    url(r'^api/frontend/dashboard/', include('apps.dashboard.api.frontend.urls')),
+    url('ws/', include('apps.ws.urls')),
 ]
 
 if settings.DEBUG:
@@ -39,6 +53,9 @@ if settings.DEBUG:
 
     # MEDIA
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    # STATIC
+    urlpatterns += staticfiles_urlpatterns()
 
     # DEBUG TOOLBAR
     import debug_toolbar

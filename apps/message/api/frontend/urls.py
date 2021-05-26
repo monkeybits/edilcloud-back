@@ -40,6 +40,11 @@ tracker_urlpatterns = [
         name='tracker_talk_detail'
     ),
     url(
+        r'^talk/(?P<pk>\d+)/read_all/$',
+        tracker_views.TrackerTalkReadAllView.as_view(),
+        name='tracker_talk_read_all'
+    ),
+    url(
         r'^talk/delete/(?P<pk>\d+)/$',
         tracker_views.TrackerTalkDeleteView.as_view(),
         name='tracker_talk_delete'

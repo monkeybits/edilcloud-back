@@ -3,6 +3,10 @@
 import os
 import datetime
 
+import filetype
+import stripe
+from filetype.types import Type as EdilType
+
 gettext = lambda s: s
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -10,6 +14,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
 )
 
 SETTINGS_PATH = os.path.abspath(os.path.dirname(__file__))
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 PROJECT_PATH = os.path.dirname(SETTINGS_PATH)
 
@@ -25,6 +32,9 @@ INTERNAL_IPS = ['127.0.0.1']
 
 ADMIN_LANGUAGE_CODE = 'it'
 
+DEVELOPERS = [
+    'tbellini@edilcloud.io'
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,18 +49,19 @@ INSTALLED_APPS = [
     'django.contrib.admindocs',
     'django_extensions',
     'debug_toolbar',
-    'mptt',
-
     'rest_framework_docs',
-
     'rest_framework',
     'rest_framework.authtoken',
-
     'social_django',
     'rest_social_auth',
-
-    'rest_auth', # Todo: Before removing this package, you must create custom serializers for PasswordChange, Reset etc
-
+    'dj_rest_auth.registration',
+    'rest_framework_simplejwt',
+    'rest_auth',  # Todo: Before removing this package, you must create custom serializers for PasswordChange, Reset etc
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
     'web',
     'apps.document.apps.DocumentConfig',
     'apps.media.apps.MediaConfig',
@@ -62,14 +73,37 @@ INSTALLED_APPS = [
     'apps.project.apps.ProjectConfig',
     'apps.quotation.apps.QuotationConfig',
     'apps.user.apps.UserConfig',
-
+    'apps.pushpin.apps.PushpinConfig',
     'corsheaders',
+    'channels',
+    'apps.ws',
+    "djstripe",
+    'rosetta'
 ]
+ASGI_APPLICATION = "web.routing.application"
+CHANNEL_LAYERS = {
+    'default': {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        }
+    },
+}
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_IMPORTS = ['web.tasks', ]
+CELERY_BEAT_SCHEDULE = {
+    'printHello': {
+        'task': 'web.tasks.archived_projects_reminder',
+        'schedule': datetime.timedelta(days=1),
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -92,6 +126,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect'
             ],
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
@@ -242,9 +278,11 @@ REST_FRAMEWORK = {
 }
 REST_FRAMEWORK_PAGE_SIZE_QUERY_PARAM = 'per_page'
 
-# REST_AUTH_SERIALIZERS = {
-#     "PASSWORD_RESET_SERIALIZER": "web.serializers.PasswordResetSerializer"
-# }
+REST_AUTH_SERIALIZERS = {
+    # "PASSWORD_RESET_SERIALIZER": "web.serializers.PasswordResetSerializer",
+    "JWT_SERIALIZER": "rest_framework_jwt.serializers.JSONWebTokenSerializer",
+    "JWT_TOKEN_CLAIMS_SERIALIZER": "apps.user.api.frontend.serializers.CustomLoginJWTSerializer"
+}
 
 DJANGO_ADMIN_LIST_PER_PAGE = 10
 
@@ -253,7 +291,7 @@ SITE_ID = 1
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.linkedin.LinkedinOAuth2',
+    'web.views.AppleIdAuth',
     'django.contrib.auth.backends.ModelBackend',
     # 'allauth.account.auth_backends.AuthenticationBackend',
 )
@@ -278,11 +316,11 @@ GRAPH_MODELS = {
 WHISTLE_CRONTAB_USERNAME = '< set in local.py >'
 
 # SOCIAL AUTH SETTINGS
-SOCIAL_AUTH_FACEBOOK_KEY = '< set in local.py >'
-SOCIAL_AUTH_FACEBOOK_SECRET = '< set in local.py >'
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '< set in local.py >'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '< set in local.py >'
+SOCIAL_AUTH_FACEBOOK_KEY = '1093743794410189'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'eba8fe5d381c5094a68701145c19ed43'
+#SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1069029983695-hv8kifhpc9n64sldage6tmggkr817qj6.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1069029983695-o8lv0olsm7511o0jc2dv1b6g6ftgvub6.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'UaaQoCbFd_jIyLq4bXuA5ocn'
 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '< set in local.py >'
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = '< set in local.py >'
@@ -298,7 +336,15 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 }
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email']
-
+SOCIAL_AUTH_GOOGLE_PROFILE_EXTRA_PARAMS = {
+    'fields': ','.join([
+        'id', 'cover', 'name', 'first_name',
+        'last_name', 'age_range', 'link',
+        'gender', 'locale', 'picture',
+        'timezone', 'updated_time',
+        'verified', 'email',
+    ]),
+}
 # Add email to requested authorizations.
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress']
 # Add the fields so they will be requested from linkedin.
@@ -311,67 +357,95 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [
     ('emailAddress', 'email_address')
 ]
 
-# SOCIALACCOUNT_PROVIDERS = {
-#
-#     'facebook': {
-#         'METHOD': 'oauth2',
-#         'SCOPE': ['email', 'public_profile', 'user_friends'],
-#         'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-#         'INIT_PARAMS': {'cookie': True},
-#         'FIELDS': [
-#             'id',
-#             'email',
-#             'name',
-#             'first_name',
-#             'last_name',
-#             'verified',
-#             'locale',
-#             'timezone',
-#             'link',
-#             'gender',
-#             'updated_time',
-#         ],
-#         'EXCHANGE_TOKEN': True,
-#         'LOCALE_FUNC': lambda request: 'en_US',
-#         'VERIFIED_EMAIL': False,
-#     },
-#     'google': {
-#         'SCOPE': [
-#             'profile',
-#             'email',
-#         ],
-#         'AUTH_PARAMS': {
-#             'access_type': 'online',
-#         }
-#     },
-#     'linkedin_oauth2': {
-#         'SCOPE': [
-#             'r_emailaddress',
-#         ],
-#         'PROFILE_FIELDS': [
-#             'id',
-#             'first-name',
-#             'last-name',
-#             'email-address',
-#             'picture-url',
-#             'public-profile-url',
-#         ]
-#     }
-# }
+SOCIALACCOUNT_PROVIDERS = {
 
-BASE_URL = 'whistle.it'
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile', 'user_friends'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+            'locale',
+            'timezone',
+            'link',
+            'gender',
+            'updated_time',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': lambda request: 'en_US',
+        'VERIFIED_EMAIL': False,
+    },
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    },
+    "apple": {
+        "APP": {
+            # Your service identifier.
+            "client_id": "com.monkeybits.edilcloud.signin",
+            "scope": [
+                'name',
+                'email',
+            ],
+            # The Key ID (visible in the "View Key Details" page).
+            "secret": "FPD4PR8LBC",
+
+            # Member ID/App ID Prefix -- you can find it below your name
+            # at the top right corner of the page, or it’s your App ID
+            # Prefix in your App ID.
+            "key": "4TVXD29D7P",
+
+            # The certificate you downloaded when generating the key.
+            "certificate_key": """
+                            -----BEGIN PRIVATE KEY-----
+                            MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQglqa9iU43lk13NgRR
+                            itGWvxzmACV2yrn3d3uaDvsNJBmgCgYIKoZIzj0DAQehRANCAAS4hwryxakGLwp4
+                            RGWqiYrY/7/oUkqbJGrRUM7BM2P7XpGGdHjufBBaalmRJ2e60ILD2lrFuR5vhIZK
+                            pY6S1Xmj
+                            -----END PRIVATE KEY-----
+                        """
+        }
+    },
+    'linkedin_oauth2': {
+        'SCOPE': [
+            'r_emailaddress',
+        ],
+        'PROFILE_FIELDS': [
+            'id',
+            'first-name',
+            'last-name',
+            'email-address',
+            'picture-url',
+            'public-profile-url',
+        ]
+    }
+}
+
+BASE_URL = 'test.edilcloud.io'
 
 JWT_AUTH = {
     'JWT_PAYLOAD_HANDLER': 'apps.user.views.custom_jwt_payload_handler',
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'apps.user.views.custom_jwt_response_payload_handler',
     'JWT_LEEWAY': 100,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=1000),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=30),
     'JWT_ALLOW_REFRESH': True,
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
 }
-
+# JWT_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
+# JWT_TOKEN_CLAIMS_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
 REST_USE_JWT = True
-
+LOGIN_SERIALIZER = 'apps.user.api.frontend.serializers.CustomLoginJWTSerializer'
 SOCIALACCOUNT_EMAIL_VERIFICATION = None
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 SOCIALACCOUNT_QUERY_EMAIL = True
@@ -390,6 +464,10 @@ ACCOUNT_EMAIL_CONFIRMATION_HMAC = False
 # CROSS ORIGIN RESOURCE SHARING
 CORS_ORIGIN_WHITELIST = (
     # List of Domain we want to allow
+    'http://ec2-3-9-170-59.eu-west-2.compute.amazonaws.com:8000',
+    'http://localhost:3000',
+    'https://www.edilcloud.ml',
+    'https://www.back.edilcloud.ml'
 )
 CORS_ORIGIN_ALLOW_ALL = True  # For now Allow ALL
 CORS_ALLOW_METHODS = (
@@ -403,14 +481,85 @@ CORS_ALLOW_METHODS = (
 FAKER_LOCALE = None
 FAKER_PROVIDERS = None
 
+UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media')
 
-UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media_private')
-
-
+PROTOCOL = 'https'
+DEFAULT_FROM_EMAIL = 'notification@edilcloud.io'
+REGISTRATION_FROM_EMAIL = 'registration@edilcloud.io'
+REGISTRATION_EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
+SERVER_EMAIL = 'mail.edilcloud.io'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'mail.edilcloud.io'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "whistlepro.registrazione@gmail.com"
-EMAIL_HOST_PASSWORD = 'whistlepro.reg'
+EMAIL_HOST_USER = 'notification@edilcloud.io'
+EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
 
-NEW_SPONSOR_REQUEST_RECIPIENT = 'info@whistlepro.it'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+NEW_SPONSOR_REQUEST_RECIPIENT = 'edilcloud.activation@gmail.com'
+
+# stripe settings
+# live
+# STRIPE_PUBLIC_KEY ='pk_live_51Hr7tlCPJO2Tjuq18IVS505Hh91jthPuDAeiHHZX4zRIex1sDRj0ezBSOypO7cUNRLCkXEup8YE2bbvcjnoCyI9400m9fKRBGf'
+# STRIPE_SECRET_KEY = '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'
+# test
+STRIPE_PUBLIC_KEY = 'pk_test_51Hr7tlCPJO2Tjuq1PUy2FdjQAvuDkRPNxYWvN2YwdOWqykdtKBZArXrFRXjZ4R7IkcAwDmAbwnd57M5gPplJIjej00BrnpqbdI'
+STRIPE_SECRET_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
+STRIPE_LIVE_MODE = False  # Change to True in production
+DJSTRIPE_WEBHOOK_SECRET = "whsec_DPmr9NI6XAaAveZIGqo0DDxHqkSnsyg8"
+STRIPE_TEST_SECRET_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
+STRIPE_TEST_PUBLIC_KEY = 'pk_test_51Hr7tlCPJO2Tjuq1PUy2FdjQAvuDkRPNxYWvN2YwdOWqykdtKBZArXrFRXjZ4R7IkcAwDmAbwnd57M5gPplJIjej00BrnpqbdI'
+TEST_API_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
+
+# PAYMENTS SETTINGS
+TRIAL_MAX_DAYS = 14
+TRIAL_PLAN = 'price_1I0OpZCPJO2Tjuq1xjOnYhVm'  # standard plan
+stripe.api_key = STRIPE_SECRET_KEY
+
+# API_SEJDA_PDF_GENERATOR
+API_SEJDA_PDF_GENERATOR = 'api_D0D855D3D00041BFABA9FA5AA514E16D'
+
+STRIPE_PLANS_METADATA_KEYS = [
+    'TRIAL_MAX_PROJECTS',
+    'TRIAL_MAX_PROFILES',
+    'MAX_PROJECTS',
+    'MAX_PROFILES',
+    'MAX_SIZE',
+    'ENABLE_GANTT',
+    'REPORT_TYPE',
+]
+
+# gspread new entry
+GSPREAD_USERS_URL = 'https://docs.google.com/spreadsheets/d/1kEMeH0GAOHjE4G54rGSJYSIT6hyDZteGgnpkuyQ9MoE/edit?usp=sharing'
+NEW_ENTRY_SENDER = [
+    'm.carminati@monkeybits.it'
+]
+
+# ROSETTA settings
+ROSETTA_SHOW_AT_ADMIN_PANEL = True
+ROSETTA_WSGI_AUTO_RELOAD = True
+ROSETTA_UWSGI_AUTO_RELOAD = True
+
+
+# override filetype package adding new types
+class Dwg(EdilType):
+    """
+    Implements the Zip archive type matcher.
+    """
+    MIME = 'image/vnd'
+    EXTENSION = 'dwg'
+
+    def __init__(self):
+        super(Dwg, self).__init__(
+            mime=Dwg.MIME,
+            extension=Dwg.EXTENSION
+        )
+
+    def match(self, buf):
+        return (len(buf) > 3 and
+                buf[0] == 0x50 and buf[1] == 0x4B and
+                (buf[2] == 0x3 or buf[2] == 0x5 or
+                 buf[2] == 0x7) and
+                (buf[3] == 0x4 or buf[3] == 0x6 or
+                 buf[3] == 0x8))
+# filetype.types.insert(0, Dwg)

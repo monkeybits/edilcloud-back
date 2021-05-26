@@ -143,5 +143,9 @@ class BomDoesNotExist(WhistleException):
     pass
 
 
+class MaxSubfolderLevel(WhistleException):
+    pass
+
+
 class MessageAddPermissionDenied(WhistleException):
     pass

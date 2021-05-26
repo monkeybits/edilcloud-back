@@ -14,18 +14,22 @@ class UserModel(models.Model):
         settings.AUTH_USER_MODEL,
         related_name="%(app_label)s_%(class)s_creator",
         verbose_name=_("creator"),
+        on_delete=models.CASCADE
     )
     last_modifier = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='%(app_label)s_%(class)s_last_modifier',
         verbose_name=_("last modifier"),
+        on_delete=models.CASCADE
     )
 
     class Meta:
         abstract = True
 
     def save(self, user=None, *args, **kwargs):
-        user = get_current_user()
+        if not user:
+            user = get_current_user()
+
         if user:
             if self.pk:
                 self.creator = user
@@ -98,6 +102,6 @@ class CleanModel(models.Model):
     class Meta:
         abstract = True
 
-    def save(self, *args, **kwargs):
+    def save(self, user=None, *args, **kwargs):
         self.full_clean()
-        super(CleanModel, self).save(*args, **kwargs)
+        super(CleanModel, self).save(user=user, *args, **kwargs)

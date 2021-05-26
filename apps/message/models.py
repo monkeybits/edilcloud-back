@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -10,6 +12,10 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from web.core.models import UserModel, DateModel, StatusModel, OrderedModel, CleanModel
+
+def get_upload_message_file_path(instance, filename):
+    talk = instance.message.talk.id
+    return os.path.join(u"talks", u"{0}".format(str(talk)), "messages", str(instance.message.id), filename)
 
 
 def talk_limit_choices_to():
@@ -66,11 +72,15 @@ class Talk(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     def get_content_type_model(self):
         return self.content_type.model
 
+    def read_all(self, profile):
+        MessageProfileAssignment.objects.filter(profile=profile, read=False).update(read=True)
+
 
 @python_2_unicode_compatible
 class Message(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     body = models.TextField(
-        verbose_name=_('body')
+        verbose_name=_('body'),
+        blank=True
     )
     talk = models.ForeignKey(
         Talk,
@@ -83,6 +93,10 @@ class Message(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         on_delete=models.CASCADE,
         related_name='sent_messages',
         verbose_name=_('sender'),
+    )
+    unique_code = models.TextField(
+        verbose_name=_('unique_code'),
+        blank=True
     )
 
     class Meta:
@@ -102,3 +116,22 @@ class Message(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     @classmethod
     def get_messages(cls):
         return cls.objects.all()
+
+@python_2_unicode_compatible
+class MessageFileAssignment(OrderedModel):
+    media = models.FileField(blank=True, default="", upload_to=get_upload_message_file_path)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('message file assignment')
+        verbose_name_plural = _('message file assignments')
+
+@python_2_unicode_compatible
+class MessageProfileAssignment(OrderedModel):
+    profile = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    read = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = _('message profile assignment')
+        verbose_name_plural = _('message profile assignments')

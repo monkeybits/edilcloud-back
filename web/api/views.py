@@ -30,7 +30,7 @@ class QuerysetMixin(object):
                 if key.endswith('__isnull'):
                     filters[key] = json.loads(value.lower())
                 elif key.endswith('__in'):
-                    filters[key] = value.split(',')[:-1]
+                    filters[key] = value.split(',')
                 else:
                     filters[key] = value
         return filters
@@ -183,5 +183,5 @@ def get_first_last_dates_of_month_and_year(month, year):
 
 def get_media_root(public):
     if public:
-        return 'media'
-    return 'media_private'
+        return 'media/public'
+    return 'media/private'

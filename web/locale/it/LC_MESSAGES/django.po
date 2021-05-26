@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2021-01-06 22:16+0000\n"
+"Last-Translator: b'  <root@reply.com>'\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"X-Translated-Using: django-rosetta 0.9.5\n"
+
+msgid "Already exists an account with this email"
+msgstr "Esiste già un account associato a questa email"
+
+msgid "Invalid token"
+msgstr "Token non valido"
+
+msgid "Invalid credentials"
+msgstr "Credenziali non valide"
+
+msgid "Registration successful"
+msgstr "Registrazione completata"
+
+msgid "Unable to log in with provided credentials."
+msgstr "Impossibile eseguire il login con le credenziali immesse."
+
+msgid "Your account is disabled, check your email to activate it"
+msgstr "Il tuo account è disabilitato, controlla la tua email per attivare."
+
+msgid "Please provide a valid provider"
+msgstr "Inserisci un provider valido, per favore"
+
+msgid "We are generating your report, download will start when process is finished."
+msgstr "Stiamo generando il tuo report, il download partirà appena finito il processo."
+
+msgid "New Comment added in post activity"
+msgstr "Nuovo commento aggiunto al post dell'attività"
+
+msgid "Comment updated in post activity"
+msgstr "Commento modificato al post dell'attività"
+
+msgid "Comment deleted in post activity"
+msgstr "Commento cancellato al post dell'attività"
+
+msgid "New Comment added in post task"
+msgstr "Nuovo commento aggiunto al post della fase"
+
+msgid "Comment updated in post task"
+msgstr "Commento modificato al post della fase"
+
+msgid "Comment deleted in post task"
+msgstr "Commento cancellato al post della fase"
+
+msgid "New Post added in activity"
+msgstr "Nuovo post aggiunto all'attività"
+
+msgid "Post updated in activity"
+msgstr "Post aggiornato nell'attività"
+
+msgid "Post deleted in activity"
+msgstr "Post cancellato nell'attività"
+
+msgid "New Post added in task"
+msgstr "Nuovo post aggiunto nella fase"
+
+msgid "Post updated in task"
+msgstr "Post aggiornato nella fase"
+
+msgid "Post deleted in task"
+msgstr "Post cancellato nella fase"
+
+msgid "New Activity added in project"
+msgstr "Nuova attività aggiunta nel progetto"
+
+msgid "Activity updated in project"
+msgstr "Attività aggiornata nel progetto"
+
+msgid "Activity"
+msgstr "Attività"
+
+msgid "New activity"
+msgstr "Nuova attività"
+
+msgid "added in project"
+msgstr "aggiunta nel progetto"
+
+msgid "updated in project"
+msgstr "modificato nel progetto"
+
+msgid "deleted in project"
+msgstr "cancellato nel progetto"
+
+msgid "of task"
+msgstr "della fase"
+#########################################
+msgid "You have been invited in a project"
+msgstr "Sei stato invitato in un progetto"
+
+msgid "You have been invited in project"
+msgstr "Sei stato invitato nel progetto"
+
+msgid "from company"
+msgstr "dall'azienda"
+
+msgid "You have been added in a project"
+msgstr "Sei stato aggiunto in un progetto"
+
+msgid "You have been added in project"
+msgstr "Sei stato aggiunto nel progetto"
+
+msgid "You have been deleted from project"
+msgstr "Sei stato eliminato dal progetto"
+
+msgid "User"
+msgstr "L'utente"
+
+msgid "has removed you from project"
+msgstr "ti ha rimosso dal progetto"
+
+msgid "New assignment for your company"
+msgstr "Nuova assegnazione per la tua azienda"
+
+msgid "Company"
+msgstr "L'azienda"
+
+msgid "has assigned you task"
+msgstr "ti ha assegnato la fase"
+
+msgid "in project"
+msgstr "nel progetto"
+
+msgid "New activity assigned"
+msgstr "Nuova attività assegnata"
+
+msgid "Person"
+msgstr "La persona"
+
+msgid "has assigned you activity"
+msgstr "ti ha assegnato l'attività"
+
+msgid "There is an issue in an activity"
+msgstr "C'è un problema in un'attività"
+
+msgid "Issue resolved in an activity"
+msgstr "Problema risolto in un'attività"
+
+msgid "There is an issue in a task"
+msgstr "C'è un problema in una fase di lavoro"
+
+msgid "Issue resolved in a task"
+msgstr "Problema risolto nella fase di lavoro"
+
+msgid "has reported an issue in activity"
+msgstr "ha segnalato un problema nell'attività"
+
+msgid "has reported an issue in task"
+msgstr "ha segnalato un problema nella fase di lavoro"
+
+msgid "has resolved an issue in activity"
+msgstr "ha risolto un problema nell'attività"
+
+msgid "has resolved an issue in task"
+msgstr "ha risolto un problema nella fase di lavoro"
+
+msgid "of project"
+msgstr "del progetto"
+
+msgid "New post has been created"
+msgstr "E' stato creato un nuovo post"
+
+msgid "has created a new post in task"
+msgstr "ha creato un nuovo post nella fase di lavoro"
+
+msgid "has created a new post in activity"
+msgstr "ha creato un nuovo post nell'attività"
+
+msgid "There is a new comment"
+msgstr "C'è un nuovo commento"
+
+msgid "has commented post"
+msgstr "ha commentato il post"
+
+msgid "in task"
+msgstr "nella fase di lavoro"
+
+msgid "in activity"
+msgstr "nell'attività"
+
+msgid "New message in"
+msgstr "Nuovo messaggio in"
+
+msgid "Task has been completed"
+msgstr "La task è stata completata"
+
+msgid "has completed task"
+msgstr "ha completato la task"
+
+msgid "has completed activity"
+msgstr "ha completato l'attività"
+
+msgid "Folder not created. Max subfolders limit is 3"
+msgstr "Cartella non creata. Il limite massimo di sotto cartelle è di 3"

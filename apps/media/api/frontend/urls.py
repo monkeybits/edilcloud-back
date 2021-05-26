@@ -21,9 +21,24 @@ tracker_urlpatterns = [
         name='tracker_photo_add'
     ),
     url(
+        r'^photo/(?P<pk>[0-9]+)/move/$',
+        tracker_views.TrackerPhotoMoveView.as_view(),
+        name='tracker_photo_move'
+    ),
+    url(
         r'^photo/edit/(?P<pk>\d+)/$',
         tracker_views.TrackerPhotoEditView.as_view(),
         name='tracker_photo_edit'
+    ),
+    url(
+        r'^video/(?P<pk>[0-9]+)/move/$',
+        tracker_views.TrackerVideoMoveView.as_view(),
+        name='tracker_video_move'
+    ),
+    url(
+        r'^document/(?P<pk>[0-9]+)/move/$',
+        tracker_views.TrackerDocumentMoveView.as_view(),
+        name='tracker_document_move'
     ),
     url(
         r'^photo/delete/(?P<pk>\d+)/$',
@@ -65,6 +80,56 @@ tracker_urlpatterns = [
         generic_views.PublicVideoDownloadView.as_view(),
         name='public_video_download'
     ),
+    url(
+        r'^files/download/(?P<pk>\d+)/public/$',
+        generic_views.PublicVideoDownloadView.as_view(),
+        name='public_video_download'
+    ),
+    url(
+        r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/list/$',
+        tracker_views.TrackerFolderList.as_view(),
+        name='tracker_folder_list'
+    ),
+    url(
+        r'^folder/(?P<pk>\d+)/detail/$',
+        tracker_views.TrackerFolderDetailView.as_view(),
+        name='tracker_folder_detail'
+    ),
+    # url(
+    #     r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/add/$',
+    #     tracker_views.TrackerFolderAdd.as_view(),
+    #     name='tracker_folder_add'
+    # ),
+    # url(
+    #     r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/move/$',
+    #     tracker_views.TrackerFolderMove.as_view(),
+    #     name='tracker_folder_move'
+    # ),
+    # url(
+    #     r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/delete/$',
+    #     tracker_views.TrackerFolderDeleteView.as_view(),
+    #     name='tracker_folder_delete'
+    # ),
+    url(
+        r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/add/$',
+        tracker_views.TrackerFolderAddView.as_view(),
+        name='tracker_folder_add'
+    ),
+    url(
+        r'^folder/(?P<pk>\d+)/edit/$',
+        tracker_views.TrackerFolderEditView.as_view(),
+        name='tracker_folder_edit'
+    ),
+    url(
+        r'^folder/(?P<pk>\d+)/delete/$',
+        tracker_views.TrackerFolderDeleteView.as_view(),
+        name='tracker_folder_delete'
+    ),
+    url(
+        r'^folder/(?P<type>(project|company|bom){1})/(?P<pk>\d+)/structure_list/$',
+        tracker_views.TrackerFolderStructureList.as_view(),
+        name='tracker_folder_structure_list'
+    )
 ]
 
 urlpatterns = user_urlpatterns + generic_urlpatterns + tracker_urlpatterns

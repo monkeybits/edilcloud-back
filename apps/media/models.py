@@ -22,19 +22,32 @@ video_fs = FileSystemStorage(location=settings.BASE_DIR, base_url="/")
 
 def get_upload_photo_path(instance, filename):
     media_dir1 = instance.content_object._meta.model_name
-    media_dir2 = slugify(instance.content_object.__str__().lower())
+    if hasattr(instance.content_object, 'slug'):
+        media_dir2 = instance.content_object.slug
+    else:
+        media_dir2 = instance.content_object.id
     ext = pathlib.Path(filename).suffix
-    filename = '{}{}'.format(slugify(instance.title), ext)
+    if hasattr(instance, 'title'):
+        filename = '{}{}'.format(slugify(instance.title), ext)
     media_root = get_media_root(instance.is_public)
+    if hasattr(instance, 'additional_path'):
+        return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2), instance.additional_path, filename)
+
     return os.path.join(media_root, 'photo', format(media_dir1), format(media_dir2), filename)
 
 
 def get_upload_video_path(instance, filename):
     media_dir1 = instance.content_object._meta.model_name
-    media_dir2 = slugify(instance.content_object.__str__().lower())
+    if hasattr(instance.content_object, 'slug'):
+        media_dir2 = instance.content_object.slug
+    else:
+        media_dir2 = instance.content_object.id
     ext = pathlib.Path(filename).suffix
     filename = '{}{}'.format(slugify(instance.title), ext)
     media_root = get_media_root(instance.is_public)
+    if hasattr(instance, 'additional_path'):
+        return os.path.join(media_root, 'video', format(media_dir1), format(media_dir2), instance.additional_path,
+                            filename)
     return os.path.join(media_root, 'video',format(media_dir1), format(media_dir2), filename)
 
 
@@ -51,6 +64,47 @@ def video_limit_choices_to():
         q_objects.add(models.Q(app_label=value['app_label'], model=value['model']), models.Q.OR)
     return q_objects
 
+
+class Folder(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        limit_choices_to=photo_limit_choices_to
+    )
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    for_concrete_model = models.BooleanField(
+        default=False,
+        verbose_name=_('for concrete model'),
+    )
+    name = models.CharField(
+        max_length=255,
+        verbose_name=_('name'),
+    )
+    is_public = models.BooleanField(
+        default=True,
+        verbose_name=_('is public')
+    )
+    is_root = models.BooleanField(
+        default=False,
+        verbose_name=_('is root')
+    )
+    parent = models.ForeignKey('self',
+                               null=True,
+                               blank=True,
+                               related_name='folders',
+                               on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('folder')
+        verbose_name_plural = _('folders')
+        permissions = (
+            ("list_folder", "can list folder"),
+            ("detail_folder", "can detail folder"),
+            ("disable_folder", "can disable folder"),
+        )
+        ordering = ['-date_last_modify']
+        get_latest_by = "date_create"
 
 @python_2_unicode_compatible
 class Photo(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
@@ -75,8 +129,9 @@ class Photo(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     )
     photo = models.ImageField(
         storage=photo_fs,
+        max_length=1000,
         upload_to=get_upload_photo_path,
-        verbose_name=_('image'),
+        verbose_name=_('image')
     )
     is_public = models.BooleanField(
         default=False,
@@ -91,6 +146,12 @@ class Photo(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             max_length=255, blank=True
         ),
         blank=True, null=True,
+    )
+    folder = models.ForeignKey(
+        Folder,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
     )
 
     class Meta:
@@ -139,6 +200,7 @@ class Video(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
     )
     video = models.FileField(
         storage=video_fs,
+        max_length=1000,
         upload_to=get_upload_video_path,
         verbose_name=_('video'),
     )
@@ -155,6 +217,12 @@ class Video(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             max_length=255, blank=True
         ),
         blank=True, null=True,
+    )
+    folder = models.ForeignKey(
+        Folder,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
     )
 
     class Meta:

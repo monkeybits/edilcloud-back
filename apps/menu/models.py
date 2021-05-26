@@ -31,7 +31,8 @@ class Menu(MPTTModel, UserModel, DateModel, StatusModel, OrderedModel):
         'self',
         null=True, blank=True,
         related_name='children',
-        db_index=True
+        db_index=True,
+        on_delete=models.CASCADE
     )
 
     class MPTTMeta:

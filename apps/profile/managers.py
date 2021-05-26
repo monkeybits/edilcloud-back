@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
 
 class CompanyQuerySet(models.QuerySet):
@@ -73,8 +74,8 @@ class ProfileQuerySet(models.QuerySet):
 
     def profile_invitation_approve(self):
         return self.filter(
-            # status=1,
-            # user__isnull=False,
+            status=1,
+            user__isnull=False,
             company_invitation_date__isnull=False,
             profile_invitation_date__isnull=False,
             invitation_refuse_date__isnull=True,
@@ -92,8 +93,8 @@ class ProfileQuerySet(models.QuerySet):
     def company_invitation_request(self):
         return self.filter(
             status=1,
-            user__isnull=False,
-            company_invitation_date__isnull=True,
+            user__isnull=True,
+            company_invitation_date__isnull=False,
             profile_invitation_date__isnull=False,
             invitation_refuse_date__isnull=True,
         )
@@ -110,6 +111,30 @@ class ProfileQuerySet(models.QuerySet):
     def company_invitation_approve(self):
         return self.filter(
             status=1,
+            user__isnull=False,
+            company_invitation_date__isnull=False,
+            profile_invitation_date__isnull=False,
+            invitation_refuse_date__isnull=True,
+        )
+
+    def company_invitation_approve_and_external(self):
+        return self.filter(
+            Q(
+                status=1,
+                # user__isnull=False,
+                company_invitation_date__isnull=False,
+                profile_invitation_date__isnull=False,
+                invitation_refuse_date__isnull=True
+            ) | Q(
+                role=settings.OWNER
+            ) | Q(
+                role=settings.DELEGATE
+            )
+        )
+
+    def company_invitation_approve_inactive(self):
+        return self.filter(
+            status=0,
             # user__isnull=False,
             company_invitation_date__isnull=False,
             profile_invitation_date__isnull=False,
@@ -195,6 +220,12 @@ class ProfileManager(models.Manager):
 
     def company_invitation_approve(self):
         return self.get_queryset().company_invitation_approve()
+
+    def company_invitation_approve_and_external(self):
+        return self.get_queryset().company_invitation_approve_and_external()
+
+    def company_invitation_approve_inactive(self):
+        return self.get_queryset().company_invitation_approve_inactive()
 
     def company_invitation_refuse(self):
         return self.get_queryset().company_invitation_refuse()

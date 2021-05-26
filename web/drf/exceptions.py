@@ -7,12 +7,17 @@ Whistle APIExceptions tree
 
 import logging
 
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from rest_framework.exceptions import APIException
 from rest_framework.request import Request
 from rest_framework.views import exception_handler
 
 
 # API EXCEPTION HANDLER
+from web.settings import DEVELOPERS, DEFAULT_FROM_EMAIL
+
+
 def whistle_exception_handler(exc, context):
     # Call REST framework's default exception handler first,
     # to get the standard error response.
@@ -20,7 +25,10 @@ def whistle_exception_handler(exc, context):
 
     # Now add the HTTP status code to the response.
     if response is not None:
-        response.data['status_code'] = response.status_code
+        try:
+            response.data['status_code'] = response.status_code
+        except:
+            pass
 
     return response
 
@@ -55,7 +63,6 @@ class WhistleAPIException(APIException):
             # if request is DRF-request then self.request = DJANGO-request
             self.request = self.request._request
         self.http_method = request.method
-
         super(WhistleAPIException, self).__init__(msg)
         if write_log:
             log_string = """{detail}\nurl: {url}\nmethod: {method}\nuser: {user}\ndata: {data}\n""".format(
@@ -66,6 +73,13 @@ class WhistleAPIException(APIException):
                 data=getattr(request, 'data', ''),
             )
             self.logger.error(log_string)
+            if status_code == 500:
+                send_mail(
+                    subject='Edilcloud Tracelogs Error: ' + str(status_code),
+                    message=log_string,
+                    recipient_list=DEVELOPERS,
+                    from_email=DEFAULT_FROM_EMAIL,
+                )
 
     def get_repr_str(self):
         repr_str = u''
@@ -158,6 +172,11 @@ class TeamAPIDoesNotExist(WhistleAPIException):
 class TaskAPIDoesNotExist(WhistleAPIException):
     pass
 
+class PostAPIDoesNotExist(WhistleAPIException):
+    pass
+
+class CommentAPIDoesNotExist(WhistleAPIException):
+    pass
 
 class CertificationAPIDoesNotExist(WhistleAPIException):
     pass
@@ -192,6 +211,9 @@ class PhotoAPIDoesNotExist(WhistleAPIException):
 
 
 class VideoAPIDoesNotExist(WhistleAPIException):
+    pass
+
+class FolderAPIDoesNotExist(WhistleAPIException):
     pass
 
 

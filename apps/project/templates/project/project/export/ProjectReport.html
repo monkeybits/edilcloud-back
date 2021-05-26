@@ -1,0 +1,496 @@
+{% load static %}
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" href="https://askbootstrap.com/preview/osahanin/light/img/fav.png">
+    <title>Edilcloud.io - Report template</title>
+    <link rel="stylesheet"
+          href="https://askbootstrap.com/preview/osahanin/light/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://askbootstrap.com/preview/osahanin/light/vendor/slick/slick.min.css">
+    <link rel="stylesheet" href="https://askbootstrap.com/preview/osahanin/light/vendor/slick/slick-theme.min.css">
+    <link rel="stylesheet" href="https://askbootstrap.com/preview/osahanin/light/vendor/icons/feather.css">
+    <link rel="stylesheet" href="https://askbootstrap.com/preview/osahanin/light/css/style.css">
+<body>
+
+<nav class="navbar navbar-expand navbar-light bg-white osahan-nav-top p-0">
+    <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+        <a class="navbar-brand mr-2" href="index.html"><img
+                style="max-width: 150px; margin-top: 20px; margin-bottom:20px;"
+                src="https://test.edilcloud.io/assets/images/logos/fuse.svg" alt="">
+        </a>
+        <ul class="navbar-nav ml-auto d-flex align-items-center">
+            <li class="nav-item dropdown no-arrow d-sm-none">
+                <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    <i class="feather-search mr-2"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right p-3 shadow-sm animated--grow-in"
+                     aria-labelledby="searchDropdown">
+                    <form class="form-inline mr-auto w-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control border-0 shadow-none"
+                                   placeholder="Search people, jobs and more..." aria-label="Search"
+                                   aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn" type="button">
+                                    <i class="feather-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="jobs.html"><span style="margin-left: 10px;" class="d-none d-lg-inline"> Report generato da {{ requested_from.first_name }} {{ requested_from.last_name }} - {{ requested_from.company }}</span></a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div style="background-color: #0d0a27;" class="py-5">
+    <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+        <div class="row">
+            <div class="col-md-12 mx-auto">
+                <h1 class="text-white font-weight-light"><span class="font-weight-bold">Report:
+                </span>{{ name }}</h1>
+                <p class="mb-2 text-white-50">
+                    <a href="https://test.edilcloud.io/apps/projects/{{ id }}">https://test.edilcloud.io/apps/projects/{{ id }}</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="pt-5">
+    <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+        <h2 class="font-weight-light">
+            <span class="font-weight-bold">
+                1. Informazioni di progetto
+            </span>
+        </h2>
+    </div>
+</div>
+<div class="py-5 px-20">
+    <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+        <div class="row">
+            <main class="col col-xl-6 order-xl-2 col-lg-6 order-lg-2 col-md-6 col-sm-6 col-6">
+                <div class="box shadow-sm border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Descrizione del progetto</h6>
+                    </div>
+                    <div class="box-body p-3">
+                        <p>{{ description }}
+                        </p>
+                    </div>
+                </div>
+                <div class="box shadow-sm border rounded bg-white ">
+                    <div class="box shadow-sm border rounded bg-white ">
+                        <div class="box-title border-bottom p-3">
+                            <h6 class="m-0">Informazioni di Progetto</h6>
+                        </div>
+                        <div class="box-body">
+                            <table class="table table-borderless mb-0">
+                                <tbody>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Committente</th>
+                                    <td class="p-3"><a href="#">via San Giovanni Bosco 3, 24050 Bariano (BG)</a></td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Impresa Appaltatrice</th>
+                                    <td class="p-3">Internet</td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Responsabile della Sicurezza</th>
+                                    <td class="p-3">10,001+ employees <i data-toggle="tooltip" data-placement="top"
+                                                                         title="" class="feather-info text-info"
+                                                                         data-original-title="Google’s mission is to organize the world‘s information and make it universally accessible and useful.
+                                          "></i></td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Type</th>
+                                    <td class="p-3">Public Company</td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <th class="p-3">Founded</th>
+                                    <td class="p-3">1998</td>
+                                </tr>
+                                <tr>
+                                    <th class="p-3">Specialties</th>
+                                    <td class="p-3">search, ads, mobile, android, online video, apps, machine learning,
+                                        virtual reality, cloud, hardware, artificial intelligence, youtube, and software
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <aside class="col col-xl-3 order-xl-1 col-lg-3 order-lg-1 order-md-1 order-sm-1 col-md-3 col-sm-3 col-12">
+                <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">
+                    <div class="p-5">
+                        <img src="{{ company.logo }}"
+                             class="img-fluid" alt="Responsive image">
+                    </div>
+                    <div class="p-3 border-top border-bottom">
+                        <h6 class="font-weight-bold text-dark mb-1 mt-0">{{ company.name }}</h6>
+                        </p>
+                    </div>
+                    <div class="box shadow-sm border rounded bg-white mb-3">
+                        <div class="box-title border-bottom p-3">
+                            <h6 class="m-0">Persone coinvolte nel progetto</h6>
+                        </div>
+                        <div class="box-body p-3">
+                            {% for profile in profiles %}
+                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="{{ profile.photo }}" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">{{ profile.first_name }} {{ profile.last_name }}</div>
+                                        <div class="small text-gray-500">{{ profile.position }}
+                                            - {{ profile.company.name }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            <aside class="col col-xl-3 order-xl-3 col-lg-3 order-lg-3 prder-sm-3 order-md-3 col-md-3 col-sm-3 col-12">
+                <div class="box shadow-sm border rounded bg-white mb-3">
+                    <div class="box-title border-bottom p-3">
+                        <h6 class="m-0">Aziende coinvolte</h6>
+                    </div>
+                    <div class="box-body p-3">
+                        <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="img/l1.png" alt="">
+                            </div>
+                            <div class="font-weight-bold mr-2">
+                                <div class="text-truncate">Impresa Edile Itinera Spa</div>
+                                <div class="small text-gray-500">Impresa Edile
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="img/l2.png" alt="">
+                            </div>
+                            <div class="font-weight-bold mr-2">
+                                <div class="text-truncate">Gusalli Impianti Elettrici Spa</div>
+                                <div class="small text-gray-500">Impresa Elettrica
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="img/l3.png" alt="">
+                            </div>
+                            <div class="font-weight-bold mr-2">
+                                <div class="text-truncate">TermoImpianti Salvetti srl</div>
+                                <div class="small text-gray-500">Impianti idraulici e installazioni caldaie
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="img/l4.png" alt="">
+                            </div>
+                            <div class="font-weight-bold mr-2">
+                                <div class="text-truncate">Facebook</div>
+                                <div class="small text-gray-500">Internet
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center osahan-post-header people-list">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="img/l5.png" alt="">
+                            </div>
+                            <div class="font-weight-bold mr-2">
+                                <div class="text-truncate">Netflix</div>
+                                <div class="small text-gray-500">Entertainment
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="box shadow-sm mb-3 border rounded bg-white ads-box text-center">
+                    <img src="img/ads1.png" class="img-fluid" alt="Responsive image">
+                    <div class="p-3 border-bottom">
+                        <h6 class="font-weight-bold text-gold">EdilCloud Premium</h6>
+                        <p class="mb-0 text-muted">Upgrade and boost your report now!</p>
+                    </div>
+                    <div class="p-3">
+                        <button type="button" class="btn btn-outline-gold pl-4 pr-4"> UPGRADE</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    <div style="max-width: 100%; padding-left: 60px; padding-right: 60px; margin-top: 30px;" class="container">
+        <div class="box shadow-sm border rounded bg-white mb-3 col col-xl-12 order-xl-12 col-lg-12">
+            <div class="box-title border-bottom p-3">
+                <h6 class="m-0">Persone coinvolte nel progetto: ordine alfabetico per cognome</h6>
+            </div>
+            <div class="p-3">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="profile.html">
+                            <div class="border network-item rounded mb-3">
+                                <div class="p-3 d-flex align-items-center network-item-header">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p1.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold">
+                                        <h6 class="font-weight-bold text-dark mb-0">Tommaso Bellini</h6>
+                                        <div class="small text-black-50">Backend Developer - MonkeyBits srl</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="profile.html">
+                            <div class="border network-item rounded mb-3">
+                                <div class="p-3 d-flex align-items-center network-item-header">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p1.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold">
+                                        <h6 class="font-weight-bold text-dark mb-0">Marco Carminati</h6>
+                                        <div class="small text-black-50">CEO e Founder - MonkeyBits srl</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="pb-5">
+    <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+        <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">2. Dettaglio delle fasi di lavoro</span>
+        </h2>
+    </div>
+</div>
+{% for task in tasks %}
+    <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-9">
+
+            <div class="blog-card padding-card box shadow-sm rounded bg-white mb-3 border-0">
+
+                <div class="card-body">
+
+                    <h2>{{ task.name }}</h2>
+                    <h6 class="mb-3">{{ task.post_set | length }} posts</h6>
+                    {% for post in task.post_set %}
+                    <div class="box shadow-sm border rounded bg-white mb-3 osahan-post">
+                        <div class="p-3 d-flex align-items-center border-bottom osahan-post-header">
+                            <div class="dropdown-list-image mr-3">
+                                <img class="rounded-circle" src="{{ post.author.photo }}" alt="">
+                                <div class="status-indicator bg-success"></div>
+                            </div>
+                            <div class="font-weight-bold">
+                                <div class="text-truncate">{{ post.author.first_name }} {{ post.author.last_name }}</div>
+                                <div class="small text-gray-500">{{ post.author.position }}
+                                    - {{ post.author.company.name }}</div>
+                            </div>
+                            <span class="ml-auto small">{{ post.published_date }}</span>
+                        </div>
+                        <div class="p-3 border-bottom osahan-post-body">
+                            <p class="mb-0">{{ post.text }} </p>
+                        </div>  {% for media in task.mediaassignement_set.all %}
+                              <img style="max-width:24%;" src="{{ media.media.url }}" class="img-fluid p-2" alt="Responsive image">
+                                {% endfor %}  
+                              
+                        <div class="p-3">
+                            {% for media in task.mediaassignement_set.all %}
+                            <button type="button" class="btn btn-outline-primary btn-sm mr-1">{{ media.media.name }}
+                            </button>
+                            {% endfor %}  
+                        
+                        </div>
+                        <div class="p-3 border-top osahan-post-body"><a href="profile.html">
+                        </a>
+                            <div class=" reviews-card rounded bg-white border-0">
+                                <div class="card-body" style="
+    padding: 0px;
+">
+                                    <h5 class="card-title mb-4">{{ post.comment_set | length }} commenti</h5>
+                                    {% for comment in post.comment_set %}
+                                        <div class="media mb-2">
+                                            <img class="d-flex mr-3 rounded"
+                                                 src="{{ comment.author.photo }}"
+                                                 alt="">
+                                            <div class="media-body">
+                                                <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }}
+                                                    - {{ comment.author.position }} {{ comment.author.company.name }}
+                                                    <span class="star-rating float-right"><small>{{ comment.published_date }}
+                                                        </small>
+                                                                </span></h5>
+                                                <p>{{ comment.text }}</p>
+                                                {% for reply in comment.reply_set %}
+                                                    <div class="media mt-4">
+                                                        <img class="d-flex mr-3 rounded"
+                                                             src="{{ reply.author.photo }}" alt="">
+                                                        <div class="media-body">
+                                                            <h5 class="mt-0">{{ reply.author.first_name }} {{ reply.author.last_name }}
+                                                                <small>{{ reply.published_date }}</small>
+                                                            </h5>
+                                                            <p>{{ reply.text }}</p>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                            <a href="profile.html">
+                            </a></div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+
+            <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
+                <div class="card-body" style="
+    padding: 0px;
+">
+                    <h5 class="card-title p-2">Info Fase di Lavoro</h5>
+
+                    <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">
+                        <div class="p-5">
+                            <img src="{{ task.assigned_company.logo }}" class="img-fluid" alt="Responsive image">
+                        </div>
+                        <div class="p-3 border-top border-bottom">
+                            <h6 class="font-weight-bold text-dark mb-1 mt-0">{{ task.assigned_company.name }}</h6>
+                            <p></p>
+                        </div>
+
+                        <div class="box shadow-sm border rounded bg-white mb-3">
+                            <div class="box-title border-bottom p-3">
+                                <h6 class="m-0">Persone coinvolte nella fase di lavoro</h6>
+                            </div>
+                            <div class="box-body p-3">
+                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p4.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">Mauro Cappelletti</div>
+                                        <div class="small text-gray-500">CEO - Itinera Group Spa
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p9.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">Carla Mastrantonio</div>
+                                        <div class="small text-gray-500">Direttrice Sicurezza Cantieri - Itinera
+                                            Group
+                                            Spa
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p10.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">Edoardo Bianchessi</div>
+                                        <div class="small text-gray-500">Architetto - Itinera Spa
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p11.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">Robert Cook</div>
+                                        <div class="small text-gray-500">Engineer - Itinera Group Spa
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="d-flex align-items-center osahan-post-header people-list">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p12.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold mr-2">
+                                        <div class="text-truncate">Federico Rapisarda</div>
+                                        <div class="small text-gray-500">Resonsabile Cantiere - Itinera Group Spa
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
+                                <div class="card-body" style="
+    padding: 0px;
+">
+                                    <h5 class="card-title mb-3">Alerted</h5>
+                                    <ul class="sidebar-card-list">
+                                        <li><a href="#"><i class="feather-arrow-right-circle"></i> December,
+                                            2017</a>
+                                        </li>
+                                        <li><a href="#"><i class="feather-arrow-right-circle"></i> November,
+                                            2017</a>
+                                        </li>
+                                        <li><a href="#"><i class="feather-arrow-right-circle"></i> October, 2017</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+{% endfor %}
+</div>
+<div class="pb-5">
+    <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+        <h2 class="font-weight-light"><span style="color:  #0d0a27;"
+                                            class="font-weight-bold">3. Diagramma di Gantt</span></h2>
+    </div>
+</div>
+<div class="pb-5">
+    <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+        <h2 class="font-weight-light">
+            <span style="color:  #0d0a27;" class="font-weight-bold">4. Allegati
+            <p> Potete trovare il materiale allegato nella mail ricevuta con il report pdf</p></span>
+        </h2>
+    </div>
+</div>
+</body>
+</html>

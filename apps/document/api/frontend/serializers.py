@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, status
 from rest_framework.serializers import ValidationError
 
+from web.utils import check_limitation_plan, get_media_size
 from ... import models
 from apps.profile import models as profile_models
 from apps.project import models as project_models
@@ -16,15 +17,49 @@ from web.api.serializers import DynamicFieldsModelSerializer
 
 class DocumentSerializer(
         DynamicFieldsModelSerializer):
-
     extension = serializers.SerializerMethodField()
+    size = serializers.SerializerMethodField(read_only=True)
+    relative_path = serializers.SerializerMethodField()
+    folder_relative_path = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Document
         fields = '__all__'
 
+    def get_size(self, obj):
+        return obj.document.size
+
     def get_extension(self, obj):
-        return obj.get_file_extension()
+        return obj.get_file_extension()[1:]
+
+    def get_folder_relative_path(self, obj):
+        url = obj.document.url
+        if '%20' in obj.document.url:
+            url = obj.document.url.replace('%20', ' ')
+        if hasattr(obj.content_object, 'slug'):
+            identity_folder = obj.content_object.slug
+        else:
+            identity_folder = str(obj.content_object.id)
+        if len(url.split(identity_folder)) >= 2:
+            splitted = url.split(identity_folder)[1].rsplit('/', 1)[0]
+            if splitted != '':
+                return splitted.split('/', 1)[1]
+            return splitted
+        else:
+            return url
+
+    def get_relative_path(self, obj):
+        url = obj.document.url
+        if '%20' in obj.document.url:
+            url = obj.document.url.replace('%20', ' ')
+        if hasattr(obj.content_object, 'slug'):
+            identity_folder = obj.content_object.slug
+        else:
+            identity_folder = str(obj.content_object.id)
+        if len(url.split(identity_folder)) >= 2:
+            return url.split(identity_folder)[1]
+        else:
+            return url
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -73,6 +108,9 @@ class DocumentAddSerializer(
 
     def create(self, validated_data):
         try:
+            check_limitation_plan(self.profile.company.customer, 'size', get_media_size(self.profile, validated_data)['total_size'])
+            if 'additional_path' in self.request.data:
+                validated_data['additional_path'] = self.request.data['additional_path']
             document = self.profile.create_document(validated_data)
             return document
         except Exception as err:

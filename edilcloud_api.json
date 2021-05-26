@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "edilcloud-80e3f",
+  "private_key_id": "2f3e5d4c602d691df5b9cdb94c4e99a8cf842308",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCcPYsux09UeKe2\nEQrALPP3auGdp3Bafiz5cVaSaFiODHxaQOXKjWOE93stoI0EOJWS5zvg2QCVl39G\nlrlaaNKxI38kh3q8VZDIL2PnmagG6Ri3BmmryXUv6dqvpRZB5//AjteDLriRGjBM\nqaBJjug7qpjT3IVu4rXtmvvG+9nLsxbuANyJ2vz3foZquc9ooCeUdqpl6b9GdEia\nNoQ73xgjZ2hTIOXXXdChlvsEXNa07MYDFBypzhKIAr7vZE2PWyTDZvWmX5oAhQLb\n1sV6kiIyrjDLDhrTtn2bQuuKXpQ0VF3dTYquBoVR8pd1bjcvhCbjd0B3efMsnhBi\niopVhCc7AgMBAAECggEAEr9vzBUud7xio344BAdg3vd8SyakXLd3PhdThA3xUlo9\nMbdH255LqtDnfvoc8by4dgA5NynS4CBlrVq4sxiQ76CKyR9YovDBhsPpAQl3GB0w\nUgX6+Bocbbtp+lmc6huknL6HLb6VdxPlZ82S5kC3rTEzVXjIqh2aJwDJ5X6jC8Yp\niHwkjm7bjYa8zwlanYk7GisM5b5HbbVfY1/8wUM2d/guS/LlmOaaFHUWWMrkYHIC\nars3tJcH2SwZU7wjnTSVNHb4YUpp0qgxw2EYO1TOAD4AYo9RBXZavLYqDLGcG/qm\n7bgFRI+k61lMsZCcq2ag8YJneHKLJ+4HWQWOgvp2AQKBgQDVmBuQg1dlKUNqpiOc\nLllyZDs6HV/5ym3YFV835/El3GT/QGbv+Z9eMGyUToWaRcHWSQxKqUkCayFLJHYK\nYhX2GahpnadmL7OKJvG0dbYTmMicwKq4IYYNDbQJQkXskoOFkzh5P44jK15B0QR3\nhs6WWLh37/S8NPBQP7WbnZaV2wKBgQC7QnB2IXzB2iLQDljyKC53ne6kmngniSaR\nDEiUbO552zyKy1Sal9APHqMl7tWBVr12u+44GIUty3+18lZ0WpQDZeW2vFLLes/D\n2pBPYKBgNgXZ0RqcGEwJ2EV71zZRP6zPrubgD8Z2oIRydNe02dKXTv+ZCe3KB0QK\nY4S8cEdiIQKBgQCHuucZSD1LLZOHvBe48cMpbAQvA+evZjGzNLGTZzLYqlsL0TMY\nn/nj8sWs4NEJnfZ1Y2oKL9UTUlyP0ZWpN3dZMijRJLvxtbJTwjeqQ3r2rQoeglh6\nNeNnfCPCFnk0wk4NneYvNnHua2q0TEyYX/P7mllu7e8JgmKLvFB9mQDOLQKBgQCd\nPZnfqBjxUnE/EX0gwhrauJQmRcs1L5Zh39WmRJ4vVqfMyBYfxfCgcZJ/jMBdXe+0\nHvRWyEg0fxebOYXdKB33iH3O5u4DDPofNI1PCg1BHLvm/g4BGunmrmMSLVHgAb7j\nmbMmXDjDbeApl/F1XB7YjS5VXJ/+sAEzVAOmlAVs4QKBgE6p0xL1BmxU5euMsl/3\nlsfFYjqYxqvwqbHJtF+Jkn+p7zaLVoO4KLNPk4hnBr4yVCTZioicgYMxeqjUKs3Z\nvr3LW/xE7r789YMcqgNEkHeo4hRS+h04jI0hMmSI0AhFnR5RB6A8mWTP5JL/E8o/\nv920Ncb1qKi0ylRHTO074qnN\n-----END PRIVATE KEY-----\n",
+  "client_email": "edilcloud-580@edilcloud-80e3f.iam.gserviceaccount.com",
+  "client_id": "110768818876113744258",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/edilcloud-580%40edilcloud-80e3f.iam.gserviceaccount.com"
+}

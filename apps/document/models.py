@@ -11,6 +11,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
+from apps.media.models import Folder
 from web.core.models import UserModel, DateModel, StatusModel, OrderedModel, CleanModel
 from web.api.views import get_media_root
 
@@ -22,10 +23,16 @@ doc_fs = FileSystemStorage(location=settings.BASE_DIR, base_url="/")
 def get_upload_document_path(instance, filename):
     # TODO tree upload
     media_dir1 = instance.content_object._meta.model_name
-    media_dir2 = instance.content_object.id
+    if hasattr(instance.content_object, 'slug'):
+        media_dir2 = instance.content_object.slug
+    else:
+        media_dir2 = instance.content_object.id
     ext = pathlib.Path(filename).suffix
     filename = '{}{}'.format(slugify(instance.title), ext)
     media_root = get_media_root(instance.is_public)
+    if hasattr(instance, 'additional_path'):
+        return os.path.join(media_root, 'document', format(media_dir1), format(media_dir2), instance.additional_path,
+                            filename)
     return os.path.join(media_root, "document", format(media_dir1), format(media_dir2), filename)
 
 
@@ -54,10 +61,11 @@ class Document(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         verbose_name=_('title'),
     )
     description = models.TextField(
-        verbose_name=_('description'),
+        verbose_name=_('description'), blank=True
     )
     document = models.FileField(
         storage=doc_fs,
+        max_length=1000,
         upload_to=get_upload_document_path,
         verbose_name=_('certification'),
     )
@@ -65,7 +73,12 @@ class Document(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         default=False,
         verbose_name=_('is public')
     )
-
+    folder = models.ForeignKey(
+        Folder,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
     class Meta:
         verbose_name = _('document')
         verbose_name_plural = _('documents')

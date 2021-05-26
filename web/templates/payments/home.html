@@ -1,0 +1,589 @@
+<!-- templates/home.html -->
+
+{% load static %} <!-- new -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Django + Stripe Subscriptions</title>
+    <script src="https://js.stripe.com/v3/"></script>  <!-- new -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+            crossorigin="anonymous"></script>
+    <script>
+        console.log('{{ has_payment_method }}')
+        window.has_payment_method = '{{ has_payment_method }}';
+    </script>
+</head>
+<body>
+<div class="container ">
+<div class="planContainer">
+{% for p in products %}
+  <div class="plan">
+    <div class="titleContainer">
+      <div class="title">{{ p.name }}</div>
+    </div>
+    <div class="infoContainer">
+    {% for plan in p.plan_set.all %}
+      <div class="price">
+        <p>{{ plan.human_readable_price }}</p>
+      </div>
+    {% endfor %}
+      <div class="p desc"><em>{{ p.description }}</em></div>
+      <ul class="features">
+        <li><strong>2</strong> Users</li>
+        <li><strong>5</strong> Projects</li>
+        <li><strong>10GB</strong> Storage</li>
+        <li><strong>100GB</strong> Bandwidth</li>
+      </ul><a class="selectPlan" onclick="planSelect('{{ p.name }}' ,'{{ p.plan_set.all.0.human_readable_price }}', '{{ p.plan_set.all.0.id }}')">Select Plan</a>
+    </div>
+  </div>
+{% endfor %}
+{#  <div class="plan">#}
+{#    <div class="titleContainer">#}
+{#      <div class="title">Developer</div>#}
+{#    </div>#}
+{#    <div class="infoContainer">#}
+{#      <div class="price">#}
+{#        <p>$12 </p><span>/mo</span>#}
+{#      </div>#}
+{#      <div class="p desc"><em>Recommended for developers and experienced hobbyists.</em></div>#}
+{#      <ul class="features">#}
+{#        <li><strong>5</strong> Users</li>#}
+{#        <li><strong>15</strong> Projects</li>#}
+{#        <li><strong>50GB</strong> Storage</li>#}
+{#        <li><strong>500GB</strong> Bandwidth</li>#}
+{#        <li><strong>1</strong> Free Domain</li>#}
+{#      </ul><a class="selectPlan">Select Plan</a>#}
+{#    </div>#}
+{#  </div>#}
+{#  <div class="plan">#}
+{#    <div class="titleContainer">#}
+{#      <div class="title">BUSINESS</div>#}
+{#    </div>#}
+{#    <div class="infoContainer">#}
+{#      <div class="price">#}
+{#        <p>$20</p><span>/mo</span>#}
+{#      </div>#}
+{#      <div class="p desc"><em>Ideal for small businesses and experienced developers.</em></div>#}
+{#      <ul class="features">#}
+{#        <li><strong>20</strong> Users</li>#}
+{#        <li><strong>Unlimited</strong> Projects</li>#}
+{#        <li><strong>150GB</strong> Storage</li>#}
+{#        <li><strong>1TB</strong> Bandwidth</li>#}
+{#        <li><strong>2</strong> Free Domains</li>#}
+{#      </ul><a class="selectPlan">Select Plan</a>#}
+{#    </div>#}
+{#  </div>#}
+</div>
+
+
+{#    <div class="row ">#}
+{#        {% for p in products %}#}
+{#            <div class="col-6">#}
+{#                <div class="card mx-5 shadow" style="border-radius: 10px; border:none; ">#}
+{#                    <div class="card-body">#}
+{#                        <h5 class="card-title font-weight-bold">{{ p.name }}</h5>#}
+{#                        <p class="card-text text-muted">#}
+{#                            <svg class="bi bi-check" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"#}
+{#                                 xmlns="http://www.w3.org/2000/svg">#}
+{#                                <path fill-rule="evenodd"#}
+{#                                      d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>#}
+{#                            </svg>#}
+{#                            {{ p.description }}</p>#}
+{##}
+{#                        {% for plan in p.plan_set.all %}#}
+{#                            <h5>{{ plan.human_readable_price }}</h5>#}
+{#                            <div class="text-right">#}
+{#                            <input type="checkbox" name="{{ p.name }}" value="{{ p.id }}"#}
+{#                                   onclick="planSelect('{{ p.name }}' ,'{{ plan.human_readable_price }}', '{{ plan.id }}')">#}
+{#                        {% endfor %}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{##}
+{#            </div>#}
+{##}
+{#        {% endfor %}#}
+{#    </div>#}
+    <hr style="background-color: white;">
+    <div class="planContainer">
+           <div class="plan-card">
+            <div class="titleContainer">
+              <div class="title">Checkout</div>
+            </div>
+            <div class="infoContainer">
+            {% for plan in p.plan_set.all %}
+              <div class="price">
+                <p>{{ plan.human_readable_price }}</p>
+              </div>
+            {% endfor %}
+              <div class="p desc"><em>Enter card details. Your subscription will start immediately</em></div>
+            <form id="subscription-form">
+              <ul class="features">
+                <li><strong>Plan:</strong> <span id="plan"></span></li>
+                <li><strong>Total:</strong> <span id="price"></span><span hidden id="priceId"></span></li>
+              </ul>
+                  <div id="card-element" class="MyCardElement">
+                                <!-- Elements will create input elements here -->
+                            </div>
+
+                            <!-- We'll put the error messages in this element -->
+                            <div id="card-errors" role="alert"></div>
+                <button type="submit" class="selectPlan" id="submitCheckout">
+                    <div class="spinner-border  spinner-border-sm text-light hidden" hidden id="spinner"
+                         role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <span id="button-text">Subscribe</span>
+                </button>
+                </form>
+            </div>
+          </div>
+    </div>
+</div>
+<script>
+    // static/main.js
+
+console.log("Sanity check!");
+console.log(document.getElementById('ciao'));
+console.log(document.querySelector("subscription-form"))
+
+var stripe = Stripe('pk_test_51Hr7tlCPJO2Tjuq1PUy2FdjQAvuDkRPNxYWvN2YwdOWqykdtKBZArXrFRXjZ4R7IkcAwDmAbwnd57M5gPplJIjej00BrnpqbdI');
+
+stripeElements();
+document.querySelector("#spinner").classList.add("hidden");
+
+function stripeElements() {
+    if (document.getElementById('card-element')) {
+        let elements = stripe.elements();
+
+        // Card Element styles
+        let style = {
+            base: {
+                color: "#32325d",
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: "antialiased",
+                fontSize: "16px",
+                "::placeholder": {
+                    color: "#aab7c4"
+                }
+            },
+            invalid: {
+                color: "#fa755a",
+                iconColor: "#fa755a"
+            }
+        };
+
+        if (window.has_payment_method === 'False') {
+
+
+            var card = elements.create('card', {style: style});
+
+            card.mount('#card-element');
+
+            card.on('focus', function () {
+                let el = document.getElementById('card-errors');
+                el.classList.add('focused');
+            });
+
+            card.on('blur', function () {
+                let el = document.getElementById('card-errors');
+                el.classList.remove('focused');
+            });
+
+            card.on('change', function (event) {
+                displayError(event);
+            });
+        }
+    }
+    //we'll add payment form handling here
+        console.log('payment method')
+        let paymentForm = document.getElementById('subscription-form');
+        console.log(paymentForm)
+        console.log(document.getElementById("submitCheckout"))
+        document.getElementById("submitCheckout").disabled = true;
+        var selectedPlanId = null;
+        if (paymentForm) {
+
+            paymentForm.addEventListener('submit', function (evt) {
+                evt.preventDefault();
+                changeLoadingState(true);
+
+                if (window.has_payment_method === 'False') {
+                    // create new payment method & create subscription
+                    createPaymentMethod({card});
+                } else {
+                    subscribe({card})
+                }
+
+            });
+        }
+}
+
+function createPaymentMethod({card}) {
+
+    // Set up payment method for recurring usage
+    let billingName = '{{profile.first_name}} {{profile.last_name}} ({{ profile.company.name }})';
+    stripe
+        .createPaymentMethod({
+            type: 'card',
+            card: card,
+            billing_details: {
+                name: billingName,
+            },
+        })
+        .then((result) => {
+            if (result.error) {
+                displayError(result);
+            } else {
+                const paymentParams = {
+                    price_id: document.getElementById("priceId").innerHTML,
+                    payment_method: result.paymentMethod.id,
+                    card: card
+                };
+                fetch("/api/frontend/payments/create-sub", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(paymentParams),
+                }).then((response) => {
+                    return response.json();
+                }).then((result) => {
+                    if (result.error) {
+                        // The card had an error when trying to attach it to a customer
+                        throw result;
+                    }
+                    return result;
+                }).then((result) => {
+                    if (result && result.status === 'active') {
+
+                        window.location.href = '/api/frontend/payments/charge/complete';
+                    }
+                    ;
+                }).catch(function (error) {
+                    displayError(result.error.message);
+
+                });
+            }
+        });
+}
+
+function subscribe({card}) {
+    const paymentParams = {
+        price_id: document.getElementById("priceId").innerHTML,
+        payment_method: null,
+        card: card
+    };
+    fetch("/api/frontend/payments/create-sub", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify(paymentParams),
+    }).then((response) => {
+        return response.json();
+    }).then((result) => {
+        if (result.error) {
+            // The card had an error when trying to attach it to a customer
+            throw result;
+        }
+        return result;
+    }).then((result) => {
+        if (result && result.status === 'active') {
+
+            window.location.href = '/api/frontend/payments/charge/complete';
+        }
+        ;
+    }).catch(function (error) {
+        displayError(result.error.message);
+
+    });
+}
+
+
+
+var changeLoadingState = function (isLoading) {
+    if (isLoading) {
+        document.getElementById("submitCheckout").disabled = true;
+        document.querySelector("#spinner").classList.remove("hidden");
+        document.querySelector("#button-text").classList.add("hidden");
+    } else {
+        document.getElementById("submitCheckout").disabled = false;
+        document.querySelector("#spinner").classList.add("hidden");
+        document.querySelector("#button-text").classList.remove("hidden");
+    }
+};
+
+function displayError(event) {
+
+    let displayError = document.getElementById('card-errors');
+    if (event.error) {
+        displayError.textContent = event.error.message;
+    } else {
+        displayError.textContent = '';
+    }
+}
+
+function planSelect(name, price, priceId) {
+    var inputs = document.getElementsByTagName('input');
+
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].checked = false;
+        if (inputs[i].name == name) {
+
+            inputs[i].checked = true;
+        }
+    }
+
+    selectedPlanId = priceId;
+    var n = document.getElementById('plan');
+    var p = document.getElementById('price');
+    var pid = document.getElementById('priceId');
+    console.log(priceId)
+    console.log(name)
+    n.innerHTML = name;
+    p.innerHTML = price;
+    pid.innerHTML = priceId;
+    document.getElementById("submitCheckout").disabled = false;
+
+
+}
+
+
+// Get Stripe publishable key
+fetch("/api/frontend/payments/config/")
+    .then((result) => {
+        return result.json();
+    })
+    .then((data) => {
+        // Initialize Stripe.js
+        const stripe = Stripe(data.publicKey);
+
+        // new
+        // Event handler
+        document.querySelector("#submitCheckout").addEventListener("click", () => {
+            // Get Checkout Session ID
+            fetch("/api/frontend/payments/create-checkout-session/?plan_id=" + selectedPlanId)
+                .then((result) => {
+                    return result.json();
+                })
+                .then((data) => {
+                    console.log(data);
+                    // Redirect to Stripe Checkout
+                    return stripe.redirectToCheckout({sessionId: data.sessionId})
+                })
+                .then((res) => {
+                    console.log(res);
+                });
+        });
+    });
+</script> <!-- new -->
+</body>
+</html>
+<style>
+    body {
+    .StripeElement {
+        box-sizing: border-box;
+
+        height: 40px;
+
+        padding: 10px 12px;
+
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background-color: white;
+
+        box-shadow: 0 1px 3px 0 #e6ebf1;
+        -webkit-transition: box-shadow 150ms ease;
+        transition: box-shadow 150ms ease;
+    }
+
+    .StripeElement--focus {
+        box-shadow: 0 1px 3px 0 #cfd7df;
+    }
+
+    .StripeElement--invalid {
+        border-color: #fa755a;
+    }
+
+    .StripeElement--webkit-autofill {
+        background-color: #fefde5 !important;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+
+    #submitCheckout:hover {
+        filter: contrast(120%);
+    }
+
+    #submitCheckout {
+        font-feature-settings: "pnum";
+        --body-color: #f7fafc;
+        --button-color: #556cd6;
+        --accent-color: #556cd6;
+        --gray-border: #e3e8ee;
+        --link-color: #fff;
+        --font-color: #697386;
+        --body-font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        --radius: 4px;
+        --form-width: 400px;
+        -webkit-box-direction: normal;
+        word-wrap: break-word;
+        box-sizing: border-box;
+        font: inherit;
+        overflow: visible;
+        -webkit-appearance: button;
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        font-size: 16px;
+        padding: 0 12px;
+        line-height: 32px;
+        outline: none;
+        text-decoration: none;
+        text-transform: none;
+        margin-right: 8px;
+        height: 36px;
+        border-radius: var(--radius);
+        color: #fff;
+        border: 0;
+        margin-top: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .2s ease;
+        display: block;
+        box-shadow: 0 4px 5.5px 0 rgba(0, 0, 0, .07);
+        width: 100%;
+        background: var(--button-color);
+    }
+
+</style>
+<style lang="scss">
+    @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800');
+ body {
+	 background-color: #1abc9c;
+	 font-family: 'Open Sans', sans-serif;
+	 text-align: center;
+	 margin: 0;
+	 display: flex;
+	 justify-content: center;
+	 align-items: center;
+	 min-height: 100vh;
+}
+ .planContainer {
+	 display: flex;
+	 flex-wrap: wrap;
+	 margin: 1em;
+	 display: flex;
+	 flex-direction: row;
+	 align-items: flex-start;
+	 justify-content: center;
+}
+ .plan, .plan-card {
+	 background: white;
+	 width: 20em;
+	 box-sizing: border-box;
+	 text-align: center;
+	 margin: 1em;
+	 margin-bottom: 1em;
+}
+ .plan-card {
+    width: 100em;
+}
+ .plan .titleContainer, .plan-card .titleContainer {
+	 background-color: #f3f3f3;
+	 padding: 1em;
+}
+ .plan .titleContainer .title, .plan-card .titleContainer .title {
+	 font-size: 1.45em;
+	 text-transform: uppercase;
+	 color: #1abc9c;
+	 font-weight: 700;
+}
+ .plan .infoContainer, .plan-card .infoContainer {
+	 padding: 1em;
+	 color: #2d3b48;
+	 box-sizing: border-box;
+}
+ .plan .infoContainer .price, .plan-card .infoContainer .price {
+	 font-size: 1.35em;
+	 padding: 1em 0;
+	 font-weight: 600;
+	 margin-top: 0;
+	 display: inline-block;
+	 width: 80%;
+}
+ .plan .infoContainer .price p, .plan-card .infoContainer .price p {
+	 font-size: 1.35em;
+	 display: inline-block;
+	 margin: 0;
+}
+ .plan .infoContainer .price span, .plan-card .infoContainer .price span {
+	 font-size: 1.0125em;
+	 display: inline-block;
+}
+ .plan .infoContainer .desc, .plan-card .infoContainer .desc {
+	 padding-bottom: 1em;
+	 border-bottom: 2px solid #f3f3f3;
+	 margin: 0 auto;
+	 width: 90%;
+}
+ .plan .infoContainer .desc em, .plan-card .infoContainer .desc em {
+	 font-size: 1em;
+	 font-weight: 500;
+}
+ .plan .infoContainer .features, .plan-card .infoContainer .features {
+	 font-size: 1em;
+	 list-style: none;
+	 padding-left: 0;
+}
+ .plan .infoContainer .features li, .plan-card .infoContainer .features li {
+	 padding: 0.5em;
+}
+ .plan .infoContainer .selectPlan, .plan-card .infoContainer .selectPlan {
+	 border: 2px solid #1abc9c;
+	 padding: 0.75em 1em;
+	 border-radius: 2.5em;
+	 cursor: pointer;
+	 transition: all 0.25s;
+	 margin: 1em auto;
+	 box-sizing: border-box;
+	 max-width: 70%;
+	 display: block;
+	 font-weight: 700;
+}
+ .plan .infoContainer .selectPlan:hover, .plan-card .infoContainer .selectPlan:hover {
+	 background-color: #1abc9c;
+	 color: white;
+    }
+ .plan-card .infoContainer .selectPlan {
+     background-color: #1abc9c;
+	 color: white;
+    }
+    @media screen and (max-width: 25em) {
+	 .planContainer {
+		 margin: 0;
+	}
+	 .planContainer .plan, .planContainer .plan-card {
+		 width: 100%;
+		 margin: 1em 0;
+	}
+}
+
+</style>

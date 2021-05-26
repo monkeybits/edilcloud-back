@@ -1,0 +1,77 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - streams
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=office2017.whistle.it
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  web:
+    build: .
+    command: daphne -b 0.0.0.0 -p 8000 web.asgi:application
+    volumes:
+      - .:/office2017.whistle.it
+    ports:
+      - "8000:8000"
+    networks:
+      - streams
+    depends_on:
+      - db
+    environment:
+      - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
+      - ENV_NAME=test
+      - SOCKET_HOST=35.176.179.55
+      - SOCKET_PORT=6969
+      - SOCKET_URL=https://ws.edilcloud.io
+
+  redis:
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    networks:
+      - streams
+
+  nginx:
+    image: nginx:1.13
+    build:
+      context: .
+      dockerfile: ./config/nginx/Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - /etc/letsencrypt/:/etc/letsencrypt/
+    depends_on:
+      - web
+      - db
+    networks:
+      - streams
+
+  celery:
+    build: .
+    command: celery -A web worker -B
+    networks:
+      - streams
+    volumes:
+      - .:/office2017.whistle.it
+    links:
+      - db
+      - redis
+
+volumes:
+  postgres_data:
+  redis-data:
+networks:
+  streams:
+    external: true

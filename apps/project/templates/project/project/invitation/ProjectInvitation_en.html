@@ -1,0 +1,27 @@
+{% extends 'email/base_email_en.html' %}
+
+{% block content %}
+<p>
+    Dear {{recipient_first_name}} {{recipient_last_name}}, <br/>
+    <strong>Your email {{recipient_email}} was added to Edilcloud within the staff of the {{company_name}} company</strong>.
+    <br/>
+</p>
+<p>
+    To access Edilcloud follow the instructions below: <br/>
+    <ul>
+        <li>Access the link <a href="{{registration_page}}">Registration Page</a> or copy the
+            link <strong>{{registration_page}}</strong> and paste it in the browser
+        </li>
+        <li>
+            Follow the steps to register with Edilcloud. Use the email {{recipient_email}} as email in registration procedure.
+        </li>
+        <li>
+            When registration is complete, log in to Edilcloud and create a main profile.
+        </li>
+        <li>
+            Insert the following code when requested to access to new project:
+            {{ code }}
+        </li>
+    </ul>
+</p>
+{% endblock %}

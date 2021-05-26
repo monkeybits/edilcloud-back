@@ -51,7 +51,7 @@ class TrackerDocumentDetailView(
     def __init__(self, *args, **kwargs):
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
-            'date_create', 'date_last_modify', 'is_public'
+            'date_create', 'date_last_modify', 'is_public', 'size', 'folder'
         ]
         super(TrackerDocumentDetailView, self).__init__(*args, **kwargs)
 
@@ -70,11 +70,11 @@ class TrackerDocumentAddView(
     def __init__(self, *args, **kwargs):
         self.document_request_include_fields = [
             'title', 'description', 'document',
-            'content_type', 'object_id', 'is_public'
+            'content_type', 'object_id', 'is_public', 'folder'
         ]
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
-            'date_create', 'date_last_modify', 'is_public'
+            'date_create', 'date_last_modify', 'is_public', 'folder'
         ]
         super(TrackerDocumentAddView, self).__init__(*args, **kwargs)
 
@@ -100,11 +100,11 @@ class TrackerProjectDocumentAddView(
     def __init__(self, *args, **kwargs):
         self.document_request_include_fields = [
             'title', 'description', 'document',
-            'content_type', 'object_id', 'is_public'
+            'content_type', 'object_id', 'is_public', 'folder'
         ]
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
-            'date_create', 'date_last_modify', 'is_public'
+            'date_create', 'date_last_modify', 'is_public', 'folder'
         ]
         super(TrackerProjectDocumentAddView, self).__init__(*args, **kwargs)
 
@@ -129,11 +129,11 @@ class TrackerDocumentEditView(
 
     def __init__(self, *args, **kwargs):
         self.document_request_include_fields = [
-            'title', 'description', 'document'
+            'title', 'description', 'document', 'folder'
         ]
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
-            'date_create', 'date_last_modify', 'is_public'
+            'date_create', 'date_last_modify', 'is_public', 'folder'
         ]
         super(TrackerDocumentEditView, self).__init__(*args, **kwargs)
 
@@ -156,11 +156,11 @@ class TrackerProjectDocumentEditView(
 
     def __init__(self, *args, **kwargs):
         self.document_request_include_fields = [
-            'title', 'description', 'document'
+            'title', 'description', 'document', 'folder'
         ]
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
-            'date_create', 'date_last_modify', 'is_public'
+            'date_create', 'date_last_modify', 'is_public', 'folder'
         ]
         super(TrackerProjectDocumentEditView, self).__init__(*args, **kwargs)
 
@@ -184,7 +184,7 @@ class TrackerDocumentDeleteView(
     def __init__(self, *args, **kwargs):
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
-            'date_create', 'date_last_modify'
+            'date_create', 'date_last_modify', 'folder'
         ]
         super(TrackerDocumentDeleteView, self).__init__(*args, **kwargs)
 
@@ -208,7 +208,7 @@ class TrackerProjectDocumentDeleteView(
     def __init__(self, *args, **kwargs):
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
-            'date_create', 'date_last_modify'
+            'date_create', 'date_last_modify', 'folder'
         ]
         super(TrackerProjectDocumentDeleteView, self).__init__(*args, **kwargs)
 

@@ -1,1 +1,4 @@
-.idea
+media/*
+migrations/
+reset_pgadmin.sh
+.env

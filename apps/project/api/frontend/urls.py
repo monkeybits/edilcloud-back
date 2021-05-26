@@ -51,6 +51,16 @@ tracker_urlpatterns = [
         name='tracker_project_list'
     ),
     url(
+        r'^activity/post_list_alert/$',
+        tracker_views.TrackerActivityPostListAlertView.as_view(),
+        name='tracker_activity_post_list_alert'
+    ),
+    url(
+        r'^task/post_list_alert/$',
+        tracker_views.TrackerTaskPostListAlertView.as_view(),
+        name='tracker_task_post_list_alert'
+    ),
+    url(
         r'^project/(?P<pk>\d+)/$',
         tracker_views.TrackerProjectDetailView.as_view(),
         name='tracker_project_detail'
@@ -90,6 +100,27 @@ tracker_urlpatterns = [
         tracker_views.TrackerProjectTeamAddView.as_view(),
         name='tracker_project_team_add'
     ),
+    url(
+        r'^project/(?P<pk>\d+)/generate_code/$',
+        tracker_views.TrackerProjectGenerateCodeView.as_view(),
+        name='tracker_project_team_generate_code'
+    ),
+    url(
+        r'^project/add_team_by_code/$',
+        tracker_views.TrackerProjectAddTeamByCodeView.as_view(),
+        name='tracker_project_add_team_by_code'
+    ),
+    
+    # url(
+    #     r'^project/invite/profile_add/(?P<pk>\d+)/$',
+    #     tracker_views.TrackerProjectInviteProfileAddView.as_view(),
+    #     name='tracker_invite_company_profile_add'
+    # ),
+    # url(
+    #     r'^project/(?P<type>(request|approve|refuse|waiting){1})/staff_list/$',
+    #     tracker_views.TrackerProjectStaffListView.as_view(),
+    #     name='tracker_company_staff_list'
+    # ),
     url(
         r'^project/(?P<pk>\d+)/task_add/$',
         tracker_views.TrackerProjectTaskAddView.as_view(),
@@ -141,6 +172,11 @@ tracker_urlpatterns = [
         name='tracker_project_team_list'
     ),
     url(
+        r'^project/(?P<pk>\d+)/(?P<type>(request|approve|refuse|waiting){1})/team_list/$',
+        tracker_views.TrackerProjectTeamListView.as_view(),
+        name='tracker_project_team_list'
+    ),
+    url(
         r'^project/(?P<pk>\d+)/talk_list/$',
         tracker_views.TrackerProjectTalkListView.as_view(),
         name='tracker_project_talk_list'
@@ -161,6 +197,11 @@ tracker_urlpatterns = [
         name='tracker_project_video_list'
     ),
     url(
+        r'^project/(?P<pk>\d+)/folder_list/$',
+        tracker_views.TrackerProjectPhotoListView.as_view(),
+        name='tracker_project_folder_list'
+    ),
+    url(
         r'^project/(?P<pk>\d+)/internal_task_list/$',
         tracker_views.TrackerProjectInternalTaskListView.as_view(),
         name='tracker_project_internal_task_list'
@@ -169,6 +210,11 @@ tracker_urlpatterns = [
         r'^project/(?P<pk>\d+)/task_list/$',
         tracker_views.TrackerProjectTaskListView.as_view(),
         name='tracker_project_task_list'
+    ),
+    url(
+        r'^gantt/project/(?P<pk>\d+)/task_list/$',
+        tracker_views.TrackerGanttProjectTaskListView.as_view(),
+        name='tracker_gantt_project_task_list'
     ),
     url(
         r'^project/(?P<pk>\d+)/document_list/$',
@@ -231,6 +277,11 @@ tracker_urlpatterns = [
         name='tracker_task_delete'
     ),
     url(
+        r'^team/inviation_list/$',
+        tracker_views.TrackerTeamInviationListView.as_view(),
+        name='tracker_team_detail'
+    ),
+    url(
         r'^team/(?P<pk>\d+)/$',
         tracker_views.TrackerTeamDetailView.as_view(),
         name='tracker_team_detail'
@@ -254,6 +305,16 @@ tracker_urlpatterns = [
         r'^team/delete/(?P<pk>\d+)/$',
         tracker_views.TrackerTeamDeleteView.as_view(),
         name='tracker_team_delete'
+    ),
+    url(
+        r'^task/(?P<pk>\d+)/attachment_add/$',
+        tracker_views.TrackerTaskAttachmentAddView.as_view(),
+        name='tracker_task_attachment_add'
+    ),
+    url(
+        r'^attachment/(?P<pk>\d+)/delete/$',
+        tracker_views.TrackerAttachmentDeleteView.as_view(),
+        name='tracker_attachment_delete'
     ),
     url(
         r'^task/(?P<pk>\d+)/activity_add/$',
@@ -284,6 +345,91 @@ tracker_urlpatterns = [
         r'^activity/delete/(?P<pk>\d+)/$',
         tracker_views.TrackerActivityDeleteView.as_view(),
         name='tracker_activity_delete'
+    ),
+    url(
+        r'^activity/(?P<pk>\d+)/post_list/$',
+        tracker_views.TrackerActivityPostListView.as_view(),
+        name='tracker_activity_post_list'
+    ),
+    url(
+        r'^task/(?P<pk>\d+)/post_list/$',
+        tracker_views.TrackerTaskPostListView.as_view(),
+        name='tracker_task_post_list'
+    ),
+    url(
+        r'^activity/(?P<pk>\d+)/add_post/$',
+        tracker_views.TrackerActivityPostAddView.as_view(),
+        name='tracker_activity_post_add'
+    ),
+    url(
+        r'^task/(?P<pk>\d+)/add_post/$',
+        tracker_views.TrackerTaskPostAddView.as_view(),
+        name='tracker_task_post_add'
+    ),
+    url(
+        r'^post/(?P<pk>\d+)/edit/$',
+        tracker_views.TrackerPostEditView.as_view(),
+        name='tracker_edit_post'
+    ),
+    url(
+        r'^post/(?P<pk>\d+)/notify/$',
+        tracker_views.TrackerPostNotifyView.as_view(),
+        name='tracker_notify_post'
+    ),
+    url(
+        r'^post/(?P<pk>\d+)/comment_list/$',
+        tracker_views.TrackerPostCommentListView.as_view(),
+        name='tracker_post_comment_list'
+    ),
+    url(
+        r'^post/(?P<pk>\d+)/add_comment/$',
+        tracker_views.TrackerPostCommentAddView.as_view(),
+        name='tracker_activity_comment_add'
+    ),
+    url(
+        r'^comment/(?P<pk>\d+)/edit/$',
+        tracker_views.TrackerCommentEditView.as_view(),
+        name='tracker_edit_comment'
+    ),
+    url(
+        r'^post/delete/(?P<pk>\d+)/$',
+        tracker_views.TrackerPostDeleteView.as_view(),
+        name='tracker_post_delete'
+    ),
+    url(
+        r'^comment/delete/(?P<pk>\d+)/$',
+        tracker_views.TrackerCommentDeleteView.as_view(),
+        name='tracker_comment_delete'
+    ),
+    url(
+        r'^comment/(?P<pk>\d+)/replies_list/$',
+        tracker_views.TrackerCommentRepliesListView.as_view(),
+        name='tracker_comment_replies_list'
+    ),
+    url(
+        r'^post/(?P<pk>\d+)/share_to_task/$',
+        tracker_views.TrackerSharePostToTaskView.as_view(),
+        name='tracker_activity_task_post_share'
+    ),
+    url(
+        r'^task/(?P<pk>\d+)/shared_posts/$',
+        tracker_views.TrackerTaskPostsListView.as_view(),
+        name='tracker_activity_task_posts'
+    ),
+    url(
+        r'^photo/download/(?P<pk>\d+)/$',
+        tracker_views.TrackerProjectPhotoDownloadView.as_view(),
+        name='tracker_project_document_download'
+    ),
+    url(
+        r'^video/download/(?P<pk>\d+)/$',
+        tracker_views.TrackerProjectVideoDownloadView.as_view(),
+        name='tracker_project_document_download'
+    ),
+    url(
+        r'^project/(?P<pk>\d+)/export/$',
+        tracker_views.TrackerProjectExport.as_view(),
+        name='tracker_project_export'
     ),
 ]
 

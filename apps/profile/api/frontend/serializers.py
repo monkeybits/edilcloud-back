@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import random
 
+import stripe
 from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -9,11 +11,15 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers, status
 
+import apps.message.api.frontend.serializers
+from apps.message.models import MessageProfileAssignment
+from web.utils import check_limitation_plan, get_media_size, info_plan, permissions_plan
 from ... import models
 from web.drf import exceptions as django_api_exception
 from web import exceptions as django_exception
 from web.api.views import JWTPayloadMixin, daterange, get_first_last_dates_of_month_and_year
 from web.api.serializers import DynamicFieldsModelSerializer
+from web.api.views import JWTPayloadMixin, ArrayFieldInMultipartMixin
 
 User = get_user_model()
 
@@ -33,9 +39,30 @@ class UserSerializer(
 
 class PreferenceSerializer(
         serializers.ModelSerializer):
+    total_size = serializers.SerializerMethodField()
+    plan_permissions = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Preference
         fields = '__all__'
+
+    def get_total_size(self, obj):
+        if obj.profile.company.customer != '':
+            plan_size = permissions_plan(obj.profile.company.customer)['max_size']
+            summary_size = get_media_size(obj.profile, {})
+            return {
+                'photo_size': float(summary_size['photo_size']),
+                'video_size': float(summary_size['video_size']),
+                'document_size': float(summary_size['document_size']),
+                'used': float(summary_size['total_size']),
+                'free': float(plan_size) - float(summary_size['total_size']),
+                'max_plan': float(plan_size)
+            }
+        else:
+            return {}
+
+    def get_plan_permissions(self, obj):
+        return permissions_plan(obj.profile.company.customer)
 
 
 class PreferenceEditSerializer(
@@ -58,10 +85,47 @@ class PreferenceEditSerializer(
         preference = self.profile.edit_preference(validated_data)
         return preference
 
+class TalkSerializer(
+        DynamicFieldsModelSerializer):
+    content_type_name = serializers.ReadOnlyField(source="get_content_type_model")
+    unread_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Talk
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+            payload = self.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+
+
+    def get_field_names(self, *args, **kwargs):
+        view = self.get_view
+        if view:
+            return view.talk_response_include_fields
+        return super(TalkSerializer, self).get_field_names(*args, **kwargs)
+
+    def get_unread_count(self, obj):
+        view = self.get_view
+        if view:
+            self.request = view.request
+            payload = view.get_payload()
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            # if obj.content_type.name == 'project':
+            #     project_id = obj.object_id
+            # else:
+            #     company_id = obj.object_id
+            counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False, message__talk=obj).count()
+            return counter
+        return 0
 
 class CompanySerializer(
         JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+        DynamicFieldsModelSerializer, serializers.ModelSerializer):
     projects_count = serializers.ReadOnlyField(source='get_projects_count')
     messages_count = serializers.ReadOnlyField(source='get_messages_count')
     tags_count = serializers.ReadOnlyField(source='get_tags_count')
@@ -71,7 +135,12 @@ class CompanySerializer(
     is_sponsor = serializers.ReadOnlyField(source='get_is_sponsor')
     followed = serializers.SerializerMethodField(read_only=True)
     partnership = serializers.SerializerMethodField(read_only=True)
-
+    can_access_files = serializers.SerializerMethodField(read_only=True)
+    can_access_chat = serializers.SerializerMethodField(read_only=True)
+    color_project = serializers.SerializerMethodField()
+    talks = TalkSerializer(many=True)
+    last_message_created = serializers.SerializerMethodField()
+    subscription = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Company
@@ -83,11 +152,68 @@ class CompanySerializer(
         if context:
             self.request = kwargs['context']['request']
 
+    def get_subscription(self, obj):
+        if obj.subscription != '':
+            sub = stripe.Subscription.retrieve(obj.subscription)
+            return {
+                'id': sub.id,
+                'plan_name': stripe.Product.retrieve(sub.plan.product).name,
+                'status': sub.status,
+                'trial_start': str(datetime.datetime.fromtimestamp(sub.trial_start)) if sub.status == 'trialing' else None,
+                'trial_end': str(datetime.datetime.fromtimestamp(sub.trial_end)) if sub.status == 'trialing' else None,
+                'days_left': (datetime.datetime.fromtimestamp(sub.trial_end) - datetime.datetime.now()).days if sub.status == 'trialing' else (datetime.datetime.fromtimestamp(sub.current_period_end) - datetime.datetime.now()).days
+            }
+        else:
+            return {}
+
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
             return view.company_response_include_fields
         return super(CompanySerializer, self).get_field_names(*args, **kwargs)
+
+    def get_last_message_created(self, obj):
+        talk = obj.talks.last()
+        try:
+            if talk:
+                return talk.messages.all().last().date_create
+        except Exception:
+            pass
+        return None
+
+    def get_color_project(self, obj):
+        try:
+            obj_color = obj.projectcompanycolorassignment_set.all().filter(project=self.context['view'].kwargs['pk'])
+            if obj_color:
+                return obj_color[0].color
+            else:
+                return None
+        except:
+            return None
+
+    def get_can_access_files(self, obj):
+        payload = self.get_payload()
+        # Todo: Under review
+        try:
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            if self.profile:
+                return self.profile.can_access_files
+            else:
+                return 0
+        except:
+            return 0
+
+    def get_can_access_chat(self, obj):
+        payload = self.get_payload()
+        # Todo: Under review
+        try:
+            self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            if self.profile:
+                return self.profile.can_access_chat
+            else:
+                return 0
+        except:
+            return 0
 
     def get_followed(self, obj):
         payload = self.get_payload()
@@ -124,7 +250,6 @@ class CompanySerializer(
                 return 0
         except:
             return 0
-
 
 class PartnershipSerializer(
         DynamicFieldsModelSerializer):
@@ -284,11 +409,11 @@ class CompanyAddSerializer(
         return super(CompanyAddSerializer, self).get_field_names(*args, **kwargs)
 
     def validate(self, attrs):
-        if 'ssn' not in attrs and 'vat_number' not in attrs:
-            raise serializers.ValidationError({
-                'ssn': _('Please provide either SSN or Vat Number'),
-                'vat_number':  _('Please provide either SSN or Vat Number')
-            })
+        # if 'tax_code' not in attrs and 'vat_number' not in attrs:
+        #     raise serializers.ValidationError({
+        #         'tax_code': _('Please provide either tax_code or Vat Number'),
+        #         'vat_number':  _('Please provide either tax_code or Vat Number')
+        #     })
         return attrs
 
     def create(self, validated_data):
@@ -390,13 +515,36 @@ class ProfileSerializer(
     role = serializers.ReadOnlyField(source="get_role")
     company = CompanySerializer()
     user = UserSerializer()
+    preference = PreferenceSerializer()
     is_main = serializers.SerializerMethodField()
     talk_count = serializers.SerializerMethodField()
+    is_external = serializers.SerializerMethodField()
+    subscription = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Profile
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        context = kwargs.get('context', None)
+        if context:
+            self.request = kwargs['context']['request']
+
+    def get_subscription(self, obj):
+        if obj.subscription != '':
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+            sub = stripe.Subscription.retrieve(obj.subscription)
+            return {
+                'id': sub.id,
+                'plan_name': stripe.Product.retrieve(sub.plan.product).name,
+                'status': sub.status,
+                'trial_start': str(datetime.datetime.fromtimestamp(sub.trial_start)) if sub.status == 'trialing' else None,
+                'trial_end': str(datetime.datetime.fromtimestamp(sub.trial_end)) if sub.status == 'trialing' else None,
+                'days_left': (datetime.datetime.fromtimestamp(sub.trial_end) - datetime.datetime.now()).days if sub.status == 'trialing' else (datetime.datetime.fromtimestamp(sub.current_period_end) - datetime.datetime.now()).days
+            }
+        else:
+            return {}
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
@@ -409,6 +557,33 @@ class ProfileSerializer(
     def get_talk_count(self, obj):
         return obj.talks.count()
 
+    def get_is_external(self, obj):
+        payload = self.context['view'].get_payload()
+        profile = self.context['request'].user.get_profile_by_id(payload['extra']['profile']['id'])
+        if obj in profile.company.profiles.company_invitation_approve():
+            return False
+        else:
+            return True
+
+class TeamProfileSerializer(ProfileSerializer):
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        main = obj.get_main_profile()
+        if main is None:
+            return ""
+        request = self.context['request']
+        protocol = request.is_secure()
+        if protocol:
+            protocol = 'https://'
+        else:
+            protocol = 'http://'
+        host = request.get_host()
+        if main.photo:
+            media_url = protocol + host + main.photo.url
+        else:
+            media_url = None
+        return media_url
 
 class MainProfileAddSerializer(
         DynamicFieldsModelSerializer):
@@ -494,6 +669,7 @@ class ProfileAddSerializer(
 
     def create(self, validated_data):
         try:
+            check_limitation_plan(self.profile.company.customer, 'profile', self.profile.list_active_profiles().count())
             generic_profile = self.profile
             if not 'user' in validated_data:
                 if not 'email' in validated_data:
@@ -528,14 +704,17 @@ class ProfileAddSerializer(
             return profile
         except Exception as err:
             raise django_api_exception.ProfileAPIAlreadyExists(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                str(status.HTTP_500_INTERNAL_SERVER_ERROR), self.request,
                 _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class ProfileEditSerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    ArrayFieldInMultipartMixin,
+    DynamicFieldsModelSerializer):
+    photo = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -552,27 +731,51 @@ class ProfileEditSerializer(
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
-            return view.profile_request_include_fields
+            try:
+                return view.profile_request_include_fields
+            except:
+                return super(ProfileEditSerializer, self).get_field_names(*args, **kwargs)
+
         return super(ProfileEditSerializer, self).get_field_names(*args, **kwargs)
+
+    def get_photo(self, obj):
+        try:
+            photo_url = obj.get_main_profile().photo.url
+            protocol = self.context['request'].is_secure()
+            if protocol:
+                protocol = 'https://'
+            else:
+                protocol = 'http://'
+            host = self.context['request'].get_host()
+            media_url = protocol + host + photo_url
+        except:
+            media_url = None
+
+        return media_url
+
 
     def update(self, instance, validated_data):
         try:
             try:
                 generic_profile = self.request.user.get_profile_by_id(instance.id)
             except:
-                generic_profile = self.profile
+                generic_profile = instance
 
             validated_data['id'] = instance.id
+            files = list(self.request.FILES.values())
+            if len(files) > 0:
+                validated_data['photo'] = files[0]
             profile = generic_profile.edit_profile(validated_data)
             return profile
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                str(status.HTTP_500_INTERNAL_SERVER_ERROR), self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class ProfileEnableSerializer(
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -591,8 +794,12 @@ class ProfileEnableSerializer(
 
     def update(self, instance, validated_data):
         try:
-            generic_profile = self.request.user.get_profile_by_id(instance.id, instance.status)
-            profile = generic_profile.enable_profile()
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            staff_list = profile.list_approve_profiles_inactive()
+            profile_to_enable = staff_list.filter(id=instance.id)
+            if profile_to_enable:
+                profile = profile_to_enable[0].enable_profile()
             return profile
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
@@ -601,7 +808,8 @@ class ProfileEnableSerializer(
 
 
 class ProfileDisableSerializer(
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -620,8 +828,12 @@ class ProfileDisableSerializer(
 
     def update(self, instance, validated_data):
         try:
-            generic_profile = self.request.user.get_profile_by_id(instance.id, instance.status)
-            profile = generic_profile.disable_profile()
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            staff_list = profile.list_approve_profiles()
+            profile_to_disable = staff_list.filter(id=instance.id)
+            if profile_to_disable:
+                profile = profile_to_disable[0].disable_profile()
             return profile
         except Exception as err:
             raise django_api_exception.WhistleAPIException(

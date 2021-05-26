@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 
 from django.conf.urls import url
 
@@ -7,8 +7,8 @@ from apps.profile.api.frontend.views import (
     tracker_views,
     user_views,
 )
-
 # Todo: some URLS are not listed here. We will add it soon.
+app_name = 'profile'
 
 user_urlpatterns = [
     url(
@@ -397,6 +397,11 @@ tracker_urlpatterns = [
         name='tracker_company_company_private_public_photo_list'
     ),
     url(
+        r'^company/total_photo_size/$',
+        tracker_views.TrackerCompanyTotalPhotoSizeListView.as_view(),
+        name='tracker_company_total_photo_size'
+    ),
+    url(
         r'^company/project_photo_list/$',
         tracker_views.TrackerCompanyProjectPhotoListView.as_view(),
         name='tracker_company_project_photo_list'
@@ -415,6 +420,11 @@ tracker_urlpatterns = [
         r'^company/company_video_list/$',
         tracker_views.TrackerCompanyCompanyVideoListView.as_view(),
         name='tracker_company_company_video_list'
+    ),
+    url(
+        r'^company/total_video_size/$',
+        tracker_views.TrackerCompanyTotalVideoSizeListView.as_view(),
+        name='tracker_company_total_video_size'
     ),
     url(
         r'^company/company_video_list/(?P<type>(private|public){1})/$',
@@ -470,6 +480,16 @@ tracker_urlpatterns = [
         r'^company/(?P<type>(request|approve|refuse|waiting){1})/staff_list/$',
         tracker_views.TrackerCompanyStaffListView.as_view(),
         name='tracker_company_staff_list'
+    ),
+    url(
+        r'^company/(?P<type>(request|approve|refuse|waiting){1})/staff_list_and_external/$',
+        tracker_views.TrackerCompanyStaffListAndExternalView.as_view(),
+        name='tracker_company_staff_list_and_external'
+    ),
+    url(
+        r'^company/(?P<type>(request|approve|refuse|waiting){1})/staff_list/disabled/$',
+        tracker_views.TrackerCompanyStaffListDisabledView.as_view(),
+        name='tracker_company_staff_list_disabled'
     ),
     url(
         r'^company/public_staff_list/$',

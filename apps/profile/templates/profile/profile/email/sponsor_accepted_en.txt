@@ -8,18 +8,18 @@ Sponsorship Details:
    Expiration date: {{expiration_date}}
 
 
-WhistlePRO allows all actors of constructions to collaborate,
+Edilcloud allows all actors of constructions to collaborate,
 share informations and choose materials from preferred suppliers.
 
 --------------------------------------
 Thanks,
 
-WhistlePRO Team
+Edilcloud Team
 
 
 
 You can find the answers to the most frequently asked questions here: http://www.whistlepro.it/faq/.
 You can still write us at info@whistlepro.it.
 
-Whistle srl is a company registered in Italy with VAT number 04160940161
+Edilcloud srl is a company registered in Italy with VAT number 04160940161
 Our office is registered in via Santa Liberata 11, 24050 Bariano (BG) Italy

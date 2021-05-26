@@ -5,6 +5,8 @@ services:
     image: postgres
     ports:
       - "5433:5432"
+    networks:
+      - streams
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -13,12 +15,42 @@ services:
       - POSTGRES_PASSWORD=postgres
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 web.asgi:application
     volumes:
       - .:/office2017.whistle.it
     ports:
       - "8000:8000"
+    networks:
+      - streams
     depends_on:
       - db
+    environment:
+      - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
+      - ENV_NAME=test
+      - SOCKET_HOST=35.176.179.55
+      - SOCKET_PORT=6969
+  redis:
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    networks:
+      - streams
+  celery:
+    build: .
+    command: celery -A web worker -B
+    networks:
+      - streams
+    volumes:
+      - .:/office2017.whistle.it
+    links:
+      - db
+      - redis
+
 volumes:
   postgres_data:
+  redis-data:
+networks:
+  streams:

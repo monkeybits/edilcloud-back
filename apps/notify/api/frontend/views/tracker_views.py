@@ -77,7 +77,7 @@ class TrackerNotificationRecipientListView(
         ]
         self.notification_response_include_fields = [
             'id', 'sender', 'subject', 'body', 'content_type',
-            'object_id'
+            'object_id', 'project_id'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo'
@@ -151,6 +151,40 @@ class TrackerNotificationRecipientReadView(
         ]
         super(TrackerNotificationRecipientReadView, self).__init__(*args, **kwargs)
 
+class TrackerNotificationRecipientReadAllView(
+        WhistleGenericViewMixin,
+        JWTPayloadMixin,
+        generics.CreateAPIView):
+    """
+    Read a single notify
+    """
+    queryset = models.NotificationRecipient.objects.all()
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.NotificationRecipientReadAllSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.notification_recipient_request_include_fields = []
+        self.notification_recipient_response_include_fields = [
+        ]
+        self.notification_response_include_fields = [
+        ]
+        self.profile_response_include_fields = [
+        ]
+        super(TrackerNotificationRecipientReadAllView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        generic = 'list_notification_receipient_new'
+        self.queryset = getattr(self.profile, generic)()
+        return super(TrackerNotificationRecipientReadAllView, self).get_queryset()
+
+    def create(self, request, *args, **kwargs):
+        notification_recipients = self.get_queryset()
+        for instance in notification_recipients:
+            notification_recipient = self.profile.edit_notification_receipient(instance)
+        return Response("ok", status.HTTP_200_OK)
 
 class TrackerNotificationDeleteView(
         JWTPayloadMixin,

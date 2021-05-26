@@ -11,7 +11,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
-
+from rest_framework.response import Response
 from rest_framework import generics, status, exceptions
 
 from apps.message.api.frontend import serializers as message_serializers
@@ -20,6 +20,7 @@ from apps.product.models import Category
 from apps.profile.models import Company
 from apps.project.api.frontend import serializers as project_serializers
 from apps.profile.api.frontend import serializers as profile_serializers
+from apps.project.models import Project
 from apps.quotation.api.frontend import serializers as quotation_serializers
 from apps.document.api.frontend import serializers as document_serializers
 from web.api.permissions import RoleAccessPermission
@@ -34,7 +35,7 @@ from web.drf import exceptions as django_api_exception
 
 
 class TrackerCompanyProfileMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Profile Mixin
     """
@@ -59,9 +60,9 @@ class TrackerCompanyProfileMixin(
 
 
 class CompanyListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all companies
     """
@@ -72,7 +73,10 @@ class CompanyListView(
     def __init__(self, *args, **kwargs):
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'url', 'email', 'phone',
-            'logo', 'followed', 'is_supplier', 'partnership'
+            'logo', 'followed', 'is_supplier', 'partnership',
+            'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(CompanyListView, self).__init__(*args, **kwargs)
 
@@ -82,7 +86,7 @@ class CompanyListView(
 
 
 class TrackerProfileAcceptInviteView(
-        generics.UpdateAPIView):
+    generics.UpdateAPIView):
     """
     Accept the invitation request from a company
     """
@@ -99,7 +103,9 @@ class TrackerProfileAcceptInviteView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo'
+            'tax_code', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'vat_number', 'pec', 'billing_email'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -119,7 +125,7 @@ class TrackerProfileAcceptInviteView(
                 status.HTTP_403_FORBIDDEN, self.request, _('No profile matches the given query')
             )
         if not profile.user:
-        # if profile.user and profile.user != self.request.user:
+            # if profile.user and profile.user != self.request.user:
             raise django_api_exception.ProfileAPIDoesNotMatch(
                 status.HTTP_403_FORBIDDEN, self.request, _('Profiles don\'t match')
             )
@@ -127,7 +133,7 @@ class TrackerProfileAcceptInviteView(
 
 
 class TrackerProfileRefuseInviteView(
-        generics.UpdateAPIView):
+    generics.UpdateAPIView):
     """
     Refuse the invitation request from a company
     """
@@ -144,7 +150,9 @@ class TrackerProfileRefuseInviteView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo'
+            'tax_code', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'vat_number', 'pec', 'billing_email'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -164,7 +172,7 @@ class TrackerProfileRefuseInviteView(
                 status.HTTP_403_FORBIDDEN, self.request, _('No profile matches the given query')
             )
         if not profile.user:
-        # if profile.user and profile.user != self.request.user:
+            # if profile.user and profile.user != self.request.user:
             raise django_api_exception.ProfileAPIDoesNotMatch(
                 status.HTTP_403_FORBIDDEN, self.request, _('Profiles don\'t match')
             )
@@ -172,7 +180,7 @@ class TrackerProfileRefuseInviteView(
 
 
 class TrackerProfileReAcceptInviteView(
-        generics.UpdateAPIView):
+    generics.UpdateAPIView):
     """
     Accept the invitation request from a company
     """
@@ -189,7 +197,9 @@ class TrackerProfileReAcceptInviteView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo'
+            'tax_code', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'vat_number', 'pec', 'billing_email'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -198,7 +208,7 @@ class TrackerProfileReAcceptInviteView(
 
 
 class TrackerProfileChangeShowroomVisibilityView(
-        generics.UpdateAPIView):
+    generics.UpdateAPIView):
     """
     Accept the invitation request from a company
     """
@@ -216,7 +226,9 @@ class TrackerProfileChangeShowroomVisibilityView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo'
+            'tax_code', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'vat_number', 'pec', 'billing_email'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -225,7 +237,7 @@ class TrackerProfileChangeShowroomVisibilityView(
 
 
 class TrackerProfileChangeComunicaVisibilityView(
-        generics.UpdateAPIView):
+    generics.UpdateAPIView):
     """
     Accept the invitation request from a company
     """
@@ -243,7 +255,9 @@ class TrackerProfileChangeComunicaVisibilityView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'slug', 'email', 'url',
-            'ssn', 'logo'
+            'tax_code', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'vat_number', 'pec', 'billing_email'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -252,9 +266,9 @@ class TrackerProfileChangeComunicaVisibilityView(
 
 
 class TrackerProfileDocumentListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all profile documents
     """
@@ -264,7 +278,8 @@ class TrackerProfileDocumentListView(
     serializer_class = document_serializers.DocumentSerializer
 
     def __init__(self, *args, **kwargs):
-        self.document_response_include_fields = ['id', 'title', 'description', 'document', 'date_create']
+        self.document_response_include_fields = ['id', 'title', 'description', 'document', 'date_create', 'size',
+                                                 'extension']
         super(TrackerProfileDocumentListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -279,7 +294,7 @@ class TrackerProfileDocumentListView(
 
 
 class TrackerProfilePreferenceMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Profile Preference Mixin
     """
@@ -298,8 +313,8 @@ class TrackerProfilePreferenceMixin(
 
 
 class TrackerPreferenceDetailView(
-        TrackerProfilePreferenceMixin,
-        generics.RetrieveAPIView):
+    TrackerProfilePreferenceMixin,
+    generics.RetrieveAPIView):
     """
     Detail a profile preference
     """
@@ -309,8 +324,8 @@ class TrackerPreferenceDetailView(
 
 
 class TrackerPreferenceEditView(
-        TrackerProfilePreferenceMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerProfilePreferenceMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Update a profile preference
     """
@@ -334,19 +349,21 @@ class TrackerCompanyProfileAddView(
         self.profile_request_include_fields = [
             'first_name', 'last_name', 'email',
             'language', 'position', 'user', 'phone',
-            'fax', 'mobile', 'note', 'role'
+            'fax', 'mobile', 'note', 'role',
+            'can_access_files', 'can_access_chat'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email',
-            'language', 'position', 'photo', 'role', 'is_shared', 'is_in_showroom'
+            'language', 'position', 'photo', 'role', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat', 'is_invited'
         ]
         super(TrackerCompanyProfileAddView, self).__init__(*args, **kwargs)
 
 
 class TrackerCompanyInviteProfileAddView(
-        WhistleGenericViewMixin,
-        TrackerCompanyProfileMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerCompanyProfileMixin,
+    generics.CreateAPIView):
     """
     Create a company profile
     # Todo: Check the workflow
@@ -363,11 +380,13 @@ class TrackerCompanyInviteProfileAddView(
         self.profile_request_include_fields = [
             'first_name', 'last_name', 'email',
             'language', 'position', 'user', 'phone',
-            'fax', 'mobile', 'note', 'role'
+            'fax', 'mobile', 'note', 'role',
+            'can_access_files', 'can_access_chat'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email',
-            'language', 'position', 'photo', 'role', 'is_shared', 'is_in_showroom'
+            'language', 'position', 'photo', 'role', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
         ]
         super(TrackerCompanyInviteProfileAddView, self).__init__(*args, **kwargs)
 
@@ -388,9 +407,9 @@ class TrackerCompanyInviteProfileAddView(
 
 
 class TrackerCompanyProfileListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all profiles
     """
@@ -400,8 +419,13 @@ class TrackerCompanyProfileListView(
 
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'is_shared',
-                                                'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+                                                'is_in_showroom', 'can_access_files', 'can_access_chat']
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'tax_code', 'can_access_files', 'can_access_chat',
+            'country', 'address',
+            'sdi', 'province', 'cap',
+            'vat_number', 'pec', 'billing_email'
+        ]
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyProfileListView, self).__init__(*args, **kwargs)
 
@@ -413,9 +437,9 @@ class TrackerCompanyProfileListView(
 
 
 class TrackerCompanyProfileDetailView(
-        WhistleGenericViewMixin,
-        TrackerCompanyProfileMixin,
-        generics.RetrieveAPIView):
+    WhistleGenericViewMixin,
+    TrackerCompanyProfileMixin,
+    generics.RetrieveAPIView):
     """
     Company can show company profile
     """
@@ -428,36 +452,41 @@ class TrackerCompanyProfileDetailView(
             'id', 'first_name', 'last_name', 'email',
             'language', 'position', 'role', 'fax',
             'mobile', 'note', 'phone', 'photo', 'is_shared', 'is_in_showroom',
-            'company_invitation_date', 'profile_invitation_date', 'talk_count'
+            'company_invitation_date', 'profile_invitation_date', 'talk_count',
+            'can_access_files', 'can_access_chat', 'user', 'preference'
         ]
+        self.user_response_include_fields = ['id', 'first_name', 'last_name', 'username']
         super(TrackerCompanyProfileDetailView, self).__init__(*args, **kwargs)
 
 
 class TrackerCompanyProfileEditView(
-        WhistleGenericViewMixin,
-        TrackerCompanyProfileMixin,
-        generics.RetrieveUpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerCompanyProfileMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Company can edit company profile
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
     serializer_class = serializers.ProfileEditSerializer
 
     def __init__(self, *args, **kwargs):
         self.profile_request_include_fields = [
             'first_name', 'last_name', 'email',
             'language', 'position', 'user', 'phone',
-            'fax', 'mobile', 'note', 'role', 'photo'
+            'fax', 'mobile', 'note', 'role', 'photo', 'can_access_files', 'can_access_chat'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email', 'phone',
             'language', 'fax', 'company', 'user', 'role', 'position',
             'status', 'uidb36', 'token', 'photo', 'company_invitation_date',
-            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom'
+            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'vat_number', 'pec', 'billing_email'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -466,8 +495,8 @@ class TrackerCompanyProfileEditView(
 
 
 class TrackerCompanyProfileEnableView(
-        TrackerCompanyProfileMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerCompanyProfileMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Company can enable profile
     """
@@ -479,14 +508,15 @@ class TrackerCompanyProfileEnableView(
         self.profile_request_include_fields = []
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email',
-            'language', 'position', 'is_shared', 'is_in_showroom'
+            'language', 'position', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
         ]
         super(TrackerCompanyProfileEnableView, self).__init__(*args, **kwargs)
 
 
 class TrackerCompanyProfileDisableView(
-        TrackerCompanyProfileMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerCompanyProfileMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Company can disable profile
     """
@@ -504,8 +534,8 @@ class TrackerCompanyProfileDisableView(
 
 
 class TrackerCompanyProfileDeleteView(
-        TrackerCompanyProfileMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerCompanyProfileMixin,
+    generics.RetrieveDestroyAPIView):
     """
     Company can disable profile
     """
@@ -519,7 +549,9 @@ class TrackerCompanyProfileDeleteView(
             'id', 'first_name', 'last_name', 'company', 'user', 'is_shared', 'is_in_showroom'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'vat_number', 'pec', 'billing_email'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -533,10 +565,11 @@ class TrackerCompanyProfileDeleteView(
 
 
 class FollowCompanyMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Mixin
     """
+
     def set_output_serializer(self, output_serializer=None):
         if output_serializer is None:
             self.serializer_class = serializers.FavouriteSerializer
@@ -545,9 +578,9 @@ class FollowCompanyMixin(
 
 
 class TrackerCompanyFollowView(
-        WhistleGenericViewMixin,
-        FollowCompanyMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    FollowCompanyMixin,
+    generics.CreateAPIView):
     """
     Follow a company
     """
@@ -561,13 +594,15 @@ class TrackerCompanyFollowView(
             'id', 'company'
         ]
         self.company_response_include_fields = [
-            'id',
+            'id', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyFollowView, self).__init__(*args, **kwargs)
 
 
 class TrackerCompanyUnFollowView(
-        generics.RetrieveDestroyAPIView):
+    generics.RetrieveDestroyAPIView):
     """
     Unfollow a company
     """
@@ -585,10 +620,10 @@ class TrackerCompanyUnFollowView(
 
 
 class TrackerCompanyAcceptFollowView(
-        WhistleGenericViewMixin,
-        FollowCompanyMixin,
-        QuerysetMixin,
-        generics.RetrieveUpdateAPIView):
+    WhistleGenericViewMixin,
+    FollowCompanyMixin,
+    QuerysetMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Follow a company
     """
@@ -608,9 +643,9 @@ class TrackerCompanyAcceptFollowView(
 
 
 class TrackerCompanyRefuseFollowView(
-        FollowCompanyMixin,
-        QuerysetMixin,
-        generics.RetrieveDestroyAPIView):
+    FollowCompanyMixin,
+    QuerysetMixin,
+    generics.RetrieveDestroyAPIView):
     """
         Get all partnership
     """
@@ -640,7 +675,7 @@ class TrackerCompanyRefuseFollowView(
 
 
 class TrackerCompanyMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Mixin
     """
@@ -665,8 +700,8 @@ class TrackerCompanyMixin(
 
 
 class TrackerCompanyDetailView(
-        TrackerCompanyMixin,
-        generics.RetrieveAPIView):
+    TrackerCompanyMixin,
+    generics.RetrieveAPIView):
     """
     Detail a single company
     """
@@ -676,20 +711,29 @@ class TrackerCompanyDetailView(
 
     def __init__(self, *args, **kwargs):
         self.company_response_include_fields = [
-            'id', 'name', 'brand', 'description', 'slug', 'email', 'ssn',
+            'id', 'name', 'brand', 'description', 'slug', 'email', 'tax_code',
+            'country', 'address',
+            'sdi', 'province', 'cap',
+            'pec', 'billing_email',
             'email', 'phone', 'logo', 'vat_number',
             'url', 'fax', 'phone2', 'projects_count',
             'messages_count', 'tags_count', 'followers_count',
-            'staff_count', 'partnerships_count', 'category', 'is_sponsor'
+            'staff_count', 'partnerships_count', 'category', 'is_sponsor',
+            'can_access_files', 'can_access_chat', 'talks', 'last_message_created', 'customer', 'trial_used',
+            'subscription'
+        ]
+        self.talk_response_include_fields = [
+            'id', 'code', 'unread_count'
         ]
         super(TrackerCompanyDetailView, self).__init__(*args, **kwargs)
 
 
 class TrackerPartnershipMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Partnership Mixin
     """
+
     def set_output_serializer(self, output_serializer=None):
         if output_serializer is None:
             self.serializer_class = serializers.PartnershipSerializer
@@ -698,9 +742,9 @@ class TrackerPartnershipMixin(
 
 
 class TrackerCompanyPartnerShipListView(
-        TrackerCompanyMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    TrackerCompanyMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
         Get all partnership
     """
@@ -715,7 +759,9 @@ class TrackerCompanyPartnerShipListView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'logo', 'url', 'email', 'phone',
-            'phone2', 'fax', 'is_supplier'
+            'phone2', 'fax', 'is_supplier', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyPartnerShipListView, self).__init__(*args, **kwargs)
 
@@ -728,10 +774,10 @@ class TrackerCompanyPartnerShipListView(
 
 
 class TrackerCompanyPartnerShipAddView(
-        WhistleGenericViewMixin,
-        TrackerPartnershipMixin,
-        QuerysetMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerPartnershipMixin,
+    QuerysetMixin,
+    generics.CreateAPIView):
     """
         Create partnership
     """
@@ -747,16 +793,18 @@ class TrackerCompanyPartnerShipAddView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'logo', 'url', 'email', 'phone',
-            'phone2', 'fax', 'is_supplier'
+            'phone2', 'fax', 'is_supplier', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyPartnerShipAddView, self).__init__(*args, **kwargs)
 
 
 class TrackerCompanyPartnerShipAcceptView(
-        WhistleGenericViewMixin,
-        TrackerPartnershipMixin,
-        QuerysetMixin,
-        generics.RetrieveUpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerPartnershipMixin,
+    QuerysetMixin,
+    generics.RetrieveUpdateAPIView):
     """
         Get all partnership
     """
@@ -773,15 +821,17 @@ class TrackerCompanyPartnerShipAcceptView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'logo', 'url', 'email', 'phone',
-            'phone2', 'fax', 'is_supplier'
+            'phone2', 'fax', 'is_supplier', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyPartnerShipAcceptView, self).__init__(*args, **kwargs)
 
 
 class TrackerCompanyPartnerShipRefuseView(
-        TrackerPartnershipMixin,
-        QuerysetMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerPartnershipMixin,
+    QuerysetMixin,
+    generics.RetrieveDestroyAPIView):
     """
         Get all partnership
     """
@@ -797,7 +847,9 @@ class TrackerCompanyPartnerShipRefuseView(
         ]
         self.company_response_include_fields = [
             'id', 'name', 'logo', 'url', 'email', 'phone',
-            'phone2', 'fax', 'is_supplier'
+            'phone2', 'fax', 'is_supplier', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyPartnerShipRefuseView, self).__init__(*args, **kwargs)
 
@@ -812,8 +864,8 @@ class TrackerCompanyPartnerShipRefuseView(
 
 
 class TrackerCompanyDeleteView(
-        TrackerCompanyMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerCompanyMixin,
+    generics.RetrieveDestroyAPIView):
     """
     Delete a single company
     """
@@ -823,8 +875,10 @@ class TrackerCompanyDeleteView(
 
     def __init__(self, *args, **kwargs):
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn',
-            'email', 'phone', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code',
+            'email', 'phone', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyDeleteView, self).__init__(*args, **kwargs)
 
@@ -835,9 +889,9 @@ class TrackerCompanyDeleteView(
 
 
 class TrackerCompanyEditView(
-        WhistleGenericViewMixin,
-        TrackerCompanyMixin,
-        generics.RetrieveUpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerCompanyMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Update a single company
     """
@@ -847,16 +901,22 @@ class TrackerCompanyEditView(
 
     def __init__(self, *args, **kwargs):
         self.company_request_include_fields = [
-            'name', 'slug', 'brand', 'description', 'ssn',
+            'name', 'slug', 'brand', 'description', 'tax_code',
             'vat_number', 'url',
             'email', 'phone', 'phone2', 'fax',
-            'note', 'logo', 'category'
+            'note', 'logo', 'category',
+            'color', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'pec', 'billing_email'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'brand', 'description', 'ssn',
+            'id', 'name', 'slug', 'brand', 'description', 'tax_code',
             'vat_number', 'url',
             'email', 'phone', 'phone2', 'fax',
-            'note', 'logo', 'category'
+            'note', 'logo', 'category',
+            'color', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'pec', 'billing_email'
         ]
         super(TrackerCompanyEditView, self).__init__(*args, **kwargs)
 
@@ -880,8 +940,8 @@ class TrackerCompanyEditView(
 
 
 class TrackerCompanyEnableView(
-        TrackerCompanyMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerCompanyMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Enable a single company
     """
@@ -892,15 +952,17 @@ class TrackerCompanyEnableView(
     def __init__(self, *args, **kwargs):
         self.company_request_include_fields = []
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn',
-            'email', 'phone', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code',
+            'email', 'phone', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyEnableView, self).__init__(*args, **kwargs)
 
 
 class TrackerCompanyDisableView(
-        TrackerCompanyMixin,
-        generics.RetrieveUpdateAPIView):
+    TrackerCompanyMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Disable a single company
     """
@@ -911,16 +973,18 @@ class TrackerCompanyDisableView(
     def __init__(self, *args, **kwargs):
         self.company_request_include_fields = []
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn',
-            'email', 'phone', 'logo'
+            'id', 'name', 'slug', 'email',
+            'email', 'phone', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyDisableView, self).__init__(*args, **kwargs)
 
 
 class TrackerCompanyDocumentListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all documents
     """
@@ -943,9 +1007,9 @@ class TrackerCompanyDocumentListView(
 
 
 class TrackerCompanyMessageListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
         Get all project messages
         """
@@ -953,10 +1017,16 @@ class TrackerCompanyMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create'
+            'id', 'body', 'sender', 'date_create', 'files', 'unique_code', 'read'
         ]
+        self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
+            'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom', 'position', 'company'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'category', 'color_project', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyMessageListView, self).__init__(*args, **kwargs)
 
@@ -978,9 +1048,9 @@ class TrackerCompanyMessageListView(
 
 
 class TrackerCompanyCompanyDocumentListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company documents
     """
@@ -992,7 +1062,7 @@ class TrackerCompanyCompanyDocumentListView(
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
             'date_create', 'date_last_modify', 'status',
-            'extension'
+            'extension', 'size', 'relative_path', 'folder_relative_path'
         ]
         super(TrackerCompanyCompanyDocumentListView, self).__init__(*args, **kwargs)
 
@@ -1008,9 +1078,9 @@ class TrackerCompanyCompanyDocumentListView(
 
 
 class TrackerCompanyProjectDocumentListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company project documents
     """
@@ -1034,9 +1104,9 @@ class TrackerCompanyProjectDocumentListView(
 
 
 class TrackerCompanyProfileDocumentListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company profile documents
     """
@@ -1060,9 +1130,9 @@ class TrackerCompanyProfileDocumentListView(
 
 
 class TrackerCompanyBomDocumentListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company bom documents
     """
@@ -1086,9 +1156,9 @@ class TrackerCompanyBomDocumentListView(
 
 
 class TrackerCompanyTalkListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all talks
     """
@@ -1097,7 +1167,7 @@ class TrackerCompanyTalkListView(
     serializer_class = message_serializers.TalkSerializer
 
     def __init__(self, *args, **kwargs):
-        self.talk_response_include_fields = ['id', 'code']
+        self.talk_response_include_fields = ['id', 'code', 'content_type_name']
         super(TrackerCompanyTalkListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -1108,9 +1178,9 @@ class TrackerCompanyTalkListView(
 
 
 class TrackerCompanyCompanyTalkListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company talks
     """
@@ -1130,9 +1200,9 @@ class TrackerCompanyCompanyTalkListView(
 
 
 class TrackerCompanyProjectTalkListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company project talks
     """
@@ -1152,9 +1222,9 @@ class TrackerCompanyProjectTalkListView(
 
 
 class TrackerCompanyProfileTalkListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company profile talks
     """
@@ -1174,9 +1244,9 @@ class TrackerCompanyProfileTalkListView(
 
 
 class TrackerCompanyPhotoListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company photos
     """
@@ -1199,20 +1269,20 @@ class TrackerCompanyPhotoListView(
 
 
 class TrackerCompanyCompanyPhotoListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company photos
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles =settings.MEMBERS
+    permission_roles = settings.MEMBERS
     serializer_class = media_serializers.PhotoSerializer
 
     def __init__(self, *args, **kwargs):
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo', 'extension',
-            'photo_64', 'note', 'is_public'
+            'note', 'is_public', 'size', 'relative_path', 'folder_relative_path'
         ]
         super(TrackerCompanyCompanyPhotoListView, self).__init__(*args, **kwargs)
 
@@ -1227,10 +1297,52 @@ class TrackerCompanyCompanyPhotoListView(
         return super(TrackerCompanyCompanyPhotoListView, self).get_queryset()
 
 
+class TrackerCompanyTotalPhotoSizeListView(JWTPayloadMixin, QuerysetMixin, generics.ListAPIView):
+    """
+    Get total photo size
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = media_serializers.PhotoSerializer
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        if 'type' in self.kwargs:
+            list_method = 'list_{}_company_photos'.format(self.kwargs['type'])
+            self.queryset = getattr(profile, list_method)()
+        else:
+            self.queryset = profile.list_company_photos()
+        return super(TrackerCompanyTotalPhotoSizeListView, self).get_queryset()
+
+    def list(self, request, *args, **kwargs):
+        total_size = 0
+        for object in self.get_queryset():
+            total_size += object.photo.size
+        return Response([
+            {
+                'total': total_size,
+                'uom': 'bytes'
+            },
+            {
+                'total': total_size / 1000,
+                'uom': 'kilobytes'
+            },
+            {
+                'total': (total_size / 1000) / 1000,
+                'uom': 'megabytes'
+            },
+            {
+                'total': ((total_size / 1000) / 1000) / 1000,
+                'uom': 'gigabytes'
+            }
+        ])
+
+
 class TrackerCompanyProjectPhotoListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company project photos
     """
@@ -1252,9 +1364,9 @@ class TrackerCompanyProjectPhotoListView(
 
 
 class TrackerCompanyBomPhotoListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company bom photos
     """
@@ -1277,9 +1389,9 @@ class TrackerCompanyBomPhotoListView(
 
 
 class TrackerCompanyVideoListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company Videos
     """
@@ -1290,7 +1402,7 @@ class TrackerCompanyVideoListView(
     def __init__(self, *args, **kwargs):
         self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
-            'extension', 'is_public'
+            'extension', 'is_public', 'size'
         ]
         super(TrackerCompanyVideoListView, self).__init__(*args, **kwargs)
 
@@ -1301,10 +1413,58 @@ class TrackerCompanyVideoListView(
         return super(TrackerCompanyVideoListView, self).get_queryset()
 
 
+class TrackerCompanyTotalVideoSizeListView(
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
+    """
+       Get all company Videos
+       """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = media_serializers.VideoSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.video_response_include_fields = [
+            'id', 'title', 'pub_date', 'video',
+            'extension', 'is_public'
+        ]
+        super(TrackerCompanyTotalVideoSizeListView, self).__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        self.queryset = profile.list_videos()
+        return super(TrackerCompanyTotalVideoSizeListView, self).get_queryset()
+
+    def list(self, request, *args, **kwargs):
+        total_size = 0
+        for object in self.get_queryset():
+            total_size += object.video.size
+        return Response([
+            {
+                'total': total_size,
+                'uom': 'bytes'
+            },
+            {
+                'total': total_size / 1000,
+                'uom': 'kilobytes'
+            },
+            {
+                'total': (total_size / 1000) / 1000,
+                'uom': 'megabytes'
+            },
+            {
+                'total': ((total_size / 1000) / 1000) / 1000,
+                'uom': 'gigabytes'
+            }
+        ])
+
+
 class TrackerCompanyCompanyVideoListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company Videos
     """
@@ -1315,7 +1475,7 @@ class TrackerCompanyCompanyVideoListView(
     def __init__(self, *args, **kwargs):
         self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
-            'extension', 'note', 'is_public'
+            'extension', 'note', 'is_public', 'size', 'relative_path', 'folder_relative_path'
         ]
         super(TrackerCompanyCompanyVideoListView, self).__init__(*args, **kwargs)
 
@@ -1331,9 +1491,9 @@ class TrackerCompanyCompanyVideoListView(
 
 
 class TrackerCompanyProjectVideoListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company project Videos
     """
@@ -1356,9 +1516,9 @@ class TrackerCompanyProjectVideoListView(
 
 
 class TrackerCompanyBomVideoListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company bom Videos
     """
@@ -1381,9 +1541,9 @@ class TrackerCompanyBomVideoListView(
 
 
 class TrackerCompanyBomListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company bill of materials
     """
@@ -1393,7 +1553,7 @@ class TrackerCompanyBomListView(
 
     def __init__(self, *args, **kwargs):
         self.bom_response_include_fields = ['id', 'title', 'description', 'owner', 'contact', 'date_bom', 'deadline']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'is_shared', 'is_in_showroom']
         super(TrackerCompanyBomListView, self).__init__(*args, **kwargs)
 
@@ -1405,9 +1565,9 @@ class TrackerCompanyBomListView(
 
 
 class TrackerCompanyQuotationListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company quotations
     """
@@ -1420,7 +1580,7 @@ class TrackerCompanyQuotationListView(
             'id', 'title', 'description', 'owner', 'contact', 'date_quotation',
             'deadline', 'bom', 'tags'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'is_shared', 'is_in_showroom']
         self.bom_response_include_fields = ['id', 'title', 'description', 'date_bom', 'deadline']
         super(TrackerCompanyQuotationListView, self).__init__(*args, **kwargs)
@@ -1433,9 +1593,9 @@ class TrackerCompanyQuotationListView(
 
 
 class TrackerCompanyOfferListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company offers
     """
@@ -1452,7 +1612,9 @@ class TrackerCompanyOfferListView(
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyOfferListView, self).__init__(*args, **kwargs)
 
@@ -1464,9 +1626,9 @@ class TrackerCompanyOfferListView(
 
 
 class TrackerCompanyActiveOfferListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company offers
     """
@@ -1483,7 +1645,9 @@ class TrackerCompanyActiveOfferListView(
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyActiveOfferListView, self).__init__(*args, **kwargs)
 
@@ -1495,9 +1659,9 @@ class TrackerCompanyActiveOfferListView(
 
 
 class TrackerCompanyCertificationListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company certificates
     """
@@ -1513,7 +1677,9 @@ class TrackerCompanyCertificationListView(
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'logo', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
         ]
         super(TrackerCompanyCertificationListView, self).__init__(*args, **kwargs)
 
@@ -1525,9 +1691,9 @@ class TrackerCompanyCertificationListView(
 
 
 class TrackerCompanyPhantomListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all phantom profiles w.r.t. company
     """
@@ -1538,7 +1704,7 @@ class TrackerCompanyPhantomListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user',
                                                 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyPhantomListView, self).__init__(*args, **kwargs)
 
@@ -1550,9 +1716,9 @@ class TrackerCompanyPhantomListView(
 
 
 class TrackerCompanyGuestListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all guest profiles w.r.t. company
     """
@@ -1563,7 +1729,7 @@ class TrackerCompanyGuestListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user',
                                                 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyGuestListView, self).__init__(*args, **kwargs)
 
@@ -1575,25 +1741,28 @@ class TrackerCompanyGuestListView(
 
 
 class TrackerCompanyStaffListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company staffs
     """
     permission_classes = (RoleAccessPermission,)
     permission_roles = settings.MEMBERS
-    serializer_class = serializers.ProfileSerializer
+    serializer_class = serializers.TeamProfileSerializer
 
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'email', 'phone', 'mobile',
             'language', 'fax', 'company', 'user', 'role', 'position',
             'status', 'uidb36', 'token', 'photo', 'company_invitation_date',
-            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom'
+            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'is_supplier'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'is_supplier', 'country', 'address',
+            'sdi', 'province', 'cap',
+            'vat_number', 'pec', 'billing_email'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -1613,9 +1782,160 @@ class TrackerCompanyStaffListView(
     def get_queryset(self):
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-        generic = 'list_'+self.kwargs.get('type')+'_profiles'
+        generic = 'list_' + self.kwargs.get('type') + '_profiles'
         self.queryset = getattr(profile, generic)()
-        return super(TrackerCompanyStaffListView, self).get_queryset().filter(status=1)
+        if 'exclude__role__in' in self.request.query_params:
+            params = self.request.query_params.get('exclude__role__in')
+            self.queryset = self.queryset.exclude(role__in=params.split(','))
+        return super(TrackerCompanyStaffListView, self).get_queryset()
+
+
+class TrackerProjectStaffListView(
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
+    """
+    Get all company staffs
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.ProfileSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'email', 'phone', 'mobile',
+            'language', 'fax', 'company', 'user', 'role', 'position',
+            'status', 'uidb36', 'token', 'photo', 'company_invitation_date',
+            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'logo', 'is_supplier', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
+        ]
+        self.user_response_include_fields = [
+            'id', 'first_name', 'last_name'
+        ]
+        super(TrackerCompanyStaffListView, self).__init__(*args, **kwargs)
+
+    def get_filters(self):
+        filters = super(TrackerProjectStaffListView, self).get_filters()
+        if filters:
+            if len(filters) != 1:
+                query = []
+                for key, value in enumerate(filters):
+                    query.append(tuple((value, filters[value])))
+                return reduce(operator.or_, [Q(x) for x in query])
+        return filters
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        generic = 'list_' + self.kwargs.get('type') + '_profiles'
+        self.queryset = getattr(profile, generic)()
+        return super(TrackerProjectStaffListView, self).get_queryset().filter(status=1)
+
+
+class TrackerCompanyStaffListAndExternalView(
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
+    """
+    Get all company staffs and external owner/delegate companies
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.ProfileSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'email', 'phone', 'mobile',
+            'language', 'fax', 'company', 'user', 'role', 'position',
+            'status', 'uidb36', 'token', 'photo', 'company_invitation_date',
+            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat', 'is_external'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'logo', 'is_supplier', 'country', 'address',
+            'sdi', 'province', 'cap', 'tax_code',
+            'vat_number', 'pec', 'billing_email'
+        ]
+        self.user_response_include_fields = [
+            'id', 'first_name', 'last_name'
+        ]
+        super(TrackerCompanyStaffListAndExternalView, self).__init__(*args, **kwargs)
+
+    def get_filters(self):
+        filters = super(TrackerCompanyStaffListAndExternalView, self).get_filters()
+        if filters:
+            if len(filters) != 1:
+                query = []
+                for key, value in enumerate(filters):
+                    query.append(tuple((value, filters[value])))
+                return reduce(operator.or_, [Q(x) for x in query])
+        return filters
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        generic = 'list_' + self.kwargs.get('type') + '_profiles_and_external'
+        is_creator = None
+        if 'project_id' in self.request.query_params:
+            project_id = self.request.query_params.get('project_id')
+            project = Project.objects.get(id=project_id)
+            creator = project.creator
+            if creator == profile.user:
+                is_creator = True
+            else:
+                is_creator = False
+        self.queryset = getattr(profile, generic)(is_creator, profile)
+        return super(TrackerCompanyStaffListAndExternalView, self).get_queryset().filter(status=1)
+
+
+class TrackerCompanyStaffListDisabledView(
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
+    """
+    Get all company staffs
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = settings.MEMBERS
+    serializer_class = serializers.ProfileSerializer
+
+    def __init__(self, *args, **kwargs):
+        self.profile_response_include_fields = [
+            'id', 'first_name', 'last_name', 'email', 'phone', 'mobile',
+            'language', 'fax', 'company', 'user', 'role', 'position',
+            'status', 'uidb36', 'token', 'photo', 'company_invitation_date',
+            'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom',
+            'can_access_files', 'can_access_chat'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'is_supplier'
+        ]
+        self.user_response_include_fields = [
+            'id', 'first_name', 'last_name'
+        ]
+        super(TrackerCompanyStaffListDisabledView, self).__init__(*args, **kwargs)
+
+    def get_filters(self):
+        filters = super(TrackerCompanyStaffListDisabledView, self).get_filters()
+        if filters:
+            if len(filters) != 1:
+                query = []
+                for key, value in enumerate(filters):
+                    query.append(tuple((value, filters[value])))
+                return reduce(operator.or_, [Q(x) for x in query])
+        return filters
+
+    def get_queryset(self):
+        payload = self.get_payload()
+        profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+        generic = 'list_' + self.kwargs.get('type') + '_profiles_inactive'
+        self.queryset = getattr(profile, generic)()
+        return super(TrackerCompanyStaffListDisabledView, self).get_queryset().filter(status=0)
 
 
 class TrackerCompanyPublicStaffListView(
@@ -1632,7 +1952,7 @@ class TrackerCompanyPublicStaffListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'role', 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
 
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyPublicStaffListView, self).__init__(*args, **kwargs)
@@ -1658,7 +1978,7 @@ class TrackerCompanyShowroomStaffListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'role', 'is_shared', 'is_in_showroom', 'photo']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
 
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyShowroomStaffListView, self).__init__(*args, **kwargs)
@@ -1671,20 +1991,20 @@ class TrackerCompanyShowroomStaffListView(
 
 
 class TrackerCompanyOwnerListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company owners list
     """
     permission_classes = (RoleAccessPermission,)
     permission_roles = settings.MEMBERS
     serializer_class = serializers.ProfileSerializer
-    
+
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
 
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyOwnerListView, self).__init__(*args, **kwargs)
@@ -1697,9 +2017,9 @@ class TrackerCompanyOwnerListView(
 
 
 class TrackerCompanyDelegateListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company delegates list
     """
@@ -1710,7 +2030,7 @@ class TrackerCompanyDelegateListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user', 'phone', 'mobile',
                                                 'email', 'language', 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyDelegateListView, self).__init__(*args, **kwargs)
 
@@ -1722,9 +2042,9 @@ class TrackerCompanyDelegateListView(
 
 
 class TrackerCompanyLevel1ListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company level1 team members
     """
@@ -1735,7 +2055,7 @@ class TrackerCompanyLevel1ListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user',
                                                 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyLevel1ListView, self).__init__(*args, **kwargs)
 
@@ -1747,9 +2067,9 @@ class TrackerCompanyLevel1ListView(
 
 
 class TrackerCompanyLevel2ListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company level2 team members
     """
@@ -1760,7 +2080,7 @@ class TrackerCompanyLevel2ListView(
     def __init__(self, *args, **kwargs):
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'company', 'user',
                                                 'is_shared', 'is_in_showroom']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.user_response_include_fields = ['id', 'first_name', 'last_name']
         super(TrackerCompanyLevel2ListView, self).__init__(*args, **kwargs)
 
@@ -1772,9 +2092,9 @@ class TrackerCompanyLevel2ListView(
 
 
 class TrackerCompanyProjectListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all projects wrt company
     """
@@ -1786,14 +2106,17 @@ class TrackerCompanyProjectListView(
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'status',
-            'profiles', 'shared_project', 'typology', 'completed',
-            'shared_companies', 'task_companies'
+            'profiles', 'typology', 'completed',
+            'shared_companies', 'logo', 'talks', 'last_message_created', 'address'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
+        ]
+        self.talk_response_include_fields = [
+            'id', 'code', 'unread_count'
         ]
         super(TrackerCompanyProjectListView, self).__init__(*args, **kwargs)
 
@@ -1805,9 +2128,9 @@ class TrackerCompanyProjectListView(
 
 
 class TrackerCompanySimpleProjectListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all projects wrt company
     """
@@ -1829,9 +2152,9 @@ class TrackerCompanySimpleProjectListView(
 
 
 class TrackerCompanyInternalProjectListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all internal projects wrt company
     """
@@ -1845,7 +2168,7 @@ class TrackerCompanyInternalProjectListView(
             'company', 'referent', 'typology', 'completed', 'shared_project', 'logo'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
@@ -1860,9 +2183,9 @@ class TrackerCompanyInternalProjectListView(
 
 
 class TrackerCompanySharedProjectListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all shared projects wrt company
     """
@@ -1875,7 +2198,7 @@ class TrackerCompanySharedProjectListView(
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'typology', 'completed'
         ]
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         self.profile_response_include_fields = ['id', 'first_name', 'last_name', 'is_shared', 'is_in_showroom']
         super(TrackerCompanySharedProjectListView, self).__init__(*args, **kwargs)
 
@@ -1887,9 +2210,9 @@ class TrackerCompanySharedProjectListView(
 
 
 class TrackerCompanyInternalGanttListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all internal tasks wrt company
     """
@@ -1923,9 +2246,9 @@ class TrackerCompanyInternalGanttListView(
 
 
 class TrackerCompanySharedGanttListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all shared tasks wrt company
     """
@@ -1954,7 +2277,7 @@ class TrackerCompanySharedGanttListView(
 
 
 class TrackerCompanyFavouriteMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Company Favourite Mixin
     """
@@ -1973,9 +2296,9 @@ class TrackerCompanyFavouriteMixin(
 
 
 class TrackerCompanyFavouriteListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company favourites
     """
@@ -1985,7 +2308,7 @@ class TrackerCompanyFavouriteListView(
 
     def __init__(self, *args, **kwargs):
         self.favourite_response_include_fields = ['id', 'company_followed', 'company']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn', 'is_supplier', 'logo',
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'is_supplier', 'logo',
                                                 'url', 'email', 'phone', 'phone2', 'fax']
         super(TrackerCompanyFavouriteListView, self).__init__(*args, **kwargs)
 
@@ -1997,9 +2320,9 @@ class TrackerCompanyFavouriteListView(
 
 
 class TrackerCompanyFavouriteWaitingListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company favourites
     """
@@ -2009,7 +2332,7 @@ class TrackerCompanyFavouriteWaitingListView(
 
     def __init__(self, *args, **kwargs):
         self.favourite_response_include_fields = ['id', 'company_followed', 'company']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn', 'is_supplier', 'logo',
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'is_supplier', 'logo',
                                                 'url', 'email', 'phone', 'phone2', 'fax']
         super(TrackerCompanyFavouriteWaitingListView, self).__init__(*args, **kwargs)
 
@@ -2021,9 +2344,9 @@ class TrackerCompanyFavouriteWaitingListView(
 
 
 class TrackerCompanyFavouriteReceivedListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company favourites
     """
@@ -2033,7 +2356,7 @@ class TrackerCompanyFavouriteReceivedListView(
 
     def __init__(self, *args, **kwargs):
         self.favourite_response_include_fields = ['id', 'company_followed', 'company']
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn', 'is_supplier', 'logo',
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'is_supplier', 'logo',
                                                 'url', 'email', 'phone', 'phone2', 'fax']
         super(TrackerCompanyFavouriteReceivedListView, self).__init__(*args, **kwargs)
 
@@ -2045,9 +2368,9 @@ class TrackerCompanyFavouriteReceivedListView(
 
 
 class TrackerCompanyNotFavouriteListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all company favourites
     """
@@ -2056,7 +2379,7 @@ class TrackerCompanyNotFavouriteListView(
     serializer_class = serializers.CompanySerializer
 
     def __init__(self, *args, **kwargs):
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn', 'is_supplier', 'logo']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code', 'is_supplier', 'logo']
         super(TrackerCompanyNotFavouriteListView, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -2064,16 +2387,16 @@ class TrackerCompanyNotFavouriteListView(
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         self.queryset = Company.objects.filter(status=1).exclude(
             id=profile.company.id
-         ).exclude(
+        ).exclude(
             request_favourites__company__id=profile.company.id,
             request_favourites__approval_date__isnull=False)
         return super(TrackerCompanyNotFavouriteListView, self).get_queryset()
 
 
 class TrackerCompanyFavouriteContactListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get all public profiles for favourite companies
     """
@@ -2089,7 +2412,7 @@ class TrackerCompanyFavouriteContactListView(
             'profile_invitation_date', 'invitation_refuse_date', 'is_shared', 'is_in_showroom'
         ]
         self.company_response_include_fields = [
-            'id', 'name', 'slug', 'email', 'ssn', 'logo', 'is_supplier'
+            'id', 'name', 'slug', 'email', 'tax_code', 'logo', 'is_supplier'
         ]
         self.user_response_include_fields = [
             'id', 'first_name', 'last_name'
@@ -2121,8 +2444,8 @@ class TrackerCompanyFavouriteContactListView(
 
 
 class TrackerCompanyFavouriteDetailView(
-        TrackerCompanyFavouriteMixin,
-        generics.RetrieveAPIView):
+    TrackerCompanyFavouriteMixin,
+    generics.RetrieveAPIView):
     """
     Get a single favourite
     """
@@ -2131,13 +2454,13 @@ class TrackerCompanyFavouriteDetailView(
     serializer_class = serializers.CompanySerializer
 
     def __init__(self, *args, **kwargs):
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerCompanyFavouriteDetailView, self).__init__(*args, **kwargs)
 
 
 class TrackerCompanyFavouriteDeleteView(
-        TrackerCompanyFavouriteMixin,
-        generics.RetrieveDestroyAPIView):
+    TrackerCompanyFavouriteMixin,
+    generics.RetrieveDestroyAPIView):
     """
     Delete a single favourite
     """
@@ -2146,7 +2469,7 @@ class TrackerCompanyFavouriteDeleteView(
     serializer_class = serializers.CompanySerializer
 
     def __init__(self, *args, **kwargs):
-        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'ssn']
+        self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerCompanyFavouriteDeleteView, self).__init__(*args, **kwargs)
 
     def perform_destroy(self, instance):
@@ -2156,9 +2479,9 @@ class TrackerCompanyFavouriteDeleteView(
 
 
 class TrackerCompanyProjectIntervalDetailView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get a company project gantt
     """
@@ -2188,9 +2511,9 @@ class TrackerCompanyProjectIntervalDetailView(
 
 
 class TrackerProfileProjectIntervalDetailView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get a company project gantt
     """
@@ -2227,9 +2550,9 @@ class TrackerProfileProjectIntervalDetailView(
 
 
 class TrackerProfileActivityIntervalDetailView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get a company profile gantt
     """
@@ -2239,7 +2562,7 @@ class TrackerProfileActivityIntervalDetailView(
 
     def __init__(self, *args, **kwargs):
         self.activity_response_include_fields = [
-            'task', 'days_for_gantt', 'title'
+            'task', 'days_for_gantt', 'title', 'alert'
         ]
         self.task_response_include_fields = [
             'project'
@@ -2265,9 +2588,9 @@ class TrackerProfileActivityIntervalDetailView(
 
 
 class TrackerCompanyStaffActivityIntervalDetailView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
     Get a company profile gantt
     """
@@ -2300,9 +2623,9 @@ class TrackerCompanyStaffActivityIntervalDetailView(
 
 
 class TrackerProfileMessageListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
         Get all project messages
         """
@@ -2310,7 +2633,7 @@ class TrackerProfileMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create'
+            'id', 'body', 'sender', 'date_create', 'unique_code'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
@@ -2325,9 +2648,9 @@ class TrackerProfileMessageListView(
 
 
 class TrackerProfileToProfileMessageListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
         Get all project messages
         """
@@ -2335,7 +2658,7 @@ class TrackerProfileToProfileMessageListView(
 
     def __init__(self, *args, **kwargs):
         self.message_response_include_fields = [
-            'id', 'body', 'sender', 'date_create'
+            'id', 'body', 'sender', 'date_create', 'unique_code'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
@@ -2356,7 +2679,7 @@ class TrackerProfileToProfileMessageListView(
 
 
 class TrackerSponsorMixin(
-        JWTPayloadMixin):
+    JWTPayloadMixin):
     """
     Sponsor Mixin
     """
@@ -2389,10 +2712,10 @@ class TrackerSponsorMixin(
 
 
 class TrackerSponsorAddView(
-        WhistleGenericViewMixin,
-        TrackerSponsorMixin,
-        QuerysetMixin,
-        generics.CreateAPIView):
+    WhistleGenericViewMixin,
+    TrackerSponsorMixin,
+    QuerysetMixin,
+    generics.CreateAPIView):
     """
         Create sponsor request
     """
@@ -2412,9 +2735,9 @@ class TrackerSponsorAddView(
 
 
 class TrackerSponsorListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
         Get all project messages
         """
@@ -2441,9 +2764,9 @@ class TrackerSponsorListView(
 
 
 class TrackerCompanySponsorActiveListView(
-        JWTPayloadMixin,
-        QuerysetMixin,
-        generics.ListAPIView):
+    JWTPayloadMixin,
+    QuerysetMixin,
+    generics.ListAPIView):
     """
         Get all project messages
         """
@@ -2466,9 +2789,9 @@ class TrackerCompanySponsorActiveListView(
 
 
 class TrackerSponsorDetailView(
-        TrackerSponsorMixin,
-        QuerysetMixin,
-        generics.RetrieveAPIView):
+    TrackerSponsorMixin,
+    QuerysetMixin,
+    generics.RetrieveAPIView):
     """
     Get a single sponsor
     """
@@ -2487,9 +2810,9 @@ class TrackerSponsorDetailView(
 
 
 class TrackerSponsorEditView(
-        WhistleGenericViewMixin,
-        TrackerSponsorMixin,
-        generics.RetrieveUpdateAPIView):
+    WhistleGenericViewMixin,
+    TrackerSponsorMixin,
+    generics.RetrieveUpdateAPIView):
     """
     Update a single company
     """
@@ -2526,4 +2849,3 @@ class TrackerSponsorEditView(
                     tags_field[row.code] = {'name': row.name, 'color': row.typology.color}
                 request.data['tags'] = tags_field
         return super(TrackerSponsorEditView, self).put(request, *args, **kwargs)
-

@@ -83,7 +83,6 @@ services:
 volumes:
   postgres_data:
   redis-data:
-  /etc/letsencrypt/:
 networks:
   streams:
     external: true

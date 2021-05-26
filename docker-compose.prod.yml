@@ -58,7 +58,7 @@ services:
       - 443:443
     volumes:
       - ./config/nginx/conf.d:/etc/nginx/conf.d
-      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/letsencrypt/:/etc/letsencrypt/
     depends_on:
       - web
       - db
@@ -83,7 +83,6 @@ services:
 volumes:
   postgres_data:
   redis-data:
-  letsencrypt:
 networks:
   streams:
     external: true

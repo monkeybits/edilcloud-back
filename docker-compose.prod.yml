@@ -42,7 +42,8 @@ services:
       - streams
 
   nginx:
-    image: nginx:1.13
+    restart: unless-stopped
+    image: staticfloat/nginx-certbot
     build:
       context: .
       dockerfile: ./config/nginx/Dockerfile
@@ -50,21 +51,23 @@ services:
         - CERTBOT_EMAIL=monkeybits.srl@gmail.com
         - DOMAIN_LIST=edilcloud.io,*.edilcloud.io
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    environment:
+        CERTBOT_EMAIL: monkeybits.srl@gmail.com
     ports:
       - 80:80
       - 443:443
     volumes:
       - ./config/nginx/conf.d:/etc/nginx/conf.d
-      - ./letsencrypt:/etc/letsencrypt
+      - letsencrypt:/etc/letsencrypt
     depends_on:
       - web
       - db
     networks:
       - streams
 
-  certbot:
-    image: certbot/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+#  certbot:
+#    image: certbot/certbot
+#    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   celery:
     build: .

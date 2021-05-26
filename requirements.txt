@@ -91,7 +91,7 @@ pyasn1-modules==0.2.8
 pycparser==2.20
 pycrypto==2.6.1
 pydot==1.2.3
-Pygments==2.2.0
+Pygments==2.7.4
 PyHamcrest==2.0.2
 PyJWT==1.5.3
 pyOpenSSL==19.1.0

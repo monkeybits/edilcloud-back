@@ -576,7 +576,7 @@ def post_notification(sender, instance, request, **kwargs):
             body = json.dumps({
                 'content': content,
                 'url': endpoint,
-                'big_picture': PROTOCOL + '://back-test.edilcloud.io' + instance.mediaassignment_set.all()[0].media.url if instance.mediaassignment_set.all().count() > 0 else '',
+                'big_picture': PROTOCOL + '://back.edilcloud.io' + instance.mediaassignment_set.all()[0].media.url if instance.mediaassignment_set.all().count() > 0 else '',
                 'activity_id': instance.sub_task.id,
                 'task_id': instance.sub_task.task.id,
                 'project_id': instance.sub_task.task.project.id
@@ -585,7 +585,7 @@ def post_notification(sender, instance, request, **kwargs):
             body = json.dumps({
                 'content': content,
                 'url': endpoint,
-                'big_picture': PROTOCOL + '://back-test.edilcloud.io' + instance.mediaassignment_set.all()[
+                'big_picture': PROTOCOL + '://back.edilcloud.io' + instance.mediaassignment_set.all()[
                     0].media.url if instance.mediaassignment_set.all().count() > 0 else '',
                 'task_id': instance.task.id,
                 'project_id': instance.task.project.id
@@ -703,14 +703,14 @@ def comment_notification(sender, instance, kwargs=None):
             body = {
                 'content': content,
                 'url': endpoint,
-                'big_picture': PROTOCOL + '://back-test.edilcloud.io' + instance.mediaassignment_set.all()[
+                'big_picture': PROTOCOL + '://back.edilcloud.io' + instance.mediaassignment_set.all()[
                     0].media.url if instance.mediaassignment_set.all().count() > 0 else '',
                 'comment_id': instance.parent.id,
             }
         else:
             body = {
                 'content': content,
-                'big_picture': PROTOCOL + '://back-test.edilcloud.io' + instance.mediaassignment_set.all()[
+                'big_picture': PROTOCOL + '://back.edilcloud.io' + instance.mediaassignment_set.all()[
                     0].media.url if instance.mediaassignment_set.all().count() > 0 else '',
                 'url': endpoint,
             }

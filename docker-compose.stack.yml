@@ -10,14 +10,14 @@
       volumes:
         - postgres_data:/var/lib/postgresql/data/
       environment:
-        - POSTGRES_DB=office2017.whistle.it
+        - POSTGRES_DB=edilcloud-back
         - POSTGRES_USER=postgres
         - POSTGRES_PASSWORD=postgres
     web:
       image: tbellini01/edilcloud-back:latest
       command: python manage.py runserver 0.0.0.0:8000 --settings=web.settings.production
       volumes:
-        - .:/office2017.whistle.it
+        - .:/edilcloud-back
       ports:
         - "8000:8000"
       networks:

@@ -137,7 +137,7 @@ def customer_portal(request):
     # Authenticate your user.
   session = stripe.billing_portal.Session.create(
     customer=customer_id,
-    return_url='https://test.edilcloud.io/apps/todo/all',
+    return_url='https://app.edilcloud.io/apps/todo/all',
   )
   return redirect(session.url)
 

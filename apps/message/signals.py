@@ -79,10 +79,10 @@ def get_files(obj):
 
 def addRedirectUrl(talk):
     if talk.content_type.name == 'company':
-        return "https://test.edilcloud.io/apps/chat"
+        return "https://app.edilcloud.io/apps/chat"
     if talk.content_type.name == 'project':
-        return "https://test.edilcloud.io/apps/projects/{}".format(str(talk.object_id))
-    return "https://test.edilcloud.io"
+        return "https://app.edilcloud.io/apps/projects/{}".format(str(talk.object_id))
+    return "https://app.edilcloud.io"
 
 def addHeading(talk, notify_obj):
     if talk.content_type.name == 'company':
@@ -271,8 +271,8 @@ def message_notification(sender, instance, **kwargs):
 
         # from websocket import create_connection
         # try:
-        #     print("ws://35.176.179.55:8000")
-        #     ws = create_connection("ws://35.176.179.55:8000/ws/chat/chat_channel/")
+        #     print("ws://18.130.248.158:8000")
+        #     ws = create_connection("ws://18.130.248.158:8000/ws/chat/chat_channel/")
         # except:
         #     communicator = WebsocketCommunicator(application, "/ws/chat/chat_channel/")
         #     communicator.send_json_to({'message': 'ciao'})

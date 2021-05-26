@@ -6,7 +6,7 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'office2017.whistle.it',
+        'NAME': 'edilcloud-back',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'db',

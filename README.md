@@ -2,7 +2,7 @@
 
 ## Clone the respository
 ```
-hg clone ssh://hg@bitbucket.org/thux/office2017.whistle.it
+hg clone ssh://hg@bitbucket.org/thux/edilcloud-back
 ```
 
 ## Use Virtualenv and Virtualenvwrapper
@@ -36,24 +36,24 @@ source /usr/local/bin/virtualenvwrapper.sh
  - virtualenv (standard):
 	 - python2:
 
-        `virtualenv office2017.whistle.it/venv`
+        `virtualenv edilcloud-back/venv`
 
      - python3:
 
-        `virtualenv office2017.whistle.it/venv --python /usr/bin/python3`
+        `virtualenv edilcloud-back/venv --python /usr/bin/python3`
 
  - virtualenvwrapper:
     - python2:
 
-        `mkvirtualenv office2017.whistle.it`
+        `mkvirtualenv edilcloud-back`
 
     - python3:
 
-        `mkvirtualenv --python=/usr/bin/python3 office2017.whistle.it`
+        `mkvirtualenv --python=/usr/bin/python3 edilcloud-back`
 
  - Python3 Venv (only for python 3):
 
-    `python3 -m venv office2017.whistle.it/venv`
+    `python3 -m venv edilcloud-back/venv`
 
 
 ####Activate virtualenv:
@@ -63,7 +63,7 @@ source /usr/local/bin/virtualenvwrapper.sh
     `. venv/bin/activate`
 
 - virtualenvwrapper:
-    `workon office2017.whistle.it`
+    `workon edilcloud-back`
 
 ## Install and configure autoenv
 
@@ -79,7 +79,7 @@ echo "source `which activate.sh`" >> ~/.bashrc
 ```
 For create autoenv in your project (in this example with virtualenvwrapper) create `.env` file as follows:
 ```
-echo "workon office2017.whistle.it" > .env
+echo "workon edilcloud-back" > .env
 ```
 
 The complete autoenv documentation can be found [here](https://github.com/kennethreitz/autoenv).
@@ -103,7 +103,7 @@ pip install .
 ## Create the database
 
 ```
-createdb office2017.whistle.it
+createdb edilcloud-back
 ```
 ## Create local.py file inside web/settings
 
@@ -121,7 +121,7 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'office2017.whistle.it',
+        'NAME': 'edilcloud-back',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -153,7 +153,7 @@ dj createsuperuser
 ## Create static folder inside web dir
 
 ```
-cd office2017.whistle.it/web
+cd edilcloud-back/web
 mkdir static
 
 ```
@@ -172,4 +172,4 @@ TYPOLOGY, CATEGORY, SUBCATEGORY, ECC
 - python manage.py shell < web/management/scripts/import_typology.py
 - python manage.py shell < web/management/scripts/import_category.py
 
-DEV ssh -i "Edilcloud-key.pem" ec2-user@35.176.179.55
+DEV ssh -i "Edilcloud-key.pem" ec2-user@18.130.248.158

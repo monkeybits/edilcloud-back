@@ -432,7 +432,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-BASE_URL = 'test.edilcloud.io'
+BASE_URL = 'app.edilcloud.io'
 
 JWT_AUTH = {
     'JWT_PAYLOAD_HANDLER': 'apps.user.views.custom_jwt_payload_handler',

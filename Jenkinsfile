@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-       GIT_TARGET_BRANCH = "test_aws"
+       GIT_TARGET_BRANCH = "master"
        VM_IP = "3.9.185.8"
        registry = "tbellini01/edilcloud-back"
        registryCredential = 'docker_tbellini01'

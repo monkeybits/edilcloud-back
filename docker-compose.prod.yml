@@ -10,14 +10,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=office2017.whistle.it
+      - POSTGRES_DB=edilcloud-back
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   web:
     build: .
     command: daphne -b 0.0.0.0 -p 8000 web.asgi:application
     volumes:
-      - .:/office2017.whistle.it
+      - .:/edilcloud-back
     ports:
       - "8000:8000"
     networks:
@@ -26,8 +26,8 @@ services:
       - db
     environment:
       - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
-      - ENV_NAME=test
-      - SOCKET_HOST=35.176.179.55
+      - ENV_NAME=prod
+      - SOCKET_HOST=18.130.248.158
       - SOCKET_PORT=6969
       - SOCKET_URL=https://ws.edilcloud.io
 
@@ -64,7 +64,7 @@ services:
     networks:
       - streams
     volumes:
-      - .:/office2017.whistle.it
+      - .:/edilcloud-back
     links:
       - db
       - redis

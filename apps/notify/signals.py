@@ -82,7 +82,7 @@ def send_push_notification(notify_obj, recipient, subject, body):
         "android_sound": "message",
         "data": {
             "custom_data": body['content'],
-            "redirect_url": "https://test.edilcloud.io" + body['url']
+            "redirect_url": "https://app.edilcloud.io" + body['url']
         },
         "small_icon": "ic_stat_onesignal_default"
     }

@@ -46,12 +46,15 @@ services:
     build:
       context: .
       dockerfile: ./config/nginx/Dockerfile
+      args:
+        - CERTBOT_EMAIL=monkeybits.srl@gmail.com
+        - DOMAIN_LIST=edilcloud.io,*.edilcloud.io
     ports:
       - 80:80
       - 443:443
     volumes:
       - ./config/nginx/conf.d:/etc/nginx/conf.d
-      - /etc/letsencrypt/:/etc/letsencrypt/
+      - letsencrypt:/etc/letsencrypt
     depends_on:
       - web
       - db

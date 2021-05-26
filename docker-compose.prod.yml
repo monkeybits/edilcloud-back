@@ -75,6 +75,7 @@ services:
 volumes:
   postgres_data:
   redis-data:
+  letsencrypt:
 networks:
   streams:
     external: true

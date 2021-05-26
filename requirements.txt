@@ -31,7 +31,7 @@ django-admin-tools==0.8.1
 django-allauth==0.44.0
 django-application-settings==0.2
 django-cors-headers==2.1.0
-django-debug-toolbar==1.8
+django-debug-toolbar==1.11.1
 django-dotenv==1.4.2
 django-extensions==1.7.9
 django-flat-responsive==1.4.1

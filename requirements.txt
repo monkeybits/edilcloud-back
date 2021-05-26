@@ -106,7 +106,7 @@ redis==3.5.3
 requests==2.24.0
 requests-oauthlib==0.8.0
 rest-social-auth==4.2.0
-rsa==4.6
+rsa==4.7
 simplegeneric==0.8.1
 simplejson==3.11.1
 six==1.10.0

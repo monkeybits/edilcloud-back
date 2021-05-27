@@ -73,6 +73,7 @@ def send_push_notification(notify_obj, recipient, subject, body):
     # The topic name can be optionally prefixed with "/topics/".
     topic = '/topics/user{}'.format(recipient.id)
     print('to topic: {}'.format(topic))
+    print('name: {}, surname: {} from company: {}'.format(recipient.first_name, recipient.last_name, recipient.company.name))
 
     # See documentation on defining a message payload.
     message = messaging.Message(

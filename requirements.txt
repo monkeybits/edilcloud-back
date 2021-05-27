@@ -132,3 +132,4 @@ xlrd==1.1.0
 zipp==1.2.0
 zope.interface==5.1.2
 ptvsd==4.3.2
+firebase-admin==4.5.3

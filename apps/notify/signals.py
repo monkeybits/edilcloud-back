@@ -7,9 +7,10 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from . import models as notify_models
 from channels.layers import get_channel_layer
-
+import firebase_admin
 from ..project.models import Project
 
+default_app = firebase_admin.initialize_app()
 
 def event_triger(msg):
     channel_layer = get_channel_layer()
@@ -48,7 +49,7 @@ def send_push_notification(notify_obj, recipient, subject, body):
     }
 
     req_players = requests.get(
-        "https://onesignal.com/api/v1/players?app_id=0fbdf0cf-d9f5-4363-809f-4735b1bba268&limit=300&offset=0",
+        "https://   onesignal.com/api/v1/players?app_id=0fbdf0cf-d9f5-4363-809f-4735b1bba268&limit=300&offset=0",
         headers=header)
     print(req_players)
     list_profiles_id = []

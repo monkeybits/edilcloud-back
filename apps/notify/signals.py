@@ -71,7 +71,7 @@ def send_push_notification(notify_obj, recipient, subject, body):
     #     "small_icon": "ic_stat_onesignal_default"
     # }
     # The topic name can be optionally prefixed with "/topics/".
-    topic = '/topics/user{}'.format(recipient.id)
+    topic = 'user{}'.format(recipient.id)
     print('to topic: {}'.format(topic))
     print('name: {}, surname: {} from company: {}'.format(recipient.first_name, recipient.last_name, recipient.company.name))
 
@@ -109,6 +109,7 @@ def send_push_notification(notify_obj, recipient, subject, body):
         },
         topic=topic,
     )
+
 
     # Send a message to the devices subscribed to the provided topic.
     response = messaging.send(message)

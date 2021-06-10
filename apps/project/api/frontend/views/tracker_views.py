@@ -2764,7 +2764,7 @@ class TrackerPostCommentAddView(
 
     def __init__(self, *args, **kwargs):
         self.activity_request_include_fields = [
-            'text', 'created_date', 'parent', 'unique_code'
+            'created_date', 'parent', 'unique_code'
         ]
         self.activity_response_include_fields = [
             'id', 'author', 'post', 'parent', 'text',

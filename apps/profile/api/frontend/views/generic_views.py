@@ -49,7 +49,13 @@ class CompanyDetailView(
             'email', 'phone', 'logo', 'vat_number',
             'url', 'fax', 'phone2', 'projects_count',
             'messages_count', 'tags_count', 'followers_count',
-            'staff_count', 'partnerships_count', 'category'
+            'staff_count', 'partnerships_count', 'category',
+            'address',
+            'province',
+            'cap',
+            'country',
+            'pec',
+            'billing_email'
         ]
         super(CompanyDetailView, self).__init__(*args, **kwargs)
 

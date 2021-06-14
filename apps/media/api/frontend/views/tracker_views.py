@@ -641,11 +641,10 @@ class TrackerFolderList(
 
     def __init__(self, *args, **kwargs):
         self.folder_response_include_fields = [
-            'id', 'title', 'folder', 'is_root',
-            'extension', 'note', 'is_public', 'size', 'media'
+            'id', 'title', 'folder', 'is_root', 'note', 'is_public', 'size', 'media'
         ]
         self.photo_response_include_fields = [
-            'id', 'title', 'pub_date', 'photo',
+            'id', 'title', 'pub_date', 'photo', 'extension',
             'is_public', 'tags', 'note', 'size', 'folder', 'size'
         ]
         self.video_response_include_fields = [
@@ -653,7 +652,7 @@ class TrackerFolderList(
             'tags', 'note', 'extension', 'is_public', 'folder', 'size'
         ]
         self.document_response_include_fields = [
-            'id', 'title', 'description', 'document',
+            'id', 'title', 'description', 'document', 'extension',
             'date_create', 'date_last_modify', 'is_public', 'folder', 'size'
         ]
         super(TrackerFolderList, self).__init__(*args, **kwargs)

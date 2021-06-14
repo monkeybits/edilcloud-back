@@ -689,7 +689,7 @@ class Comment(OrderedModel):
                             on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     author = models.ForeignKey('profile.Profile', on_delete=models.CASCADE)
-    text = models.TextField()
+    text = models.TextField(blank=True)
     created_date = models.DateTimeField(
         default=timezone.now)
     unique_code = models.TextField(

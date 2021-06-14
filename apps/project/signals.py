@@ -92,6 +92,57 @@ EMOJI_UNICODES = {
 }
 
 
+def remove_team_member_notification(sender, instance):
+    company_staff = instance.project.profiles.all().union(
+        instance.project.company.get_owners_and_delegates()
+    )
+    profile = get_current_profile()
+    # If there is no JWT token in the request,
+    # then we don't create notifications (Useful at admin & shell for debugging)
+    if not profile:
+        return
+
+    try:
+        subject = build_array_message(EMOJI_UNICODES['construction'], [
+            _('You have been removed from a project')
+        ])
+        endpoint = '/apps/projects'.format(str(instance.project.id))
+        body = json.dumps({
+            'content': build_array_message(None, [
+                _('You have been removed from project'),
+                instance.project.name,
+                _('from company'),
+                instance.project.company.name
+            ]),
+            'url': endpoint,
+            'project_id': instance.project.id
+        })
+        type = ContentType.objects.get(model=sender.__name__.lower())
+
+        notify_obj = notify_models.Notify.objects.create(
+            sender=profile, subject=subject, body=body,
+            content_type=type, object_id=instance.id,
+            creator=profile.user, last_modifier=profile.user
+        )
+
+        bell_status = get_bell_notification_status(
+            instance.profile, sender.__name__.lower()
+        )
+        email_status = get_email_notification_status(
+            instance.profile, sender.__name__.lower()
+        )
+        translation.activate(profile.user.get_main_profile().language)
+        if bell_status or email_status:
+            notify_recipient = notify_models.NotificationRecipient(
+                notification=notify_obj, is_email=email_status,
+                is_notify=bell_status, recipient=instance.profile,
+                creator=profile.user, last_modifier=profile.user)
+            notify_recipient.save()
+            send_push_notification(notify_obj, instance.profile, subject, body)
+    except Exception as e:
+        print(e)
+
+
 def team_invite_notification(sender, instance, **kwargs):
     company_staff = instance.project.profiles.all().union(
         instance.project.company.get_owners_and_delegates()
@@ -318,13 +369,13 @@ def activity_notification(sender, instance, **kwargs):
                 ])
             else:
                 subject = _('Activity').__str__() + " %s " % instance.title + \
-                            _("updated in project").__str__() + \
-                              " %s" % instance.task.project.name
+                          _("updated in project").__str__() + \
+                          " %s" % instance.task.project.name
                 return
         else:
             subject = _('Activity').__str__() + " %s " % instance.title + \
-                        _("deleted in project").__str__() + \
-                          " %s" % instance.task.project.name
+                      _("deleted in project").__str__() + \
+                      " %s" % instance.task.project.name
             return
 
         endpoint = '/apps/projects/{}/task'.format(
@@ -366,7 +417,7 @@ def activity_notification(sender, instance, **kwargs):
                 notify_recipient.save()
                 body = json.loads(body)
                 body['url'] = endpoint + \
-                    '/{}/activity/{}/'.format(instance.task.id, instance.id)
+                              '/{}/activity/{}/'.format(instance.task.id, instance.id)
                 body = json.dumps(body)
                 send_push_notification(notify_obj, staff, subject, body)
 
@@ -491,7 +542,7 @@ def alert_notification(sender, instance, **kwargs):
                 body = json.loads(body)
                 if post_for_model == 'task':
                     body['url'] = endpoint + \
-                        '/{}/post/{}/'.format(instance.task.id, instance.id)
+                                  '/{}/post/{}/'.format(instance.task.id, instance.id)
                     body = json.dumps(body)
                     send_push_notification(notify_obj, staff, subject, body)
                 else:
@@ -518,13 +569,13 @@ def post_notification(sender, instance, request, **kwargs):
             # if type_notify == 'mycompany_and_creator':
             #     company_staff = instance.sub_task.workers.filter(company__in=[profile.company, ])
             # if type_notify == 'all':
-                # company_staff = instance.sub_task.workers.all().union(
-                #     instance.sub_task.task.project.company.get_owners_and_delegates()
-                # )
+            # company_staff = instance.sub_task.workers.all().union(
+            #     instance.sub_task.task.project.company.get_owners_and_delegates()
+            # )
             companies_choosen = Company.objects.filter(id__in=company_ids)
             company_staff = instance.sub_task.task.project.profiles.filter(company__in=companies_choosen).union(
-                    instance.sub_task.task.project.company.get_owners_and_delegates()
-                )
+                instance.sub_task.task.project.company.get_owners_and_delegates()
+            )
             post_for_model = 'activity'
         else:
             #  if instance.is_public:
@@ -537,8 +588,8 @@ def post_notification(sender, instance, request, **kwargs):
             #     )
             companies_choosen = Company.objects.filter(id__in=company_ids)
             company_staff = instance.task.project.profiles.filter(company__in=companies_choosen).union(
-                    instance.task.project.company.get_owners_and_delegates()
-                )
+                instance.task.project.company.get_owners_and_delegates()
+            )
             post_for_model = 'task'
     except:
         return
@@ -550,7 +601,7 @@ def post_notification(sender, instance, request, **kwargs):
     try:
         if post_for_model == 'activity':
             subject = build_array_message(EMOJI_UNICODES['newspaper'], [
-               'Nuovo post notificato'
+                'Nuovo post notificato'
             ])
             content = build_array_message(None, [
                 "{} {}".format(profile.first_name, profile.last_name),
@@ -614,7 +665,7 @@ def post_notification(sender, instance, request, **kwargs):
                 notify_recipient.save()
                 body = json.loads(body)
                 if post_for_model == 'task':
-                    body['url'] = endpoint + '/{}/post/{}/'.format(instance.task.id,instance.id)
+                    body['url'] = endpoint + '/{}/post/{}/'.format(instance.task.id, instance.id)
                     body = json.dumps(body)
                     send_push_notification(notify_obj, staff, subject, body)
                 else:
@@ -649,17 +700,17 @@ def comment_notification(sender, instance, kwargs=None):
 
     try:
         if post_for_model == 'activity':
-                subject = build_array_message(EMOJI_UNICODES['speech_baloon'], [
-                    _('There is a new comment')
-                ])
-                content = build_array_message(None, [
-                    "{} {}".format(profile.first_name, profile.last_name),
-                    _('has commented post'),
-                    instance.post.text[:50] + '..',
-                    _('in activity'),
-                    instance.post.sub_task.title,
-                    '\n"' + instance.text + '"'
-                ])
+            subject = build_array_message(EMOJI_UNICODES['speech_baloon'], [
+                _('There is a new comment')
+            ])
+            content = build_array_message(None, [
+                "{} {}".format(profile.first_name, profile.last_name),
+                _('has commented post'),
+                instance.post.text[:50] + '..',
+                _('in activity'),
+                instance.post.sub_task.title,
+                '\n"' + instance.text + '"'
+            ])
         else:
             subject = build_array_message(EMOJI_UNICODES['speech_baloon'], [
                 _('There is a new comment')
@@ -730,11 +781,13 @@ def comment_notification(sender, instance, kwargs=None):
                 notify_recipient.save()
                 body = json.loads(body)
                 if post_for_model == 'task':
-                    body['url'] = endpoint + '/{}/post/{}/comment/{}/'.format(instance.post.task.id,instance.post.id, instance.id)
+                    body['url'] = endpoint + '/{}/post/{}/comment/{}/'.format(instance.post.task.id, instance.post.id,
+                                                                              instance.id)
                     body = json.dumps(body)
                     send_push_notification(notify_obj, staff, subject, body)
                 else:
-                    body['url'] = endpoint + '/{}/activity/{}/post/{}/comment/{}/'.format(instance.post.sub_task.task.id, instance.post.sub_task.id, instance.post.id, instance.id)
+                    body['url'] = endpoint + '/{}/activity/{}/post/{}/comment/{}/'.format(
+                        instance.post.sub_task.task.id, instance.post.sub_task.id, instance.post.id, instance.id)
                     body = json.dumps(body)
                     send_push_notification(notify_obj, staff, subject, body)
     except Exception as e:

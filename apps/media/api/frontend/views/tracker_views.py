@@ -646,15 +646,15 @@ class TrackerFolderList(
         ]
         self.photo_response_include_fields = [
             'id', 'title', 'pub_date', 'photo',
-            'is_public', 'tags', 'note', 'size', 'folder'
+            'is_public', 'tags', 'note', 'size', 'folder', 'size'
         ]
         self.video_response_include_fields = [
             'id', 'title', 'pub_date', 'video',
-            'tags', 'note', 'extension', 'is_public', 'folder'
+            'tags', 'note', 'extension', 'is_public', 'folder', 'size'
         ]
         self.document_response_include_fields = [
             'id', 'title', 'description', 'document',
-            'date_create', 'date_last_modify', 'is_public', 'folder'
+            'date_create', 'date_last_modify', 'is_public', 'folder', 'size'
         ]
         super(TrackerFolderList, self).__init__(*args, **kwargs)
 

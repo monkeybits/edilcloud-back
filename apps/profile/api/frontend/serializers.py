@@ -520,6 +520,7 @@ class ProfileSerializer(
     talk_count = serializers.SerializerMethodField()
     is_external = serializers.SerializerMethodField()
     subscription = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Profile
@@ -530,6 +531,23 @@ class ProfileSerializer(
         context = kwargs.get('context', None)
         if context:
             self.request = kwargs['context']['request']
+
+    def get_photo(self, obj):
+        main = obj.get_main_profile()
+        if main is None:
+            return ""
+        request = self.context['request']
+        protocol = request.is_secure()
+        if protocol:
+            protocol = 'https://'
+        else:
+            protocol = 'http://'
+        host = request.get_host()
+        if main.photo:
+            media_url = protocol + host + main.photo.url
+        else:
+            media_url = None
+        return media_url
 
     def get_subscription(self, obj):
         if obj.subscription != '':

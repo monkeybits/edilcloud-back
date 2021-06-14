@@ -121,6 +121,10 @@ def send_push_notification(notify_obj, recipient, subject, body):
 def notify_notification(sender, instance, **kwargs):
     notify_obj = instance.notification
     recipient = instance
+    try:
+        body = json.loads(notify_obj.body)
+    except Exception as e:
+        body = {}
     if recipient.reading_date is None:
         event_triger({
             "message": {
@@ -128,7 +132,7 @@ def notify_notification(sender, instance, **kwargs):
                 "notification_id": notify_obj.id,
                 "content_type": notify_obj.content_type.name,
                 "object_id": notify_obj.object_id,
-                "body": json.loads(notify_obj.body),
+                "body": body,
                 "dest": {
                     "id": recipient.recipient.pk
                 },

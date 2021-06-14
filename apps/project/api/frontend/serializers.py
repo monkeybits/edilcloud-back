@@ -1879,6 +1879,7 @@ class PostCommentAddSerializer(
         return media_list
 
     def create(self, validated_data):
+        from apps.project.signals import comment_notification
         try:
             validated_data['author'] = self.author
             validated_data['post'] = self.request.data['post']
@@ -1895,6 +1896,7 @@ class PostCommentAddSerializer(
                     comment=post_comment,
                     media=file
                 )
+            comment_notification(post_comment._meta.model, post_comment, self.request)
             return post_comment
         except ObjectDoesNotExist as err:
             raise django_api_exception.TaskActivityAddAPIPermissionDenied(

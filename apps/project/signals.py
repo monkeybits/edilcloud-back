@@ -649,45 +649,29 @@ def comment_notification(sender, instance, kwargs=None):
 
     try:
         if post_for_model == 'activity':
-            if 'created' in kwargs:
-                if kwargs['created']:
-                    subject = build_array_message(EMOJI_UNICODES['speech_baloon'], [
-                        _('There is a new comment')
-                    ])
-                    content = build_array_message(None, [
-                        "{} {}".format(profile.first_name, profile.last_name),
-                        _('has commented post'),
-                        instance.post.text[:50] + '..',
-                        _('in activity'),
-                        instance.post.sub_task.title,
-                        '\n"' + instance.text + '"'
-                    ])
-                else:
-                    subject = '%s ' % emoji.emojize(':speech_balloon:') + _("Comment updated in post activity").__str__() + " (%s)" % instance.post.sub_task.title
-                    return
-            else:
-                subject = '%s ' % emoji.emojize(':speech_balloon:') + _("Comment deleted in post activity").__str__() + " (%s)" % instance.post.sub_task.title
-                return
+                subject = build_array_message(EMOJI_UNICODES['speech_baloon'], [
+                    _('There is a new comment')
+                ])
+                content = build_array_message(None, [
+                    "{} {}".format(profile.first_name, profile.last_name),
+                    _('has commented post'),
+                    instance.post.text[:50] + '..',
+                    _('in activity'),
+                    instance.post.sub_task.title,
+                    '\n"' + instance.text + '"'
+                ])
         else:
-            if 'created' in kwargs:
-                if kwargs['created']:
-                    subject = build_array_message(EMOJI_UNICODES['speech_baloon'], [
-                        _('There is a new comment')
-                    ])
-                    content = build_array_message(None, [
-                        "{} {}".format(profile.first_name, profile.last_name),
-                        _('has commented post'),
-                        instance.post.text[:50] + '..',
-                        _('in task'),
-                        instance.post.task.name,
-                        '\n"' + instance.text + '"'
-                    ])
-                else:
-                    subject = "%s " % emoji.emojize(':speech_balloon:') + _('Comment updated in post task').__str__() + " (%s)" % instance.post.task.name
-                    return
-            else:
-                subject = "%s " % emoji.emojize(':speech_balloon:') + _('Comment deleted in post task').__str__() + " (%s)" % instance.post.task.name
-                return
+            subject = build_array_message(EMOJI_UNICODES['speech_baloon'], [
+                _('There is a new comment')
+            ])
+            content = build_array_message(None, [
+                "{} {}".format(profile.first_name, profile.last_name),
+                _('has commented post'),
+                instance.post.text[:50] + '..',
+                _('in task'),
+                instance.post.task.name,
+                '\n"' + instance.text + '"'
+            ])
         print(subject)
         try:
             print('endpoint comment for task')
@@ -697,7 +681,6 @@ def comment_notification(sender, instance, kwargs=None):
             print(instance.post.sub_task.task)
             endpoint = '/apps/projects/{}/task'.format(str(instance.post.sub_task.task.project.id))
             print('---------------------------------')
-
 
         if instance.parent:
             body = {

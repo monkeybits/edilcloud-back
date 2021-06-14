@@ -2576,6 +2576,7 @@ class OwnerProfile(Profile):
         # PS: For better understanding, we aren't merging the following 2 queries into one.
         member = self.list_members(member.project.id).get(id=member.id)
         member.delete()
+        return member
 
     # ------ BOM ------
 

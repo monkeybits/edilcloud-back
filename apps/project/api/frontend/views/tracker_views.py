@@ -2167,13 +2167,16 @@ class TrackerTeamDeleteView(
         super(TrackerTeamDeleteView, self).__init__(*args, **kwargs)
 
     def perform_destroy(self, instance):
+        from apps.project.signals import remove_team_member_notification
+        
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         activity_assigned = Activity.objects.filter(workers__in=[instance.profile.id])
         for act in activity_assigned:
             act.workers.remove(instance.profile)
             act.save()
-        profile.remove_member(instance)
+        member = profile.remove_member(instance)
+        #remove_team_member_notification(member._meta.model, member)
 
 
 class TrackerTaskActivityMixin(

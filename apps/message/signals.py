@@ -104,7 +104,7 @@ def get_sender_photo(sender):
     if main is None:
         return ""
     if main.photo:
-        media_url = 'https://back-test.edilcloud.io' + main.photo.url
+        media_url = 'https://back.edilcloud.io' + main.photo.url
     else:
         media_url = None
     return media_url

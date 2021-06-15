@@ -312,6 +312,11 @@ tracker_urlpatterns = [
         name='tracker_task_attachment_add'
     ),
     url(
+        r'^task/(?P<pk>\d+)/attachment_download/(?P<pk2>\d+)/$',
+        tracker_views.TrackerTaskAttachmentDownloadView.as_view(),
+        name='tracker_task_attachment_add'
+    ),
+    url(
         r'^attachment/(?P<pk>\d+)/delete/$',
         tracker_views.TrackerAttachmentDeleteView.as_view(),
         name='tracker_attachment_delete'

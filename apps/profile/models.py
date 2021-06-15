@@ -3441,7 +3441,10 @@ class OwnerProfile(Profile):
         """
         Get company document
         """
-        document = self.list_documents().get(id=document_id)
+        document = self.list_documents()
+        if len(document.filter(id=document_id)) == 0:
+            document = Document.objects.filter(id=document_id)
+        document = document.get(id=document_id)
         return document
 
     def edit_document(self, document_dict):

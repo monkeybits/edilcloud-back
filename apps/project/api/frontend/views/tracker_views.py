@@ -92,6 +92,31 @@ class TrackerProjectParentMixin(
             self.serializer_class = output_serializer
 
 
+class TrackerMediaAttachmentMixin(JWTPayloadMixin):
+    """
+        Project media attachment Mixin
+        """
+
+    def get_object(self):
+        try:
+            payload = self.get_payload()
+            profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
+            task = profile.get_task(self.kwargs.get('pk', None))
+            document = task.mediaassignment_set.all().get(id=self.kwargs.get('pk2', None))
+            self.check_object_permissions(self.request, document)
+            return document
+        except ObjectDoesNotExist as err:
+            raise django_api_exception.DocumentAPIDoesNotExist(
+                status.HTTP_403_FORBIDDEN, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+            )
+
+    def set_output_serializer(self, output_serializer=None):
+        if output_serializer is None:
+            self.serializer_class = serializers.DocumentSerializer
+        else:
+            self.serializer_class = output_serializer
+
+
 class TrackerProjectListView(
     JWTPayloadMixin,
     QuerysetMixin,
@@ -2168,7 +2193,7 @@ class TrackerTeamDeleteView(
 
     def perform_destroy(self, instance):
         from apps.project.signals import remove_team_member_notification
-        
+
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
         activity_assigned = Activity.objects.filter(workers__in=[instance.profile.id])
@@ -2176,7 +2201,7 @@ class TrackerTeamDeleteView(
             act.workers.remove(instance.profile)
             act.save()
         member = profile.remove_member(instance)
-        #remove_team_member_notification(member._meta.model, member)
+        # remove_team_member_notification(member._meta.model, member)
 
 
 class TrackerTaskActivityMixin(
@@ -2286,6 +2311,17 @@ class TrackerTaskAttachmentAddView(
         if request.data:
             request.data['task'] = self.kwargs.get('pk', None)
         return self.create(request, *args, **kwargs)
+
+
+class TrackerTaskAttachmentDownloadView(
+    TrackerMediaAttachmentMixin, DownloadViewMixin,
+    views.APIView):
+    """
+    Download a document
+    """
+    permission_classes = (RoleAccessPermission,)
+    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    file_field_name = 'media'
 
 
 class TrackerTaskActivityListView(
@@ -2931,7 +2967,7 @@ class TrackerTaskPostsListView(WhistleGenericViewMixin,
         self.profile_response_include_fields = [
             'id', 'user', 'photo',
             'company', 'role', 'email', 'first_name', 'position', 'last_name'
-        ]   
+        ]
         self.company_response_include_fields = ['id', 'name', 'slug', 'email', 'tax_code']
         super(TrackerTaskPostsListView, self).__init__(*args, **kwargs)
 

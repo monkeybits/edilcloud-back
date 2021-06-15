@@ -37,11 +37,13 @@ def event_triger(msg):
         }
     )
 
+
 def get_filetype(file):
     kind = filetype.guess(file)
     if kind is None:
         return
     return kind.mime
+
 
 def get_files(obj):
     media_list = []
@@ -77,12 +79,14 @@ def get_files(obj):
         )
     return media_list
 
+
 def addRedirectUrl(talk):
     if talk.content_type.name == 'company':
         return "https://test.edilcloud.io/apps/chat"
     if talk.content_type.name == 'project':
         return "https://test.edilcloud.io/apps/projects/{}".format(str(talk.object_id))
     return "https://test.edilcloud.io"
+
 
 def addHeading(talk, notify_obj):
     if talk.content_type.name == 'company':
@@ -93,6 +97,18 @@ def addHeading(talk, notify_obj):
             return "{} Project Chat".format(pr[0].name)
         else:
             return "Project Chat"
+
+
+def get_sender_photo(sender):
+    main = sender.get_main_profile()
+    if main is None:
+        return ""
+    if main.photo:
+        media_url = 'https://back-test.edilcloud.io' + main.photo.url
+    else:
+        media_url = None
+    return media_url
+
 
 @receiver([post_save, post_delete], sender=message_models.Message)
 def message_notification(sender, instance, **kwargs):
@@ -107,7 +123,7 @@ def message_notification(sender, instance, **kwargs):
         return
 
     try:
-        endpoint = os.path.join(settings.PROTOCOL+'://', settings.BASE_URL, 'comunica')
+        endpoint = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL, 'comunica')
         if instance.talk.content_type.name == 'company':
             company_staff = instance.talk.content_object.profiles.all()
             title = instance.talk.content_type.name
@@ -283,7 +299,7 @@ def message_notification(sender, instance, **kwargs):
         for profile in profiles_to_send:
             event_triger(
                 {
-                    "message":  {
+                    "message": {
                         "id": instance.id,
                         "body": instance.body,
                         "read": profile.read,
@@ -298,7 +314,7 @@ def message_notification(sender, instance, **kwargs):
                             "id": notify_obj.sender.id,
                             "first_name": notify_obj.sender.first_name,
                             "last_name": notify_obj.sender.last_name,
-                            "photo": None,
+                            "photo": get_sender_photo(notify_obj.sender),
                             "role": notify_obj.sender.role,
                             "position": notify_obj.sender.position,
                             "company": {
@@ -312,9 +328,9 @@ def message_notification(sender, instance, **kwargs):
                         },
                         "files": files
                     }
-                 })
+                })
             print("Sent")
-        #ws.close()
+        # ws.close()
 
     except Exception as e:
         print(e)

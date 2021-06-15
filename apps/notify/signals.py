@@ -89,12 +89,14 @@ def send_push_notification(notify_obj, recipient, subject, body):
                 icon='ic_stat_onesignal_default',
                 color='#f45342',
                 visibility='public',
-                priority='high'
+                priority='high',
+                sound='edilcloud.mp3'
             ),
         ),
         apns=messaging.APNSConfig(
             payload=messaging.APNSPayload(
                 aps=messaging.Aps(
+                    sound='edilcloud.caf',
                     content_available='1',
                     custom_data={
                         "custom_data": body['content'],

@@ -15,6 +15,7 @@ import datetime
 cred = credentials.Certificate("./serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
+
 def event_triger(msg):
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -45,6 +46,17 @@ def addHeading(talk, notify_obj):
             return "Project Chat"
 
 
+def get_sender_photo(sender):
+    main = sender.get_main_profile()
+    if main is None:
+        return ""
+    if main.photo:
+        media_url = 'https://back-test.edilcloud.io' + main.photo.url
+    else:
+        media_url = None
+    return media_url
+
+
 def send_push_notification(notify_obj, recipient, subject, body):
     body = json.loads(body)
     print(body['content'])
@@ -73,7 +85,8 @@ def send_push_notification(notify_obj, recipient, subject, body):
     # The topic name can be optionally prefixed with "/topics/".
     topic = 'user{}'.format(recipient.id)
     print('to topic: {}'.format(topic))
-    print('name: {}, surname: {} from company: {}'.format(recipient.first_name, recipient.last_name, recipient.company.name))
+    print('name: {}, surname: {} from company: {}'.format(recipient.first_name, recipient.last_name,
+                                                          recipient.company.name))
 
     # See documentation on defining a message payload.
     message = messaging.Message(
@@ -112,7 +125,6 @@ def send_push_notification(notify_obj, recipient, subject, body):
         topic=topic,
     )
 
-
     # Send a message to the devices subscribed to the provided topic.
     response = messaging.send(message)
     # Response is a message ID string.
@@ -142,7 +154,7 @@ def notify_notification(sender, instance, **kwargs):
                     "id": notify_obj.sender.id,
                     "first_name": notify_obj.sender.first_name,
                     "last_name": notify_obj.sender.last_name,
-                    "photo": None,
+                    "photo": get_sender_photo(notify_obj.sender),
                     "role": notify_obj.sender.role,
                     "company": {
                         "id": notify_obj.sender.company.id,

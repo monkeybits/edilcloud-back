@@ -32,31 +32,33 @@ class NotifySerializer(
 
 
     def get_project_id(self, obj):
-        if obj.content_type.name == 'project':
-            try:
+        try:
+
+            if obj.content_type.name == 'project':
                 project = Project.objects.get(id=obj.object_id)
                 return project.id
-            except:
+            elif obj.content_type.name == 'task':
+                task = Task.objects.get(id=obj.object_id)
+                return task.project.id
+            elif obj.content_type.name == 'activity':
+                activity = Activity.objects.get(id=obj.object_id)
+                return activity.task.project.id
+            elif obj.content_type.name == 'post':
+                post = Post.objects.get(id=obj.object_id)
+                if post.task is not None:
+                    return post.task.project.id
+                else:
+                    return post.sub_task.task.project.id
+            elif obj.content_type.name == 'comment':
+                comment = Comment.objects.get(id=obj.object_id)
+                if comment.post.task is not None:
+                    return comment.post.task.project.id
+                else:
+                    return comment.post.sub_task.task.project.id
+            else:
                 return None
-        elif obj.content_type.name == 'task':
-            task = Task.objects.get(id=obj.object_id)
-            return task.project.id
-        elif obj.content_type.name == 'activity':
-            activity = Activity.objects.get(id=obj.object_id)
-            return activity.task.project.id
-        elif obj.content_type.name == 'post':
-            post = Post.objects.get(id=obj.object_id)
-            if post.task is not None:
-                return post.task.project.id
-            else:
-                return post.sub_task.task.project.id
-        elif obj.content_type.name == 'comment':
-            comment = Comment.objects.get(id=obj.object_id)
-            if comment.post.task is not None:
-                return comment.post.task.project.id
-            else:
-                return comment.post.sub_task.task.project.id
-        else:
+
+        except Exception as e:
             return None
 
 

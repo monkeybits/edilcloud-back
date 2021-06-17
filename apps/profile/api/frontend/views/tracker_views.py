@@ -901,7 +901,7 @@ class TrackerCompanyEditView(
 
     def __init__(self, *args, **kwargs):
         self.company_request_include_fields = [
-            'name', 'slug', 'brand', 'description', 'tax_code',
+            'name', 'brand', 'description', 'tax_code',
             'vat_number', 'url',
             'email', 'phone', 'phone2', 'fax',
             'note', 'logo', 'category',

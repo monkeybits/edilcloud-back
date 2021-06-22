@@ -9,3 +9,5 @@ build:
 	docker-compose -f docker-compose.prod.yml down
 djstripe:
     docker exec -it edilcloud-back_web_1 python manage.py djstripe_sync_models
+dumpdata:
+	docker exec -it edilcloud-back_web_1 python manage.py dumpdata project --indent 2 > first_db.json

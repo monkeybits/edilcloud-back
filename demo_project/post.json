@@ -1,0 +1,258 @@
+[
+  {
+  "model": "project.post",
+  "pk": 17,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 4,
+    "author": 9,
+    "is_public": true,
+    "alert": false,
+    "text": "In questo settore passeranno le tubazioni dei sanitari che si collegano con la fogna esterna",
+    "created_date": "2021-06-09T01:37:32.759",
+    "published_date": "2021-06-13T12:11:11.558",
+    "unique_code": "41cd8ce0-c8c3-11eb-aa62-7bbf61235a98"
+    }
+  },
+  {
+    "model": "project.post",
+    "pk": 18,
+    "fields": {
+      "ordering": 0,
+      "sub_task": null,
+      "task": 4,
+      "author": 9,
+      "is_public": false,
+      "alert": true,
+      "text": "Segnare sul disegno che la finestra nel soggiorno va modificata. Il cliente chiede di abbattere il muro e montare una portafinestra",
+      "created_date": "2021-06-09T01:38:05.106",
+      "published_date": "2021-06-16T21:17:36.087",
+      "unique_code": "54795db0-c8c3-11eb-aa62-7bbf61235a98"
+    }
+  },
+  {
+  "model": "project.post",
+  "pk": 19,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 5,
+    "author": 15,
+    "is_public": true,
+    "alert": false,
+    "text": "La cucina \u00e8 stata smantellata e abbiamo cominciato la demolizione della parate",
+    "created_date": "2021-06-09T01:42:38.826",
+    "published_date": "2021-06-16T21:40:28.070",
+    "unique_code": "f8cb19d0-c8c3-11eb-903c-1789bf000944"
+  }
+},
+{
+  "model": "project.post",
+  "pk": 20,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 5,
+    "author": 16,
+    "is_public": false,
+    "alert": false,
+    "text": "Cerchiamo di lavorare in sicurezza e puliamo le macerie",
+    "created_date": "2021-06-09T01:47:00.434",
+    "published_date": "2021-06-15T21:07:02.760",
+    "unique_code": "94043120-c8c4-11eb-aa62-7bbf61235a98"
+  }
+},
+{
+  "model": "project.post",
+  "pk": 21,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 5,
+    "author": 18,
+    "is_public": true,
+    "alert": true,
+    "text": "Per proseguire mi servono le misure della porta, ho notificato il post e attendo istruzioni.",
+    "created_date": "2021-06-09T01:53:25.877",
+    "published_date": "2021-06-16T21:48:56.743",
+    "unique_code": "7a748060-c8c5-11eb-aa62-7bbf61235a98"
+  }
+},
+  {
+  "model": "project.post",
+  "pk": 22,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 7,
+    "author": 23,
+    "is_public": true,
+    "alert": false,
+    "text": "I collegameti dei tubi dei sanitari sono stati installati e abbiamo controllato tutte le pendenze",
+    "created_date": "2021-06-09T02:11:23.064",
+    "published_date": "2021-06-09T02:11:23.064",
+    "unique_code": "fbe136a0-c8c7-11eb-903c-1789bf000944"
+  }
+},
+{
+  "model": "project.post",
+  "pk": 24,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 7,
+    "author": 12,
+    "is_public": true,
+    "alert": true,
+    "text": "Ho verificato la posa dei tubi e sono stati installati correttamente, posso dare il via per la copertura?",
+    "created_date": "2021-06-09T02:21:14.085",
+    "published_date": "2021-06-13T12:09:43.448",
+    "unique_code": "5a1724e0-c8c9-11eb-aa62-7bbf61235a98"
+  }
+},
+  {
+  "model": "project.post",
+  "pk": 27,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 8,
+    "author": 32,
+    "is_public": false,
+    "alert": false,
+    "text": "La putrella \u00e8 stata installata correttamente, si pu\u00f2 procedere con l'abbattimento del muro portante. Si richiede all'architetto la verifica delle saldature per archivio.",
+    "created_date": "2021-06-09T13:18:24.622",
+    "published_date": "2021-06-10T20:09:06.096",
+    "unique_code": "2b58e0b0-c925-11eb-b96c-678171671d4b"
+  }
+},
+{
+  "model": "project.post",
+  "pk": 28,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 8,
+    "author": 9,
+    "is_public": true,
+    "alert": false,
+    "text": "Ho fatto le verifiche di conformit\u00e0 e le ho archiviate, cominciate con gettare il basamento. Finito il lavoro ti chiedo di postare una foto nei commenti. Buon lavoro",
+    "created_date": "2021-06-09T15:21:11.805",
+    "published_date": "2021-06-12T12:16:52.931",
+    "unique_code": "52471820-c936-11eb-9ffd-a336583f3392"
+  }
+},
+  {
+  "model": "project.post",
+  "pk": 25,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 9,
+    "author": 24,
+    "is_public": true,
+    "alert": false,
+    "text": "Non sono riuscito a collegare i tubi esterni perch\u00e8 ho bisogno di un ulteriore scavo in torno alla fossa biologica. Se l'impresa conclude gli scavi in giornata finisco il lavoro",
+    "created_date": "2021-06-09T02:34:02.366",
+    "published_date": "2021-06-09T02:34:02.366",
+    "unique_code": "2592dc30-c8cb-11eb-903c-1789bf000944"
+  }
+},
+{
+  "model": "project.post",
+  "pk": 26,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 9,
+    "author": 12,
+    "is_public": true,
+    "alert": false,
+    "text": "Ho paura che questa ispezione possa creare problemi, provvediamo a sostituirla e ad installarne una nuova. Come gi\u00e0 detto durante la riunione di cantiere, le ispezioni vecchie vanno sostituite",
+    "created_date": "2021-06-09T02:38:43.003",
+    "published_date": "2021-06-09T02:38:43.003",
+    "unique_code": "cc68d230-c8cb-11eb-aa62-7bbf61235a98"
+  }
+},
+  {
+  "model": "project.post",
+  "pk": 29,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 10,
+    "author": 28,
+    "is_public": true,
+    "alert": false,
+    "text": "Ho un dubbio su questa tracciatura, da disegno dovrebbe esserci una scatoletta ma non \u00e8 stata installata.  Chiedo la verifica a Geometra e al disegnatore Giustini.",
+    "created_date": "2021-06-09T16:14:28.477",
+    "published_date": "2021-06-09T16:19:27.785",
+    "unique_code": "c30b0740-c93d-11eb-9ffd-a336583f3392"
+  }
+},
+{
+  "model": "project.post",
+  "pk": 30,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 10,
+    "author": 27,
+    "is_public": true,
+    "alert": false,
+    "text": "Le misue sono state rispettate come si pu\u00f2 vedere dalla foto, abbiamo tenuto altezza 50 dal pavimento finito. Rilievi effettuati con il responsabile dell'impresa edile",
+    "created_date": "2021-06-09T16:23:24.494",
+    "published_date": "2021-06-09T16:23:24.494",
+    "unique_code": "02eaff90-c93f-11eb-81a8-27938ad3fa98"
+  }
+},
+{
+  "model": "project.post",
+  "pk": 31,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 10,
+    "author": 12,
+    "is_public": true,
+    "alert": false,
+    "text": "Abbiamo un problema in questo punto  in lavanderia perch\u00e8 il cliente ha deciso di fare una modifica. \u00c8 indispensabile che il tutto sia ultimato era venerd\u00ec sera",
+    "created_date": "2021-06-09T16:33:19.192",
+    "published_date": "2021-06-09T16:33:19.192",
+    "unique_code": "655a51c0-c940-11eb-9a1a-732aca5b9c3f"
+  }
+},
+  {
+  "model": "project.post",
+  "pk": 32,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 12,
+    "author": 36,
+    "is_public": false,
+    "alert": false,
+    "text": "Abbiamo finito il sottofondo, posto immagine del terrazzo ed entrata",
+    "created_date": "2021-06-10T02:02:32.897",
+    "published_date": "2021-06-10T10:34:53.115",
+    "unique_code": "ea6b02c0-c98f-11eb-a384-031a087e793e"
+  }
+},
+  {
+  "model": "project.post",
+  "pk": 33,
+  "fields": {
+    "ordering": 0,
+    "sub_task": null,
+    "task": 13,
+    "author": 39,
+    "is_public": true,
+    "alert": true,
+    "text": "Prima di proseguire attendiamo verifica del lavoro effettuato dai miei collaboratori",
+    "created_date": "2021-06-10T02:05:49.243",
+    "published_date": "2021-06-13T13:54:37.777",
+    "unique_code": "5f623f80-c990-11eb-81a8-27938ad3fa98"
+  }
+}
+]

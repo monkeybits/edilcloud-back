@@ -132,7 +132,7 @@ class TrackerDocumentEditView(
             'title', 'description', 'document', 'folder'
         ]
         self.document_response_include_fields = [
-            'id', 'title', 'description', 'document',
+            'id', 'title', 'description', 'document', 'extension',
             'date_create', 'date_last_modify', 'is_public', 'folder'
         ]
         super(TrackerDocumentEditView, self).__init__(*args, **kwargs)

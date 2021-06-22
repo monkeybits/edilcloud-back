@@ -246,7 +246,7 @@ class TrackerPhotoEditView(
             'title', 'pub_date', 'photo', 'note', 'tags', 'folder'
         ]
         self.photo_response_include_fields = [
-            'id', 'title', 'pub_date', 'photo',
+            'id', 'title', 'pub_date', 'photo', 'extension',
             'tags', 'note', 'is_public', 'photo_64', 'extension', 'folder'
         ]
         super(TrackerPhotoEditView, self).__init__(*args, **kwargs)
@@ -402,7 +402,7 @@ class TrackerVideoEditView(
             'title', 'pub_date', 'video', 'tags', 'note', 'folder'
         ]
         self.video_response_include_fields = [
-            'id', 'title', 'pub_date', 'video',
+            'id', 'title', 'pub_date', 'video', 'extension',
             'tags', 'note', 'extension', 'is_public', 'folder'
         ]
         super(TrackerVideoEditView, self).__init__(*args, **kwargs)

@@ -122,6 +122,8 @@ class DocumentAddSerializer(
 class DocumentEditSerializer(
         JWTPayloadMixin,
         DynamicFieldsModelSerializer):
+    extension = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Document
         fields = '__all__'
@@ -144,3 +146,6 @@ class DocumentEditSerializer(
         validated_data['id'] = instance.id
         document = self.profile.edit_document(validated_data)
         return document
+
+    def get_extension(self, obj):
+        return obj.get_file_extension()[1:]

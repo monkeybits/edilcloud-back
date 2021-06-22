@@ -1,0 +1,313 @@
+[
+  {
+  "model": "project.comment",
+  "pk": 38,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 17,
+    "author": 15,
+    "text": "Lunedi partiamo con gli scavi in questo punto",
+    "created_date": "2021-06-10T02:43:55.263",
+    "unique_code": "b26c3c80-c995-11eb-a384-031a087e793e"
+    }
+  },
+  {
+  "model": "project.comment",
+  "pk": 39,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 17,
+    "author": 9,
+    "text": "Grazie, avvisa tu l'idraulico quando sei pronto",
+    "created_date": "2021-06-10T02:44:25.099",
+    "unique_code": "c4479df0-c995-11eb-9a1a-732aca5b9c3f"
+  }
+},{
+  "model": "project.comment",
+  "pk": 37,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 18,
+    "author": 12,
+    "text": "Ho gi\u00e0 aggiornato e condiviso i disegni aggiornati",
+    "created_date": "2021-06-10T02:43:07.902",
+    "unique_code": "963f1a00-c995-11eb-9196-136aec721bc8"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 100,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 18,
+    "author": 9,
+    "text": "Ok grazie Mario",
+    "created_date": "2021-06-15T20:28:19.055",
+    "unique_code": "37a7c190-ce18-11eb-b51e-31f0f9d76bc2"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 14,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 20,
+    "author": 18,
+    "text": "Stiamo aspettando i container delle macerie",
+    "created_date": "2021-06-09T01:55:28.878",
+    "unique_code": "c3fafb10-c8c5-11eb-aa62-7bbf61235a98"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 16,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 20,
+    "author": 15,
+    "text": "Il container arriva domani perch\u00e8 hanno avuto dei problemi con il trasporto. Lavorate in modo sicuro e cominciate a pulire il cantiere",
+    "created_date": "2021-06-09T01:58:28.208",
+    "unique_code": "2ecf27e0-c8c6-11eb-903c-1789bf000944"
+  }
+},
+{
+  "model": "project.comment",
+  "pk": 17,
+  "fields": {
+    "ordering": 0,
+    "parent": 16,
+    "post": 20,
+    "author": 18,
+    "text": "@Pietro Pancini Ti avviso che il container \u00e8 arrivato e abbiamo pulito il cantiere",
+    "created_date": "2021-06-09T02:05:04.329",
+    "unique_code": "1aff7b10-c8c7-11eb-aa62-7bbf61235a98"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 15,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 21,
+    "author": 15,
+    "text": "Le misure le trovi nel disegno in allegato, in giornata passa l'architetto e chiedi conferma delle misure",
+    "created_date": "2021-06-09T01:57:22.680",
+    "unique_code": "07ad4d90-c8c6-11eb-903c-1789bf000944"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 18,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 24,
+    "author": 23,
+    "text": "Si chiama pure l'impresa edile e fai coprire",
+    "created_date": "2021-06-09T02:22:39.110",
+    "unique_code": "8f98f580-c8c9-11eb-903c-1789bf000944"
+  }
+},
+{
+  "model": "project.comment",
+  "pk": 19,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 24,
+    "author": 12,
+    "text": "Ok perfetto, ti ringrazio..Domani sono sul posto",
+    "created_date": "2021-06-09T02:24:04.949",
+    "unique_code": "c2a420d0-c8c9-11eb-aa62-7bbf61235a98"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 22,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 27,
+    "author": 12,
+    "text": "Ottimo lavoro Pietro, ti possa dire con certezza che l'architetto sar\u00e0 presente in cantiere domani mattina per le verifiche",
+    "created_date": "2021-06-09T13:22:25.893",
+    "unique_code": "bb4f4740-c925-11eb-82ed-ebc1ba909e4c"
+  }
+},
+{
+  "model": "project.comment",
+  "pk": 23,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 27,
+    "author": 12,
+    "text": "Dopo le verifiche procederemo con la demolizione del muro portante",
+    "created_date": "2021-06-09T13:24:00.504",
+    "unique_code": "f3c59fc0-c925-11eb-82ed-ebc1ba909e4c"
+  }
+},
+{
+  "model": "project.comment",
+  "pk": 24,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 27,
+    "author": 32,
+    "text": "ok Mario, per noi non ci sono problemi",
+    "created_date": "2021-06-09T13:27:24.150",
+    "unique_code": "6d1cb430-c926-11eb-b96c-678171671d4b"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 25,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 28,
+    "author": 18,
+    "text": "Buongiorno Architetto, come da lei richiesto la foto del sottofondo. Per qualsiasi domanda resto a disposizione",
+    "created_date": "2021-06-09T15:26:12.344",
+    "unique_code": "055c4750-c937-11eb-81a8-27938ad3fa98"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 40,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 28,
+    "author": 9,
+    "text": "Grazie Luca, ho verificato e il lavoro \u00e8 perfetto",
+    "created_date": "2021-06-10T02:45:58.699",
+    "unique_code": "fc1162c0-c995-11eb-9a1a-732aca5b9c3f"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 27,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 29,
+    "author": 27,
+    "text": "Osman giusta osservazione, ho verificato il disegno in allegato e in quel punto \u00e8 stata tralasciata una scatoletta. Ho gia allertato il geometra.",
+    "created_date": "2021-06-09T16:16:24.902",
+    "unique_code": "0932c690-c93e-11eb-81a8-27938ad3fa98"
+  }
+},
+{
+  "model": "project.comment",
+  "pk": 28,
+  "fields": {
+    "ordering": 0,
+    "parent": 27,
+    "post": 29,
+    "author": 28,
+    "text": "@Andrea Giustini ricevuto, proseguo con la posa dei tubi flessibili nella zona giorno",
+    "created_date": "2021-06-09T16:18:28.350",
+    "unique_code": "52c8f8b0-c93e-11eb-9ffd-a336583f3392"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 32,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 29,
+    "author": 12,
+    "text": "Ho chiamato il cliente e mi ha detto di lasciarla pure fuori, ho segnato e gi\u00e0 modificato il disegno che trovi in allegato nella fase di lavoro",
+    "created_date": "2021-06-09T16:30:56.300",
+    "unique_code": "10895e20-c940-11eb-9a1a-732aca5b9c3f"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 29,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 30,
+    "author": 28,
+    "text": "Andrea ho tenuto il riferimento segnato quindi era impossibile sbagliare. Ho utilizzato differenti colori per i tubi flessibili. Quello verde \u00e8 per il cavo lan",
+    "created_date": "2021-06-09T16:25:41.352",
+    "unique_code": "54cb62f0-c93f-11eb-9ffd-a336583f3392"
+  }
+},
+{
+  "model": "project.comment",
+  "pk": 30,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 30,
+    "author": 12,
+    "text": "Nessun problema Andrea, ho controllato anche io e tutte le misure sono corrette.",
+    "created_date": "2021-06-09T16:27:56.699",
+    "unique_code": "a58d36f0-c93f-11eb-9a1a-732aca5b9c3f"
+  }
+},
+{
+  "model": "project.comment",
+  "pk": 31,
+  "fields": {
+    "ordering": 0,
+    "parent": 29,
+    "post": 30,
+    "author": 12,
+    "text": "@Osma Daka hai fatto bene a segnalarlo! Ottimo lavoro",
+    "created_date": "2021-06-09T16:28:59.656",
+    "unique_code": "cb170c20-c93f-11eb-9a1a-732aca5b9c3f"
+  }
+},
+  {
+  "model": "project.comment",
+  "pk": 33,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 31,
+    "author": 28,
+    "text": "Perfetto, attendo istruzioni dal titolare e dall'impresa edile",
+    "created_date": "2021-06-09T16:34:11.794",
+    "unique_code": "8509bd30-c940-11eb-9ffd-a336583f3392"
+  }
+},
+{
+  "model": "project.comment",
+  "pk": 34,
+  "fields": {
+    "ordering": 0,
+    "parent": null,
+    "post": 31,
+    "author": 27,
+    "text": "Osman la scanalatura viene fatta domani sera, venerdi mattina procedi con la posa dei tubi",
+    "created_date": "2021-06-09T16:35:28.003",
+    "unique_code": "b287b460-c940-11eb-81a8-27938ad3fa98"
+  }
+},
+{
+  "model": "project.comment",
+  "pk": 35,
+  "fields": {
+    "ordering": 0,
+    "parent": 34,
+    "post": 31,
+    "author": 28,
+    "text": "@Andrea Giustini ricevuto",
+    "created_date": "2021-06-09T16:35:49.401",
+    "unique_code": "bf585820-c940-11eb-9ffd-a336583f3392"
+  }
+}
+]

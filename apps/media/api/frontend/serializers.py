@@ -187,7 +187,7 @@ def get_upload_folder_path2(instance, subpath, folder, is_public, create=False, 
     return os.path.join(media_root, type, format(media_dir1), format(media_dir2))
 
 
-class PhotoMoveSerializer(
+class   PhotoMoveSerializer(
     JWTPayloadMixin,
     ArrayFieldInMultipartMixin,
     DynamicFieldsModelSerializer):
@@ -431,7 +431,7 @@ class VideoEditSerializer(
         return video
 
     def get_extension(self, obj):
-        return obj.get_file_extension()
+        return obj.get_file_extension()[1:]
 
 
 class FolderSerializer(

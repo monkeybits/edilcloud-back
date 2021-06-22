@@ -1,0 +1,23 @@
+{
+  "model": "project.project",
+  "pk": 4,
+  "fields": {
+    "creator": 5,
+    "last_modifier": 5,
+    "date_create": "2021-06-01T13:28:28.637",
+    "date_last_modify": "2021-06-10T19:57:36.395",
+    "ordering": 0,
+    "company": 3,
+    "referent": null,
+    "shared_project": null,
+    "name": "Villa Chiara",
+    "description": "Antica villa degli anni 30 completamente ristrutturata",
+    "address": "Via Santa LIberata 11, 24050 Bariano (BG)",
+    "date_start": "2021-06-13",
+    "date_end": "2021-12-31",
+    "status": 1,
+    "tags": {},
+    "logo": "public/project/logo/vi/villa-chiara.png",
+    "note": ""
+  }
+}

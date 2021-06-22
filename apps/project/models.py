@@ -569,6 +569,7 @@ class Team(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         choices=settings.PROJECT_TEAM_ROLE_CHOICES,
         verbose_name=_('role'),
     )
+    disabled = models.BooleanField(default=False, verbose_name=_('is disabled'))
     project_invitation_date = models.DateTimeField(
         blank=True, null=True,
         verbose_name=_('project invitation date'),

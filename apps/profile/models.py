@@ -2562,10 +2562,12 @@ class OwnerProfile(Profile):
         # member = self.list_waiting_members(member.project.id).get(id=member.id)
         if member.status == 1:
             member.status = 0
+            member.disabled = True
             member.save()
         else:
             member.status = 0
             member.invitation_refuse_date = datetime.datetime.now()
+            member.disabled = True
             member.save()
         return member
 

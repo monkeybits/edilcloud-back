@@ -792,7 +792,7 @@ class TrackerProjectTeamListView(
 
     def __init__(self, *args, **kwargs):
         self.team_response_include_fields = [
-            'id', 'profile', 'role', 'status'
+            'id', 'profile', 'role', 'status', 'project_invitation_date', 'disabled'
         ]
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'position',
@@ -2163,7 +2163,7 @@ class TrackerTeamDisableView(
 
     def __init__(self, *args, **kwargs):
         self.team_request_include_fields = []
-        self.team_response_include_fields = ['id', 'project', 'profile', 'role']
+        self.team_response_include_fields = ['id', 'project', 'profile', 'role', 'disabled']
         self.project_response_include_fields = ['id', 'name', 'description', 'date_start', 'date_end', ]
         self.profile_response_include_fields = ['id', 'first_name', 'position', 'last_name']
         super(TrackerTeamDisableView, self).__init__(*args, **kwargs)

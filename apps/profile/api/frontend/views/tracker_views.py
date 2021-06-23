@@ -936,7 +936,7 @@ class TrackerCompanyEditView(
                 for row in qs:
                     category_field[row.code] = row.name
                 request.data['category'] = category_field
-        return super(TrackerCompanyEditView, self).put(request, *args, **kwargs)
+        return self.update(request, *args, **kwargs)
 
 
 class TrackerCompanyEnableView(

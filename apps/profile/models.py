@@ -1741,6 +1741,8 @@ class OwnerProfile(Profile):
         Update company data
         """
         company = self.list_companies().get(id=company_dict['id'])
+        if company.name == company_dict['name']:
+            company_dict.pop('name')
         company.__dict__.update(**company_dict)
         company.save()
         return company

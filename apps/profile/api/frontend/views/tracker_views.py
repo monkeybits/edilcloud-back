@@ -904,7 +904,7 @@ class TrackerCompanyEditView(
             'name', 'brand', 'description', 'tax_code',
             'vat_number', 'url',
             'email', 'phone', 'phone2', 'fax',
-            'note', 'logo', 'category',
+            'note', 'logo',
             'color', 'country', 'address',
             'sdi', 'province', 'cap',
             'pec', 'billing_email'
@@ -919,24 +919,24 @@ class TrackerCompanyEditView(
             'pec', 'billing_email'
         ]
         super(TrackerCompanyEditView, self).__init__(*args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        if not request.POST._mutable:
-            request.POST._mutable = True
-        if 'category' in request.data:
-            category_field = {}
-            if isinstance(request.data['category'], str):
-                category_list = request.data['category'].split(',')
-                qs = Category.objects.filter(code__in=category_list)
-                for row in qs:
-                    category_field[row.code] = row.name
-                request.data['category'] = json.dumps(category_field)
-            else:
-                qs = Category.objects.filter(code__in=request.data['category'])
-                for row in qs:
-                    category_field[row.code] = row.name
-                request.data['category'] = category_field
-        return self.update(request, *args, **kwargs)
+    #
+    # def put(self, request, *args, **kwargs):
+    #     if not request.POST._mutable:
+    #         request.POST._mutable = True
+    #     if 'category' in request.data:
+    #         category_field = {}
+    #         if isinstance(request.data['category'], str):
+    #             category_list = request.data['category'].split(',')
+    #             qs = Category.objects.filter(code__in=category_list)
+    #             for row in qs:
+    #                 category_field[row.code] = row.name
+    #             request.data['category'] = json.dumps(category_field)
+    #         else:
+    #             qs = Category.objects.filter(code__in=request.data['category'])
+    #             for row in qs:
+    #                 category_field[row.code] = row.name
+    #             request.data['category'] = category_field
+    #     return self.update(request, *args, **kwargs)
 
 
 class TrackerCompanyEnableView(

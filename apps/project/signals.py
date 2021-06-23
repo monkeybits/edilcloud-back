@@ -268,9 +268,6 @@ def team_notification(sender, instance, **kwargs):
 @receiver([post_save, post_delete], sender=project_models.Task)
 def task_notification(sender, instance, **kwargs):
     try:
-        company_staff = instance.project.profiles.all().union(
-            instance.project.company.get_owners_and_delegates()
-        )
         profile = get_current_profile()
     except:
         return
@@ -278,17 +275,7 @@ def task_notification(sender, instance, **kwargs):
     # then we don't create notifications (Useful at admin & shell for debugging)
     if not profile:
         return
-
     try:
-        if instance.assigned_company:
-            company_staff = company_staff.union(
-                instance.assigned_company.get_owners_and_delegates()
-            )
-
-        if instance.shared_task:
-            company_staff = company_staff.union(
-                instance.shared_task.project.company.get_owners_and_delegates()
-            )
 
         if 'created' in kwargs:
             if kwargs['created']:
@@ -296,9 +283,9 @@ def task_notification(sender, instance, **kwargs):
                     _('New assignment for your company')
                 ])
             else:
-                subject = _('Task (%s) updated in project (%s)' %
-                            (instance.name, instance.project.name))
-                return
+                subject = build_array_message(EMOJI_UNICODES['clipboard'], [
+                    _('New assignment for your company')
+                ])
         else:
             subject = _('Task (%s) deleted in project (%s)' %
                         (instance.name, instance.project.name))
@@ -318,30 +305,31 @@ def task_notification(sender, instance, **kwargs):
             'project_id': instance.project.id
         })
         type = ContentType.objects.get(model=sender.__name__.lower())
-
-        notify_obj = notify_models.Notify.objects.create(
-            sender=profile, subject=subject, body=body,
-            content_type=type, object_id=instance.id,
-            creator=profile.user, last_modifier=profile.user
-        )
-        for staff in company_staff:
-            bell_status = get_bell_notification_status(
-                staff, sender.__name__.lower()
+        if instance.assigned_company:
+            company_staff = instance.assigned_company.list_contacts()
+            notify_obj = notify_models.Notify.objects.create(
+                sender=profile, subject=subject, body=body,
+                content_type=type, object_id=instance.id,
+                creator=profile.user, last_modifier=profile.user
             )
-            email_status = get_email_notification_status(
-                staff, sender.__name__.lower()
-            )
-            translation.activate(staff.user.get_main_profile().language)
-            if bell_status or email_status:
-                notify_recipient = notify_models.NotificationRecipient(
-                    notification=notify_obj, is_email=email_status,
-                    is_notify=bell_status, recipient=staff,
-                    creator=profile.user, last_modifier=profile.user)
-                notify_recipient.save()
-                body = json.loads(body)
-                body['url'] = endpoint + '/{}/'.format(instance.id)
-                body = json.dumps(body)
-                send_push_notification(notify_obj, staff, subject, body)
+            for staff in company_staff:
+                bell_status = get_bell_notification_status(
+                    staff, sender.__name__.lower()
+                )
+                email_status = get_email_notification_status(
+                    staff, sender.__name__.lower()
+                )
+                translation.activate(staff.user.get_main_profile().language)
+                if bell_status or email_status:
+                    notify_recipient = notify_models.NotificationRecipient(
+                        notification=notify_obj, is_email=email_status,
+                        is_notify=bell_status, recipient=staff,
+                        creator=profile.user, last_modifier=profile.user)
+                    notify_recipient.save()
+                    body = json.loads(body)
+                    body['url'] = endpoint + '/{}/'.format(instance.id)
+                    body = json.dumps(body)
+                    send_push_notification(notify_obj, staff, subject, body)
 
     except Exception as e:
         print(e)
@@ -428,14 +416,10 @@ def activity_notification(sender, instance, **kwargs):
 def alert_notification(sender, instance, **kwargs):
     try:
         if instance.sub_task is not None:
-            company_staff = instance.sub_task.workers.all().union(
-                instance.sub_task.task.project.company.get_owners_and_delegates()
-            )
+            company_staff = instance.author.company.profiles.all()
             post_for_model = 'activity'
         else:
-            company_staff = instance.task.project.profiles.all().union(
-                instance.task.project.company.get_owners_and_delegates()
-            )
+            company_staff = instance.author.company.profiles.all()
             post_for_model = 'task'
 
     except:
@@ -445,7 +429,9 @@ def alert_notification(sender, instance, **kwargs):
     # then we don't create notifications (Useful at admin & shell for debugging)
     if not profile:
         return
-
+    company_staff = company_staff.union(
+        profile.company.profiles.all()
+    )
     try:
         if post_for_model == 'activity':
             if instance.alert:
@@ -679,17 +665,14 @@ def post_notification(sender, instance, request, **kwargs):
 # @receiver([post_save, post_delete], sender=project_models.Comment)
 def comment_notification(sender, instance, kwargs=None):
     try:
+        authors_list = []
         if instance.post.sub_task is not None:
-            company_staff = instance.post.sub_task.workers.all().union(
-                instance.post.sub_task.task.project.company.get_owners_and_delegates()
-            )
+            company_staff = instance.post.author
             post_for_model = 'activity'
         else:
-            company_staff = instance.post.task.project.profiles.all().union(
-                instance.post.task.project.company.get_owners_and_delegates()
-            )
+            company_staff = instance.post.author
             post_for_model = 'task'
-
+        authors_list.append(company_staff)
     except Exception as e:
         logging.error(e.__str__())
     profile = get_current_profile()
@@ -697,7 +680,10 @@ def comment_notification(sender, instance, kwargs=None):
     # then we don't create notifications (Useful at admin & shell for debugging)
     if not profile:
         return
-
+    for comment in instance.post.comment_set.all():
+        if not comment.author in authors_list:
+            authors_list.append(comment.author)
+    company_staff = authors_list
     try:
         if post_for_model == 'activity':
             subject = build_array_message(EMOJI_UNICODES['speech_baloon'], [

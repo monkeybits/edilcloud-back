@@ -1137,6 +1137,7 @@ class TaskEditSerializer(
         return attrs
 
     def update(self, instance, validated_data):
+        from apps.project.signals import task_notification
         validated_data['id'] = instance.id
         if (not instance.assigned_company) and validated_data['assigned_company']:
             task = self.profile.assign_task(validated_data)
@@ -1155,6 +1156,8 @@ class TaskEditSerializer(
             act.datetime_start = act.datetime_start + datetime.timedelta(days=duration)
             act.datetime_end = act.datetime_end + datetime.timedelta(days=duration)
             act.save()
+        if instance.assigned_company is None and validated_data['assigned_company'] is not None:
+            task_notification(task._meta.model, task, **{'created': False})
         return task
 
 

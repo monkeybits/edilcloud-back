@@ -88,7 +88,8 @@ EMOJI_UNICODES = {
     'activity': '\U00002692',
     'clipboard': '\U0001F4CB',
     'pushpin': '\U0001F4CC',
-    'envelope': '\U0001F4E9'
+    'envelope': '\U0001F4E9',
+    'locked': '\U0001f510'
 }
 
 
@@ -254,6 +255,57 @@ def team_notification(sender, instance, **kwargs):
                 staff, sender.__name__.lower()
             )
             translation.activate(staff.user.get_main_profile().language)
+            if bell_status or email_status:
+                notify_recipient = notify_models.NotificationRecipient(
+                    notification=notify_obj, is_email=email_status,
+                    is_notify=bell_status, recipient=staff,
+                    creator=profile.user, last_modifier=profile.user)
+                notify_recipient.save()
+                send_push_notification(notify_obj, staff, subject, body)
+    except Exception as e:
+        print(e)
+
+
+def close_project_notification(sender, instance, **kwargs):
+    company_staff = instance.project.profiles.all().union(
+        instance.project.company.get_owners_and_delegates()
+    )
+    profile = get_current_profile()
+    # If there is no JWT token in the request,
+    # then we don't create notifications (Useful at admin & shell for debugging)
+    if not profile:
+        return
+
+    try:
+        subject = build_array_message(EMOJI_UNICODES['1f510'], [
+            _('Project closed')
+        ])
+        endpoint = '/apps/projects'.format(str(instance.project.id))
+        body = json.dumps({
+            'content': build_array_message(None, [
+                _('Closed project'),
+                instance.project.name,
+                _('from company'),
+                instance.project.company.name
+            ]),
+            'url': endpoint,
+            'project_id': instance.project.id
+        })
+        type = ContentType.objects.get(model=sender.__name__.lower())
+
+        notify_obj = notify_models.Notify.objects.create(
+            sender=profile, subject=subject, body=body,
+            content_type=type, object_id=instance.id,
+            creator=profile.user, last_modifier=profile.user
+        )
+        for staff in company_staff:
+            bell_status = get_bell_notification_status(
+                staff, sender.__name__.lower()
+            )
+            email_status = get_email_notification_status(
+                staff, sender.__name__.lower()
+            )
+            translation.activate(profile.user.get_main_profile().language)
             if bell_status or email_status:
                 notify_recipient = notify_models.NotificationRecipient(
                     notification=notify_obj, is_email=email_status,

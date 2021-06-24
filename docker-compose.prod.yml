@@ -26,7 +26,7 @@ services:
       - db
     environment:
       - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
-      - ENV_NAME=prod
+      - ENV_NAME=test
       - SOCKET_HOST=35.176.179.55
       - SOCKET_PORT=6969
       - SOCKET_URL=https://ws.edilcloud.io

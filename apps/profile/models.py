@@ -47,7 +47,6 @@ from web.core.models import UserModel, DateModel, StatusModel, OrderedModel, Cle
 from web.functions import zerofill
 from web.token import TokenGenerator
 from web.api.views import get_first_last_dates_of_month_and_year
-from ..project.signals import close_project_notification
 
 User = get_user_model()
 
@@ -2000,6 +1999,8 @@ class OwnerProfile(Profile):
         """
         Disable a company project, if it is enabled
         """
+        from ..project.signals import close_project_notification
+
         project = self.get_project(project.id)
         if project.status == 1:
             project.status = 0

@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
-
 import os
 import datetime
-
-import filetype
+import dotenv
 import stripe
 from filetype.types import Type as EdilType
 
 gettext = lambda s: s
+
+dotenv.read_dotenv(dotenv=".env.{}".format(os.environ.get('ENV_NAME')))
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))
@@ -358,7 +357,6 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
-
     'facebook': {
         'METHOD': 'oauth2',
         'SCOPE': ['email', 'public_profile', 'user_friends'],
@@ -486,13 +484,13 @@ UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media')
 PROTOCOL = 'https'
 DEFAULT_FROM_EMAIL = 'notification@edilcloud.io'
 REGISTRATION_FROM_EMAIL = 'registration@edilcloud.io'
-REGISTRATION_EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
+REGISTRATION_EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 SERVER_EMAIL = 'mail.edilcloud.io'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'mail.edilcloud.io'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'notification@edilcloud.io'
-EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -503,15 +501,14 @@ NEW_SPONSOR_REQUEST_RECIPIENT = 'edilcloud.activation@gmail.com'
 # STRIPE_PUBLIC_KEY ='pk_live_51Hr7tlCPJO2Tjuq18IVS505Hh91jthPuDAeiHHZX4zRIex1sDRj0ezBSOypO7cUNRLCkXEup8YE2bbvcjnoCyI9400m9fKRBGf'
 # STRIPE_SECRET_KEY = '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'
 # test
-STRIPE_PUBLIC_KEY = 'pk_test_51Hr7tlCPJO2Tjuq1PUy2FdjQAvuDkRPNxYWvN2YwdOWqykdtKBZArXrFRXjZ4R7IkcAwDmAbwnd57M5gPplJIjej00BrnpqbdI'
-STRIPE_SECRET_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_LIVE_MODE = False  # Change to True in production
-DJSTRIPE_WEBHOOK_SECRET = "whsec_DPmr9NI6XAaAveZIGqo0DDxHqkSnsyg8"
-STRIPE_TEST_SECRET_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
-STRIPE_TEST_PUBLIC_KEY = 'pk_test_51Hr7tlCPJO2Tjuq1PUy2FdjQAvuDkRPNxYWvN2YwdOWqykdtKBZArXrFRXjZ4R7IkcAwDmAbwnd57M5gPplJIjej00BrnpqbdI'
-TEST_API_KEY = 'sk_test_51Hr7tlCPJO2Tjuq1vlNb85U8zE9KmftgDTchrjGICQHyX6q7lAY717JlQhnMKAlAc3pNO9Kqy0bhDwYtoZJqzVJv00i11jmePc'
+DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET')
+STRIPE_TEST_SECRET_KEY = os.environ.get('STRIPE_TEST_SECRET_KEY')
+STRIPE_TEST_PUBLIC_KEY = os.environ.get('STRIPE_TEST_PUBLIC_KEY')
+TEST_API_KEY = os.environ.get('TEST_API_KEY')
 
-# PAYMENTS SETTINGS
 TRIAL_MAX_DAYS = 14
 TRIAL_PLAN = 'price_1I0OpZCPJO2Tjuq1xjOnYhVm'  # standard plan
 stripe.api_key = STRIPE_SECRET_KEY

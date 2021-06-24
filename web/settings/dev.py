@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
-
-# Put here your development specific settings
 import os
+import dotenv
+
+dotenv.read_dotenv(dotenv=".env.{}".format(os.environ.get('ENV_NAME')))
 
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
@@ -10,5 +10,3 @@ DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET')
 STRIPE_TEST_SECRET_KEY = os.environ.get('STRIPE_TEST_SECRET_KEY')
 STRIPE_TEST_PUBLIC_KEY = os.environ.get('STRIPE_TEST_PUBLIC_KEY')
 TEST_API_KEY = os.environ.get('TEST_API_KEY')
-from djstripe import settings
-settings.TEST_API_KEY = TEST_API_KEY

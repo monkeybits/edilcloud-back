@@ -1,5 +1,8 @@
 media/*
 migrations/
 reset_pgadmin.sh
-.env.*
+.env.dev
+.env.local
+.env.prod
+.env.test
 serviceAccountKey.json

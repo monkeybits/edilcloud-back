@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
-
 import os
 import datetime
-
-import filetype
+import dotenv
 import stripe
 from filetype.types import Type as EdilType
 
 gettext = lambda s: s
+
+dotenv.read_dotenv(dotenv=".env.{}".format(os.environ.get('ENV_NAME')))
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))
@@ -358,7 +357,6 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
-
     'facebook': {
         'METHOD': 'oauth2',
         'SCOPE': ['email', 'public_profile', 'user_friends'],
@@ -486,13 +484,13 @@ UPLOAD_FILE_PATH = os.path.join(BASE_DIR, 'media')
 PROTOCOL = 'https'
 DEFAULT_FROM_EMAIL = 'notification@edilcloud.io'
 REGISTRATION_FROM_EMAIL = 'registration@edilcloud.io'
-REGISTRATION_EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
+REGISTRATION_EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 SERVER_EMAIL = 'mail.edilcloud.io'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'mail.edilcloud.io'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'notification@edilcloud.io'
-EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -510,8 +508,7 @@ DJSTRIPE_WEBHOOK_SECRET = os.environ.get('DJSTRIPE_WEBHOOK_SECRET')
 STRIPE_TEST_SECRET_KEY = os.environ.get('STRIPE_TEST_SECRET_KEY')
 STRIPE_TEST_PUBLIC_KEY = os.environ.get('STRIPE_TEST_PUBLIC_KEY')
 TEST_API_KEY = os.environ.get('TEST_API_KEY')
-from djstripe import settings
-settings.TEST_API_KEY = TEST_API_KEY# PAYMENTS SETTINGS
+
 TRIAL_MAX_DAYS = 14
 TRIAL_PLAN = 'price_1I0OpZCPJO2Tjuq1xjOnYhVm'  # standard plan
 stripe.api_key = STRIPE_SECRET_KEY

@@ -434,6 +434,8 @@ class CompanyAddSerializer(
 class CompanyEditSerializer(
         JWTPayloadMixin,
         DynamicFieldsModelSerializer):
+    subscription = serializers.SerializerMethodField()
+    
     class Meta:
         model = models.Company
         fields = '__all__'
@@ -452,6 +454,23 @@ class CompanyEditSerializer(
             return view.company_request_include_fields
         return super(CompanyEditSerializer, self).get_field_names(*args, **kwargs)
 
+    def get_subscription(self, obj):
+        if obj.subscription != '':
+            sub = stripe.Subscription.retrieve(obj.subscription)
+            return {
+                'id': sub.id,
+                'plan_name': stripe.Product.retrieve(sub.plan.product).name,
+                'status': sub.status,
+                'trial_start': str(
+                    datetime.datetime.fromtimestamp(sub.trial_start)) if sub.status == 'trialing' else None,
+                'trial_end': str(datetime.datetime.fromtimestamp(sub.trial_end)) if sub.status == 'trialing' else None,
+                'days_left': (datetime.datetime.fromtimestamp(
+                    sub.trial_end) - datetime.datetime.now()).days if sub.status == 'trialing' else (
+                            datetime.datetime.fromtimestamp(sub.current_period_end) - datetime.datetime.now()).days
+            }
+        else:
+            return {}
+        
     def update(self, instance, validated_data):
         validated_data['id'] = instance.id
         company = self.profile.edit_company(validated_data)

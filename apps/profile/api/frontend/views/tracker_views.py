@@ -916,7 +916,9 @@ class TrackerCompanyEditView(
             'note', 'logo', 'category',
             'color', 'country', 'address',
             'sdi', 'province', 'cap',
-            'pec', 'billing_email'
+            'pec', 'billing_email',
+            'customer', 'trial_used',
+            'subscription'
         ]
         super(TrackerCompanyEditView, self).__init__(*args, **kwargs)
     #

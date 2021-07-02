@@ -80,7 +80,10 @@ class TrackerNotificationRecipientListView(
             'object_id', 'project_id'
         ]
         self.profile_response_include_fields = [
-            'id', 'first_name', 'last_name', 'photo'
+            'id', 'first_name', 'last_name', 'photo', 'company', 'position'
+        ]
+        self.company_response_include_fields = [
+            'id', 'name', 'category', 'color_project'
         ]
         super(TrackerNotificationRecipientListView, self).__init__(*args, **kwargs)
 

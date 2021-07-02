@@ -113,14 +113,14 @@ def send_push_notification(notify_obj, recipient, subject, body):
                     content_available='1',
                     custom_data={
                         "custom_data": body['content'],
-                        "redirect_url": "https://test.edilcloud.io" + body['url']
+                        "redirect_url": "https://test.edilcloud.io/apps/todo/all/notification"
                     }
                 )
             ),
         ),
         data={
             "custom_data": body['content'],
-            "redirect_url": "https://app.edilcloud.io" + body['url']
+            "redirect_url": "https://test.edilcloud.io/apps/todo/all/notification"
         },
         topic=topic,
     )

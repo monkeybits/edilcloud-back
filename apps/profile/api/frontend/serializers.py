@@ -25,7 +25,7 @@ User = get_user_model()
 
 
 class UserSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
@@ -38,7 +38,7 @@ class UserSerializer(
 
 
 class PreferenceSerializer(
-        serializers.ModelSerializer):
+    serializers.ModelSerializer):
     total_size = serializers.SerializerMethodField()
     plan_permissions = serializers.SerializerMethodField()
 
@@ -66,8 +66,8 @@ class PreferenceSerializer(
 
 
 class PreferenceEditSerializer(
-        JWTPayloadMixin,
-        serializers.ModelSerializer):
+    JWTPayloadMixin,
+    serializers.ModelSerializer):
     class Meta:
         model = models.Preference
         fields = '__all__'
@@ -85,8 +85,9 @@ class PreferenceEditSerializer(
         preference = self.profile.edit_preference(validated_data)
         return preference
 
+
 class TalkSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     content_type_name = serializers.ReadOnlyField(source="get_content_type_model")
     unread_count = serializers.SerializerMethodField()
 
@@ -101,7 +102,6 @@ class TalkSerializer(
             self.request = kwargs['context']['request']
             payload = self.get_payload()
             self.profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-
 
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
@@ -119,13 +119,15 @@ class TalkSerializer(
             #     project_id = obj.object_id
             # else:
             #     company_id = obj.object_id
-            counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False, message__talk=obj).count()
+            counter = MessageProfileAssignment.objects.filter(profile=self.profile, read=False,
+                                                              message__talk=obj).count()
             return counter
         return 0
 
+
 class CompanySerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer, serializers.ModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer, serializers.ModelSerializer):
     projects_count = serializers.ReadOnlyField(source='get_projects_count')
     messages_count = serializers.ReadOnlyField(source='get_messages_count')
     tags_count = serializers.ReadOnlyField(source='get_tags_count')
@@ -159,9 +161,12 @@ class CompanySerializer(
                 'id': sub.id,
                 'plan_name': stripe.Product.retrieve(sub.plan.product).name,
                 'status': sub.status,
-                'trial_start': str(datetime.datetime.fromtimestamp(sub.trial_start)) if sub.status == 'trialing' else None,
+                'trial_start': str(
+                    datetime.datetime.fromtimestamp(sub.trial_start)) if sub.status == 'trialing' else None,
                 'trial_end': str(datetime.datetime.fromtimestamp(sub.trial_end)) if sub.status == 'trialing' else None,
-                'days_left': (datetime.datetime.fromtimestamp(sub.trial_end) - datetime.datetime.now()).days if sub.status == 'trialing' else (datetime.datetime.fromtimestamp(sub.current_period_end) - datetime.datetime.now()).days
+                'days_left': (datetime.datetime.fromtimestamp(
+                    sub.trial_end) - datetime.datetime.now()).days if sub.status == 'trialing' else (
+                            datetime.datetime.fromtimestamp(sub.current_period_end) - datetime.datetime.now()).days
             }
         else:
             return {}
@@ -251,8 +256,9 @@ class CompanySerializer(
         except:
             return 0
 
+
 class PartnershipSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     guest_company = CompanySerializer()
     inviting_company = CompanySerializer()
 
@@ -268,8 +274,8 @@ class PartnershipSerializer(
 
 
 class PartnershipAddSerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     guest_company = CompanySerializer()
 
     class Meta:
@@ -304,13 +310,14 @@ class PartnershipAddSerializer(
             return partnership
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class PartnershipAcceptSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin):
     guest_company = CompanySerializer()
 
     class Meta:
@@ -345,13 +352,14 @@ class PartnershipAcceptSerializer(
             return partnership
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class PartnershipRefuseSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin):
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin):
     guest_company = CompanySerializer()
 
     class Meta:
@@ -386,12 +394,13 @@ class PartnershipRefuseSerializer(
             return partnership
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class CompanyAddSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Company
         fields = '__all__'
@@ -427,15 +436,16 @@ class CompanyAddSerializer(
             )
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class CompanyEditSerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     subscription = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = models.Company
         fields = '__all__'
@@ -466,11 +476,11 @@ class CompanyEditSerializer(
                 'trial_end': str(datetime.datetime.fromtimestamp(sub.trial_end)) if sub.status == 'trialing' else None,
                 'days_left': (datetime.datetime.fromtimestamp(
                     sub.trial_end) - datetime.datetime.now()).days if sub.status == 'trialing' else (
-                            datetime.datetime.fromtimestamp(sub.current_period_end) - datetime.datetime.now()).days
+                        datetime.datetime.fromtimestamp(sub.current_period_end) - datetime.datetime.now()).days
             }
         else:
             return {}
-        
+
     def update(self, instance, validated_data):
         validated_data['id'] = instance.id
         company = self.profile.edit_company(validated_data)
@@ -478,8 +488,8 @@ class CompanyEditSerializer(
 
 
 class CompanyEnableSerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Company
         fields = '__all__'
@@ -504,8 +514,8 @@ class CompanyEnableSerializer(
 
 
 class CompanyDisableSerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Company
         fields = '__all__'
@@ -530,7 +540,7 @@ class CompanyDisableSerializer(
 
 
 class ProfileSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     role = serializers.ReadOnlyField(source="get_role")
     company = CompanySerializer()
     user = UserSerializer()
@@ -576,12 +586,16 @@ class ProfileSerializer(
                 'id': sub.id,
                 'plan_name': stripe.Product.retrieve(sub.plan.product).name,
                 'status': sub.status,
-                'trial_start': str(datetime.datetime.fromtimestamp(sub.trial_start)) if sub.status == 'trialing' else None,
+                'trial_start': str(
+                    datetime.datetime.fromtimestamp(sub.trial_start)) if sub.status == 'trialing' else None,
                 'trial_end': str(datetime.datetime.fromtimestamp(sub.trial_end)) if sub.status == 'trialing' else None,
-                'days_left': (datetime.datetime.fromtimestamp(sub.trial_end) - datetime.datetime.now()).days if sub.status == 'trialing' else (datetime.datetime.fromtimestamp(sub.current_period_end) - datetime.datetime.now()).days
+                'days_left': (datetime.datetime.fromtimestamp(
+                    sub.trial_end) - datetime.datetime.now()).days if sub.status == 'trialing' else (
+                            datetime.datetime.fromtimestamp(sub.current_period_end) - datetime.datetime.now()).days
             }
         else:
             return {}
+
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
@@ -602,8 +616,16 @@ class ProfileSerializer(
         else:
             return True
 
+
 class TeamProfileSerializer(ProfileSerializer):
     photo = serializers.SerializerMethodField()
+    phone = serializers.SerializerMethodField()
+
+    def get_phone(self, obj):
+        main = obj.get_main_profile()
+        if main is None:
+            return ""
+        return main.phone
 
     def get_photo(self, obj):
         main = obj.get_main_profile()
@@ -622,8 +644,9 @@ class TeamProfileSerializer(ProfileSerializer):
             media_url = None
         return media_url
 
+
 class MainProfileAddSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -646,12 +669,13 @@ class MainProfileAddSerializer(
             return profile
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class ProfileInvitationAddSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -679,13 +703,14 @@ class ProfileInvitationAddSerializer(
             return company_profile
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class ProfileAddSerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -790,7 +815,6 @@ class ProfileEditSerializer(
 
         return media_url
 
-
     def update(self, instance, validated_data):
         try:
             try:
@@ -806,7 +830,8 @@ class ProfileEditSerializer(
             return profile
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                str(status.HTTP_500_INTERNAL_SERVER_ERROR), self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                str(status.HTTP_500_INTERNAL_SERVER_ERROR), self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
@@ -840,7 +865,8 @@ class ProfileEnableSerializer(
             return profile
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
@@ -874,12 +900,13 @@ class ProfileDisableSerializer(
             return profile
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class ProfileAcceptInvitationEditSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -907,7 +934,7 @@ class ProfileAcceptInvitationEditSerializer(
 
 
 class ProfileReAcceptInvitationEditSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -937,7 +964,7 @@ class ProfileReAcceptInvitationEditSerializer(
 
 
 class ProfileChangeShowroomVisibilitySerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -964,7 +991,7 @@ class ProfileChangeShowroomVisibilitySerializer(
 
 
 class ProfileChangeComunicaVisibilitySerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -991,7 +1018,7 @@ class ProfileChangeComunicaVisibilitySerializer(
 
 
 class ProfileRefuseInvitationEditSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
@@ -1017,14 +1044,14 @@ class ProfileRefuseInvitationEditSerializer(
 
 
 class ProfileStatusSerializer(
-        serializers.ModelSerializer):
+    serializers.ModelSerializer):
     class Meta:
         model = models.Profile
         fields = '__all__'
 
 
 class ProfileActivitySerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     # to fix circular import
 
     company = CompanySerializer()
@@ -1037,8 +1064,8 @@ class ProfileActivitySerializer(
     def get_field_names(self, *args, **kwargs):
         view = self.get_view
         if view:
-            if 'month' in view.kwargs: self.month =  view.kwargs['month']
-            if 'year' in view.kwargs: self.year =  view.kwargs['year']
+            if 'month' in view.kwargs: self.month = view.kwargs['month']
+            if 'year' in view.kwargs: self.year = view.kwargs['year']
             return view.profile_response_include_fields
         return super(ProfileActivitySerializer, self).get_field_names(*args, **kwargs)
 
@@ -1051,8 +1078,8 @@ class ProfileActivitySerializer(
         date_from, date_to = get_first_last_dates_of_month_and_year(self.month, self.year)
         start_date, end_date = (date_from, date_to)
         query = (
-            Q(datetime_start__gte=date_from, datetime_start__lte=date_to)
-            | Q(datetime_start__lt=date_from, datetime_end__gte=date_from)
+                Q(datetime_start__gte=date_from, datetime_start__lte=date_to)
+                | Q(datetime_start__lt=date_from, datetime_end__gte=date_from)
         )
 
         for activity in obj.activities.filter(query).distinct():
@@ -1063,18 +1090,19 @@ class ProfileActivitySerializer(
                 start_date = start_date.date()
             if isinstance(end_date, datetime.datetime):
                 end_date = end_date.date()
-                
+
             for dt in daterange(start_date, end_date):
                 if not dt.day in days.keys():
                     days[dt.day] = {}
                 if not activity.task.project.id in days[dt.day].keys():
                     days[dt.day][activity.task.project.id] = []
-                days[dt.day][activity.task.project.id].append({'activity': activity.title, 'project': activity.task.project.name})
+                days[dt.day][activity.task.project.id].append(
+                    {'activity': activity.title, 'project': activity.task.project.name})
         return days
 
 
 class FavouriteSerializer(
-        DynamicFieldsModelSerializer):
+    DynamicFieldsModelSerializer):
     company = CompanySerializer()
     company_followed = CompanySerializer()
 
@@ -1090,9 +1118,8 @@ class FavouriteSerializer(
 
 
 class FavouriteAcceptSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin):
-
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin):
     class Meta:
         model = models.Favourite
         fields = '__all__'
@@ -1117,14 +1144,14 @@ class FavouriteAcceptSerializer(
             return favourite
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class SetFavouriteSerializer(
-        DynamicFieldsModelSerializer,
-        JWTPayloadMixin):
-
+    DynamicFieldsModelSerializer,
+    JWTPayloadMixin):
     class Meta:
         model = models.Favourite
         fields = '__all__'
@@ -1149,13 +1176,13 @@ class SetFavouriteSerializer(
             return favourite
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class SponsorSerializer(
     DynamicFieldsModelSerializer):
-
     company = CompanySerializer()
 
     class Meta:
@@ -1164,9 +1191,8 @@ class SponsorSerializer(
 
 
 class SponsorAddSerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
-
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Sponsor
         fields = '__all__'
@@ -1204,14 +1230,14 @@ class SponsorAddSerializer(
             return sponsor
         except Exception as err:
             raise django_api_exception.WhistleAPIException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request, _("{}".format(err.msg if hasattr(err, 'msg') else err))
+                status.HTTP_500_INTERNAL_SERVER_ERROR, self.request,
+                _("{}".format(err.msg if hasattr(err, 'msg') else err))
             )
 
 
 class SponsorEditSerializer(
-        JWTPayloadMixin,
-        DynamicFieldsModelSerializer):
-
+    JWTPayloadMixin,
+    DynamicFieldsModelSerializer):
     class Meta:
         model = models.Sponsor
         fields = '__all__'

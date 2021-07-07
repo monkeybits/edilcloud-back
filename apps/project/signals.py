@@ -217,17 +217,15 @@ def team_notification(sender, instance, **kwargs):
                     "<b>{}</b>".format(instance.project.name)
                 ])
             else:
-                return
-        else:
-            subject = build_array_message(EMOJI_UNICODES['worker1'], [
-                _('You have been deleted from project')
-            ])
-            content = build_array_message(None, [
-                _('User'),
-                "<b>{} {}</b>".format(profile.first_name, profile.last_name),
-                _('has removed you from project'),
-                "<b>{}</b>".format(instance.project.name)
-            ])
+                subject = build_array_message(EMOJI_UNICODES['worker1'], [
+                    _('You have been deleted from project')
+                ])
+                content = build_array_message(None, [
+                    _('User'),
+                    "<b>{} {}</b>".format(profile.first_name, profile.last_name),
+                    _('has removed you from project'),
+                    "<b>{}</b>".format(instance.project.name)
+                ])
 
         endpoint = '/apps/projects/{}/team'.format(str(instance.project.id))
         body = json.dumps({
@@ -243,25 +241,22 @@ def team_notification(sender, instance, **kwargs):
             creator=profile.user, last_modifier=profile.user
         )
 
-        for staff in company_staff:
+        bell_status = get_bell_notification_status(
+            instance.profile, sender.__name__.lower()
+        )
+        email_status = get_email_notification_status(
+            instance.profile, sender.__name__.lower()
+        )
+        translation.activate(instance.profile.user.get_main_profile().language)
+        if bell_status or email_status:
             if 'created' in kwargs:
-                if kwargs['created']:
-                    if instance.profile.id == staff.id:
-                        continue
-            bell_status = get_bell_notification_status(
-                staff, sender.__name__.lower()
-            )
-            email_status = get_email_notification_status(
-                staff, sender.__name__.lower()
-            )
-            translation.activate(staff.user.get_main_profile().language)
-            if bell_status or email_status:
-                notify_recipient = notify_models.NotificationRecipient(
-                    notification=notify_obj, is_email=email_status,
-                    is_notify=bell_status, recipient=staff,
-                    creator=profile.user, last_modifier=profile.user)
-                notify_recipient.save()
-                send_push_notification(notify_obj, staff, subject, body)
+                if not kwargs['created']:
+                    notify_recipient = notify_models.NotificationRecipient(
+                        notification=notify_obj, is_email=email_status,
+                        is_notify=bell_status, recipient=instance.profile,
+                        creator=profile.user, last_modifier=profile.user)
+                    notify_recipient.save()
+                    send_push_notification(notify_obj, instance.profile, subject, body)
     except Exception as e:
         print(e)
 
@@ -373,15 +368,16 @@ def task_notification(sender, instance, **kwargs):
                 )
                 translation.activate(staff.user.get_main_profile().language)
                 if bell_status or email_status:
-                    notify_recipient = notify_models.NotificationRecipient(
-                        notification=notify_obj, is_email=email_status,
-                        is_notify=bell_status, recipient=staff,
-                        creator=profile.user, last_modifier=profile.user)
-                    notify_recipient.save()
-                    body = json.loads(body)
-                    body['url'] = endpoint + '/{}/'.format(instance.id)
-                    body = json.dumps(body)
-                    send_push_notification(notify_obj, staff, subject, body)
+                    if staff != profile:
+                        notify_recipient = notify_models.NotificationRecipient(
+                            notification=notify_obj, is_email=email_status,
+                            is_notify=bell_status, recipient=staff,
+                            creator=profile.user, last_modifier=profile.user)
+                        notify_recipient.save()
+                        body = json.loads(body)
+                        body['url'] = endpoint + '/{}/'.format(instance.id)
+                        body = json.dumps(body)
+                        send_push_notification(notify_obj, staff, subject, body)
 
     except Exception as e:
         print(e)
@@ -450,16 +446,17 @@ def activity_notification(sender, instance, **kwargs):
             )
             translation.activate(staff.user.get_main_profile().language)
             if bell_status or email_status:
-                notify_recipient = notify_models.NotificationRecipient(
-                    notification=notify_obj, is_email=email_status,
-                    is_notify=bell_status, recipient=staff,
-                    creator=profile.user, last_modifier=profile.user)
-                notify_recipient.save()
-                body = json.loads(body)
-                body['url'] = endpoint + \
-                              '/{}/activity/{}/'.format(instance.task.id, instance.id)
-                body = json.dumps(body)
-                send_push_notification(notify_obj, staff, subject, body)
+                if staff != profile:
+                    notify_recipient = notify_models.NotificationRecipient(
+                        notification=notify_obj, is_email=email_status,
+                        is_notify=bell_status, recipient=staff,
+                        creator=profile.user, last_modifier=profile.user)
+                    notify_recipient.save()
+                    body = json.loads(body)
+                    body['url'] = endpoint + \
+                                  '/{}/activity/{}/'.format(instance.task.id, instance.id)
+                    body = json.dumps(body)
+                    send_push_notification(notify_obj, staff, subject, body)
 
     except Exception as e:
         print(e)
@@ -572,22 +569,23 @@ def alert_notification(sender, instance, **kwargs):
             )
             translation.activate(staff.user.get_main_profile().language)
             if bell_status or email_status:
-                notify_recipient = notify_models.NotificationRecipient(
-                    notification=notify_obj, is_email=email_status,
-                    is_notify=bell_status, recipient=staff,
-                    creator=profile.user, last_modifier=profile.user)
-                notify_recipient.save()
-                body = json.loads(body)
-                if post_for_model == 'task':
-                    body['url'] = endpoint + \
-                                  '/{}/post/{}/'.format(instance.task.id, instance.id)
-                    body = json.dumps(body)
-                    send_push_notification(notify_obj, staff, subject, body)
-                else:
-                    body['url'] = endpoint + '/{}/activity/{}/post/{}/'.format(
-                        instance.sub_task.task.id, instance.sub_task.id, instance.id)
-                    body = json.dumps(body)
-                    send_push_notification(notify_obj, staff, subject, body)
+                if staff != profile:
+                    notify_recipient = notify_models.NotificationRecipient(
+                        notification=notify_obj, is_email=email_status,
+                        is_notify=bell_status, recipient=staff,
+                        creator=profile.user, last_modifier=profile.user)
+                    notify_recipient.save()
+                    body = json.loads(body)
+                    if post_for_model == 'task':
+                        body['url'] = endpoint + \
+                                      '/{}/post/{}/'.format(instance.task.id, instance.id)
+                        body = json.dumps(body)
+                        send_push_notification(notify_obj, staff, subject, body)
+                    else:
+                        body['url'] = endpoint + '/{}/activity/{}/post/{}/'.format(
+                            instance.sub_task.task.id, instance.sub_task.id, instance.id)
+                        body = json.dumps(body)
+                        send_push_notification(notify_obj, staff, subject, body)
     except Exception as e:
         print(e)
 
@@ -717,6 +715,8 @@ def post_notification(sender, instance, request, **kwargs):
 
 # @receiver([post_save, post_delete], sender=project_models.Comment)
 def comment_notification(sender, instance, kwargs=None):
+    profile = get_current_profile()
+
     try:
         authors_list = []
         if instance.post.sub_task is not None:
@@ -725,16 +725,17 @@ def comment_notification(sender, instance, kwargs=None):
         else:
             company_staff = instance.post.author
             post_for_model = 'task'
-        authors_list.append(company_staff)
+
+        if company_staff != profile:
+            authors_list.append(company_staff)
     except Exception as e:
         logging.error(e.__str__())
-    profile = get_current_profile()
     # If there is no JWT token in the request,
     # then we don't create notifications (Useful at admin & shell for debugging)
     if not profile:
         return
     for comment in instance.post.comment_set.all():
-        if not comment.author in authors_list:
+        if not comment.author in authors_list and comment.author != profile:
             authors_list.append(comment.author)
     company_staff = authors_list
     try:

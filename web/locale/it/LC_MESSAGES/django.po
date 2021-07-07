@@ -201,3 +201,15 @@ msgstr "ha completato l'attività"
 
 msgid "Folder not created. Max subfolders limit is 3"
 msgstr "Cartella non creata. Il limite massimo di sotto cartelle è di 3"
+
+msgid "New document"
+msgstr "Nuovo documento"
+
+msgid "created"
+msgstr "creato"
+
+msgid "updated"
+msgstr "aggiornato"
+
+msgid "deleted"
+msgstr "cancellato"

@@ -111,9 +111,9 @@ def remove_team_member_notification(sender, instance):
         body = json.dumps({
             'content': build_array_message(None, [
                 _('You have been removed from project'),
-                instance.project.name,
+                "<b>{}</b>".format(instance.project.name),
                 _('from company'),
-                instance.project.company.name
+                "<b>{}</b>".format(instance.project.company.name)
             ]),
             'url': endpoint,
             'project_id': instance.project.id
@@ -162,9 +162,9 @@ def team_invite_notification(sender, instance, **kwargs):
         body = json.dumps({
             'content': build_array_message(None, [
                 _('You have been invited in project'),
-                instance.project.name,
+                "<b>{}</b>".format(instance.project.name),
                 _('from company'),
-                instance.project.company.name
+                "<b>{}</b>".format(instance.project.company.name)
             ]),
             'url': endpoint,
             'project_id': instance.project.id
@@ -214,7 +214,7 @@ def team_notification(sender, instance, **kwargs):
                 ])
                 content = build_array_message(None, [
                     _('You have been added in project'),
-                    instance.project.name
+                    "<b>{}</b>".format(instance.project.name)
                 ])
             else:
                 return
@@ -224,9 +224,9 @@ def team_notification(sender, instance, **kwargs):
             ])
             content = build_array_message(None, [
                 _('User'),
-                "{} {}".format(profile.first_name, profile.last_name),
+                "<b>{} {}</b>".format(profile.first_name, profile.last_name),
                 _('has removed you from project'),
-                instance.project.name
+                "<b>{}</b>".format(instance.project.name)
             ])
 
         endpoint = '/apps/projects/{}/team'.format(str(instance.project.id))
@@ -284,9 +284,9 @@ def close_project_notification(sender, instance, **kwargs):
         body = json.dumps({
             'content': build_array_message(None, [
                 _('Closed project'),
-                instance.project.name,
+                "<b>{}</b>".format(instance.project.name),
                 _('from company'),
-                instance.project.company.name
+                "<b>{}</b>".format(instance.project.company.name)
             ]),
             'url': endpoint,
             'project_id': instance.project.id
@@ -347,11 +347,11 @@ def task_notification(sender, instance, **kwargs):
         body = json.dumps({
             'content': build_array_message(None, [
                 _('Company'),
-                instance.project.company.name,
+                "<b>{}</b>".format(instance.project.company.name),
                 _('has assigned you task'),
-                instance.name,
+                "<b>{}</b>".format(instance.name),
                 _('in project'),
-                instance.project.name
+                "<b>{}</b>".format(instance.project.name)
             ]),
             'url': endpoint,
             'project_id': instance.project.id
@@ -423,11 +423,11 @@ def activity_notification(sender, instance, **kwargs):
         body = json.dumps({
             'content': build_array_message(None, [
                 _('Person'),
-                "{} {}".format(profile.first_name, profile.last_name),
+                "<b>{} {}</b>".format(profile.first_name, profile.last_name),
                 _('has assigned you activity'),
-                instance.title,
+                "<b>{}</b>".format(instance.title),
                 _('in project'),
-                instance.task.project.name
+                "<b>{}</b>".format(instance.task.project.name)
             ]),
             'url': endpoint,
             'task_id': instance.task.id,
@@ -491,11 +491,11 @@ def alert_notification(sender, instance, **kwargs):
                     _('There is an issue in an activity')
                 ])
                 content = build_array_message(None, [
-                    "{} {}".format(profile.first_name, profile.last_name),
+                    "<b>{} {}</b>".format(profile.first_name, profile.last_name),
                     _('has reported an issue in activity'),
-                    instance.sub_task.title,
+                    "<b>{}</b>".format(instance.sub_task.title),
                     _('of project'),
-                    instance.sub_task.task.project.name
+                    "<b>{}</b>".format(instance.sub_task.task.project.name)
                 ])
             else:
                 subject = build_array_message(EMOJI_UNICODES['stars'], [
@@ -515,11 +515,11 @@ def alert_notification(sender, instance, **kwargs):
                 ])
                 content = build_array_message(None, [
                     _('User'),
-                    "{} {}".format(profile.first_name, profile.last_name),
+                    "<b>{} {}</b>".format(profile.first_name, profile.last_name),
                     _('has reported an issue in task'),
-                    instance.task.name,
+                    "<b>{}</b>".format(instance.task.name),
                     _('of project'),
-                    instance.task.project.name
+                    "<b>{}</b>".format(instance.task.project.name)
                 ])
             else:
                 subject = build_array_message(EMOJI_UNICODES['stars'], [
@@ -527,11 +527,11 @@ def alert_notification(sender, instance, **kwargs):
                 ])
                 content = build_array_message(None, [
                     _('User'),
-                    "{} {}".format(profile.first_name, profile.last_name),
+                    "<b>{} {}</b>".format(profile.first_name, profile.last_name),
                     _('has resolved an issue in task'),
-                    instance.task.name,
+                    "<b>{}</b>".format(instance.task.name),
                     _('of project'),
-                    instance.task.project.name
+                    "<b>{}</b>".format(instance.task.project.name)
                 ])
 
         try:
@@ -642,9 +642,9 @@ def post_notification(sender, instance, request, **kwargs):
                 'Nuovo post notificato'
             ])
             content = build_array_message(None, [
-                "{} {}".format(profile.first_name, profile.last_name),
+                "<b>{} {}</b>".format(profile.first_name, profile.last_name),
                 "ha notificato il post",
-                instance.sub_task.title,
+                "<b>{}</b>".format(instance.sub_task.title),
                 '\n"' + instance.text + '"'
             ])
         else:
@@ -652,9 +652,9 @@ def post_notification(sender, instance, request, **kwargs):
                 'Nuovo post notificato'
             ])
             content = build_array_message(None, [
-                "{} {}".format(profile.first_name, profile.last_name),
+                "<b>{} {}</b>".format(profile.first_name, profile.last_name),
                 "ha notificato il post",
-                instance.task.name,
+                "<b>{}</b>".format(instance.task.name),
                 '\n"' + instance.text + '"'
             ])
         try:
@@ -743,11 +743,11 @@ def comment_notification(sender, instance, kwargs=None):
                 _('There is a new comment')
             ])
             content = build_array_message(None, [
-                "{} {}".format(profile.first_name, profile.last_name),
+                "<b>{} {}</b>".format(profile.first_name, profile.last_name),
                 _('has commented post'),
                 instance.post.text[:50] + '..',
                 _('in activity'),
-                instance.post.sub_task.title,
+                "<b>{}</b>".format(instance.post.sub_task.title),
                 '\n"' + instance.text + '"'
             ])
         else:
@@ -755,11 +755,11 @@ def comment_notification(sender, instance, kwargs=None):
                 _('There is a new comment')
             ])
             content = build_array_message(None, [
-                "{} {}".format(profile.first_name, profile.last_name),
+                "<b>{} {}</b>".format(profile.first_name, profile.last_name),
                 _('has commented post'),
                 instance.post.text[:50] + '..',
                 _('in task'),
-                instance.post.task.name,
+                "<b>{}</b>".format(instance.post.task.name),
                 '\n"' + instance.text + '"'
             ])
         print(subject)

@@ -72,6 +72,8 @@ services:
   celery:
     build: .
     command: celery -A web worker -B
+    environment:
+      - ENV_NAME=test
     networks:
       - streams
     volumes:

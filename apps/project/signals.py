@@ -195,7 +195,6 @@ def team_invite_notification(sender, instance, **kwargs):
         print(e)
 
 
-@receiver([post_save, post_delete], sender=project_models.Team)
 def team_notification(sender, instance, **kwargs):
     company_staff = instance.project.profiles.all().union(
         instance.project.company.get_owners_and_delegates()
@@ -312,7 +311,6 @@ def close_project_notification(sender, instance, **kwargs):
         print(e)
 
 
-@receiver([post_save, post_delete], sender=project_models.Task)
 def task_notification(sender, instance, **kwargs):
     try:
         profile = get_current_profile()
@@ -609,9 +607,7 @@ def post_notification(sender, instance, request, **kwargs):
             #     instance.sub_task.task.project.company.get_owners_and_delegates()
             # )
             companies_choosen = Company.objects.filter(id__in=company_ids)
-            company_staff = instance.sub_task.task.project.profiles.filter(company__in=companies_choosen).union(
-                instance.sub_task.task.project.company.get_owners_and_delegates()
-            )
+            company_staff = instance.sub_task.task.project.profiles.filter(company__in=companies_choosen)
             post_for_model = 'activity'
         else:
             #  if instance.is_public:
@@ -623,9 +619,7 @@ def post_notification(sender, instance, request, **kwargs):
             #         instance.task.project.company.get_owners_and_delegates()
             #     )
             companies_choosen = Company.objects.filter(id__in=company_ids)
-            company_staff = instance.task.project.profiles.filter(company__in=companies_choosen).union(
-                instance.task.project.company.get_owners_and_delegates()
-            )
+            company_staff = instance.task.project.profiles.filter(company__in=companies_choosen)
             post_for_model = 'task'
     except:
         return

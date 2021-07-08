@@ -303,6 +303,7 @@
                             <p class="mb-0">{{ post.text }} </p>
                         </div>
                         {% for media in post.media_set %}
+                                {{ media_url }}
                               <img style="max-width:24%;" src="{{ media_url }}" class="img-fluid p-2" alt="Responsive image">
                         {% endfor %}
                               

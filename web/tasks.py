@@ -56,7 +56,8 @@ def generate_pdf_report(html_message, data, domain_url):
     url = 'https://api.sejda.com/v2/html-pdf'
     r = requests.post(url, json={
         'htmlCode': html_message,
-        'viewportWidth': 1200
+        'viewportWidth': 1200,
+        'pageSize': 'A4',
     }, headers={
         'Authorization': 'Token: {}'.format(API_SEJDA_PDF_GENERATOR)
     })

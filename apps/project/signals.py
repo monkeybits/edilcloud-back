@@ -607,9 +607,7 @@ def post_notification(sender, instance, request, **kwargs):
             #     instance.sub_task.task.project.company.get_owners_and_delegates()
             # )
             companies_choosen = Company.objects.filter(id__in=company_ids)
-            company_staff = instance.sub_task.task.project.profiles.filter(company__in=companies_choosen).union(
-                instance.sub_task.task.project.company.get_owners_and_delegates()
-            )
+            company_staff = instance.sub_task.task.project.profiles.filter(company__in=companies_choosen)
             post_for_model = 'activity'
         else:
             #  if instance.is_public:
@@ -621,9 +619,7 @@ def post_notification(sender, instance, request, **kwargs):
             #         instance.task.project.company.get_owners_and_delegates()
             #     )
             companies_choosen = Company.objects.filter(id__in=company_ids)
-            company_staff = instance.task.project.profiles.filter(company__in=companies_choosen).union(
-                instance.task.project.company.get_owners_and_delegates()
-            )
+            company_staff = instance.task.project.profiles.filter(company__in=companies_choosen)
             post_for_model = 'task'
     except:
         return

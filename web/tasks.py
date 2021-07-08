@@ -58,6 +58,7 @@ def generate_pdf_report(html_message, data, domain_url):
         'htmlCode': html_message,
         'viewportWidth': 1200,
         'pageSize': 'A4',
+        'pageOrientation': 'portrait'
     }, headers={
         'Authorization': 'Token: {}'.format(API_SEJDA_PDF_GENERATOR)
     })

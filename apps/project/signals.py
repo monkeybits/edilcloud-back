@@ -312,7 +312,6 @@ def close_project_notification(sender, instance, **kwargs):
         print(e)
 
 
-@receiver([post_save, post_delete], sender=project_models.Task)
 def task_notification(sender, instance, **kwargs):
     try:
         profile = get_current_profile()

@@ -281,10 +281,8 @@
     <div class="row">
         <div class="col-lg-9 col-md-9 col-sm-9">
 
-            <div class="blog-card padding-card box shadow-sm rounded bg-white mb-3 border-0">
-
+            <div class="blog-card padding-card box shadow-sm rounded bg-white mb-3 border-0" style="min-height: 605px;">
                 <div class="card-body">
-
                     <h2>{{ task.name }}</h2>
                     <h6 class="mb-3">{{ task.post_set | length }} posts</h6>
                     {% for post in task.post_set %}
@@ -303,17 +301,18 @@
                         </div>
                         <div class="p-3 border-bottom osahan-post-body">
                             <p class="mb-0">{{ post.text }} </p>
-                        </div>  {% for media in task.mediaassignement_set.all %}
-                              <img style="max-width:24%;" src="{{ media.media.url }}" class="img-fluid p-2" alt="Responsive image">
-                                {% endfor %}  
-                              
-                        <div class="p-3">
-                            {% for media in task.mediaassignement_set.all %}
-                            <button type="button" class="btn btn-outline-primary btn-sm mr-1">{{ media.media.name }}
-                            </button>
-                            {% endfor %}  
-                        
                         </div>
+                        {% for media in post.media_set %}
+                              <img style="max-width:60%;" src="{{ media.media_url }}" class="img-fluid p-2" alt="Responsive image">
+                        {% endfor %}
+                              
+<!--                        <div class="p-3">-->
+<!--                            {% for media in task.mediaassignement_set.all %}-->
+<!--                            <button type="button" class="btn btn-outline-primary btn-sm mr-1">{{ media.media.name }}-->
+<!--                            </button>-->
+<!--                            {% endfor %}  -->
+<!--                        -->
+<!--                        </div>-->
                         <div class="p-3 border-top osahan-post-body"><a href="profile.html">
                         </a>
                             <div class=" reviews-card rounded bg-white border-0">

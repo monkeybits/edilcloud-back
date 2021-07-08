@@ -195,7 +195,6 @@ def team_invite_notification(sender, instance, **kwargs):
         print(e)
 
 
-@receiver([post_save, post_delete], sender=project_models.Team)
 def team_notification(sender, instance, **kwargs):
     company_staff = instance.project.profiles.all().union(
         instance.project.company.get_owners_and_delegates()

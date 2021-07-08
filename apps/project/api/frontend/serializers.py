@@ -1530,7 +1530,9 @@ class TeamEnableSerializer(
         return super(TeamEnableSerializer, self).get_field_names(*args, **kwargs)
 
     def update(self, instance, validated_data):
+        from apps.project.signals import team_notification
         member = self.profile.enable_member(instance)
+        team_notification(member._meta.model, member, **{'created': True})
         return member
 
 
@@ -1557,7 +1559,9 @@ class TeamDisableSerializer(
         return super(TeamDisableSerializer, self).get_field_names(*args, **kwargs)
 
     def update(self, instance, validated_data):
+        from apps.project.signals import team_notification
         member = self.profile.disable_member(instance)
+        team_notification(member._meta.model, member, **{'created': False})
         return member
 
 

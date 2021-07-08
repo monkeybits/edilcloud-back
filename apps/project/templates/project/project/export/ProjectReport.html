@@ -381,7 +381,7 @@
                                 <h6 class="m-0">Persone coinvolte nella fase di lavoro</h6>
                             </div>
                             <div class="box-body p-3">
-                                {% for profile in task.assigned_company.profiles.all() %}
+                                {% for profile in task.assigned_company.profiles.all %}
                                 <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
                                     <div class="dropdown-list-image mr-3">
                                         <img class="rounded-circle" src="{{ profile.photo }}" alt="">

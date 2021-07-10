@@ -351,7 +351,7 @@ def task_notification(sender, instance, **kwargs):
         })
         type = ContentType.objects.get(model=sender.__name__.lower())
         if instance.assigned_company:
-            company_staff = instance.assigned_company.list_contacts()
+            company_staff = instance.assigned_company.profiles.all()
             notify_obj = notify_models.Notify.objects.create(
                 sender=profile, subject=subject, body=body,
                 content_type=type, object_id=instance.id,

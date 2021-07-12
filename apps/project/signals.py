@@ -93,7 +93,7 @@ EMOJI_UNICODES = {
 }
 
 
-def remove_team_member_notification(sender, instance):
+def remove_team_member_notification(sender, instance, member_id):
     company_staff = instance.project.profiles.all().union(
         instance.project.company.get_owners_and_delegates()
     )
@@ -122,7 +122,7 @@ def remove_team_member_notification(sender, instance):
 
         notify_obj = notify_models.Notify.objects.create(
             sender=profile, subject=subject, body=body,
-            content_type=type, object_id=instance.id,
+            content_type=type, object_id=member_id,
             creator=profile.user, last_modifier=profile.user
         )
 

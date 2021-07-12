@@ -2201,7 +2201,7 @@ class TrackerTeamDeleteView(
             act.workers.remove(instance.profile)
             act.save()
         member = profile.remove_member(instance)
-        # remove_team_member_notification(member._meta.model, member)
+        remove_team_member_notification(member._meta.model, member, instance.id)
 
 
 class TrackerTaskActivityMixin(

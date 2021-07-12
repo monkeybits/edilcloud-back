@@ -396,9 +396,13 @@ class TrackerProjectDeleteView(
         super(TrackerProjectDeleteView, self).__init__(*args, **kwargs)
 
     def perform_destroy(self, instance):
+        from apps.project.signals import close_project_notification
         payload = self.get_payload()
         profile = self.request.user.get_profile_by_id(payload['extra']['profile']['id'])
-        profile.remove_project(instance)
+        project = profile.get_project(instance.id)
+        if project.creator == profile.user:
+            close_project_notification(project._meta.model, project, **{'created': False})
+            project.delete()
 
 
 class TrackerProjectShareView(

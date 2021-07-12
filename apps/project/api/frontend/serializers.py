@@ -1028,14 +1028,17 @@ class TaskAttachmentAddSerializer(
         return attrs
 
     def create(self, validated_data):
+        from apps.document.signals import document_notification
+
         id = self.request.data.pop('task')[0]
         task = Task.objects.get(id=id)
         files = list(self.request.FILES.values())
         for file in files:
-            MediaAssignment.objects.create(
+            media = MediaAssignment.objects.create(
                 task=task,
                 media=file
             )
+            document_notification(media._meta.model, media, self.request)
         return task
 
 
@@ -1099,6 +1102,7 @@ class TaskAddSerializer(
         return attrs
 
     def create(self, validated_data):
+        from apps.project.signals import task_notification
         task = self.profile.create_task(validated_data)
         files = list(self.request.FILES.values())
         for file in files:
@@ -1106,6 +1110,8 @@ class TaskAddSerializer(
                 task=task,
                 media=file
             )
+        if validated_data['assigned_company'] is not None:
+            task_notification(task._meta.model, task, **{'created': False})
         return task
 
 

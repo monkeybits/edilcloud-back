@@ -2015,6 +2015,7 @@ class OwnerProfile(Profile):
         project = self.get_project(project.id)
         if project.creator == self.user:
             project.delete()
+        return project
 
     # ------ PROJECT TASK ------
 

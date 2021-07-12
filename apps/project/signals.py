@@ -89,11 +89,12 @@ EMOJI_UNICODES = {
     'clipboard': '\U0001F4CB',
     'pushpin': '\U0001F4CC',
     'envelope': '\U0001F4E9',
-    'locked': '\U0001f510'
+    'locked': '\U0001f510',
+    'briefcase': '\U0001F4BC'
 }
 
 
-def remove_team_member_notification(sender, instance):
+def remove_team_member_notification(sender, instance, member_id):
     company_staff = instance.project.profiles.all().union(
         instance.project.company.get_owners_and_delegates()
     )
@@ -122,7 +123,7 @@ def remove_team_member_notification(sender, instance):
 
         notify_obj = notify_models.Notify.objects.create(
             sender=profile, subject=subject, body=body,
-            content_type=type, object_id=instance.id,
+            content_type=type, object_id=member_id,
             creator=profile.user, last_modifier=profile.user
         )
 
@@ -261,8 +262,8 @@ def team_notification(sender, instance, **kwargs):
 
 
 def close_project_notification(sender, instance, **kwargs):
-    company_staff = instance.project.profiles.all().union(
-        instance.project.company.get_owners_and_delegates()
+    company_staff = instance.profiles.all().union(
+        instance.company.get_owners_and_delegates()
     )
     profile = get_current_profile()
     # If there is no JWT token in the request,
@@ -271,19 +272,19 @@ def close_project_notification(sender, instance, **kwargs):
         return
 
     try:
-        subject = build_array_message(EMOJI_UNICODES['1f510'], [
+        subject = build_array_message(EMOJI_UNICODES['briefcase'], [
             _('Project closed')
         ])
-        endpoint = '/apps/projects'.format(str(instance.project.id))
+        endpoint = '/apps/projects'.format(str(instance.id))
         body = json.dumps({
             'content': build_array_message(None, [
                 _('Closed project'),
-                "<b>{}</b>".format(instance.project.name),
+                "<b>{}</b>".format(instance.name),
                 _('from company'),
-                "<b>{}</b>".format(instance.project.company.name)
+                "<b>{}</b>".format(instance.company.name)
             ]),
             'url': endpoint,
-            'project_id': instance.project.id
+            'project_id': instance.id
         })
         type = ContentType.objects.get(model=sender.__name__.lower())
 
@@ -351,7 +352,7 @@ def task_notification(sender, instance, **kwargs):
         })
         type = ContentType.objects.get(model=sender.__name__.lower())
         if instance.assigned_company:
-            company_staff = instance.assigned_company.list_contacts()
+            company_staff = instance.project.profiles.filter(company=instance.assigned_company)
             notify_obj = notify_models.Notify.objects.create(
                 sender=profile, subject=subject, body=body,
                 content_type=type, object_id=instance.id,
@@ -463,10 +464,10 @@ def activity_notification(sender, instance, **kwargs):
 def alert_notification(sender, instance, **kwargs):
     try:
         if instance.sub_task is not None:
-            company_staff = instance.author.company.profiles.all()
+            company_staff = instance.sub_task.task.project.profiles.filter(company=instance.author.company)
             post_for_model = 'activity'
         else:
-            company_staff = instance.author.company.profiles.all()
+            company_staff = instance.task.project.profiles.filter(company=instance.author.company)
             post_for_model = 'task'
 
     except:
@@ -476,9 +477,16 @@ def alert_notification(sender, instance, **kwargs):
     # then we don't create notifications (Useful at admin & shell for debugging)
     if not profile:
         return
-    company_staff = company_staff.union(
-        profile.company.profiles.all()
-    )
+
+    if instance.sub_task is not None:
+        company_staff = company_staff.union(
+            instance.sub_task.task.project.profiles.filter(company=profile.company)
+        )
+    else:
+        company_staff = company_staff.union(
+            instance.task.project.profiles.filter(company=profile.company)
+        )
+
     try:
         if post_for_model == 'activity':
             if instance.alert:
@@ -688,20 +696,21 @@ def post_notification(sender, instance, request, **kwargs):
             )
             translation.activate(staff.user.get_main_profile().language)
             if bell_status or email_status:
-                notify_recipient = notify_models.NotificationRecipient(
-                    notification=notify_obj, is_email=email_status,
-                    is_notify=bell_status, recipient=staff,
-                    creator=profile.user, last_modifier=profile.user)
-                notify_recipient.save()
-                body = json.loads(body)
-                if post_for_model == 'task':
-                    body['url'] = endpoint + '/{}/post/{}/'.format(instance.task.id, instance.id)
-                    body = json.dumps(body)
-                    send_push_notification(notify_obj, staff, subject, body)
-                else:
-                    body['url'] = endpoint + '/{}/post/{}/'.format(instance.sub_task.id, instance.id)
-                    body = json.dumps(body)
-                    send_push_notification(notify_obj, staff, subject, body)
+                if staff != profile:
+                    notify_recipient = notify_models.NotificationRecipient(
+                        notification=notify_obj, is_email=email_status,
+                        is_notify=bell_status, recipient=staff,
+                        creator=profile.user, last_modifier=profile.user)
+                    notify_recipient.save()
+                    body = json.loads(body)
+                    if post_for_model == 'task':
+                        body['url'] = endpoint + '/{}/post/{}/'.format(instance.task.id, instance.id)
+                        body = json.dumps(body)
+                        send_push_notification(notify_obj, staff, subject, body)
+                    else:
+                        body['url'] = endpoint + '/{}/post/{}/'.format(instance.sub_task.id, instance.id)
+                        body = json.dumps(body)
+                        send_push_notification(notify_obj, staff, subject, body)
     except Exception as e:
         print(e)
 

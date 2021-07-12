@@ -14,8 +14,7 @@ from web.core.middleware.thread_local import get_current_profile
 from web.core.utils import get_html_message, get_bell_notification_status, get_email_notification_status
 
 
-@receiver([post_save, post_delete], sender=document_models.Document)
-def document_notification(sender, instance, **kwargs):
+def document_notification(sender, instance):
     company_staff = []
     profile = get_current_profile()
     # If there is no JWT token in the request,

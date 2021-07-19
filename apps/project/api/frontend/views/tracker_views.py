@@ -2677,7 +2677,7 @@ class TrackerTaskPostListView(
     Create a Post for a task
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
     serializer_class = serializers.PostSerializer
 
     def __init__(self, *args, **kwargs):

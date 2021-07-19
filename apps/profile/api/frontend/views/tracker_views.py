@@ -2108,6 +2108,8 @@ class TrackerCompanyProjectListView(
         self.project_response_include_fields = [
             'id', 'name', 'description', 'date_start', 'date_end',
             'company', 'referent', 'status',
+            'creator',
+            'date_create',
             'profiles', 'typology', 'completed',
             'shared_companies', 'logo', 'talks', 'last_message_created', 'address'
         ]

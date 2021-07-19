@@ -1038,7 +1038,7 @@ class TaskAttachmentAddSerializer(
                 task=task,
                 media=file
             )
-            document_notification(media._meta.model, media, self.request)
+            document_notification(media._meta.model, media)
         return task
 
 

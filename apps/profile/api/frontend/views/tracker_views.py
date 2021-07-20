@@ -2119,6 +2119,10 @@ class TrackerCompanyProjectListView(
         self.profile_response_include_fields = [
             'id', 'first_name', 'last_name', 'photo', 'is_shared', 'is_in_showroom'
         ]
+        self.user_response_include_fields = [
+            'id', 'username',
+            'email', 'first_name', 'last_name', 'is_active'
+        ]
         self.talk_response_include_fields = [
             'id', 'code', 'unread_count'
         ]

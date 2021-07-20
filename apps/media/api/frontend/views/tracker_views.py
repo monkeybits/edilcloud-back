@@ -284,7 +284,7 @@ class TrackerPhotoDownloadView(
     Download a document
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
     file_field_name = 'photo'
 
 
@@ -440,7 +440,7 @@ class TrackerVideoDownloadView(
     Download a document
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
     file_field_name = 'video'
 
 

@@ -225,7 +225,7 @@ class TrackerDocumentDownloadView(
     Download a document
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    permission_roles = (settings.OWNER, settings.DELEGATE, settings.LEVEL_1, settings.LEVEL_2)
     file_field_name = 'document'
 
 

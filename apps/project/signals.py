@@ -278,8 +278,9 @@ def close_project_notification(sender, instance, **kwargs):
         endpoint = '/apps/projects'.format(str(instance.id))
         body = json.dumps({
             'content': build_array_message(None, [
-                _('Closed project'),
+                _('Project'),
                 "{}".format(instance.name),
+                _('was closed'),
                 _('from company'),
                 "{}".format(instance.company.name)
             ]),
@@ -302,12 +303,13 @@ def close_project_notification(sender, instance, **kwargs):
             )
             translation.activate(profile.user.get_main_profile().language)
             if bell_status or email_status:
-                notify_recipient = notify_models.NotificationRecipient(
-                    notification=notify_obj, is_email=email_status,
-                    is_notify=bell_status, recipient=staff,
-                    creator=profile.user, last_modifier=profile.user)
-                notify_recipient.save()
-                send_push_notification(notify_obj, staff, subject, body)
+                if staff != profile:
+                    notify_recipient = notify_models.NotificationRecipient(
+                        notification=notify_obj, is_email=email_status,
+                        is_notify=bell_status, recipient=staff,
+                        creator=profile.user, last_modifier=profile.user)
+                    notify_recipient.save()
+                    send_push_notification(notify_obj, staff, subject, body)
     except Exception as e:
         print(e)
 

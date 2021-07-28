@@ -17,7 +17,10 @@ msgid "Invalid credentials"
 msgstr "Invalid credentials"
 
 msgid "Registration successful"
-msgstr "Registrazione completata"
+msgstr "Registration successful"
 
 msgid "Unable to log in with provided credentials."
-msgstr "Impossibile eseguire il login con le credenziali immesse."
+msgstr "Unable to log in with provided credentials."
+
+msgid "Project closed"
+msgstr "Project closed"

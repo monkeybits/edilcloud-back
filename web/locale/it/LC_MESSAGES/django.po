@@ -213,3 +213,12 @@ msgstr "aggiornato"
 
 msgid "deleted"
 msgstr "cancellato"
+
+msgid "Project closed"
+msgstr "Progetto chiuso"
+
+msgid "Project"
+msgstr "Progetto"
+
+msgid "was closed"
+msgstr "è stato chiuso"

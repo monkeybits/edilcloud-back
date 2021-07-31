@@ -19,7 +19,7 @@ PROTOCOL = 'https'
 DEFAULT_FROM_EMAIL = 'notification@edilcloud.io'
 
 REGISTRATION_FROM_EMAIL = 'registration@edilcloud.io'
-REGISTRATION_EMAIL_HOST_PASSWORD = 'MonkeyBits2020'
+REGISTRATION_EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 SERVER_EMAIL = 'mail.edilcloud.io'
 EMAIL_USE_TLS = True

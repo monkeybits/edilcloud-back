@@ -233,7 +233,7 @@ def message_notification(sender, instance, **kwargs):
                 "en": subject
             },
             "data": {
-                "custom_data": "New Message from Edilcloud",
+                "custom_data": "New Message from EdilCloud",
                 "redirect_url": addRedirectUrl(instance.talk)
             },
             "small_icon": "ic_stat_onesignal_default"

@@ -86,7 +86,7 @@ def generate_pdf_report(html_message, data, domain_url):
     # }
     # report_template = render_to_string('email/report_email.html', data_template)
     # email = EmailMultiAlternatives(
-    #     subject='Edilcloud.io Report PDF - Progetto {}'.format(data['project_name']),
+    #     subject='EdilCloud.io Report PDF - Progetto {}'.format(data['project_name']),
     #     body='ciao questo è un report',
     #     to=[data['email']],
     #     from_email=DEFAULT_FROM_EMAIL,

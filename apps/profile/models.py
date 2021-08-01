@@ -1063,6 +1063,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             "last_name": self.last_name,
             "company_name": self.company,
             "endpoint": endpoint,
+            'recipient_email': to_email,
             'registration_page': 'https://account.edilcloud.io/pages/auth/register'
         }
 

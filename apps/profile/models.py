@@ -1062,7 +1062,8 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "company_name": self.company,
-            "endpoint": endpoint
+            "endpoint": endpoint,
+            'registration_page': 'https://account.edilcloud.io/pages/auth/register'
         }
 
         if language_code == 'en':

@@ -299,9 +299,9 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
                     if not language_code:
                         language_code = 'en'
 
-                    subject = "Edilcloud Projects Reminder"
+                    subject = "EdilCloud Projects Reminder"
                     if language_code == 'it':
-                        subject = 'Reminder progetti Edilcloud'
+                        subject = 'Reminder progetti EdilCloud'
 
                     context = {
                         'logo_url': os.path.join(
@@ -315,7 +315,7 @@ class Project(CleanModel, UserModel, DateModel, OrderedModel):
                         "protocol": settings.PROTOCOL,
                         "base_url": settings.BASE_URL
                     }
-                    subject = "Edilcloud Projects Reminder"
+                    subject = "EdilCloud Projects Reminder"
 
                     # Text message
                     text_message = render_to_string('project/project/archive/account_{}.txt'.format(language_code), context)

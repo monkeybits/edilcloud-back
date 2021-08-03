@@ -170,11 +170,11 @@ def send_account_verification_email(self, to_email=None, language_code=None):
     if not to_email:
         to_email = self.email or self.user.email
     if not language_code:
-        language_code = 'en'
+        language_code = 'it'
 
-    subject = 'Edilcloud Account Activation'
+    subject = 'EdilCloud Account Activation'
     if language_code == 'it':
-        subject = 'Attivazione account Edilcloud'
+        subject = 'Attivazione account EdilCloud'
 
     account_activation_token = UserTokenGenerator()
     context = {
@@ -192,7 +192,7 @@ def send_account_verification_email(self, to_email=None, language_code=None):
         "protocol": settings.PROTOCOL,
         "base_url": settings.BASE_URL
     }
-    subject = "Edilcloud Account Activation"
+    subject = "Attivazione account EdilCloud"
 
     # Text message
     text_message = render_to_string('user/user/registration/account_{}.txt'.format(language_code), context)
@@ -1048,7 +1048,7 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
         if not to_email:
             to_email = self.email or self.user.email
         if not language_code:
-            language_code = self.language if self.language else 'en'
+            language_code = self.language if self.language else 'it'
         accept_url = self.get_accept_url()
         refuse_url = self.get_refuse_url()
 
@@ -1062,13 +1062,15 @@ class Profile(CleanModel, UserModel, DateModel, StatusModel, OrderedModel):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "company_name": self.company,
-            "endpoint": endpoint
+            "endpoint": endpoint,
+            'recipient_email': to_email,
+            'registration_page': 'https://account.edilcloud.io/pages/auth/register'
         }
 
         if language_code == 'en':
-            subject = "Edilcloud Company {} Profile Activation".format(self.company)
+            subject = "EdilCloud Company {} Profile Activation".format(self.company)
         else:
-            subject = "Attivazione nuovo profilo Edilcloud per l'impresa {}".format(self.company)
+            subject = "Attivazione nuovo profilo EdilCloud per l'impresa {}".format(self.company)
         # Text message
         text_message = render_to_string('profile/profile/email/profile_{}.txt'.format(language_code), context)
 

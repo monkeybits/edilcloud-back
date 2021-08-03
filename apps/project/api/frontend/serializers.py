@@ -1321,10 +1321,9 @@ class TeamGenerateCodeSerializer(
         from django.template.loader import render_to_string
         from django.core.mail import send_mail
 
-        registration_link = os.path.join(settings.PROTOCOL + '://', settings.BASE_URL,
-                                         'pages/auth/register')
+        registration_link = os.path.join('https://account.edilcloud.io/pages/auth/register')
         from_mail = settings.NOTIFY_NOTIFY_NO_REPLY_EMAIL
-        subject = _('Your email is added to Edilcloud')
+        subject = _('Your email is added to EdilCloud')
         unique_code = uuid.uuid5(uuid.NAMESPACE_DNS, validated_data['email'])
         validated_data['unique_code'] = str(unique_code)
         code_assignment, created = CodeTeamAssignment.objects.get_or_create(creator=self.profile.user, last_modifier=self.profile.user,unique_code=unique_code, project=validated_data['project'], role='o', email=validated_data['email'])

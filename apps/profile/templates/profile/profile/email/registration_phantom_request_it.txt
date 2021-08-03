@@ -1,21 +1,21 @@
 
 Gentile {{recipient_first_name}} {{recipient_last_name}},
-  La tua email{{recipient_email}} è stata aggiunta in Edilcloud all'interno dello staff dell'impresa {{company_name}}.
+  La tua email{{recipient_email}} è stata aggiunta in EdilCloud all'interno dello staff dell'impresa {{company_name}}.
 
-  Per accedere a Edilcloud seguire le istruzioni seguenti:
+  Per accedere a EdilCloud seguire le istruzioni seguenti:
     - Copiare il seguente link {{registration_page}} e incollarlo all'interno del browser.
-    - Seguire i passi per effettuare la registrazione a Edilcloud. Utilizzare l'email {{recipient_email}} come email di registrazione.
-    - Quando la registrazione è completata, accedere a Edilcloud e creare un profilo principale.
+    - Seguire i passi per effettuare la registrazione a EdilCloud. Utilizzare l'email {{recipient_email}} come email di registrazione.
+    - Quando la registrazione è completata, accedere a EdilCloud e creare un profilo principale.
 
 
-Edilcloud permette a tutti gli attori del settore costruzioni di
+EdilCloud permette a tutti gli attori del settore costruzioni di
 collaborare, condividere informazioni e scegliere i materiali dai fornitori
 preferiti.
 
 --------------------------------------
 Grazie,
 
-Il Team Edilcloud
+Il Team EdilCloud
 
 
 

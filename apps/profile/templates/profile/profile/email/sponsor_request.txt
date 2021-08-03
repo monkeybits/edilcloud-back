@@ -1,4 +1,4 @@
-Gentile Edilcloud,
+Gentile EdilCloud,
 
 l'impresa {{ company_name }} ha richiesto di diventare sponsor della piattaforma.
 
@@ -12,14 +12,14 @@ Site: {{company_url}}
 
 
 
-Edilcloud permette a tutti gli attori del settore costruzioni di
+EdilCloud permette a tutti gli attori del settore costruzioni di
 collaborare, condividere informazioni e scegliere i materiali dai fornitori
 preferiti.
 
 --------------------------------------
 Grazie,
 
-Il Team Edilcloud
+Il Team EdilCloud
 
 
 

@@ -27,7 +27,7 @@ services:
     environment:
       - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
       - ENV_NAME=prod
-      - SOCKET_HOST=18.169.171.118
+      - SOCKET_HOST=35.178.108.7
       - SOCKET_PORT=6969
   redis:
     image: redis

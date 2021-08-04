@@ -287,8 +287,8 @@ def message_notification(sender, instance, **kwargs):
 
         # from websocket import create_connection
         # try:
-        #     print("ws://18.130.248.158:8000")
-        #     ws = create_connection("ws://18.130.248.158:8000/ws/chat/chat_channel/")
+        #     print("ws://18.169.171.118:8000")
+        #     ws = create_connection("ws://18.169.171.118:8000/ws/chat/chat_channel/")
         # except:
         #     communicator = WebsocketCommunicator(application, "/ws/chat/chat_channel/")
         #     communicator.send_json_to({'message': 'ciao'})

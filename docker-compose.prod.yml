@@ -91,4 +91,3 @@ volumes:
   redis-data:
 networks:
   streams:
-    external: true

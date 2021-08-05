@@ -20,11 +20,8 @@ services:
       - .:/edilcloud-back
     ports:
       - "8000:8000"
-      - "8001:8001"
     networks:
       - streams
-    deploy:
-      replicas: 2
     restart: always
     depends_on:
       - db

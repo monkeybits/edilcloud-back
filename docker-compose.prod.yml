@@ -24,9 +24,6 @@ services:
       - streams
     deploy:
       replicas: 2
-      update_config:
-        parallelism: 1
-        order: stop-first
     depends_on:
       - db
     environment:
@@ -83,9 +80,6 @@ services:
       - streams
     deploy:
       replicas: 2
-      update_config:
-        parallelism: 1
-        order: stop-first
     volumes:
       - .:/edilcloud-back
     links:

@@ -232,7 +232,7 @@
                                 <div class="small text-gray-500">{{ post.author.position }}
                                     - {{ post.author.company.name }}</div>
                             </div>
-                            <span class="ml-auto small">{{ post.published_date | date:"M d, Y" }}</span>
+                            <span class="ml-auto small">{{ post.published_date|date:'Y-m-d' }}</span>
                         </div>
                         <div class="p-3 border-bottom osahan-post-body">
                             <p class="mb-0">{{ post.text }} </p>
@@ -263,7 +263,7 @@
                                             <div class="media-body">
                                                 <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }}
                                                     - {{ comment.author.position }} {{ comment.author.company.name }}
-                                                    <span class="star-rating float-right"><small>{{ comment.published_date | date:"M d, Y"}}
+                                                    <span class="star-rating float-right"><small>{{ comment.published_date|date:'Y-m-d'}}
                                                         </small>
                                                                 </span></h5>
                                                 <p>{{ comment.text }}</p>
@@ -273,7 +273,7 @@
                                                              src="{{ reply.author.photo }}" alt="">
                                                         <div class="media-body">
                                                             <h5 class="mt-0">{{ reply.author.first_name }} {{ reply.author.last_name }}
-                                                                <small>{{ reply.published_date | date:"M d, Y" }}</small>
+                                                                <small>{{ reply.published_date|date:'Y-m-d' }}</small>
                                                             </h5>
                                                             <p>{{ reply.text }}</p>
                                                         </div>
@@ -379,7 +379,7 @@
                                 <div class="small text-gray-500">{{ post.author.position }}
                                     - {{ post.author.company.name }}</div>
                             </div>
-                            <span class="ml-auto small">{{ post.published_date | date:"M d, Y" }}</span>
+                            <span class="ml-auto small">{{ post.published_date|date:'Y-m-d' }}</span>
                         </div>
                         <div class="p-3 border-bottom osahan-post-body">
                             <p class="mb-0">{{ post.text }} </p>
@@ -410,7 +410,7 @@
                                             <div class="media-body">
                                                 <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }}
                                                     - {{ comment.author.position }} {{ comment.author.company.name }}
-                                                    <span class="star-rating float-right"><small>{{ comment.published_date | date:"M d, Y"}}
+                                                    <span class="star-rating float-right"><small>{{ comment.published_date|date:'Y-m-d'}}
                                                         </small>
                                                                 </span></h5>
                                                 <p>{{ comment.text }}</p>
@@ -420,7 +420,7 @@
                                                              src="{{ reply.author.photo }}" alt="">
                                                         <div class="media-body">
                                                             <h5 class="mt-0">{{ reply.author.first_name }} {{ reply.author.last_name }}
-                                                                <small>{{ reply.published_date | date:"M d, Y" }}</small>
+                                                                <small>{{ reply.published_date|date:'Y-m-d' }}</small>
                                                             </h5>
                                                             <p>{{ reply.text }}</p>
                                                         </div>
@@ -440,7 +440,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-12 col-md-12 col-sm-12">
+      <!--  <div class="col-lg-12 col-md-12 col-sm-12">
 
             <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
                 <div class="card-body" style="
@@ -499,7 +499,7 @@
                 </div>
 
             </div>
-        </div>
+        </div>-->
     </div>
     </div>
     {% endfor %}

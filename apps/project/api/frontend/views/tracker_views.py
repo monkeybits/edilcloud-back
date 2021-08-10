@@ -2878,7 +2878,7 @@ class TrackerPostDeleteView(
     Delete a talk
     """
     permission_classes = (RoleAccessPermission,)
-    permission_roles = (settings.OWNER, settings.DELEGATE,)
+    permission_roles = settings.MEMBERS
     serializer_class = serializers.PostSerializer
 
     def perform_destroy(self, instance):

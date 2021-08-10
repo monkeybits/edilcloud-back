@@ -94,13 +94,16 @@ def check_limitation_plan(customer, rule, total_count):
     product = stripe.Product.retrieve(product_id)
     if rule == 'profile':
         limit = int(product.metadata.MAX_PROFILES) if customer.subscriptions.data[0].status != 'trialing' else int(product.metadata.TRIAL_MAX_PROFILES)
-        detail_error = "Il limite massimo di personale è stato raggiunto, fai upgrade del tuo piano."
+        detail_error = "Il limite massimo di personale è stato raggiunto, vai al tuo account manager sul sito " \
+                       "internet di EdilCloud e aggiorna il tuo piano."
     elif rule == 'project':
         limit = int(product.metadata.MAX_PROJECTS) if customer.subscriptions.data[0].status != 'trialing' else int(product.metadata.TRIAL_MAX_PROJECTS)
-        detail_error = "Il limite massimo di progetti è stato raggiunto, fai upgrade del tuo piano."
+        detail_error = "Il limite massimo di progetti è stato raggiunto, vai al tuo account manager sul sito " \
+                       "internet di EdilCloud e aggiorna il tuo piano."
     elif rule == 'size':
         limit = int(product.metadata.MAX_SIZE)  # in MegaByte
-        detail_error = "Il limite massimo di file manager è stato raggiunto, fai upgrade del tuo piano."
+        detail_error = "Il limite massimo di file manager è stato raggiunto, vai al tuo account manager sul sito " \
+                       "internet di EdilCloud e aggiorna il tuo piano."
     else:
         limit = 0
     if total_count < limit:

@@ -111,7 +111,7 @@
             </div>
             <div class="p-3">
                 {% for company_key, company_profile_list in company_profiles.items %}
-                {% if  forloop.counter > 0 %}
+                {% if  forloop.counter == 0 %}
                     <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
                         <div class="dropdown-list-image mr-3">
                             <img class="rounded-circle" src="{{ company_profile_list.0.logo }}" alt="">
@@ -121,7 +121,7 @@
                             </div>
                         </div>
                     </div>
-                                {% endif %}
+                    {% endif %}
 
                     {% for profile in company_profile_list %}
                     {% if  forloop.counter > 0 %}

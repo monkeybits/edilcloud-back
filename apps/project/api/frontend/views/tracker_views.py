@@ -3060,6 +3060,16 @@ class TrackerProjectExport(
             'last_name': profile.last_name,
             'company': profile.company.name
         }
+        profiles = data['profiles']
+        company_profiles = {}
+        for new_profile in profiles:
+            if new_profile.company.name in company_profiles:
+                company_profiles[new_profile.company.name].append(new_profile)
+            else:
+                company_profiles[new_profile.company.name] = [new_profile.company]
+                company_profiles[new_profile.company.name] = [new_profile]
+
+        data['company_profiles'] = company_profiles
         zip_subdir = "Report_" + str(datetime.now())
         zip_filename = "%s.zip" % zip_subdir
         # Open StringIO to grab in-memory ZIP contents

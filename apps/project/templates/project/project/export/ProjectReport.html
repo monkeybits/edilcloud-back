@@ -60,7 +60,8 @@
                 <h1 class="text-white font-weight-light"><span class="font-weight-bold">Report:
                 </span>{{ name }}</h1>
                 <p class="mb-2 text-white-50">
-                    <a href="https://app.edilcloud.io/apps/projects/{{ id }}">https://app.edilcloud.io/apps/projects/{{ id }}</a>
+                    <a href="https://app.edilcloud.io/apps/projects/{{ id }}">https://app.edilcloud.io/apps/projects/{{
+                        id }}</a>
                 </p>
             </div>
         </div>
@@ -109,96 +110,40 @@
                 <h6 class="m-0">Aziende e Persone coinvolte nel progetto: ordine alfabetico per cognome</h6>
             </div>
             <div class="p-3">
-                 <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
-                            <div class="dropdown-list-image mr-3">
-                                <img class="rounded-circle" src="img/l1.png" alt="">
-                            </div>
-                            <div class="font-weight-bold mr-2">
-                                <div class="text-truncate">Impresa Edile Itinera Spa</div>
-                                <div class="small text-gray-500">Impresa Edile
-                                </div>
-                            </div>
-                        </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <a href="profile.html">
-
-                            <div class="network-item rounded mb-3">
-                                <div class="p-3 d-flex align-items-center network-item-header">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/p1.png" alt="">
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <h6 class="font-weight-bold text-dark mb-0">Tommaso Bellini</h6>
-                                        <div class="small text-black-50">Backend Developer - MonkeyBits srl</div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="profile.html">
-                            <div class="network-item rounded mb-3">
-                                <div class="p-3 d-flex align-items-center network-item-header">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/p1.png" alt="">
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <h6 class="font-weight-bold text-dark mb-0">Marco Carminati</h6>
-                                        <div class="small text-black-50">CEO e Founder - MonkeyBits srl</div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                {% for company_key in company_profiles.keys %}
                 <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
-                            <div class="dropdown-list-image mr-3">
-                                <img class="rounded-circle" src="img/l1.png" alt="">
-                            </div>
-                            <div class="font-weight-bold mr-2">
-                                <div class="text-truncate">Impresa Edile Itinera Spa</div>
-                                <div class="small text-gray-500">Impresa Edile
-                                </div>
-                            </div>
-                        </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <a href="profile.html">
-
-                            <div class="network-item rounded mb-3">
-                                <div class="p-3 d-flex align-items-center network-item-header">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/p1.png" alt="">
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <h6 class="font-weight-bold text-dark mb-0">Tommaso Bellini</h6>
-                                        <div class="small text-black-50">Backend Developer - MonkeyBits srl</div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </a>
+                    <div class="dropdown-list-image mr-3">
+                        <img class="rounded-circle" src="img/l1.png" alt="">
                     </div>
-                    <div class="col-md-3">
-                        <a href="profile.html">
-                            <div class="network-item rounded mb-3">
-                                <div class="p-3 d-flex align-items-center network-item-header">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/p1.png" alt="">
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <h6 class="font-weight-bold text-dark mb-0">Marco Carminati</h6>
-                                        <div class="small text-black-50">CEO e Founder - MonkeyBits srl</div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </a>
+                    <div class="font-weight-bold mr-2">
+                        <div class="text-truncate">company_profiles[company_key].0.name</div>
+                        <div class="small text-gray-500">company_profiles[company_key].0.name
+                        </div>
                     </div>
                 </div>
+                <div class="row">
+                    {% for profile in company_profiles[company_key] %}
+                    {% if  forloop.counter > 0 %}
+                    <div class="col-md-3">
+                        <a href="profile.html">
+                            <div class="network-item rounded mb-3">
+                                <div class="p-3 d-flex align-items-center network-item-header">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="img/p1.png" alt="">
+                                    </div>
+                                    <div class="font-weight-bold">
+                                        <h6 class="font-weight-bold text-dark mb-0">{{ profile.fist_name}} {{ profile.last_name }}</h6>
+                                        <div class="small text-black-50">{{ profile.role }} - {{ profile.company.name }}</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -206,13 +151,13 @@
 
 
 {% for task in tasks %}
-    <div class="pb-5">
-        <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
-            <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">{{ forloop.counter }}. Dettaglio delle fasi di lavoro</span>
-            </h2>
-        </div>
-    </div>
+<div class="pb-5">
     <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+        <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">{{ forloop.counter }}. Dettaglio delle fasi di lavoro</span>
+        </h2>
+    </div>
+</div>
+<div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12">
 
@@ -228,9 +173,11 @@
                                 <div class="status-indicator bg-success"></div>
                             </div>
                             <div class="font-weight-bold">
-                                <div class="text-truncate">{{ post.author.first_name }} {{ post.author.last_name }}</div>
+                                <div class="text-truncate">{{ post.author.first_name }} {{ post.author.last_name }}
+                                </div>
                                 <div class="small text-gray-500">{{ post.author.position }}
-                                    - {{ post.author.company.name }}</div>
+                                    - {{ post.author.company.name }}
+                                </div>
                             </div>
                             <span class="ml-auto small">{{ post.published_date|date:'Y-m-d' }}</span>
                         </div>
@@ -238,16 +185,17 @@
                             <p class="mb-0">{{ post.text }} </p>
                         </div>
                         {% for media in post.media_set %}
-                              <img style="max-width:60%;" src="{{ media.media_url }}" class="img-fluid p-2" alt="Responsive image">
+                        <img style="max-width:60%;" src="{{ media.media_url }}" class="img-fluid p-2"
+                             alt="Responsive image">
                         {% endfor %}
-                              
-<!--                        <div class="p-3">-->
-<!--                            {% for media in task.mediaassignement_set.all %}-->
-<!--                            <button type="button" class="btn btn-outline-primary btn-sm mr-1">{{ media.media.name }}-->
-<!--                            </button>-->
-<!--                            {% endfor %}  -->
-<!--                        -->
-<!--                        </div>-->
+
+                        <!--                        <div class="p-3">-->
+                        <!--                            {% for media in task.mediaassignement_set.all %}-->
+                        <!--                            <button type="button" class="btn btn-outline-primary btn-sm mr-1">{{ media.media.name }}-->
+                        <!--                            </button>-->
+                        <!--                            {% endfor %}  -->
+                        <!--                        -->
+                        <!--                        </div>-->
                         <div class="p-3 border-top osahan-post-body"><a href="profile.html">
                         </a>
                             <div class=" reviews-card rounded bg-white border-0">
@@ -256,32 +204,34 @@
 ">
                                     <h5 class="card-title mb-4">{{ post.comment_set | length }} commenti</h5>
                                     {% for comment in post.comment_set %}
-                                        <div class="media mb-2">
-                                            <img class="d-flex mr-3 rounded"
-                                                 src="{{ comment.author.photo }}"
-                                                 alt="">
-                                            <div class="media-body">
-                                                <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }}
-                                                    - {{ comment.author.position }} {{ comment.author.company.name }}
-                                                    <span class="star-rating float-right"><small>{{ comment.published_date|date:'Y-m-d'}}
+                                    <div class="media mb-2">
+                                        <img class="d-flex mr-3 rounded"
+                                             src="{{ comment.author.photo }}"
+                                             alt="">
+                                        <div class="media-body">
+                                            <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name
+                                                }}
+                                                - {{ comment.author.position }} {{ comment.author.company.name }}
+                                                <span class="star-rating float-right"><small>{{ comment.published_date|date:'Y-m-d'}}
                                                         </small>
                                                                 </span></h5>
-                                                <p>{{ comment.text }}</p>
-                                                {% for reply in comment.reply_set %}
-                                                    <div class="media mt-4">
-                                                        <img class="d-flex mr-3 rounded"
-                                                             src="{{ reply.author.photo }}" alt="">
-                                                        <div class="media-body">
-                                                            <h5 class="mt-0">{{ reply.author.first_name }} {{ reply.author.last_name }}
-                                                                <small>{{ reply.published_date|date:'Y-m-d' }}</small>
-                                                            </h5>
-                                                            <p>{{ reply.text }}</p>
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
+                                            <p>{{ comment.text }}</p>
+                                            {% for reply in comment.reply_set %}
+                                            <div class="media mt-4">
+                                                <img class="d-flex mr-3 rounded"
+                                                     src="{{ reply.author.photo }}" alt="">
+                                                <div class="media-body">
+                                                    <h5 class="mt-0">{{ reply.author.first_name }} {{
+                                                        reply.author.last_name }}
+                                                        <small>{{ reply.published_date|date:'Y-m-d' }}</small>
+                                                    </h5>
+                                                    <p>{{ reply.text }}</p>
+                                                </div>
                                             </div>
-
+                                            {% endfor %}
                                         </div>
+
+                                    </div>
                                     {% endfor %}
 
                                 </div>
@@ -321,7 +271,8 @@
                                         <img class="rounded-circle" src="{{ profile.photo }}" alt="">
                                     </div>
                                     <div class="font-weight-bold mr-2">
-                                        <div class="text-truncate">{{ profile.first_name }} {{ profile.last_name }}</div>
+                                        <div class="text-truncate">{{ profile.first_name }} {{ profile.last_name }}
+                                        </div>
                                         <div class="small text-gray-500">{{ profile.position }} - {{ profile.company }}
                                         </div>
                                     </div>
@@ -335,13 +286,13 @@
             </div>
         </div>
     </div>
-    </div>
-    {% for activity in task.activities %}
-         <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
-                <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">{{ forloop.parentloop.counter }}.{{ forloop.counter }}. Dettaglio dell'attività</span>
-                </h2>
-            </div>
-            <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+</div>
+{% for activity in task.activities %}
+<div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
+    <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">{{ forloop.parentloop.counter }}.{{ forloop.counter }}. Dettaglio dell'attività</span>
+    </h2>
+</div>
+<div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="blog-card padding-card box shadow-sm rounded bg-white mb-3 border-0" style="min-height: 605px;">
@@ -356,9 +307,11 @@
                                 <div class="status-indicator bg-success"></div>
                             </div>
                             <div class="font-weight-bold">
-                                <div class="text-truncate">{{ post.author.first_name }} {{ post.author.last_name }}</div>
+                                <div class="text-truncate">{{ post.author.first_name }} {{ post.author.last_name }}
+                                </div>
                                 <div class="small text-gray-500">{{ post.author.position }}
-                                    - {{ post.author.company.name }}</div>
+                                    - {{ post.author.company.name }}
+                                </div>
                             </div>
                             <span class="ml-auto small">{{ post.published_date|date:'Y-m-d' }}</span>
                         </div>
@@ -366,16 +319,17 @@
                             <p class="mb-0">{{ post.text }} </p>
                         </div>
                         {% for media in post.media_set %}
-                              <img style="max-width:60%;" src="{{ media.media_url }}" class="img-fluid p-2" alt="Responsive image">
+                        <img style="max-width:60%;" src="{{ media.media_url }}" class="img-fluid p-2"
+                             alt="Responsive image">
                         {% endfor %}
 
-<!--                        <div class="p-3">-->
-<!--                            {% for media in task.mediaassignement_set.all %}-->
-<!--                            <button type="button" class="btn btn-outline-primary btn-sm mr-1">{{ media.media.name }}-->
-<!--                            </button>-->
-<!--                            {% endfor %}  -->
-<!--                        -->
-<!--                        </div>-->
+                        <!--                        <div class="p-3">-->
+                        <!--                            {% for media in task.mediaassignement_set.all %}-->
+                        <!--                            <button type="button" class="btn btn-outline-primary btn-sm mr-1">{{ media.media.name }}-->
+                        <!--                            </button>-->
+                        <!--                            {% endfor %}  -->
+                        <!--                        -->
+                        <!--                        </div>-->
                         <div class="p-3 border-top osahan-post-body"><a href="profile.html">
                         </a>
                             <div class=" reviews-card rounded bg-white border-0">
@@ -384,32 +338,34 @@
 ">
                                     <h5 class="card-title mb-4">{{ post.comment_set | length }} commenti</h5>
                                     {% for comment in post.comment_set %}
-                                        <div class="media mb-2">
-                                            <img class="d-flex mr-3 rounded"
-                                                 src="{{ comment.author.photo }}"
-                                                 alt="">
-                                            <div class="media-body">
-                                                <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }}
-                                                    - {{ comment.author.position }} {{ comment.author.company.name }}
-                                                    <span class="star-rating float-right"><small>{{ comment.published_date|date:'Y-m-d'}}
+                                    <div class="media mb-2">
+                                        <img class="d-flex mr-3 rounded"
+                                             src="{{ comment.author.photo }}"
+                                             alt="">
+                                        <div class="media-body">
+                                            <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name
+                                                }}
+                                                - {{ comment.author.position }} {{ comment.author.company.name }}
+                                                <span class="star-rating float-right"><small>{{ comment.published_date|date:'Y-m-d'}}
                                                         </small>
                                                                 </span></h5>
-                                                <p>{{ comment.text }}</p>
-                                                {% for reply in comment.reply_set %}
-                                                    <div class="media mt-4">
-                                                        <img class="d-flex mr-3 rounded"
-                                                             src="{{ reply.author.photo }}" alt="">
-                                                        <div class="media-body">
-                                                            <h5 class="mt-0">{{ reply.author.first_name }} {{ reply.author.last_name }}
-                                                                <small>{{ reply.published_date|date:'Y-m-d' }}</small>
-                                                            </h5>
-                                                            <p>{{ reply.text }}</p>
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
+                                            <p>{{ comment.text }}</p>
+                                            {% for reply in comment.reply_set %}
+                                            <div class="media mt-4">
+                                                <img class="d-flex mr-3 rounded"
+                                                     src="{{ reply.author.photo }}" alt="">
+                                                <div class="media-body">
+                                                    <h5 class="mt-0">{{ reply.author.first_name }} {{
+                                                        reply.author.last_name }}
+                                                        <small>{{ reply.published_date|date:'Y-m-d' }}</small>
+                                                    </h5>
+                                                    <p>{{ reply.text }}</p>
+                                                </div>
                                             </div>
-
+                                            {% endfor %}
                                         </div>
+
+                                    </div>
                                     {% endfor %}
 
                                 </div>
@@ -421,69 +377,69 @@
                 </div>
             </div>
         </div>
-      <!--  <div class="col-lg-12 col-md-12 col-sm-12">
+        <!--  <div class="col-lg-12 col-md-12 col-sm-12">
 
-            <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
-                <div class="card-body" style="
-    padding: 0px;
-">
-                    <h5 class="card-title p-2">Info Fase di Lavoro</h5>
+              <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
+                  <div class="card-body" style="
+      padding: 0px;
+  ">
+                      <h5 class="card-title p-2">Info Fase di Lavoro</h5>
 
-                    <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">
-                        <div class="p-5">
-                            <img src="{{ task.assigned_company.logo }}" class="img-fluid" alt="Responsive image">
-                        </div>
-                        <div class="p-3 border-top border-bottom">
-                            <h6 class="font-weight-bold text-dark mb-1 mt-0">{{ task.assigned_company.name }}</h6>
-                            <p></p>
-                        </div>
+                      <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">
+                          <div class="p-5">
+                              <img src="{{ task.assigned_company.logo }}" class="img-fluid" alt="Responsive image">
+                          </div>
+                          <div class="p-3 border-top border-bottom">
+                              <h6 class="font-weight-bold text-dark mb-1 mt-0">{{ task.assigned_company.name }}</h6>
+                              <p></p>
+                          </div>
 
-                        <div class="box shadow-sm border rounded bg-white mb-3">
-                            <div class="box-title border-bottom p-3">
-                                <h6 class="m-0">Persone coinvolte nella fase di lavoro</h6>
-                            </div>
-                            <div class="box-body p-3">
-                                {% for profile in task.assigned_company.profiles.all %}
-                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="{{ profile.photo }}" alt="">
-                                    </div>
-                                    <div class="font-weight-bold mr-2">
-                                        <div class="text-truncate">{{ profile.first_name }} {{ profile.last_name }}</div>
-                                        <div class="small text-gray-500">{{ profile.position }} - {{ profile.company }}
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
+                          <div class="box shadow-sm border rounded bg-white mb-3">
+                              <div class="box-title border-bottom p-3">
+                                  <h6 class="m-0">Persone coinvolte nella fase di lavoro</h6>
+                              </div>
+                              <div class="box-body p-3">
+                                  {% for profile in task.assigned_company.profiles.all %}
+                                  <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
+                                      <div class="dropdown-list-image mr-3">
+                                          <img class="rounded-circle" src="{{ profile.photo }}" alt="">
+                                      </div>
+                                      <div class="font-weight-bold mr-2">
+                                          <div class="text-truncate">{{ profile.first_name }} {{ profile.last_name }}</div>
+                                          <div class="small text-gray-500">{{ profile.position }} - {{ profile.company }}
+                                          </div>
+                                      </div>
+                                  </div>
+                                  {% endfor %}
+                              </div>
 
-                            <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
-                                <div class="card-body" style="
-    padding: 0px;
-">
-                                    <h5 class="card-title mb-3">Alerted</h5>
-                                    <ul class="sidebar-card-list">
-                                        <li><a href="#"><i class="feather-arrow-right-circle"></i> December,
-                                            2017</a>
-                                        </li>
-                                        <li><a href="#"><i class="feather-arrow-right-circle"></i> November,
-                                            2017</a>
-                                        </li>
-                                        <li><a href="#"><i class="feather-arrow-right-circle"></i> October, 2017</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                              <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
+                                  <div class="card-body" style="
+      padding: 0px;
+  ">
+                                      <h5 class="card-title mb-3">Alerted</h5>
+                                      <ul class="sidebar-card-list">
+                                          <li><a href="#"><i class="feather-arrow-right-circle"></i> December,
+                                              2017</a>
+                                          </li>
+                                          <li><a href="#"><i class="feather-arrow-right-circle"></i> November,
+                                              2017</a>
+                                          </li>
+                                          <li><a href="#"><i class="feather-arrow-right-circle"></i> October, 2017</a>
+                                          </li>
+                                      </ul>
+                                  </div>
+                              </div>
 
-                        </div>
-                    </div>
-                </div>
+                          </div>
+                      </div>
+                  </div>
 
-            </div>
-        </div>-->
+              </div>
+          </div>-->
     </div>
-    </div>
-    {% endfor %}
+</div>
+{% endfor %}
 {% endfor %}
 </div>
 <div class="pb-5">

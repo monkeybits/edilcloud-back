@@ -208,12 +208,7 @@
                                              src="{{ comment.author.photo }}"
                                              alt="">
                                         <div class="media-body">
-                                            <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name
-                                                }}
-                                                - {{ comment.author.position }} {{ comment.author.company.name }}
-                                                <span class="star-rating float-right"><small>{{ comment.published_date|date:'Y-m-d'}}
-                                                        </small>
-                                                                </span></h5>
+                                            <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }} - {{ comment.author.position }} {{ comment.author.company.name }}<span class="star-rating float-right"><small>{{ comment.published_date|date:'Y-m-d'}}</small></span></h5>
                                             <p>{{ comment.text }}</p>
                                             {% for reply in comment.reply_set %}
                                             <div class="media mt-4">
@@ -300,12 +295,7 @@
                                              src="{{ comment.author.photo }}"
                                              alt="">
                                         <div class="media-body">
-                                            <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name
-                                                }}
-                                                - {{ comment.author.position }} {{ comment.author.company.name }}
-                                                <span class="star-rating float-right"><small>{{ comment.published_date|date:'Y-m-d'}}
-                                                        </small>
-                                                                </span></h5>
+                                            <h5 class="mt-0">{{ comment.author.first_name }} {{ comment.author.last_name }} - {{ comment.author.position }} {{ comment.author.company.name }} <span class="star-rating float-right"><small>{{ comment.published_date|date:'Y-m-d'}}</small></span></h5>
                                             <p>{{ comment.text }}</p>
                                             {% for reply in comment.reply_set %}
                                             <div class="media mt-4">

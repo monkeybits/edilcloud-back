@@ -3067,7 +3067,7 @@ class TrackerProjectExport(
                 company_profiles[new_profile['company']['name']].append(new_profile)
             else:
                 company_profiles[new_profile['company']['name']] = [new_profile['company']]
-                company_profiles[new_profile['company']['name']] = [new_profile]
+                company_profiles[new_profile['company']['name']].append(new_profile)
 
         data['company_profiles'] = company_profiles
         zip_subdir = "Report_" + str(datetime.now())

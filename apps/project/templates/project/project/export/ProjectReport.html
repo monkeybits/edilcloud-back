@@ -111,20 +111,16 @@
             </div>
             <div class="p-3">
                 {% for company_key, company_profile_list in company_profiles.items %}
-                {% for company in company_profile_list %}
-                {% if  forloop.counter == 0 %}
                 <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
                     <div class="dropdown-list-image mr-3">
-                        <img class="rounded-circle" src="{{ company.logo }}" alt="">
+                        <img class="rounded-circle" src="{{ company_profile_list.0.logo }}" alt="">
                     </div>
                     <div class="font-weight-bold mr-2">
-                        <div class="text-truncate">company.name</div>
-                        <div class="small text-gray-500">company.name
+                        <div class="text-truncate">company_profile_list.0.name</div>
+                        <div class="small text-gray-500">company_profile_list.0.name
                         </div>
                     </div>
                 </div>
-                {% endif %}
-                {% endfor %}
                 <div class="row">
                     {% for profile in company_profile_list %}
                     {% if  forloop.counter > 0 %}

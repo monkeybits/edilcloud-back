@@ -153,7 +153,7 @@
 {% for task in tasks %}
 <div class="pb-5">
     <div style="max-width: 100%; padding-left: 60px; padding-right: 60px;" class="container">
-        <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">{{ forloop.counter }}. Dettaglio delle fasi di lavoro</span>
+        <h2 class="font-weight-light"><span style="color:  #0d0a27;" class="font-weight-bold">{{ forloop.counter }}. {{ task.name }} - {{ task.assigned_company.name }}</span>
         </h2>
     </div>
 </div>
@@ -241,48 +241,6 @@
                     </div>
                     {% endfor %}
                 </div>
-            </div>
-        </div>
-        <div class="col-lg-12 col-md-12 col-sm-12">
-
-            <div class="sidebar-card box shadow-sm rounded bg-white mb-3 border-0">
-                <div class="card-body" style="
-    padding: 0px;
-">
-                    <h5 class="card-title p-2">Info Fase di Lavoro</h5>
-
-                    <div class="box mb-3 shadow-sm border rounded bg-white profile-box text-center">
-                        <div class="p-5" style="max-height: 100px;">
-                            <img src="{{ task.assigned_company.logo }}" class="img-fluid" alt="Responsive image">
-                        </div>
-                        <div class="p-3 border-top border-bottom">
-                            <h6 class="font-weight-bold text-dark mb-1 mt-0">{{ task.assigned_company.name }}</h6>
-                            <p></p>
-                        </div>
-
-                        <div class="box shadow-sm border rounded bg-white mb-3">
-                            <div class="box-title border-bottom p-3">
-                                <h6 class="m-0">Persone coinvolte nella fase di lavoro</h6>
-                            </div>
-                            <div class="box-body p-3">
-                                {% for profile in task.assigned_company.profiles.all %}
-                                <div class="d-flex align-items-center osahan-post-header mb-3 people-list">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="{{ profile.photo }}" alt="">
-                                    </div>
-                                    <div class="font-weight-bold mr-2">
-                                        <div class="text-truncate">{{ profile.first_name }} {{ profile.last_name }}
-                                        </div>
-                                        <div class="small text-gray-500">{{ profile.position }} - {{ profile.company }}
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>

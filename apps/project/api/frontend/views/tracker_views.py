@@ -3063,11 +3063,11 @@ class TrackerProjectExport(
         profiles = data['profiles']
         company_profiles = {}
         for new_profile in profiles:
-            if new_profile.company.name in company_profiles:
-                company_profiles[new_profile.company.name].append(new_profile)
+            if new_profile['company'].name in company_profiles:
+                company_profiles[new_profile['company'].name].append(new_profile)
             else:
-                company_profiles[new_profile.company.name] = [new_profile.company]
-                company_profiles[new_profile.company.name] = [new_profile]
+                company_profiles[new_profile['company'].name] = [new_profile['company']]
+                company_profiles[new_profile['company'].name] = [new_profile]
 
         data['company_profiles'] = company_profiles
         zip_subdir = "Report_" + str(datetime.now())

@@ -6,3 +6,4 @@ reset_pgadmin.sh
 .env.prod
 .env.test
 serviceAccountKey.json
+edilcloud_api.json

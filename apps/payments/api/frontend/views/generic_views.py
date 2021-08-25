@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from web import settings
 
+
 class GenericPlansViews(APIView):
     def get(self, request):
         """
@@ -26,6 +27,7 @@ class GenericPlansViews(APIView):
 
 import stripe
 from django.http import HttpRequest, JsonResponse
+
 
 class GenericCheckoutSessionView(APIView):
     def post(self, request, *args, **kwargs):
@@ -53,6 +55,12 @@ class GenericCheckoutSessionView(APIView):
                     customer=customer_id,
                     success_url="https://edilcloud.it/payment/success?sessid={{CHECKOUT_SESSION_ID}}",
                     cancel_url="https://edilcloud.it/payment/cancel",
+                    automatic_tax={
+                        "enabled": True,
+                    },
+                    subscription_data={
+                        'default_tax_rates': ['txr_1JOMXdCPJO2Tjuq1Ex7lLrnv', 'txr_1JNfFTCPJO2Tjuq1k6N6s3k2'],
+                    }
                     # The cancel_url is typically set to the original product page
                 )
             return Response(

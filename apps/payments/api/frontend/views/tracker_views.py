@@ -13,6 +13,7 @@ from apps.payments.signals import payment_failed_notification, payment_success_n
 from apps.profile.models import Profile, Company
 from web.settings import STRIPE_PUBLIC_KEY, STRIPE_SECRET_KEY
 
+
 def home(request):
     has_payment_method = False
     customer_id = request.GET.get('customer_id')
@@ -35,7 +36,9 @@ def home(request):
         profile = Company.objects.get(customer=customer_id)
         if customer.invoice_settings.default_payment_method:
             has_payment_method = True
-    return render(request, 'payments/home.html', {"products": prod_list, "customer": customer_id, "profile": profile, 'has_payment_method': has_payment_method})
+    return render(request, 'payments/home.html', {"products": prod_list, "customer": customer_id, "profile": profile,
+                                                  'has_payment_method': has_payment_method})
+
 
 def complete(request):
     return render(request, "payments/complete.html")
@@ -47,6 +50,7 @@ def stripe_config(request):
     if request.method == 'GET':
         stripe_config = {'publicKey': STRIPE_PUBLIC_KEY}
         return JsonResponse(stripe_config, safe=False)
+
 
 @csrf_exempt
 def create_checkout_session(request):
@@ -90,11 +94,18 @@ def create_checkout_session(request):
                             "price": price_id,
                             "quantity": 1,
                         },
-                    ]
+                    ],
+                    automatic_tax={
+                        "enabled": True,
+                    },
+                    subscription_data={
+                        'default_tax_rates': ['txr_1JOMXdCPJO2Tjuq1Ex7lLrnv', 'txr_1JNfFTCPJO2Tjuq1k6N6s3k2'],
+                    }
                 )
                 return JsonResponse({'sessionId': checkout_session['id']})
         except Exception as e:
             return JsonResponse({'error': str(e)})
+
 
 @csrf_exempt
 def create_sub(request):
@@ -136,16 +147,22 @@ def create_sub(request):
         return HttpResponse('requet method not allowed')
 
 
-
 # TESTING CUSTOM STRIPE PORTAL
 def customer_portal(request):
-  customer_id = request.GET.get('customer_id')
+    customer_id = request.GET.get('customer_id')
     # Authenticate your user.
-  session = stripe.billing_portal.Session.create(
-    customer=customer_id,
-    return_url='https://app.edilcloud.io/apps/todo/all',
-  )
-  return redirect(session.url)
+    session = stripe.billing_portal.Session.create(
+        customer=customer_id,
+        return_url='https://app.edilcloud.io/apps/todo/all',
+        automatic_tax={
+            "enabled": True,
+        },
+        subscription_data={
+            'default_tax_rates': ['txr_1JOMXdCPJO2Tjuq1Ex7lLrnv', 'txr_1JNfFTCPJO2Tjuq1k6N6s3k2'],
+        }
+    )
+    return redirect(session.url)
+
 
 @csrf_exempt
 def my_webhook_view(request):

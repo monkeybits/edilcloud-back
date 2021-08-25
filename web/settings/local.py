@@ -17,6 +17,7 @@ DATABASES = {
 }
 PROTOCOL = 'https'
 DEFAULT_FROM_EMAIL = 'notification@edilcloud.io'
+COMMERCIAL_FROM_EMAIL = 'commercial@edilcloud.io'
 
 REGISTRATION_FROM_EMAIL = 'registration@edilcloud.io'
 REGISTRATION_EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')

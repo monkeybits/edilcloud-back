@@ -496,6 +496,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 NEW_SPONSOR_REQUEST_RECIPIENT = 'edilcloud.activation@gmail.com'
 
+COMMERCIAL_FROM_EMAIL = 'commercial@edilcloud.io'
+
 # stripe settings
 # live
 # STRIPE_PUBLIC_KEY ='pk_live_51Hr7tlCPJO2Tjuq18IVS505Hh91jthPuDAeiHHZX4zRIex1sDRj0ezBSOypO7cUNRLCkXEup8YE2bbvcjnoCyI9400m9fKRBGf'

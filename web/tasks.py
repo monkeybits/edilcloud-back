@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
+import requests
 import os
 
 from asgiref.sync import async_to_sync
@@ -11,10 +12,9 @@ from django.template.loader import render_to_string
 
 from apps.project.models import Project
 from web import settings
-from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT, DEFAULT_FROM_EMAIL, API_SEJDA_PDF_GENERATOR, \
-    NEW_ENTRY_SENDER, GSPREAD_USERS_URL
-#from weasyprint import HTML, CSS, default_url_fetcher
-import requests
+from web.settings import MEDIA_ROOT, PROJECT_PATH, BASE_DIR, STATIC_ROOT, DEFAULT_FROM_EMAIL, COMMERCIAL_FROM_EMAIL, \
+    API_SEJDA_PDF_GENERATOR, NEW_ENTRY_SENDER, GSPREAD_USERS_URL
+
 
 def event_triger(msg):
     channel_layer = get_channel_layer()
@@ -25,6 +25,7 @@ def event_triger(msg):
             'message': msg
         }
     )
+
 
 @task()
 def archived_projects_reminder():
@@ -50,6 +51,7 @@ def archived_projects_reminder():
     #         project.send_reminder_email(remaining_days=0)
     #     if delta.days > 30:
     #         project.delete()
+
 
 @task()
 def generate_pdf_report(html_message, data, domain_url):
@@ -114,7 +116,8 @@ def update_gspread_users(data):
 
     send_mail(
         subject="Nuovo utente aggiunto a Google Sheets",
-        message="Buongiorno,\n un nuovo utente si è registrato. E' stato aggiunto al google sheets.\n\n Altrimenti accedi a questo link:\n {}".format(GSPREAD_USERS_URL),
+        message="Buongiorno,\n un nuovo utente si è registrato. E' stato aggiunto al google sheets.\n\n Altrimenti "
+                "accedi a questo link:\n {}".format(GSPREAD_USERS_URL),
         recipient_list=NEW_ENTRY_SENDER,
-        from_email=DEFAULT_FROM_EMAIL
+        from_email=COMMERCIAL_FROM_EMAIL
     )

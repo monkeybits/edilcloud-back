@@ -55,7 +55,7 @@ class RegistrationAPIView(
                     'role': main_profile.role,
                     'company': user.company.name if hasattr(user, 'company') else '',
                     'subscription_date': datetime.utcnow(),
-                    'phone': user.phone
+                    'phone': main_profile.phone
                 }
             )
         return Response(

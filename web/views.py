@@ -282,7 +282,7 @@ class SocialRegisterView(generics.GenericAPIView):
                             'last_name': user.last_name,
                             'role': main_profile.role,
                             'company': user.company.name if hasattr(user, 'company') else '',
-                            'subscription_date': user.date_create,
+                            'subscription_date': datetime.utcnow(),
                             'phone': user.phone
                         }
                     }

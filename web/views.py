@@ -273,12 +273,18 @@ class SocialRegisterView(generics.GenericAPIView):
             authenticated_user.save()
             authenticated_user.send_account_verification_email()
             from web.tasks import update_gspread_users
-            if os.environ.get('ENV_NAME') == 'test':
+            if os.environ.get('ENV_NAME') == 'prod':
                 update_gspread_users.delay(
                     {
-                        'email': authenticated_user.email,
-                        'full_name': "{} {}".format(main_profile.first_name, main_profile.last_name),
-                        'role': main_profile.role
+                        {
+                            'email': user.email,
+                            'first_name': user.first_name,
+                            'last_name': user.last_name,
+                            'role': main_profile.role,
+                            'company': user.company.name if hasattr(user, 'company') else '',
+                            'subscription_date': user.date_create,
+                            'phone': user.phone
+                        }
                     }
                 )
             return Response(status=status.HTTP_201_CREATED, data={'detail': _('Registration successful')})

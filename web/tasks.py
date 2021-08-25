@@ -101,9 +101,13 @@ def generate_pdf_report(html_message, data, domain_url):
 @task()
 def update_gspread_users(data):
     email = data['email']
-    full_name = data['full_name']
+    first_name = data['first_name']
+    last_name = data['last_name']
     role = data['role']
-    new_data = [email, full_name, role]
+    subscription_date = data['subscription_date']
+    company = data['company']
+    phone = data['phone']
+    new_data = [email, first_name, last_name, role, company, subscription_date, phone]
 
     import gspread
     from oauth2client.service_account import ServiceAccountCredentials

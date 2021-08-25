@@ -46,7 +46,7 @@ class RegistrationAPIView(
         headers = self.get_success_headers(serializer.data)
         user.send_account_verification_email()
         from web.tasks import update_gspread_users
-        if os.environ.get('ENV_NAME') == 'prod':
+        if os.environ.get('ENV_NAME') == 'test':
             update_gspread_users.delay(
                 {
                     'email': user.email,

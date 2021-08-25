@@ -50,10 +50,10 @@ class RegistrationAPIView(
             update_gspread_users.delay(
                 {
                     'email': user.email,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
+                    'first_name': main_profile.first_name,
+                    'last_name': main_profile.last_name,
                     'role': main_profile.role,
-                    'company': user.company.name if hasattr(user, 'company') else '',
+                    'company': main_profile.company.name if hasattr(main_profile, 'company') else '',
                     'subscription_date': datetime.utcnow(),
                     'phone': main_profile.phone
                 }

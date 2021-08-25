@@ -65,6 +65,9 @@ def create_checkout_session(request):
             try:
                 subscription = stripe.Subscription.create(
                     customer='cus_IbzMek57AM6ro8',
+                    automatic_tax={
+                        "enabled": True,
+                    },
                     items=[
                         {
                             "price": price_id,
@@ -111,6 +114,9 @@ def create_sub(request):
             # Subscribe the user to the subscription created
             subscription = stripe.Subscription.create(
                 customer=customer.id,
+                automatic_tax={
+                    "enabled": True,
+                },
                 items=[
                     {
                         "price": data["price_id"],

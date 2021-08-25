@@ -1314,6 +1314,9 @@ class MainProfile(Profile):
             company.customer = djstripe_customer.id
             subscription = stripe.Subscription.create(
                 customer=customer.id,
+                automatic_tax={
+                    "enabled": True,
+                },
                 items=[
                     {
                         "price": settings.TRIAL_PLAN

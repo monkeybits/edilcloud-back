@@ -69,9 +69,6 @@ def create_checkout_session(request):
             try:
                 subscription = stripe.Subscription.create(
                     customer='cus_IbzMek57AM6ro8',
-                    automatic_tax={
-                        "enabled": True,
-                    },
                     items=[
                         {
                             "price": price_id,
@@ -95,9 +92,6 @@ def create_checkout_session(request):
                             "quantity": 1,
                         },
                     ],
-                    automatic_tax={
-                        "enabled": True,
-                    },
                     subscription_data={
                         'default_tax_rates': ['txr_1JOMXdCPJO2Tjuq1Ex7lLrnv', 'txr_1JNfFTCPJO2Tjuq1k6N6s3k2'],
                     }
@@ -125,9 +119,6 @@ def create_sub(request):
             # Subscribe the user to the subscription created
             subscription = stripe.Subscription.create(
                 customer=customer.id,
-                automatic_tax={
-                    "enabled": True,
-                },
                 items=[
                     {
                         "price": data["price_id"],
@@ -154,9 +145,6 @@ def customer_portal(request):
     session = stripe.billing_portal.Session.create(
         customer=customer_id,
         return_url='https://app.edilcloud.io/apps/todo/all',
-        automatic_tax={
-            "enabled": True,
-        },
         subscription_data={
             'default_tax_rates': ['txr_1JOMXdCPJO2Tjuq1Ex7lLrnv', 'txr_1JNfFTCPJO2Tjuq1k6N6s3k2'],
         }

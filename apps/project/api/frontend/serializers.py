@@ -8,7 +8,7 @@ from web import exceptions as django_exception
 from apps.document.api.frontend import serializers as document_serializers
 from apps.profile.api.frontend import serializers as profile_serializers
 from ... import models
-from apps.profile.models import Profile
+from apps.profile.models import Profile, Company
 from apps.profile.api.frontend.serializers import ProfileSerializer, UserSerializer, TeamProfileSerializer
 from apps.message.api.frontend.serializers import TalkSerializer
 from rest_framework import serializers, status
@@ -471,10 +471,13 @@ class ProjectAddSerializer(
     def create(self, validated_data):
         try:
             project = self.profile.create_project(validated_data)
-            ProjectCompanyColorAssignment.objects.create(
+            pcca = ProjectCompanyColorAssignment.objects.create(
                 project=project, company=project.company, color=choose_random_color(
                     project.company, project)
             )
+            company = Company.objects.get(id=project.company.id)
+            company.color = pcca.color
+            company.save()
             return project
         except Exception as exc:
             if type(exc).__name__ == 'ValidationError':
@@ -1417,10 +1420,13 @@ class TeamAddTeamByCodeSerializer(
                     team_invite_notification(member._meta.model, member)
                     if not ProjectCompanyColorAssignment.objects.filter(project=member.project,
                                                                         company=member.profile.company).exists():
-                        ProjectCompanyColorAssignment.objects.create(
+                        pcca = ProjectCompanyColorAssignment.objects.create(
                             project=member.project, company=member.profile.company,
                             color=choose_random_color(member.profile.company, member.project)
                         )
+                        company = Company.objects.get(id=member.profile.company.id)
+                        company.color = pcca.color
+                        company.save()
         return teamcodeass
 
 class TeamAddSerializer(
@@ -1460,10 +1466,13 @@ class TeamAddSerializer(
                 team_invite_notification(member._meta.model, member)
                 if not ProjectCompanyColorAssignment.objects.filter(project=member.project,
                                                                     company=member.profile.company).exists():
-                    ProjectCompanyColorAssignment.objects.create(
+                    pcca = ProjectCompanyColorAssignment.objects.create(
                         project=member.project, company=member.profile.company,
                         color=choose_random_color(member.profile.company, member.project)
                     )
+                    company = Company.objects.get(id=member.profile.company.id)
+                    company.color = pcca.color
+                    company.save()
                 return member
             else:
                 # don't invite but add without invitation
@@ -1473,10 +1482,13 @@ class TeamAddSerializer(
                 team_invite_notification(member._meta.model, member)
                 if not ProjectCompanyColorAssignment.objects.filter(project=member.project,
                                                                     company=member.profile.company).exists():
-                    ProjectCompanyColorAssignment.objects.create(
+                    pcca = ProjectCompanyColorAssignment.objects.create(
                         project=member.project, company=member.profile.company,
                         color=choose_random_color(member.profile.company, member.project)
                     )
+                    company = Company.objects.get(id=member.profile.company.id)
+                    company.color = pcca.color
+                    company.save()
                 return member
         except django_exception.ProjectMemberAddPermissionDenied as err:
             raise django_api_exception.ProjectMemberAddAPIPermissionDenied(

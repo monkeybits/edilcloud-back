@@ -465,7 +465,9 @@ CORS_ORIGIN_WHITELIST = (
     'ec2-18-169-171-118.eu-west-2.compute.amazonaws.com:8000',
     'http://localhost:3000',
     'https://www.edilcloud.ml',
-    'https://www.back.edilcloud.ml'
+    'https://www.back.edilcloud.ml',
+    'https://www.account-dev.edilcloud.io',
+    'https://account-dev.edilcloud.io'
 )
 CORS_ORIGIN_ALLOW_ALL = True  # For now Allow ALL
 CORS_ALLOW_METHODS = (

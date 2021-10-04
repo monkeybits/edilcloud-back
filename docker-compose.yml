@@ -41,6 +41,8 @@ services:
   celery:
     build: .
     command: celery -A web worker -B
+    environment:
+      - ENV_NAME=prod
     networks:
       - streams
     volumes:

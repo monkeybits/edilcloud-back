@@ -27,7 +27,7 @@ services:
       - db
     environment:
       - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
-      - ENV_NAME=test
+      - ENV_NAME=prod
       - SOCKET_HOST=35.178.108.7
       - SOCKET_PORT=6969
       - SOCKET_URL=https://ws.edilcloud.io
@@ -75,7 +75,7 @@ services:
     build: .
     command: celery -A web worker -B
     environment:
-      - ENV_NAME=test
+      - ENV_NAME=prod
     networks:
       - streams
     deploy:

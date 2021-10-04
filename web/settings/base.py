@@ -511,7 +511,7 @@ STRIPE_TEST_PUBLIC_KEY = os.environ.get('STRIPE_TEST_PUBLIC_KEY')
 TEST_API_KEY = os.environ.get('TEST_API_KEY')
 
 TRIAL_MAX_DAYS = 14
-TRIAL_PLAN = 'price_1JabEWD5Mmqytq5Y7VAOgkzd' if os.environ.get('ENV_NAME') != 'prod' else 'price_1JaavVD5Mmqytq5Y6BSu454U'  # standard plan
+TRIAL_PLAN = 'price_1JgzL7D5Mmqytq5YpdqfPssj' if os.environ.get('ENV_NAME') != 'prod' else 'price_1Jgyx8D5Mmqytq5Ykod30Vb3'  # standard plan
 stripe.api_key = STRIPE_SECRET_KEY
 
 # API_SEJDA_PDF_GENERATOR

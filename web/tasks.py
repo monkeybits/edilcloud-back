@@ -115,7 +115,7 @@ def update_gspread_users(data):
     gsheet = gc.open_by_url(GSPREAD_USERS_URL)
     mydata = gsheet.sheet1.get_all_records()
     print(mydata)
-    wsheet = gsheet.worksheet("Foglio1")
+    wsheet = gsheet.worksheet("Foglio2")
     wsheet.append_row(new_data)
 
     send_mail(

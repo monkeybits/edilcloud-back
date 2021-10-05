@@ -273,7 +273,7 @@ class SocialRegisterView(generics.GenericAPIView):
             authenticated_user.save()
             authenticated_user.send_account_verification_email()
             from web.tasks import update_gspread_users
-            if os.environ.get('ENV_NAME') == 'test':
+            if os.environ.get('ENV_NAME') == 'prod':
                 update_gspread_users.delay(
                     {
                         {

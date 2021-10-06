@@ -1326,10 +1326,16 @@ class TeamGenerateCodeSerializer(
 
         registration_link = os.path.join('https://account.edilcloud.io/pages/auth/register')
         from_mail = settings.NOTIFY_NOTIFY_NO_REPLY_EMAIL
-        subject = _('Your email is added to EdilCloud')
+        subject = _(
+            'Sei stato invitato in Edilcloud da {} {} di {}'.format(self.profile.first_name, self.profile.last_name,
+                                                                    self.profile.company.name))
         unique_code = uuid.uuid5(uuid.NAMESPACE_DNS, validated_data['email'])
         validated_data['unique_code'] = str(unique_code)
-        code_assignment, created = CodeTeamAssignment.objects.get_or_create(creator=self.profile.user, last_modifier=self.profile.user,unique_code=unique_code, project=validated_data['project'], role='o', email=validated_data['email'])
+        code_assignment, created = CodeTeamAssignment.objects.get_or_create(creator=self.profile.user,
+                                                                            last_modifier=self.profile.user,
+                                                                            unique_code=unique_code,
+                                                                            project=validated_data['project'], role='o',
+                                                                            email=validated_data['email'])
         if not created:
             raise django_api_exception.WhistleAPIException(
                 status.HTTP_400_BAD_REQUEST, self.request,
@@ -1367,6 +1373,7 @@ class TeamGenerateCodeSerializer(
             return code_assignment[0]
         except:
             return code_assignment
+
 
 class TeamAddTeamByCodeSerializer(
     DynamicFieldsModelSerializer,
@@ -1428,6 +1435,7 @@ class TeamAddTeamByCodeSerializer(
                         company.color = pcca.color
                         company.save()
         return teamcodeass
+
 
 class TeamAddSerializer(
     DynamicFieldsModelSerializer,

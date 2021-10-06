@@ -7,3 +7,4 @@ reset_pgadmin.sh
 .env.test
 serviceAccountKey.json
 edilcloud_api.json
+celerybeat-schedule

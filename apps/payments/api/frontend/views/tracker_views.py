@@ -144,7 +144,7 @@ def customer_portal(request):
     # Authenticate your user.
     session = stripe.billing_portal.Session.create(
         customer=customer_id,
-        return_url='https://app.edilcloud.io/apps/todo/all',
+        return_url='https://dev.edilcloud.io/apps/todo/all',
         # subscription_data={
         #     'default_tax_rates': ['txr_1JOMXdCPJO2Tjuq1Ex7lLrnv', 'txr_1JNfFTCPJO2Tjuq1k6N6s3k2'],
         # }

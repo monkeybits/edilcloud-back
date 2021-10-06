@@ -40,7 +40,7 @@ services:
       - streams
   celery:
     build: .
-    command: celery -A web worker -B --settings=web.settings.production
+    command: celery -A web worker -B
     environment:
       - ENV_NAME=prod
     networks:

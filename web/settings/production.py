@@ -21,7 +21,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # stripe settings
 # test
-TRIAL_PLAN = 'price_1IvNldCPJO2Tjuq1dpmToF2A'  # standard plan
+TRIAL_PLAN = 'price_1Jgyx8D5Mmqytq5Ykod30Vb3'  # standard plan
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_LIVE_MODE = True  # Change to True in production

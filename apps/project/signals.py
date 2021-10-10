@@ -729,7 +729,10 @@ def comment_notification(sender, instance, kwargs=None):
         else:
             company_staff = instance.post.author
             post_for_model = 'task'
-
+        print('company_staff')
+        print(company_staff)
+        print('profile')
+        print(profile)
         if company_staff != profile:
             authors_list.append(company_staff)
     except Exception as e:

@@ -1,36 +1,33 @@
-# # -*- coding: utf-8 -*-
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
+from django.conf import settings
+from django.contrib import admin
+from django.utils.translation import ugettext as _
+from web.core.admin import UserAdminMixin
+from . import models
 #
-# from django.conf import settings
-# from django.contrib import admin
-# from django.utils.translation import ugettext as _
+
+class TeamInlineAdmin(admin.TabularInline):
+    model = models.Team
+    extra = 0
+    exclude = (
+        'creator', 'last_modifier', 'date_create',
+        'date_last_modify', 'ordering',
+    )
+    raw_id_fields = ('profile',)
+
 #
-# from web.core.admin import UserAdminMixin
-# from . import models
-#
-#
-# class TeamInlineAdmin(admin.TabularInline):
-#     model = models.Team
-#     extra = 0
-#     exclude = (
-#         'creator', 'last_modifier', 'date_create',
-#         'date_last_modify', 'ordering',
-#     )
-#     raw_id_fields = ('profile',)
-#
-#
-# class TaskInlineAdmin(admin.TabularInline):
-#     model = models.Task
-#     extra = 0
-#     exclude = (
-#          'date_create', 'date_last_modify',
-#          'ordering',
-#     )
-#     raw_id_fields = (
-#         'assigned_company', 'shared_task',
-#         'creator', 'last_modifier'
-#     )
-#
+class TaskInlineAdmin(admin.TabularInline):
+    model = models.Task
+    extra = 0
+    exclude = (
+        'date_create', 'date_last_modify',
+        'ordering',
+    )
+    raw_id_fields = (
+        'assigned_company', 'shared_task',
+        'creator', 'last_modifier'
+    )
+
 #
 # class TaskTeamInlineAdmin(admin.TabularInline):
 #     model = models.Activity
@@ -39,8 +36,9 @@
 #         'creator', 'last_modifier', 'date_create',
 #         'date_last_modify', 'ordering',
 #     )
-#     raw_id_fields = ('task', )
+#     raw_id_fields = ('task',)
 #     verbose_name_plural = _('Task Workers')
+#
 #
 # class ActivityPostsInlineAdmin(admin.TabularInline):
 #     model = models.Post
@@ -49,62 +47,66 @@
 #         'creator', 'last_modifier', 'date_create',
 #         'date_last_modify', 'ordering', 'photos'
 #     )
-#     raw_id_fields = ('author', )
+#     raw_id_fields = ('author',)
 #     verbose_name_plural = _('Posts')
 #
-# class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
-#     class Media:
-#         js = (
-#             'js/project/project.js',
-#         )
-#     fieldsets = (
-#         (_('general_information'), {
-#             'fields': (
-#                 'company', 'referent',
-#                 'name', 'description',
-#                 'date_start', 'date_end', 'tags', 'logo', 'note'
-#             )
-#         }),
-#         (_('visualization_admin'), {
-#             'classes': ('collapse',),
-#             'fields': ('ordering', 'status')
-#         }),
-#         (_('logs_admin'), {
-#             'classes': ('collapse',),
-#             'fields': (
-#                 'creator', 'date_create', 'last_modifier',
-#                 'date_last_modify',
-#             )
-#         }),
-#     )
-#     inlines = (TeamInlineAdmin, TaskInlineAdmin,)
-#     list_display = (
-#         'id', 'status', 'company', 'logo',
-#         'referent',
-#         'name', 'get_members_count', 'get_tasks_count',
-#         'date_start', 'date_end', 'tags', 'get_completed_perc'
-#     )
-#     readonly_fields = (
-#         'creator', 'date_create', 'last_modifier',
-#         'date_last_modify',
-#     )
-#     list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
-#     show_full_result_count = False
-#     list_editable = ('status',)
-#     list_filter = (
-#         'status',
-#     )
-#     search_fields = (
-#         'company__name', 'name', 'description',
-#         'tags',
-#     )
-#     raw_id_fields = ('company', 'referent',)
 #
+class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
+    class Media:
+        js = (
+            'js/project/project.js',
+        )
+
+    fieldsets = (
+        (_('general_information'), {
+            'fields': (
+                'company', 'referent',
+                'name', 'description',
+                'date_start', 'date_end', 'tags', 'logo', 'note'
+            )
+        }),
+        (_('visualization_admin'), {
+            'classes': ('collapse',),
+            'fields': ('ordering', 'status')
+        }),
+        (_('logs_admin'), {
+            'classes': ('collapse',),
+            'fields': (
+                'creator', 'date_create', 'last_modifier',
+                'date_last_modify',
+            )
+        }),
+    )
+    inlines = (TeamInlineAdmin, TaskInlineAdmin,)
+    list_display = (
+        'id', 'status', 'company', 'logo',
+        'referent',
+        'name', 'get_members_count', 'get_tasks_count',
+        'date_start', 'date_end', 'tags', 'get_completed_perc'
+    )
+    readonly_fields = (
+        'creator', 'date_create', 'last_modifier',
+        'date_last_modify',
+    )
+    list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
+    show_full_result_count = False
+    list_editable = ('status',)
+    list_filter = (
+        'status',
+    )
+    search_fields = (
+        'company__name', 'name', 'description',
+        'tags',
+    )
+    raw_id_fields = ('company', 'referent',)
+
+
 # class TaskAdmin(UserAdminMixin, admin.ModelAdmin):
 #     class Media:
 #         js = (
 #             'js/project/task.js',
 #         )
+#
 #     fieldsets = (
 #         (_('general_information'), {
 #             'fields': (
@@ -143,11 +145,13 @@
 #     )
 #     raw_id_fields = ('project', 'shared_task', 'assigned_company',)
 #
+#
 # class ActivityAdmin(UserAdminMixin, admin.ModelAdmin):
 #     class Media:
 #         js = (
 #             'js/project/task.js',
 #         )
+#
 #     fieldsets = (
 #         (_('general_information'), {
 #             'fields': (
@@ -185,6 +189,7 @@
 #     )
 #     raw_id_fields = ('task',)
 #
+#
 # class PostAdmin(UserAdminMixin, admin.ModelAdmin):
 #     fieldsets = (
 #         (_('general_information'), {
@@ -202,6 +207,7 @@
 #         'created_date', 'published_date',
 #     )
 #     list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
+#
 #
 # class CommentAdmin(UserAdminMixin, admin.ModelAdmin):
 #     fieldsets = (
@@ -221,6 +227,7 @@
 #     )
 #     list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
 #
+#
 # class ProjectCompanyColorAssignmentAdmin(UserAdminMixin, admin.ModelAdmin):
 #     fieldsets = (
 #         (_('general_information'), {
@@ -232,9 +239,10 @@
 #         }),
 #     )
 #     list_display = (
-#         'id', 'project', 'company',  'color',
+#         'id', 'project', 'company', 'color',
 #     )
 #     list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
+#
 #
 # class MediaAssignmentAdmin(UserAdminMixin, admin.ModelAdmin):
 #     fieldsets = (
@@ -249,11 +257,12 @@
 #         }),
 #     )
 #     list_display = (
-#         'id', 'comment', 'task',  'activity', 'media'
+#         'id', 'comment', 'task', 'activity', 'media'
 #     )
 #     list_per_page = settings.DJANGO_ADMIN_LIST_PER_PAGE
 #
-# admin.site.register(models.Project, ProjectAdmin)
+#
+admin.site.register(models.Project, ProjectAdmin)
 # admin.site.register(models.Task, TaskAdmin)
 # admin.site.register(models.Activity, ActivityAdmin)
 # admin.site.register(models.Post, PostAdmin)

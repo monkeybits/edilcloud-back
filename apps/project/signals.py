@@ -741,6 +741,8 @@ def comment_notification(sender, instance, kwargs=None):
     for comment in instance.post.comment_set.all():
         if not comment.author in authors_list and comment.author != profile:
             authors_list.append(comment.author)
+    print('authors_list')
+    print(authors_list)
     company_staff = authors_list
     try:
         if post_for_model == 'activity':

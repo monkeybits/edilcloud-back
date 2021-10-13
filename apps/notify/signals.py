@@ -126,9 +126,9 @@ def send_push_notification(notify_obj, recipient, subject, body):
     )
 
     # Send a message to the devices subscribed to the provided topic.
-    response = messaging.send(message)
+    # response = messaging.send(message)
     # Response is a message ID string.
-    print('Successfully sent message:', response)
+    # print('Successfully sent message:', response)
 
 
 @receiver([post_save, post_delete], sender=notify_models.NotificationRecipient)

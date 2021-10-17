@@ -83,6 +83,7 @@ def send_push_notification(notify_obj, recipient, subject, body):
     #     "small_icon": "ic_stat_onesignal_default"
     # }
     # The topic name can be optionally prefixed with "/topics/".
+    import os
     topic = 'user{}-{}'.format(os.environ.get('ENV_NAME'), recipient.id)
     print('to topic: {}'.format(topic))
     print('name: {}, surname: {} from company: {}'.format(recipient.first_name, recipient.last_name,

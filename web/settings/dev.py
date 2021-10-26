@@ -1,3 +1,4 @@
+from web.settings.local import *
 import os
 import dotenv
 

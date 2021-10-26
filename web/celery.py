@@ -4,7 +4,7 @@ from celery import Celery
 from celery import shared_task
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'web.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "web.settings.{}".format(os.environ.get('ENV_NAME')))
 
 app = Celery('web')
 

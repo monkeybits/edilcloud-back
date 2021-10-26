@@ -35,12 +35,14 @@ class RegistrationAPIView(
             request.POST._mutable = True
         first_name = request.data.pop('first_name')
         last_name = request.data.pop('last_name')
+        phone = request.data.pop('phone')
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         main_profile = user.create_main_profile({
             'first_name': first_name,
             'last_name': last_name,
+            'phone': phone,
             'language': 'it'
         })
         headers = self.get_success_headers(serializer.data)

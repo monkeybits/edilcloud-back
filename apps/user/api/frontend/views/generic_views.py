@@ -87,13 +87,13 @@ class ActivateRegistrationAPIView(
             uid = force_text(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
         except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-            msg = _('Activation Link not found.')
+            msg = _('Link di attivazione non trovato')
             raise exceptions.AuthenticationFailed(msg)
         account_activation_token = TokenGenerator()
         if user is not None and account_activation_token.check_token(user, token):
             active_status = self.set_active(user)
         else:
-            msg = _('Activation Link expired')
+            msg = _('Il link di attivazione non è più valido')
             raise exceptions.AuthenticationFailed(msg)
 
         return Response(

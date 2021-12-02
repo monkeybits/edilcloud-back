@@ -32,7 +32,7 @@ msgid "Please provide a valid provider"
 msgstr "Inserisci un provider valido, per favore"
 
 msgid "We are generating your report, download will start when process is finished."
-msgstr "Stiamo generando il tuo report, il download partirà appena finito il processo."
+msgstr "Stiamo generandoa il tuo report, ci vorrà qualche minuto, il download partirà automaticamente quando sarà pronto."
 
 msgid "New Comment added in post activity"
 msgstr "Nuovo commento aggiunto al post dell'attività"

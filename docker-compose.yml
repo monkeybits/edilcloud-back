@@ -15,7 +15,7 @@ services:
       - POSTGRES_PASSWORD=postgres
   web:
     build: .
-    command: daphne -b 0.0.0.0 -p 8000 web.asgi:application --settings=web.settings.production
+    command: daphne -b 0.0.0.0 -p 8000 web.asgi:application
     volumes:
       - .:/edilcloud-back
     ports:
@@ -26,7 +26,7 @@ services:
       - db
     environment:
       - DJANGO_SUPERUSER_PASSWORD=Oneplus3t
-      - ENV_NAME=prod
+      - ENV_NAME=dev
       - SOCKET_HOST=35.178.108.7
       - SOCKET_PORT=6969
   redis:
@@ -42,7 +42,7 @@ services:
     build: .
     command: celery -A web worker -B
     environment:
-      - ENV_NAME=prod
+      - ENV_NAME=dev
     networks:
       - streams
     volumes:

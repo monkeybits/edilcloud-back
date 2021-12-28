@@ -3,6 +3,7 @@ import os
 import dotenv
 
 dotenv.read_dotenv(dotenv=".env.{}".format(os.environ.get('ENV_NAME')))
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')

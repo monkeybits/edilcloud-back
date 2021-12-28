@@ -11,6 +11,7 @@ dotenv.read_dotenv(dotenv=".env.{}".format(os.environ.get('ENV_NAME')))
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))
 )
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 SETTINGS_PATH = os.path.abspath(os.path.dirname(__file__))
 

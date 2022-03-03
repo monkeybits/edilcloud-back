@@ -72,8 +72,8 @@ def permissions_plan(customer):
         max_profiles = plan.metadata.MAX_PROFILES
         max_projects = plan.metadata.MAX_PROJECTS
     else:
-        max_profiles = plan.metadata.TRIAL_MAX_PROFILES
-        max_projects = plan.metadata.TRIAL_MAX_PROJECTS
+        max_profiles = plan.metadata.MAX_PROFILES
+        max_projects = plan.metadata.MAX_PROJECTS
 
     permissions.update({'report_type': report_type})
     permissions.update({'max_profiles': max_profiles})
